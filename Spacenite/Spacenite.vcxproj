@@ -115,8 +115,10 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayMode.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TexCache.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -127,8 +129,10 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="PlayMode.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TexCache.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="WindowUtils.h" />
   </ItemGroup>
   <ItemGroup>
