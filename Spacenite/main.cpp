@@ -12,6 +12,8 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 
+// test comment to push branch
+// 
 //if ALT+ENTER or resize or drag window we might want do
 //something like pause the game perhaps, but we definitely
 //need to let D3D know what's happened (OnResize_Default).
