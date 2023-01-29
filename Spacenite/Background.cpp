@@ -8,13 +8,13 @@ void Background::Init(MyD3D& mD3D)
 
 	//a neat way to package pairs of things (nicknames and filenames)
 	pair<string, string> files[BGND_LAYERS]{
-		{ "bgnd0","backgroundlayers/mountains01_007.dds" },
-		{ "bgnd1","backgroundlayers/mountains01_005.dds" },
-		{ "bgnd2","backgroundlayers/mountains01_004.dds" },
-		{ "bgnd3","backgroundlayers/mountains01_003.dds" },
-		{ "bgnd4","backgroundlayers/mountains01_002.dds" },
-		{ "bgnd5","backgroundlayers/mountains01_001.dds" },
-		{ "bgnd6","backgroundlayers/mountains01_000.dds" },
+		//{ "bgnd0","backgroundlayers/mountains01_007.dds" },
+		//{ "bgnd1","backgroundlayers/mountains01_005.dds" },
+		//{ "bgnd2","backgroundlayers/mountains01_004.dds" },
+		//{ "bgnd3","backgroundlayers/mountains01_003.dds" },
+		//{ "bgnd4","backgroundlayers/mountains01_002.dds" },
+		//{ "bgnd5","backgroundlayers/mountains01_001.dds" },
+		//{ "bgnd6","backgroundlayers/mountains01_000.dds" },
 		/*{ "bgnd7","backgroundlayers/mountains01_006.dds" }*/
 		{ "bgnd7","backgroundlayers/AmazingProgrammerBackground.dds" }
 	};
@@ -41,3 +41,5 @@ void Background::Render(DirectX::SpriteBatch& batch)
 	for (auto& s : bGround)
 		s.Draw(batch);
 }
+
+
