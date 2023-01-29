@@ -120,7 +120,7 @@ void Asteroid::Update(float dTime, int& additionalScore, Sprite& _mPlayer, Sprit
 			}
 		}
 
-		// Check collision between asteroid-ship
+		// Check collision between asteroid-player
 		if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
 			&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
 		{
@@ -178,27 +178,30 @@ void Bullet::Update(float dTime)
 }
 
 Player::Player(MyD3D& d3d)
-	:ship(d3d)
+	:player(d3d)
 {
 
 }
 
 void Player::Init(MyD3D& mD3D)
 {
-	//load a orientate the ship
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
-	ship.SetTex(*p);
-	ship.SetScale(Vector2(0.1f, 0.1f));
-	ship.origin = ship.GetTexData().dim / 2.f;
+	//load and orientate the player
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ProgChar.dds");  //player.dds
+	player.SetTex(*p);
+	player.SetScale(Vector2(0.1f, 0.1f));
+	player.origin = player.GetTexData().dim / 2.f;
+
+	DirectX::XMFLOAT2 playerPos(100.0f, 100.0f);
+	DirectX::XMFLOAT2 playerVel(0.0f, 0.0f);
 
 	//setup the play area
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
-	playArea.left = ship.GetScreenSize().x * 0.6f;
-	playArea.top = ship.GetScreenSize().y * 0.6f;
+	playArea.left = player.GetScreenSize().x * 0.6f;
+	playArea.top = player.GetScreenSize().y * 0.6f;
 	playArea.right = w - playArea.left;
 	playArea.bottom = h * 0.75f;
- 	ship.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);
+ 	player.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);
 }
 
 void Player::Update(float dTime)
@@ -208,7 +211,7 @@ void Player::Update(float dTime)
 
 void Player::Render(DirectX::SpriteBatch& batch)
 {
-	shipRender(batch);
+	playerRender(batch);
 }
 
 void Player::UpdateInput(float dTime)
@@ -223,7 +226,7 @@ void Player::UpdateInput(float dTime)
 
 	if (keypressed || (mouse.Length() > VERY_SMALL) || sticked)
 	{
-		//move the ship around
+		//move the player around
 		Vector2 pos(0, 0);
 
 		if (sticked)
@@ -234,7 +237,7 @@ void Player::UpdateInput(float dTime)
 		}
 
 		//keep it within the play area
-		pos += ship.mPos;
+		pos += player.mPos;
 		if (pos.x < playArea.left)
 			pos.x = playArea.left;
 		else if (pos.x > playArea.right)
@@ -244,31 +247,31 @@ void Player::UpdateInput(float dTime)
 		else if (pos.y > playArea.bottom)
 			pos.y = playArea.bottom;
 
-		ship.mPos = pos;
+		player.mPos = pos;
 	}
 
-	double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - ship.mPos.y, ship.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
-	ship.rotation = rotationInRads;
+	double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - player.mPos.y, player.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
+	player.rotation = rotationInRads;
 
-	if (ship.mPos.x + 10 < Game::sMKIn.GetMousePos(true).x)
+	if (player.mPos.x + 10 < Game::sMKIn.GetMousePos(true).x)
 	{
-		ship.mPos.x += 100.f * dTime;
+		player.mPos.x += 100.f * dTime;
 	}
-	else if (ship.mPos.x - 10 > Game::sMKIn.GetMousePos(true).x)
+	else if (player.mPos.x - 10 > Game::sMKIn.GetMousePos(true).x)
 	{
-		ship.mPos.x -= 100.f * dTime;
+		player.mPos.x -= 100.f * dTime;
 	}
-	if (ship.mPos.y + 10 < Game::sMKIn.GetMousePos(true).y)
+	if (player.mPos.y + 10 < Game::sMKIn.GetMousePos(true).y)
 	{
-		ship.mPos.y += 100.f * dTime;
+		player.mPos.y += 100.f * dTime;
 	}
-	else if (ship.mPos.y - 10 > Game::sMKIn.GetMousePos(true).y)
+	else if (player.mPos.y - 10 > Game::sMKIn.GetMousePos(true).y)
 	{
-		ship.mPos.y -= 100.f * dTime;
+		player.mPos.y -= 100.f * dTime;
 	}
 }
 
-void Player::shipRender(DirectX::SpriteBatch& batch)
+void Player::playerRender(DirectX::SpriteBatch& batch)
 {
-	ship.Draw(batch);
+	player.Draw(batch);
 }

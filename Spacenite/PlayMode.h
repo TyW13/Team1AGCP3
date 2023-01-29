@@ -33,7 +33,7 @@ private:
 	float mLastSpawn = 0;		// used in asteroid spawn timing //PMODE Exclusive
 	/*int spawnCheck = 0;*/
 	int asteroidID = 0;//PMODE Exclusive
-	/*bool shipActive = true;*/
+	/*bool playerActive = true;*/
 	int additionalScore = 0;							//PMODE Exclusive
 
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
@@ -45,7 +45,7 @@ private:
 	void UpdateMissile(float dTime);
 
 
-	//move the ship by keyboard, gamepad or mouse
+	//move the player by keyboard, gamepad or mouse
 
 	//Asteroid Function. TW
 	//A specific set of functions used to handle the 32 instances of asteroids used in Playmode. MH

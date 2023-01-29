@@ -87,7 +87,7 @@ public:
 
 	Player(MyD3D& d3d);
 
-	Sprite ship;		//jet											//PLAYER EXCLUSIVE
+	Sprite player;		// Player											//PLAYER EXCLUSIVE
 	void Init(MyD3D& d3d); //THIS IS CALLED
 	//This needs to follow where its called "mMissile.Init(mD3D);"
 	void Update(float dTime);											//PLAYER EXCLUSIVE
@@ -100,5 +100,5 @@ private:
 	RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
 	bool isHoning;
 	void UpdateInput(float dTime);										//PLAYER EXCLUSIVE
-	void shipRender(DirectX::SpriteBatch& batch);
+	void playerRender(DirectX::SpriteBatch& batch);
 };

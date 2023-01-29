@@ -16,7 +16,7 @@ public:
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
-	const float SCROLL_SPEED = 10.f;
+	const float SCROLL_SPEED = 5.f;
 	static const int BGND_LAYERS = 8;
 };
 

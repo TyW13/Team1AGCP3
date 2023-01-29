@@ -3,6 +3,7 @@
 #include <cassert>
 #include <d3d11.h>
 #include <vector>
+#include <d2d1.h>
 
 #include "WindowUtils.h"
 #include "Game.h"
@@ -52,8 +53,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)
 {
 
-	int w(512), h(256);
-	if (!WinUtil::Get().InitMainWindow(w, h, hInstance, "Spacenite", MainWndProc, true))
+
+
+	int w(1920), h(1080);
+	if (!WinUtil::Get().InitMainWindow(w, h, hInstance, "Some Sort Of Platformer I guess", MainWndProc, true))
 		assert(false);
 
 	MyD3D d3d;

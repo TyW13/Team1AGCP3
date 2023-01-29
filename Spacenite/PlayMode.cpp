@@ -119,7 +119,7 @@ void PlayMode::UpdateAsteroids(float dTime)
 	assert(!mAsteroids.empty());
 	for (auto& asteroid : mAsteroids)
 	{
-		asteroid.Update(dTime, additionalScore, Player.ship, mMissile.GetSprite()); //need to add mPlayer.ship here
+		asteroid.Update(dTime, additionalScore, Player.player, mMissile.GetSprite()); //need to add mPlayer.player here
 	}
 	if ((GetClock() - mLastSpawn) > mSpawnRateSec)		// Spawn timer
 	{
@@ -166,7 +166,7 @@ void PlayMode::UpdateMissile(float dTime)
 	if ((mMissile.GetSprite().GetActive() == false) && Game::sMKIn.IsPressed(VK_SPACE))
 	{
 		mMissile.GetSprite().SetActive(true);
-		mMissile.GetSprite().mPos = Vector2(Player.ship.mPos.x + Player.ship.GetScreenSize().x / 2.f, Player.ship.mPos.y); //need to add mPlayer.ship here
+		mMissile.GetSprite().mPos = Vector2(Player.player.mPos.x + Player.player.GetScreenSize().x / 2.f, Player.player.mPos.y); //need to add mPlayer.player here
 	}
 	mMissile.Update(dTime);
 }
@@ -176,7 +176,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 {
 	bGround.Update(dTime);
 
-	if (Player.ship.GetActive())
+	if (Player.player.GetActive())
 	{
 		UpdateMissile(dTime);
 		Player.Update(dTime);
@@ -192,7 +192,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 {
 	bGround.Render(batch);
-	if (Player.ship.GetActive())
+	if (Player.player.GetActive())
 	{
 		Player.Render(batch);
 		mMissile.Render(batch);

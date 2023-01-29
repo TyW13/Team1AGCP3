@@ -72,7 +72,7 @@ float G_Shlick_Smith_Hable(float alpha, float LdotH)
 // specularColor:   The F0 reflectance value - 0.04 for non-metals, or RGB for metals. This follows model 
 //                  used by Unreal Engine 4.
 //
-// NdotV, NdotL, LdotH, NdotH: vector relationships between,
+// NdotV, NdotL, LdotH, NdotH: vector relationplayers between,
 //      N - surface normal
 //      V - eye normal
 //      L - light normal
