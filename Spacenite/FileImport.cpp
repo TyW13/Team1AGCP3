@@ -10,19 +10,19 @@ using namespace rapidjson;
 using namespace std;
 
 
-void FileImport::FileParse()
+inline const char* FileImport::FileParse()
 {
-
-}
-
-int main()
-{
-	Document document;
-	const char* json = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+	json = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
 
 	if (document.Parse(json).HasParseError())			// json file being parsed needs to passed as argument 
 	{
-		return 1;
-		printf("no work!!!");
-	} 
-};
+		printf("why no work!!!");
+	}
+
+	FILE* filePointer = fopen("testMap.json", "rb");
+	size_t size = ftell(filePointer);
+	char* buffer = new char[size];
+	fread(buffer, sizeof(char), size, filePointer);
+	return buffer;
+}
+
