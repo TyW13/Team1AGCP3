@@ -1,13 +1,14 @@
 #pragma once
+
+
 class FileImport
 {
 
 public:
 
-	void main();
+	void FileParse();
 
 private:
 
-	Document document;
 };
 

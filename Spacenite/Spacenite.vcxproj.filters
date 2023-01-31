@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="libraries">
-      <UniqueIdentifier>{492e53bc-4f70-46c3-a959-66deeff36ec6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D.cpp">
@@ -51,6 +48,9 @@
     <ClCompile Include="PlayMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileImport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D.h">
@@ -81,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileImport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
