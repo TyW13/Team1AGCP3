@@ -188,11 +188,11 @@ void Player::Init(MyD3D& mD3D)
 	//load and orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ProgChar.dds");  //player.dds
 	player.SetTex(*p);
-	player.SetScale(Vector2(0.1f, 0.1f));
-	player.origin = player.GetTexData().dim / 2.f;
+	player.SetScale(Vector2(5.0f, 5.0f));
+	player.origin = player.GetTexData().dim / 2.0f;
 
-	DirectX::XMFLOAT2 playerPos(100.0f, 100.0f);
-	DirectX::XMFLOAT2 playerVel(0.0f, 0.0f);
+	//DirectX::XMFLOAT2 playerPos(100.0f, 100.0f);
+	//DirectX::XMFLOAT2 playerVel(0.0f, 0.0f);
 
 	//setup the play area
 	int w, h;
@@ -201,7 +201,11 @@ void Player::Init(MyD3D& mD3D)
 	playArea.top = player.GetScreenSize().y * 0.6f;
 	playArea.right = w - playArea.left;
 	playArea.bottom = h * 0.75f;
- 	player.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);
+ /*	player.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);*/
+	player.mPos = Vector2(playArea.left + player.GetScreenSize().x / 2.f, (playArea.bottom - playArea.top) / 2.f);
+
+
+	
 }
 
 void Player::Update(float dTime)
@@ -226,8 +230,18 @@ void Player::UpdateInput(float dTime)
 
 	if (keypressed || (mouse.Length() > VERY_SMALL) || sticked)
 	{
-		//move the player around
+		//move the ship around
 		Vector2 pos(0, 0);
+		if (Game::sMKIn.IsPressed(VK_UP))
+			pos.y -= SPEED * dTime;
+		else if (Game::sMKIn.IsPressed(VK_DOWN))
+			pos.y += SPEED * dTime;
+		if (Game::sMKIn.IsPressed(VK_RIGHT))
+			pos.x += SPEED * dTime;
+		else if (Game::sMKIn.IsPressed(VK_LEFT))
+			pos.x -= SPEED * dTime;
+
+		pos += mouse * MOUSE_SPEED * dTime;
 
 		if (sticked)
 		{
@@ -240,7 +254,7 @@ void Player::UpdateInput(float dTime)
 		pos += player.mPos;
 		if (pos.x < playArea.left)
 			pos.x = playArea.left;
-		else if (pos.x > playArea.right)
+		else if (pos.x >playArea.right)
 			pos.x = playArea.right;
 		if (pos.y < playArea.top)
 			pos.y = playArea.top;
@@ -248,26 +262,7 @@ void Player::UpdateInput(float dTime)
 			pos.y = playArea.bottom;
 
 		player.mPos = pos;
-	}
-
-	double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - player.mPos.y, player.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
-	player.rotation = rotationInRads;
-
-	if (player.mPos.x + 10 < Game::sMKIn.GetMousePos(true).x)
-	{
-		player.mPos.x += 100.f * dTime;
-	}
-	else if (player.mPos.x - 10 > Game::sMKIn.GetMousePos(true).x)
-	{
-		player.mPos.x -= 100.f * dTime;
-	}
-	if (player.mPos.y + 10 < Game::sMKIn.GetMousePos(true).y)
-	{
-		player.mPos.y += 100.f * dTime;
-	}
-	else if (player.mPos.y - 10 > Game::sMKIn.GetMousePos(true).y)
-	{
-		player.mPos.y -= 100.f * dTime;
+		/*mThrusting = GetClock() + 0.2f;*/
 	}
 }
 
