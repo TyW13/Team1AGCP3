@@ -5,16 +5,18 @@
 #include "D3DUtil.h"
 
 class Texture;
+class GameObject;
 
 class ResourceManager
 {
 public:
-	void Init(ID3D11Device* pDevice);
+	void Init(ID3D11Device* pDevice, MyD3D& d3d);
 	void Update();
 	void Terminate();
-	void AddTexture(ID3D11Device* pDevice, std::wstring &fPath);
-	Texture& GetTexture(const std::wstring& tName);
+	void AddTexture(ID3D11Device* pDevice, const std::string &fPath);
+	void AddGameObject(MyD3D& d3d);
+	Texture& GetTexture(const std::string& tName);
 private:
-	std::map<std::wstring, Texture> m_Textures;
+	std::map<std::string, std::string> m_Textures;
+	std::vector<GameObject*> m_gObjects;
 };
-

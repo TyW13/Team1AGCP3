@@ -114,6 +114,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="newGameObject.cpp" />
+    <ClCompile Include="PlayerCharacter.cpp" />
     <ClCompile Include="PlayMode.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -128,6 +130,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="newGameObject.h" />
+    <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="PlayMode.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Sprite.h" />
