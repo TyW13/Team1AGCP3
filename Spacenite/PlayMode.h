@@ -39,6 +39,7 @@ private:
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
+	Platform Platform;
 
 
 	//make it move, reset it once it leaves the screen, only one at once
