@@ -2,6 +2,7 @@
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
+
 class Asteroid 
 {
 public:
@@ -95,10 +96,12 @@ public:
 
 private:
 	const float SPEED = 250;											//PLAYER EXCLUSIVE
-	const float MOUSE_SPEED = 5000;										//PLAYER EXCLUSIVE
+	//const float MOUSE_SPEED = 5000;										//PLAYER EXCLUSIVE
 	const float PAD_SPEED = 500;										//PLAYER EXCLUSIVE
-	RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
+	//RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
+	bool isGrounded, isJumping;													//Player
 	bool isHoning;
 	void UpdateInput(float dTime);										//PLAYER EXCLUSIVE
 	void shipRender(DirectX::SpriteBatch& batch);
+	void KeepInScreenBoundaries();
 };

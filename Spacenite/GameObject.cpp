@@ -189,21 +189,28 @@ void Player::Init(MyD3D& mD3D)
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
 	ship.SetTex(*p);
 	ship.SetScale(Vector2(0.1f, 0.1f));
-	ship.origin = ship.GetTexData().dim / 2.f;
+	ship.origin = Vector2(ship.GetTexData().dim.x / 2.f, ship.GetTexData().dim.y);
+	
+	ship.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
 
 	//setup the play area
-	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
-	playArea.left = ship.GetScreenSize().x * 0.6f;
-	playArea.top = ship.GetScreenSize().y * 0.6f;
+	/*int w, h;
+	w = WinUtil::Get().GetClientWidth();
+	h = WinUtil::Get().GetClientHeight();
+	playArea.left = ship.GetScreenSize().x;
+	playArea.top = ship.GetScreenSize().y;
 	playArea.right = w - playArea.left;
 	playArea.bottom = h * 0.75f;
- 	ship.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);
+ 	ship.mPos = Vector2(150, playArea.bottom);*/
+
+	isGrounded = true; 
+	isJumping = false;
 }
 
 void Player::Update(float dTime)
 {
 	UpdateInput(dTime);
+	KeepInScreenBoundaries();
 }
 
 void Player::Render(DirectX::SpriteBatch& batch)
@@ -213,62 +220,84 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateInput(float dTime)
 {
-	Vector2 mouse{ Game::sMKIn.GetMousePos(false) };
-	bool keypressed = Game::sMKIn.IsPressed(VK_UP) || Game::sMKIn.IsPressed(VK_DOWN) ||
-		Game::sMKIn.IsPressed(VK_RIGHT) || Game::sMKIn.IsPressed(VK_LEFT);
-	bool sticked = false;
-	if (Game::sGamepads.IsConnected(0) &&
-		(Game::sGamepads.GetState(0).leftStickX != 0 || Game::sGamepads.GetState(0).leftStickX != 0))
-		sticked = true;
+	//Vector2 mouse{ Game::sMKIn.GetMousePos(false) };
+	//bool keypressed = Game::sMKIn.IsPressed(VK_UP) || Game::sMKIn.IsPressed(VK_DOWN) ||
+	//	Game::sMKIn.IsPressed(VK_RIGHT) || Game::sMKIn.IsPressed(VK_LEFT);
+	//bool sticked = false;
+	//if (Game::sGamepads.IsConnected(0) &&
+	//	(Game::sGamepads.GetState(0).leftStickX != 0 || Game::sGamepads.GetState(0).leftStickX != 0))
+	//	sticked = true;
 
-	if (keypressed || (mouse.Length() > VERY_SMALL) || sticked)
+	//if (keypressed || (mouse.Length() > VERY_SMALL) || sticked)
+	//{
+	//	//move the ship around
+	//	Vector2 pos(0, 0);
+
+	//	if (sticked)
+	//	{
+	//		DBOUT("left stick x=" << Game::sGamepads.GetState(0).leftStickX << " y=" << Game::sGamepads.GetState(0).leftStickY);
+	//		pos.x += Game::sGamepads.GetState(0).leftStickX * PAD_SPEED * dTime;
+	//		pos.y -= Game::sGamepads.GetState(0).leftStickY * PAD_SPEED * dTime;
+	//	}
+
+	//	//keep it within the play area
+	//	pos += ship.mPos;
+	//	if (pos.x < playArea.left)
+	//		pos.x = playArea.left;
+	//	else if (pos.x > playArea.right)
+	//		pos.x = playArea.right;
+	//	if (pos.y < playArea.top)
+	//		pos.y = playArea.top;
+	//	else if (pos.y > playArea.bottom)
+	//		pos.y = playArea.bottom;
+
+	//	ship.mPos = pos;
+	//}
+
+	//double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - ship.mPos.y, ship.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
+	//ship.rotation = rotationInRads;
+
+	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
-		//move the ship around
-		Vector2 pos(0, 0);
-
-		if (sticked)
-		{
-			DBOUT("left stick x=" << Game::sGamepads.GetState(0).leftStickX << " y=" << Game::sGamepads.GetState(0).leftStickY);
-			pos.x += Game::sGamepads.GetState(0).leftStickX * PAD_SPEED * dTime;
-			pos.y -= Game::sGamepads.GetState(0).leftStickY * PAD_SPEED * dTime;
-		}
-
-		//keep it within the play area
-		pos += ship.mPos;
-		if (pos.x < playArea.left)
-			pos.x = playArea.left;
-		else if (pos.x > playArea.right)
-			pos.x = playArea.right;
-		if (pos.y < playArea.top)
-			pos.y = playArea.top;
-		else if (pos.y > playArea.bottom)
-			pos.y = playArea.bottom;
-
-		ship.mPos = pos;
+		ship.mPos.x += SPEED * dTime;
 	}
-
-	double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - ship.mPos.y, ship.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
-	ship.rotation = rotationInRads;
-
-	if (ship.mPos.x + 10 < Game::sMKIn.GetMousePos(true).x)
+	else if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
-		ship.mPos.x += 100.f * dTime;
+		ship.mPos.x -= SPEED * dTime;
 	}
-	else if (ship.mPos.x - 10 > Game::sMKIn.GetMousePos(true).x)
+	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded == true)
 	{
-		ship.mPos.x -= 100.f * dTime;
-	}
-	if (ship.mPos.y + 10 < Game::sMKIn.GetMousePos(true).y)
-	{
-		ship.mPos.y += 100.f * dTime;
-	}
-	else if (ship.mPos.y - 10 > Game::sMKIn.GetMousePos(true).y)
-	{
-		ship.mPos.y -= 100.f * dTime;
+		
 	}
 }
 
 void Player::shipRender(DirectX::SpriteBatch& batch)
 {
 	ship.Draw(batch);
+}
+
+void Player::KeepInScreenBoundaries()
+{
+	//check if the player is outide the screen
+
+	//bottom
+	if (ship.mPos.y > WinUtil::Get().GetClientHeight())
+	{
+		ship.mPos.y = WinUtil::Get().GetClientHeight();
+	}
+	//top
+	if (ship.mPos.y < 0)
+	{
+		ship.mPos.y = 0;
+	}
+	//right
+	if (ship.mPos.x + (ship.GetTexData().dim.x / 2.f) * ship.GetScale().x > WinUtil::Get().GetClientWidth())
+	{
+		ship.mPos.x = WinUtil::Get().GetClientWidth() - (ship.GetTexData().dim.x / 2) * ship.GetScale().x;
+	}
+	//left
+	if (ship.mPos.x - (ship.GetTexData().dim.x / 2.f) * ship.GetScale().x < 0)
+	{
+		ship.mPos.x = (ship.GetTexData().dim.x / 2.f ) * ship.GetScale().x;
+	}
 }
