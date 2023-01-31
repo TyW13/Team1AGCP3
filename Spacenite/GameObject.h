@@ -102,3 +102,19 @@ private:
 	void UpdateInput(float dTime);										//PLAYER EXCLUSIVE
 	void playerRender(DirectX::SpriteBatch& batch);
 };
+
+
+class Platform
+{
+public:
+
+	Platform(MyD3D& d3d);
+	Sprite platform;
+	void Update(float dTime);
+	void Render(DirectX::SpriteBatch& batch);
+
+private :
+
+	void platformRender(DirectX::SpriteBatch& batch);
+
+};

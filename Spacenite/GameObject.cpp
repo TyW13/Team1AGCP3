@@ -186,9 +186,9 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load and orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ProgChar.dds");  //player.dds
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");  //player.dds
 	player.SetTex(*p);
-	player.SetScale(Vector2(5.0f, 5.0f));
+	player.SetScale(Vector2(0.1f, 0.1f));
 	player.origin = player.GetTexData().dim / 2.0f;
 
 	//DirectX::XMFLOAT2 playerPos(100.0f, 100.0f);
@@ -200,9 +200,9 @@ void Player::Init(MyD3D& mD3D)
 	playArea.left = player.GetScreenSize().x * 0.6f;
 	playArea.top = player.GetScreenSize().y * 0.6f;
 	playArea.right = w - playArea.left;
-	playArea.bottom = h * 0.75f;
- /*	player.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);*/
-	player.mPos = Vector2(playArea.left + player.GetScreenSize().x / 2.f, (playArea.bottom - playArea.top) / 2.f);
+	playArea.bottom = h - player.GetScreenSize().y * 0.6f;
+ 	player.mPos = Vector2(150, (playArea.bottom - playArea.top) / 2.f);
+	/*player.mPos = Vector2(playArea.left + player.GetScreenSize().x / 2.f, (playArea.bottom - playArea.top) / 2.f);*/
 
 
 	
@@ -269,4 +269,20 @@ void Player::UpdateInput(float dTime)
 void Player::playerRender(DirectX::SpriteBatch& batch)
 {
 	player.Draw(batch);
+}
+
+Platform::Platform(MyD3D& d3d)
+{
+}
+
+void Platform::Update(float dTime)
+{
+}
+
+void Platform::Render(DirectX::SpriteBatch& batch)
+{
+}
+
+void Platform::platformRender(DirectX::SpriteBatch& batch)
+{
 }
