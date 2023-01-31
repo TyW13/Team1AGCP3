@@ -49,7 +49,6 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)
 {
-
 	int w(512), h(256);
 	if (!WinUtil::Get().InitMainWindow(w, h, hInstance, "Spacenite", MainWndProc, true))
 		assert(false);

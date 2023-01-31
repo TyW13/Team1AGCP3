@@ -35,7 +35,7 @@ void Background::Update(float dTime)
 		s.Scroll(dTime * (i++) * SCROLL_SPEED, 0);
 }
 
-void Background::Render(DirectX::SpriteBatch& batch)
+void Background::Render(DirectX::DX11::SpriteBatch& batch)
 {
 	for (auto& s : bGround)
 		s.Draw(batch);

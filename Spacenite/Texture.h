@@ -12,7 +12,7 @@ using namespace DirectX::SimpleMath;
 class Texture
 {
 public:
-	Texture(ID3D11Device* pDevice, const std::string& path) 
+	Texture(ID3D11Device& pDevice, const std::string& path) 
 	{
 		//DirectX::DDS_ALPHA_MODE alpha;
 		//if(DirectX::CreateDDSTextureFromFile(pDevice, path.c_str(), nullptr, &m_pTexture, 0, &alpha) != S_OK)
@@ -20,9 +20,11 @@ public:
 		//	WDBOUT("CANNOT LOAD " << path.c_str() << "\n");
 		//	assert(false);
 		//}
-		SetName(path);
-		SetPath(path);
-		SetDimensions();
+		tName = path;
+		//SetName(path);
+		tPath = path;
+		//SetPath(path);
+		//SetDimensions();
 	}
 
 	void Init();
@@ -57,10 +59,10 @@ private:
 		tName = noPath;
 	}
 
-	void SetPath(std::string path)
-	{
-		tPath = "data/textures/" + path;
-	}
+	//void SetPath(std::string path)
+	//{
+	//	tPath = "data/textures/" + path;
+	//}
 
 	void SetDimensions()
 	{

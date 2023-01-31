@@ -13,7 +13,7 @@ public:
 	Asteroid& operator=(const Asteroid& rhs);
 	void Init(MyD3D& d3d, bool honing);
 	void Update(float dTime, int& additionalScore, Sprite& _mPlayer, Sprite& _mMissile);
-	void Render(DirectX::SpriteBatch& batch);
+	void Render(DirectX::DX11::SpriteBatch& batch);
 	bool GetActive()
 	{
 		return active;
@@ -68,7 +68,7 @@ public:
 	{}
 
 	void Init(MyD3D& d3d);
-	void Render(DirectX::SpriteBatch& batch);
+	void Render(DirectX::DX11::SpriteBatch& batch);
 	void Update(float dTime);
 
 	Sprite& GetSprite()
@@ -91,7 +91,7 @@ public:
 	void Init(MyD3D& d3d); //THIS IS CALLED
 	//This needs to follow where its called "mMissile.Init(mD3D);"
 	void Update(float dTime);											//PLAYER EXCLUSIVE
-	void Render(DirectX::SpriteBatch& batch);
+	void Render(DirectX::DX11::SpriteBatch& batch);
 
 private:
 	const float SPEED = 250;											//PLAYER EXCLUSIVE
@@ -100,5 +100,5 @@ private:
 	RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
 	bool isHoning;
 	void UpdateInput(float dTime);										//PLAYER EXCLUSIVE
-	void shipRender(DirectX::SpriteBatch& batch);
+	void shipRender(DirectX::DX11::SpriteBatch& batch);
 };

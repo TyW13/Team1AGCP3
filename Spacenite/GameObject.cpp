@@ -50,8 +50,6 @@ void Asteroid::Init(MyD3D& d3d, bool honing)
 	asteroidSpr.origin = Vector2(ASS_SZ / 2.0f, ASS_SZ / 2.0f);
 	active = false;
 	SetSprite(asteroidSpr);
-
-
 }
 void Asteroid::Update(float dTime, int& additionalScore, Sprite& _mPlayer, Sprite& _mMissile)
 {
@@ -139,7 +137,7 @@ void Asteroid::Update(float dTime, int& additionalScore, Sprite& _mPlayer, Sprit
 		}
 	}
 }
-void Asteroid::Render(SpriteBatch& batch)
+void Asteroid::Render(DirectX::DX11::SpriteBatch& batch)
 {
 	if (active)
 	{
@@ -158,7 +156,7 @@ void Bullet::Init(MyD3D& d3d)
 	bullet.origin = Vector2(laserXOrigin, laserYOrigin);
 	GetSprite().SetActive(false);
 }
-void Bullet::Render(SpriteBatch& batch)
+void Bullet::Render(DirectX::DX11::SpriteBatch& batch)
 {
 	if (GetSprite().GetActive() == true)
 	{
@@ -193,8 +191,8 @@ void Player::Init(MyD3D& mD3D)
 
 	//setup the play area
 	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
-	playArea.left = ship.GetScreenSize().x * 0.6f;
+	WinUtil::Get().GetClientExtents(w, h);																// w and h width/height of screen
+	playArea.left = ship.GetScreenSize().x * 0.6f;		
 	playArea.top = ship.GetScreenSize().y * 0.6f;
 	playArea.right = w - playArea.left;
 	playArea.bottom = h * 0.75f;
@@ -206,7 +204,7 @@ void Player::Update(float dTime)
 	UpdateInput(dTime);
 }
 
-void Player::Render(DirectX::SpriteBatch& batch)
+void Player::Render(DirectX::DX11::SpriteBatch& batch)
 {
 	shipRender(batch);
 }
@@ -268,7 +266,7 @@ void Player::UpdateInput(float dTime)
 	}
 }
 
-void Player::shipRender(DirectX::SpriteBatch& batch)
+void Player::shipRender(DirectX::DX11::SpriteBatch& batch)
 {
 	ship.Draw(batch);
 }

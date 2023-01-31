@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "Background.h"
 #include "GameObject.h"
+#include "ResourceManager.h"
 
 
 
@@ -19,7 +20,7 @@ public:
 	PlayMode(MyD3D& d3d);
 	void Release();
 	void Update(float dTime, bool& _endGame);
-	void Render(float dTime, int& pScore, DirectX::SpriteBatch& batch);
+	void Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch);
 
 
 private:
@@ -28,6 +29,9 @@ private:
 
 	MyD3D& mD3D;					//PMODE Exclusive
 	DirectX::SpriteFont* mpFont = nullptr;//PMODE Exclusive
+	ResourceManager* resourceManager;
+
+
 	std::vector<Asteroid> mAsteroids;//PMODE Exclusive
 	float mSpawnRateSec = 0.5f;		//Asteroid spawn rate //PMODE Exclusive
 	float mLastSpawn = 0;		// used in asteroid spawn timing //PMODE Exclusive
@@ -53,7 +57,7 @@ private:
 	Asteroid* CheckAsteroidColl(Asteroid& asteroid);
 	void InitAsteroids();
 	void UpdateAsteroids(float dTime);
-	void RenderAsteroids(DirectX::SpriteBatch& batch);
+	void RenderAsteroids(DirectX::DX11::SpriteBatch& batch);
 };
 
 
