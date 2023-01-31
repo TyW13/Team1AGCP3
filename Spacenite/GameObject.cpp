@@ -272,15 +272,37 @@ void Player::playerRender(DirectX::SpriteBatch& batch)
 }
 
 Platform::Platform(MyD3D& d3d)
+	:platform(d3d)
 {
+
 }
+
+void Platform::Init(MyD3D& pld3d)
+{
+	//load and orientate the player
+	ID3D11ShaderResourceView* pl = pld3d.GetCache().LoadTexture(&pld3d.GetDevice(), "ProgTestPlat.dds");  // Platform
+	platform.SetTex(*pl);
+	platform.SetScale(Vector2(0.1f, 0.1f));
+	platform.origin = platform.GetTexData().dim / 2.0f;
+
+
+}
+
+Platform::Platform(MyD3D& d3d)
+{
+
+}
+
+
 
 void Platform::Update(float dTime)
 {
+
 }
 
 void Platform::Render(DirectX::SpriteBatch& batch)
 {
+
 }
 
 void Platform::platformRender(DirectX::SpriteBatch& batch)

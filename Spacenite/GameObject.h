@@ -110,6 +110,7 @@ public:
 
 	Platform(MyD3D& d3d);
 	Sprite platform;
+	void Init(MyD3D& d3d);
 	void Update(float dTime);
 	void Render(DirectX::SpriteBatch& batch);
 
