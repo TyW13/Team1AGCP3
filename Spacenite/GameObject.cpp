@@ -203,7 +203,7 @@ void Player::Init(MyD3D& mD3D)
 	playArea.bottom = h * 0.75f;
  	ship.mPos = Vector2(150, playArea.bottom);*/
 
-	isGrounded = true; 
+	isGrounded = false; 
 	isJumping = false;
 }
 
@@ -257,6 +257,17 @@ void Player::UpdateInput(float dTime)
 	//double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - ship.mPos.y, ship.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
 	//ship.rotation = rotationInRads;
 
+	//for testing
+	if (Game::sMKIn.IsPressed(VK_S) == true)
+	{
+		ship.mPos.y += SPEED * dTime;
+	}
+	else if (Game::sMKIn.IsPressed(VK_W) == true)
+	{
+		ship.mPos.y -= SPEED * dTime;
+	}
+	//
+
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
 		ship.mPos.x += SPEED * dTime;
@@ -280,24 +291,38 @@ void Player::KeepInScreenBoundaries()
 {
 	//check if the player is outide the screen
 
+	//so the code looks cleaner
+	Vector2 playersCentrePoint = Vector2(((ship.GetTexData().dim.x / 2.f) * ship.GetScale().x, ship.GetTexData().dim.y / 2.f) * ship.GetScale().y);
+
 	//bottom
 	if (ship.mPos.y > WinUtil::Get().GetClientHeight())
 	{
 		ship.mPos.y = WinUtil::Get().GetClientHeight();
 	}
 	//top
-	if (ship.mPos.y < 0)
+	if (ship.mPos.y < playersCentrePoint.y * 2)
 	{
-		ship.mPos.y = 0;
+		ship.mPos.y = playersCentrePoint.y * 2;
 	}
 	//right
-	if (ship.mPos.x + (ship.GetTexData().dim.x / 2.f) * ship.GetScale().x > WinUtil::Get().GetClientWidth())
+	if (ship.mPos.x + playersCentrePoint.x > WinUtil::Get().GetClientWidth())
 	{
-		ship.mPos.x = WinUtil::Get().GetClientWidth() - (ship.GetTexData().dim.x / 2) * ship.GetScale().x;
+		ship.mPos.x = WinUtil::Get().GetClientWidth() - playersCentrePoint.x;
 	}
 	//left
-	if (ship.mPos.x - (ship.GetTexData().dim.x / 2.f) * ship.GetScale().x < 0)
+	if (ship.mPos.x - playersCentrePoint.x < 0)
 	{
-		ship.mPos.x = (ship.GetTexData().dim.x / 2.f ) * ship.GetScale().x;
+		ship.mPos.x = playersCentrePoint.x;
 	}
+
+	// set isGrounded to true when
+	//
+	// the player is on the bottom line
+	if (ship.mPos.y - playersCentrePoint.y == WinUtil::Get().GetClientHeight())
+	{
+		//isGrounded = true;
+	}
+	// 
+
+	// and so on
 }

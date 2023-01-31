@@ -95,7 +95,7 @@ public:
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
-	const float SPEED = 250;											//PLAYER EXCLUSIVE
+	const float SPEED = 350;											//PLAYER EXCLUSIVE
 	//const float MOUSE_SPEED = 5000;										//PLAYER EXCLUSIVE
 	const float PAD_SPEED = 500;										//PLAYER EXCLUSIVE
 	//RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
