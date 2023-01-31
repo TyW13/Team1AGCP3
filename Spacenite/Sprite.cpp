@@ -1,6 +1,5 @@
 #include "CommonStates.h"
 
-
 #include "Sprite.h"
 
 using namespace DirectX;
