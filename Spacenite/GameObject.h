@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
@@ -88,20 +90,24 @@ public:
 
 	Player(MyD3D& d3d);
 
-	Sprite ship;		//jet											//PLAYER EXCLUSIVE
+	Sprite character;		//jet											//PLAYER EXCLUSIVE
 	void Init(MyD3D& d3d); //THIS IS CALLED
 	//This needs to follow where its called "mMissile.Init(mD3D);"
 	void Update(float dTime);											//PLAYER EXCLUSIVE
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
-	const float SPEED = 350;											//PLAYER EXCLUSIVE
-	//const float MOUSE_SPEED = 5000;										//PLAYER EXCLUSIVE
+	const float JUMP_SPEED = 1000;
+	const float GRAVITY = 400;
+	const float MAX_SPEED = 320;											//PLAYER EXCLUSIVE
+	const float JUMP_HEIGHT = 100;
 	const float PAD_SPEED = 500;										//PLAYER EXCLUSIVE
-	//RECTF playArea;		//don't go outside this							//PLAYER EXCLUSIVE
-	bool isGrounded, isJumping;													//Player
-	bool isHoning;
+
+	bool isGrounded, isJumping = false;													//Player
+	
+
+
 	void UpdateInput(float dTime);										//PLAYER EXCLUSIVE
 	void shipRender(DirectX::SpriteBatch& batch);
-	void KeepInScreenBoundaries();
+	void CheckCollision();
 };

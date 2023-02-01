@@ -178,7 +178,7 @@ void Bullet::Update(float dTime)
 }
 
 Player::Player(MyD3D& d3d)
-	:ship(d3d)
+	:character(d3d)
 {
 
 }
@@ -186,31 +186,42 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the ship
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
-	ship.SetTex(*p);
-	ship.SetScale(Vector2(0.1f, 0.1f));
-	ship.origin = Vector2(ship.GetTexData().dim.x / 2.f, ship.GetTexData().dim.y);
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "character.dds");
+	character.SetTex(*p);
+	character.SetScale(Vector2(0.15f, 0.15f));
+	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
 	
-	ship.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
-
-	//setup the play area
-	/*int w, h;
-	w = WinUtil::Get().GetClientWidth();
-	h = WinUtil::Get().GetClientHeight();
-	playArea.left = ship.GetScreenSize().x;
-	playArea.top = ship.GetScreenSize().y;
-	playArea.right = w - playArea.left;
-	playArea.bottom = h * 0.75f;
- 	ship.mPos = Vector2(150, playArea.bottom);*/
-
-	isGrounded = false; 
-	isJumping = false;
+	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
 }
 
 void Player::Update(float dTime)
 {
+
+	character.mPos.x += character.mVel.x * dTime;
+	character.mPos.y += character.mVel.y * dTime;
+
+	//decrease velocity by gravity
+	character.mPos.y += GRAVITY * dTime;
+	
+	if (character.mVel.x > MAX_SPEED)
+	{
+		character.mVel.x = MAX_SPEED;
+	}
+	if (character.mVel.x < -MAX_SPEED)
+	{
+		character.mVel.x = -MAX_SPEED;
+	}
+	if (character.mVel.y > MAX_SPEED && isJumping == false)
+	{
+		character.mVel.y = MAX_SPEED;
+	}
+	if (character.mVel.y < -0)
+	{
+		character.mVel.y = -0;
+	}
+
 	UpdateInput(dTime);
-	KeepInScreenBoundaries();
+	CheckCollision();
 }
 
 void Player::Render(DirectX::SpriteBatch& batch)
@@ -220,107 +231,65 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateInput(float dTime)
 {
-	//Vector2 mouse{ Game::sMKIn.GetMousePos(false) };
-	//bool keypressed = Game::sMKIn.IsPressed(VK_UP) || Game::sMKIn.IsPressed(VK_DOWN) ||
-	//	Game::sMKIn.IsPressed(VK_RIGHT) || Game::sMKIn.IsPressed(VK_LEFT);
-	//bool sticked = false;
-	//if (Game::sGamepads.IsConnected(0) &&
-	//	(Game::sGamepads.GetState(0).leftStickX != 0 || Game::sGamepads.GetState(0).leftStickX != 0))
-	//	sticked = true;
-
-	//if (keypressed || (mouse.Length() > VERY_SMALL) || sticked)
-	//{
-	//	//move the ship around
-	//	Vector2 pos(0, 0);
-
-	//	if (sticked)
-	//	{
-	//		DBOUT("left stick x=" << Game::sGamepads.GetState(0).leftStickX << " y=" << Game::sGamepads.GetState(0).leftStickY);
-	//		pos.x += Game::sGamepads.GetState(0).leftStickX * PAD_SPEED * dTime;
-	//		pos.y -= Game::sGamepads.GetState(0).leftStickY * PAD_SPEED * dTime;
-	//	}
-
-	//	//keep it within the play area
-	//	pos += ship.mPos;
-	//	if (pos.x < playArea.left)
-	//		pos.x = playArea.left;
-	//	else if (pos.x > playArea.right)
-	//		pos.x = playArea.right;
-	//	if (pos.y < playArea.top)
-	//		pos.y = playArea.top;
-	//	else if (pos.y > playArea.bottom)
-	//		pos.y = playArea.bottom;
-
-	//	ship.mPos = pos;
-	//}
-
-	//double rotationInRads = -(atan2(Game::sMKIn.GetMousePos(true).y - ship.mPos.y, ship.mPos.x - Game::sMKIn.GetMousePos(true).x) + PI / 2);
-	//ship.rotation = rotationInRads;
-
-	//for testing
-	if (Game::sMKIn.IsPressed(VK_S) == true)
-	{
-		ship.mPos.y += SPEED * dTime;
-	}
-	else if (Game::sMKIn.IsPressed(VK_W) == true)
-	{
-		ship.mPos.y -= SPEED * dTime;
-	}
-	//
-
+	character.mVel.x = 0;
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
-		ship.mPos.x += SPEED * dTime;
+		character.mVel.x += MAX_SPEED;
 	}
-	else if (Game::sMKIn.IsPressed(VK_A) == true)
+
+	if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
-		ship.mPos.x -= SPEED * dTime;
+		character.mVel.x -= MAX_SPEED;
 	}
-	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded == true)
+	
+	if (Game::sMKIn.IsPressed(VK_SPACE) == true )
 	{
-		
+		character.mVel.y = -JUMP_SPEED;
 	}
 }
 
 void Player::shipRender(DirectX::SpriteBatch& batch)
 {
-	ship.Draw(batch);
+	character.Draw(batch);
 }
 
-void Player::KeepInScreenBoundaries()
+void Player::CheckCollision()
 {
-	//check if the player is outide the screen
 
-	//so the code looks cleaner
-	Vector2 playersCentrePoint = Vector2(((ship.GetTexData().dim.x / 2.f) * ship.GetScale().x, ship.GetTexData().dim.y / 2.f) * ship.GetScale().y);
+	//for code clarity
+	Vector2 playerOrigin = Vector2(((character.GetTexData().dim.x / 2.f) * character.GetScale().x, character.GetTexData().dim.y / 2.f) * character.GetScale().y);
+
+	//check for player and screen collision
 
 	//bottom
-	if (ship.mPos.y > WinUtil::Get().GetClientHeight())
+	if (character.mPos.y > WinUtil::Get().GetClientHeight())
 	{
-		ship.mPos.y = WinUtil::Get().GetClientHeight();
+		character.mPos.y = WinUtil::Get().GetClientHeight();
 	}
 	//top
-	if (ship.mPos.y < playersCentrePoint.y * 2)
+	if (character.mPos.y < playerOrigin.y * 2)
 	{
-		ship.mPos.y = playersCentrePoint.y * 2;
+		character.mPos.y = playerOrigin.y * 2;
 	}
 	//right
-	if (ship.mPos.x + playersCentrePoint.x > WinUtil::Get().GetClientWidth())
+	if (character.mPos.x + playerOrigin.x > WinUtil::Get().GetClientWidth())
 	{
-		ship.mPos.x = WinUtil::Get().GetClientWidth() - playersCentrePoint.x;
+		character.mPos.x = WinUtil::Get().GetClientWidth() - playerOrigin.x;
 	}
 	//left
-	if (ship.mPos.x - playersCentrePoint.x < 0)
+	if (character.mPos.x - playerOrigin.x < 0)
 	{
-		ship.mPos.x = playersCentrePoint.x;
+		character.mPos.x = playerOrigin.x;
 	}
 
-	// set isGrounded to true when
-	//
 	// the player is on the bottom line
-	if (ship.mPos.y - playersCentrePoint.y == WinUtil::Get().GetClientHeight())
+	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
-		//isGrounded = true;
+		isGrounded = true;
+	}
+	else
+	{
+		isGrounded = false;
 	}
 	// 
 
