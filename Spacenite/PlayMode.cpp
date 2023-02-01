@@ -186,7 +186,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 		_endGame = true;
 	}
 
-	UpdateAsteroids(dTime);
+	//UpdateAsteroids(dTime);
 }
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)

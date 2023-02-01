@@ -141,10 +141,10 @@ void Asteroid::Update(float dTime, int& additionalScore, Sprite& _mPlayer, Sprit
 }
 void Asteroid::Render(SpriteBatch& batch)
 {
-	if (active)
+	/*if (active)
 	{
 		asteroidSpr.Draw(batch);
-	}
+	}*/
 }
 
 void Bullet::Init(MyD3D& d3d)
@@ -185,7 +185,7 @@ Player::Player(MyD3D& d3d)
 
 void Player::Init(MyD3D& mD3D)
 {
-	//load a orientate the ship
+	//load a orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "character.dds");
 	character.SetTex(*p);
 	character.SetScale(Vector2(0.15f, 0.15f));
@@ -196,26 +196,27 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-
+	//update player core movement
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
 
 	//decrease velocity by gravity
 	character.mPos.y += GRAVITY * dTime;
 	
-	if (character.mVel.x > MAX_SPEED)
+	//if reaches max speed 
+	if (character.mVel.x > PLAYER_SPEED)
 	{
-		character.mVel.x = MAX_SPEED;
+		character.mVel.x = PLAYER_SPEED;
 	}
-	if (character.mVel.x < -MAX_SPEED)
+	if (character.mVel.x < -PLAYER_SPEED)
 	{
-		character.mVel.x = -MAX_SPEED;
+		character.mVel.x = -PLAYER_SPEED;
 	}
-	if (character.mVel.x < MIN_SPEED || character.mVel.x > -MIN_SPEED)
+	if (character.mVel.x < PLAYER_SPEED || character.mVel.x > -PLAYER_SPEED)
 	{
 		character.mVel.x *= DRAG;
 	}
-	if (character.mVel.y < -0)
+	if (character.mVel.y < - 0)
 	{
 		character.mVel.y *= 0.995;
 	}
@@ -231,15 +232,14 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateInput(float dTime)
 {
-	//character.mVel.x = 0;
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
-		character.mVel.x += MAX_SPEED;
+		character.mVel.x += PLAYER_SPEED;
 	}
 
 	if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
-		character.mVel.x -= MAX_SPEED;
+		character.mVel.x -= PLAYER_SPEED;
 	}
 	
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
@@ -260,7 +260,7 @@ void Player::CheckCollision()
 	//for code clarity
 	Vector2 playerOrigin = Vector2(((character.GetTexData().dim.x / 2.f) * character.GetScale().x, character.GetTexData().dim.y / 2.f) * character.GetScale().y);
 
-	//check for player and screen collision
+	//check for player and screen borders collision
 
 	//bottom
 	if (character.mPos.y > WinUtil::Get().GetClientHeight())
@@ -283,7 +283,7 @@ void Player::CheckCollision()
 		character.mPos.x = playerOrigin.x;
 	}
 
-	// the player is on the bottom line
+	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
 		isGrounded = true;
