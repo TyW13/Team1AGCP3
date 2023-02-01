@@ -211,6 +211,10 @@ void Player::Update(float dTime)
 	{
 		character.mVel.x = -MAX_SPEED;
 	}
+	if (character.mVel.x < MIN_SPEED || character.mVel.x > -MIN_SPEED)
+	{
+		character.mVel.x *= DRAG;
+	}
 	if (character.mVel.y > MAX_SPEED && isJumping == false)
 	{
 		character.mVel.y = MAX_SPEED;
@@ -231,7 +235,7 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateInput(float dTime)
 {
-	character.mVel.x = 0;
+	//character.mVel.x = 0;
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
 		character.mVel.x += MAX_SPEED;

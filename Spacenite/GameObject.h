@@ -99,9 +99,11 @@ public:
 private:
 	const float JUMP_SPEED = 1000;
 	const float GRAVITY = 400;
-	const float MAX_SPEED = 320;											//PLAYER EXCLUSIVE
+	const float MAX_SPEED = 350;											//PLAYER EXCLUSIVE
+	const float MIN_SPEED = 50;
 	const float JUMP_HEIGHT = 100;
 	const float PAD_SPEED = 500;										//PLAYER EXCLUSIVE
+	const float DRAG = 0.985; //for deceleration
 
 	bool isGrounded, isJumping = false;													//Player
 	
