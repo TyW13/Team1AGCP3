@@ -215,13 +215,9 @@ void Player::Update(float dTime)
 	{
 		character.mVel.x *= DRAG;
 	}
-	if (character.mVel.y > MAX_SPEED && isJumping == false)
-	{
-		character.mVel.y = MAX_SPEED;
-	}
 	if (character.mVel.y < -0)
 	{
-		character.mVel.y = -0;
+		character.mVel.y *= 0.995;
 	}
 
 	UpdateInput(dTime);
@@ -246,9 +242,10 @@ void Player::UpdateInput(float dTime)
 		character.mVel.x -= MAX_SPEED;
 	}
 	
-	if (Game::sMKIn.IsPressed(VK_SPACE) == true )
+	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
 	{
 		character.mVel.y = -JUMP_SPEED;
+		isGrounded = false;
 	}
 }
 
@@ -291,11 +288,4 @@ void Player::CheckCollision()
 	{
 		isGrounded = true;
 	}
-	else
-	{
-		isGrounded = false;
-	}
-	// 
-
-	// and so on
 }
