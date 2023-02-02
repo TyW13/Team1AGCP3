@@ -18,6 +18,7 @@ public:
 private:
 	const float SCROLL_SPEED = 10.f;
 	static const int BGND_LAYERS = 8;
+	int current = 0;
 };
 
 

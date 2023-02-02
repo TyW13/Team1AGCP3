@@ -97,7 +97,7 @@ public:
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
-	const float JUMP_SPEED = 1800;
+	const float JUMP_SPEED = 1200;
 	const float GRAVITY = 400;
 	const float PLAYER_SPEED = 350;											//PLAYER EXCLUSIVE
 	const float JUMP_HEIGHT = 100;

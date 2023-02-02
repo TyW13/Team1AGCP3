@@ -146,7 +146,7 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d)
 {
-	//bGround.Init(d3d);
+	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);
 	//InitAsteroids();
@@ -174,7 +174,7 @@ void PlayMode::UpdateMissile(float dTime)
 
 void PlayMode::Update(float dTime, bool& _endGame)
 {
-	//bGround.Update(dTime);
+	bGround.Update(dTime);
 
 	if (Player.character.GetActive())
 	{
@@ -191,7 +191,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 {
-	//bGround.Render(batch);
+	bGround.Render(batch);
 	if (Player.character.GetActive())
 	{
 		Player.Render(batch);

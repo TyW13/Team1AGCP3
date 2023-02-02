@@ -30,13 +30,11 @@ void Background::Init(MyD3D& mD3D)
 
 void Background::Update(float dTime)
 {
-	int i = 0;
-	for (auto& s : bGround)
-		s.Scroll(dTime * (i++) * SCROLL_SPEED, 0);
+
+	bGround[current].Scroll(dTime * SCROLL_SPEED, 0);
 }
 
 void Background::Render(DirectX::SpriteBatch& batch)
 {
-	for (auto& s : bGround)
-		s.Draw(batch);
+	bGround[current].Draw(batch);
 }
