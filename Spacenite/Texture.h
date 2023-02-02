@@ -12,22 +12,7 @@ using namespace DirectX::SimpleMath;
 class Texture
 {
 public:
-	Texture(ID3D11Device& pDevice, const std::string& path) 
-	{
-		//DirectX::DDS_ALPHA_MODE alpha;
-		//if(DirectX::CreateDDSTextureFromFile(pDevice, path.c_str(), nullptr, &m_pTexture, 0, &alpha) != S_OK)
-		//{
-		//	WDBOUT("CANNOT LOAD " << path.c_str() << "\n");
-		//	assert(false);
-		//}
-		tName = path;
-		//SetName(path);
-		tPath = path;
-		//SetPath(path);
-		//SetDimensions();
-	}
-
-	void Init();
+	void Init(const std::string& path);
 	void Update();
 	void Terminate();
 
@@ -55,7 +40,7 @@ private:
 		auto itr = path.find_last_of(".");
 		std::string noSuff = path.substr(0, itr);
 		auto lastSlash = noSuff.find_last_of("/");
-		std::string noPath = noSuff.substr(lastSlash, noSuff.length() - lastSlash);
+		std::string noPath = noSuff.substr(lastSlash+1, noSuff.length() - lastSlash);
 		tName = noPath;
 	}
 

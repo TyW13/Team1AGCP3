@@ -1,7 +1,9 @@
 #include "Texture.h"
 
-void Texture::Init()
+void Texture::Init(const std::string& path)
 {
+	SetName(path);
+	tPath = path;
 }
 
 void Texture::Update()

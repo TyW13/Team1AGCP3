@@ -12,7 +12,7 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 
-
+class ResourceManager;
 
 class PlayMode
 {
@@ -29,7 +29,7 @@ private:
 
 	MyD3D& mD3D;					//PMODE Exclusive
 	DirectX::SpriteFont* mpFont = nullptr;//PMODE Exclusive
-	ResourceManager* resourceManager;
+	ResourceManager* rManager;
 
 
 	std::vector<Asteroid> mAsteroids;//PMODE Exclusive

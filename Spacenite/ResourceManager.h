@@ -4,6 +4,7 @@
 #include <string>
 #include "D3DUtil.h"
 #include "Sprite.h"
+#include "Texture.h"
 
 class Texture;
 class GameObject;
@@ -18,8 +19,9 @@ public:
 	void Terminate();
 	void CreateTexture(ID3D11Device& pDevice, const std::string &fPath);
 	void AddGameObject(GameObject* newObject);
-	Texture& GetTexture(const std::string& tName);
+	Texture* GetTexture(const std::string& tName);
 private:
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
+	Texture* pTex;
 };

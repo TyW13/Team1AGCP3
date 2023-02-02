@@ -1,6 +1,5 @@
 #include "D3D.h"
 #include "ResourceManager.h"
-#include "Texture.h"
 #include "newGameObject.h"
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
@@ -23,13 +22,20 @@ void ResourceManager::Render(SpriteBatch& batch)
 
 void ResourceManager::Terminate()
 {
-
+	for (const auto& tex : m_Textures)
+	{
+		delete tex.second;
+	}
 }
 
 void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fPath)
 {
-	Texture nTexture(pDevice, fPath);
-	m_Textures[nTexture.GetName()] = &nTexture;
+	pTex = new Texture;
+	pTex->Init(fPath);
+
+	/*m_Textures[nTexture.GetName()] = &nTexture;
+	m_Textures.insert({ nTexture.GetName(), &nTexture });*/
+	m_Textures.emplace(pTex->GetName(), pTex);
 }
 
 void ResourceManager::AddGameObject(GameObject* newObject)
@@ -39,12 +45,12 @@ void ResourceManager::AddGameObject(GameObject* newObject)
 }
 
 // Get function for given texture using its std::string name used in the std::map
-Texture& ResourceManager::GetTexture(const std::string& tName)
+Texture* ResourceManager::GetTexture(const std::string& tName)
 {
 	// If given texture is not found in m_texture map, print error
 	if (m_Textures.find(tName) != m_Textures.end())
 	{
-		return *m_Textures.at(tName);
+		return m_Textures.at(tName);
 
 	}
 	else 

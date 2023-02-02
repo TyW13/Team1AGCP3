@@ -147,8 +147,9 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d)
 {
-	resourceManager->Init(d3d.GetDevice(), d3d);
-	PlayerCharacter newChar(d3d, resourceManager, resourceManager->GetTexture("testTexture.dds"), Vector2(1, 1));
+	rManager = new ResourceManager;
+	rManager->Init(d3d.GetDevice(), d3d);
+	PlayerCharacter newChar(d3d, rManager, rManager->GetTexture("testTexture.dds"), Vector2(1, 1));
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	mMissile.Init(d3d);
@@ -162,6 +163,8 @@ void PlayMode::Release()
 {
 	delete mpFont;
 	mpFont = nullptr;
+	delete rManager;
+	rManager = nullptr;
 }
 
 void PlayMode::UpdateMissile(float dTime)
@@ -194,7 +197,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
-	resourceManager.Render(batch);
+	rManager->Render(batch);
 	bGround.Render(batch);
 	if (Player.ship.GetActive())
 	{
