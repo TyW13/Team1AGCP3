@@ -149,7 +149,8 @@ PlayMode::PlayMode(MyD3D& d3d)
 {
 	rManager = new ResourceManager;
 	rManager->Init(d3d.GetDevice(), d3d);
-	PlayerCharacter newChar(d3d, rManager, rManager->GetTexture("testTexture.dds"), Vector2(1, 1));
+	PlayerCharacter* newChar = new PlayerCharacter(d3d, rManager, rManager->GetTexture("testTexture"), Vector2(1, 1));
+	rManager->AddGameObject(newChar);
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	mMissile.Init(d3d);

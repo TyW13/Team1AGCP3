@@ -8,7 +8,7 @@ using namespace DirectX::SimpleMath;
 
 void PlayerCharacter::Init(ResourceManager* rManager, Texture* tex, Vector2 scale)
 {
-	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), false);
+	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true);
 	objSprite.SetTex(*objTex);
 	objSprite.SetScale(scale);
 	objSprite.origin = objSprite.GetTexData().dim / 2.0f;
@@ -18,5 +18,5 @@ void PlayerCharacter::Init(ResourceManager* rManager, Texture* tex, Vector2 scal
 	objSprite.mPos = Vector2(w / 2, h / 2);
 
 
-	rManager->AddGameObject(this);
+	//rManager->AddGameObject(this);
 }

@@ -49,26 +49,26 @@ private:
 	//	tPath = "data/textures/" + path;
 	//}
 
-	void SetDimensions()
-	{
-		assert(m_pTexture);
-		ID3D11Resource* res = nullptr;
-		m_pTexture->GetResource(&res);
-		assert(res);
-		ID3D11Texture2D* texture2d = nullptr;
-		HRESULT hr = res->QueryInterface(&texture2d);
-		if (SUCCEEDED(hr))
-		{
-			D3D11_TEXTURE2D_DESC desc;
-			texture2d->GetDesc(&desc);
-			tDimensions.x = static_cast<float>(desc.Width);
-			tDimensions.y = static_cast<float>(desc.Height);
-		}
-		ReleaseCOM(texture2d);
-		ReleaseCOM(res);
-	}
+	//void SetDimensions()
+	//{
+	//	assert(m_pTexture);
+	//	ID3D11Resource* res = nullptr;
+	//	m_pTexture->GetResource(&res);
+	//	assert(res);
+	//	ID3D11Texture2D* texture2d = nullptr;
+	//	HRESULT hr = res->QueryInterface(&texture2d);
+	//	if (SUCCEEDED(hr))
+	//	{
+	//		D3D11_TEXTURE2D_DESC desc;
+	//		texture2d->GetDesc(&desc);
+	//		tDimensions.x = static_cast<float>(desc.Width);
+	//		tDimensions.y = static_cast<float>(desc.Height);
+	//	}
+	//	ReleaseCOM(texture2d);
+	//	ReleaseCOM(res);
+	//}
 
-	ID3D11ShaderResourceView* m_pTexture;
+	//ID3D11ShaderResourceView* m_pTexture;
 	std::string tName;
 	std::string tPath;
 	Vector2 tDimensions;

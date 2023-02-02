@@ -24,4 +24,5 @@ private:
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
 	Texture* pTex;
+	GameObject* pObj;
 };

@@ -4,7 +4,7 @@
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
-	CreateTexture(pDevice, "Textures/testTexture.dds");
+	CreateTexture(pDevice, "testTexture.dds");
 	//AddTexture(pDevice, "data/textures/testtexture.dds");
 	//AddGameObject(d3d);
 }
@@ -40,8 +40,9 @@ void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fP
 
 void ResourceManager::AddGameObject(GameObject* newObject)
 {
+	pObj = newObject;
 	//GameObject nObject(d3d);
-	m_gObjects.push_back(newObject);
+	m_gObjects.push_back(pObj);
 }
 
 // Get function for given texture using its std::string name used in the std::map
