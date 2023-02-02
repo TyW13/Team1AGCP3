@@ -222,7 +222,6 @@ void Player::Update(float dTime)
 	{
 		character.mVel.y *= 0.995;
 	}
-
 	UpdateInput(dTime);
 	CheckCollision();
 }

@@ -14,7 +14,7 @@ public:
 	void Init(MyD3D& d3d);
 	void Update(float dTime,bool IsTop, bool IsBottom);
 	void Render(DirectX::SpriteBatch& batch);
-	void Increase();
+	void Increase(bool, bool);
 private:
 	const float SCROLL_SPEED = 10.f;
 	static const int BGND_LAYERS = 8;
