@@ -204,7 +204,7 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	// Increase score over time
 	pScore = (int)GetClock() * 10 + additionalScore;
 	stringstream ss;
-	ss << std::setfill('0') << std::setw(3) << pScore;
+	//ss << std::setfill('0') << std::setw(3) << pScore;
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
 	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.86f, h * 0.85f), Vector4(1, 1, 1, 1));
