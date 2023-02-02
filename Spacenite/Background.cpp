@@ -28,13 +28,25 @@ void Background::Init(MyD3D& mD3D)
 	}
 }
 
-void Background::Update(float dTime)
+void Background::Update(float dTime, bool IsTop, bool IsBottom)
 {
-
+	if (IsTop || IsBottom == true)
+	{
+		Increase();
+	}
 	bGround[current].Scroll(dTime * SCROLL_SPEED, 0);
 }
 
 void Background::Render(DirectX::SpriteBatch& batch)
 {
 	bGround[current].Draw(batch);
+}
+
+void Background::Increase()
+{
+	++current;
+	if (current >=  7)
+	{
+		current = 0;
+	}
 }

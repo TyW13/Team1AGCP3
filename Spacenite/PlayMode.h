@@ -40,6 +40,8 @@ private:
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
 
+	bool IsTop = false;
+	bool IsBottom = false;
 
 	//make it move, reset it once it leaves the screen, only one at once
 	void UpdateMissile(float dTime);

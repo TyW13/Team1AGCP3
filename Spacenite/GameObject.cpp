@@ -196,6 +196,8 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
+	isBottom = false;
+	isTop = false;
 	//update player core movement
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
@@ -254,6 +256,17 @@ void Player::shipRender(DirectX::SpriteBatch& batch)
 	character.Draw(batch);
 }
 
+bool Player::IsTop()
+{
+	return isTop;
+}
+
+bool Player::IsBottom()
+{
+	return isBottom;
+}
+
+
 void Player::CheckCollision()
 {
 
@@ -266,11 +279,13 @@ void Player::CheckCollision()
 	if (character.mPos.y > WinUtil::Get().GetClientHeight() + 60)
 	{
    		character.mPos.y = playerOrigin.y;
+		isBottom = true;
 	}
 	//top
 	if (character.mPos.y < playerOrigin.y)
 	{
 		character.mPos.y = WinUtil::Get().GetClientHeight() + 30;
+		isTop = true;
 	}
 	//right
 	if (character.mPos.x > WinUtil::Get().GetClientWidth() + 15)

@@ -174,12 +174,15 @@ void PlayMode::UpdateMissile(float dTime)
 
 void PlayMode::Update(float dTime, bool& _endGame)
 {
-	bGround.Update(dTime);
+	bGround.Update(dTime, IsTop, IsBottom);
 
 	if (Player.character.GetActive())
 	{
 		//UpdateMissile(dTime);
 		Player.Update(dTime);
+		IsTop = Player.IsTop();
+		IsBottom = Player.IsBottom();
+
 	}
 	else
 	{
