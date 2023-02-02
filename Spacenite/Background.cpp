@@ -44,7 +44,7 @@ void Background::Increase(bool IsTop, bool IsBottom)
 	if (IsTop == true)
 	{
 		++current;
-		if (current >= 7)
+		if (current >= 8)
 		{
 			current = 0;
 		}
