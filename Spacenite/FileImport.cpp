@@ -1,8 +1,6 @@
 #include "FileImport.h"
 
 #include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
 #include "rapidjson/filereadstream.h"
 #include <fstream>
 
@@ -10,19 +8,38 @@ using namespace rapidjson;
 using namespace std;
 
 
-inline const char* FileImport::FileParse()
+void FileImport::FileParse()
 {
-	json = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
-
-	if (document.Parse(json).HasParseError())			// json file being parsed needs to passed as argument 
-	{
-		printf("why no work!!!");
-	}
+	Document document;
 
 	FILE* filePointer = fopen("testMap.json", "rb");
-	size_t size = ftell(filePointer);
-	char* buffer = new char[size];
-	fread(buffer, sizeof(char), size, filePointer);
-	return buffer;
-}
 
+	char readBuffer[5000];
+	FileReadStream is(filePointer, readBuffer, sizeof(readBuffer));
+
+	document.ParseStream(is);
+
+	GenericArray layerArray = document["layers"].GetArray();
+
+	for (Value::ConstValueIterator i = layerArray.Begin(); i < layerArray.End(); i++)
+	{
+		if (i->IsArray() == true)
+		{
+			auto obj = i->GetArray();
+		}
+
+		//if (obj.HasMember("data"))
+		//{
+		//	auto data = obj.FindMember("data");
+
+		//	auto const& LayerData = data->value;
+
+		//	for (auto& v: LayerData.GetArray()) 
+		//	{
+		//		printf(" %d", v.GetInt());
+		//	}
+		//}
+	}
+
+	fclose(filePointer);
+}
