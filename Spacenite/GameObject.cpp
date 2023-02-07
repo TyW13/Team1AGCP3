@@ -303,15 +303,8 @@ void Platform::Render(DirectX::SpriteBatch& batch)
 
 void Platform::Update(float dTime, Sprite& _mPlayer)
 {
-	float radius = 32.0f;
 
-	// Check collision between platform - player
-	if (((_mPlayer.mPos.x > platform.mPos.x - radius) && (_mPlayer.mPos.x < platform.mPos.x + 10))
-		&& ((_mPlayer.mPos.y > platform.mPos.y - radius) && (_mPlayer.mPos.y < platform.mPos.y + 10)))
-	{
-
-		_mPlayer.SetActive(false);
-	}
+	
 
 }
 

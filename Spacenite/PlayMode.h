@@ -58,8 +58,9 @@ private:
 	void UpdateAsteroids(float dTime);
 	void RenderAsteroids(DirectX::SpriteBatch& batch);
 
-	Platform* CheckPlatformColl(Platform& player);
-	void InitPlatform();
+	//Platform* CheckPlatformColl(Platform& player);
+	//void InitPlatform();
+	//void UpdatePlatform(float dTime, Platform& player);
 	void UpdatePlatform(float dTime);
 	void RenderPlatform(DirectX::SpriteBatch& batch);
 };

@@ -145,17 +145,27 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 //------------------------------------------------------------------------------- Asteroid Functions end
 
 
-Platform* PlayMode::CheckPlatformColl(Platform& player)
-{
-	return 0;
-}
-void PlayMode::InitPlatform()
-{
+//Platform* PlayMode::CheckPlatformColl(Platform& player)
+//{
+//	return 0;
+//}
+//void PlayMode::InitPlatform()
+//{
+//
+//}
 
-}
 void PlayMode::UpdatePlatform(float dTime)
 {
+	float radius = 128.0f;
 
+	// Check collision between platform - player
+	if (((Player.player.mPos.x > mPlatform.platform.mPos.x - radius) && (Player.player.mPos.x < mPlatform.platform.mPos.x + 10))
+		&& ((Player.player.mPos.y > mPlatform.platform.mPos.y - radius) && (Player.player.mPos.y < mPlatform.platform.mPos.y + 10)))
+	{
+
+
+		Player.player.SetActive(false);
+	}
 }
 void PlayMode::RenderPlatform(DirectX::SpriteBatch& batch)
 {
@@ -173,7 +183,7 @@ PlayMode::PlayMode(MyD3D& d3d)
 	Player.Init(d3d);
 	mMissile.Init(d3d);
 	
-	InitPlatform();
+	//InitPlatform();
 	InitAsteroids();
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
