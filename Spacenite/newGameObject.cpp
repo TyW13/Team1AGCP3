@@ -1,16 +1,14 @@
 #include "newGameObject.h"
 #include "Texture.h"
 
-void GameObject::Init(Texture* tex)
+void GameObject::Init()
 {
-    isActive = true;
-    ID3D11ShaderResourceView* p = gSprite.GetD3D().GetCache().LoadTexture(&gSprite.GetD3D().GetDevice(), "asteroid.dds", tex->GetName(), false);
 
 }
 
 Sprite GameObject::GetSprite()
 {
-    return gSprite;
+    return objSprite;
 }
 
 bool GameObject::GetActive()
@@ -20,7 +18,7 @@ bool GameObject::GetActive()
 
 void GameObject::SetSprite(Sprite _sprite)
 {
-    gSprite = _sprite;
+    objSprite = _sprite;
 }
 
 void GameObject::SetActive(bool _isActive)

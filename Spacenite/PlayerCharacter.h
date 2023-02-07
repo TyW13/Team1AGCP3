@@ -5,19 +5,61 @@
 #include "Sprite.h"
 #include "newGameObject.h"
 
-class ResourceManager;
 
 class PlayerCharacter : public GameObject
 {
 public:
-	PlayerCharacter(MyD3D& d3d, ResourceManager* rManager, Texture* objTex, DirectX::SimpleMath::Vector2 scale)
+	/*PlayerCharacter(MyD3D& d3d) : GameObject(d3d), objSprite(d3d){}*/
+
+	PlayerCharacter(MyD3D& d3d, Texture objTex, DirectX::SimpleMath::Vector2 scale, bool active)	// Default constructor
 		: GameObject(d3d), objSprite(d3d)
 	{
-		Init(rManager, objTex, scale);
+		Init(objTex, scale, active);
 	}
-	void Init(ResourceManager* rManager, Texture* tex, DirectX::SimpleMath::Vector2 scale);
+
+	PlayerCharacter(const PlayerCharacter& other) : GameObject(other), objSprite(other.objSprite)									// Copy constructor
+	{
+		this->isActive = other.isActive;
+		this->objSprite = other.objSprite;
+	}
+
+	PlayerCharacter& operator=(const PlayerCharacter& other)																		// Copy assignment operator
+	{
+		if (this != &other)
+		{
+			this->isActive = other.isActive;
+			this->objSprite = other.objSprite;
+		}
+
+		return *this;
+	}
+
+	PlayerCharacter(PlayerCharacter&& other) noexcept : GameObject(other), objSprite(other.objSprite)									// Move constructor
+	{
+		this->isActive = other.isActive;
+		this->objSprite = other.objSprite;
+	}
+
+	PlayerCharacter& operator=(PlayerCharacter&& other)	noexcept																// Move assignment operator
+	{
+		if (this != &other)
+		{
+			this->isActive = other.isActive;
+			this->objSprite = other.objSprite;
+		}
+
+		return *this;
+	}
+
+	~PlayerCharacter()																											// Destructor
+	{
+		DBOUT("DELETING PLAYER CHARACTER OBJECT\n")
+		printf("DELETING PLAYER CHARACTER OBJECT\n");
+	}
+
+	void Init(Texture tex, DirectX::SimpleMath::Vector2 scale, bool active);
 private:
-	bool isAcitve = false;
+	bool isActive;
 	Sprite objSprite;
 };
 

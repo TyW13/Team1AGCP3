@@ -1,6 +1,4 @@
 #pragma once
-#include "GameObject.h"
-#include "Game.h"
 #include "WindowUtils.h"
 #include "Input.h"
 #include "D3DUtil.h"
@@ -12,6 +10,47 @@ using namespace DirectX::SimpleMath;
 class Texture
 {
 public:
+	Texture(){}
+
+	Texture(const Texture& other)																								// Copy constructor
+	{
+		this->tName = other.tName;
+		this->tPath = other.tPath;
+	}
+
+	Texture& operator=(Texture& other)
+	{
+		if (this != &other)
+		{
+			this->tName = other.tName;
+			this->tPath = other.tPath;
+		}
+
+		return *this;
+	}
+
+	Texture(Texture&& other) noexcept																		// Move constructor
+	{
+		this->tName = other.tName;
+		this->tPath = other.tPath;
+	}
+
+	Texture& operator=(Texture&& other)	noexcept																// Move assignment operator
+	{
+		if (this != &other)
+		{
+			this->tName = other.tName;
+			this->tPath = other.tPath;
+		}
+
+		return *this;
+	}
+
+	~Texture()																											// Destructor
+	{
+		printf("DELETING TEXTURE OBJECT\n");
+	}
+
 	void Init(const std::string& path);
 	void Update();
 	void Terminate();
@@ -73,4 +112,3 @@ private:
 	std::string tPath;
 	Vector2 tDimensions;
 };
-

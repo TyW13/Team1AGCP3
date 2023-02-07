@@ -1,21 +1,59 @@
 #pragma once
 
-#include "D3DUtil.h"
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
-
-class Texture;
+#include "Texture.h"
 
 class GameObject
 {
 public:
 	GameObject(MyD3D& d3d)
-		: gSprite(d3d)
+		: objSprite(d3d)
 	{
 		//Init();
 	}
-	void Init(Texture*);
+
+	GameObject(const GameObject& other)	: objSprite(other.objSprite)															// Copy constructor
+	{
+		this->isActive = other.isActive;
+		this->objSprite = other.objSprite;
+	}
+
+	GameObject& operator=(const GameObject& other)																		// Copy assignment operator
+	{
+		if (this != &other)
+		{
+			this->isActive = other.isActive;
+			this->objSprite = other.objSprite;
+		}
+
+		return *this;
+	}
+
+	GameObject(GameObject&& other) noexcept : objSprite(other.GetSprite())										// Move constructor
+	{
+		this->isActive = other.isActive;
+		this->objSprite = other.objSprite;
+	}
+
+	GameObject& operator=(GameObject&& other)	noexcept																// Move assignment operator
+	{
+		if (this != &other)
+		{
+			this->isActive = other.isActive;
+			this->objSprite = other.objSprite;
+		}
+
+		return *this;
+	}
+
+	~GameObject()																											// Destructor
+	{
+		printf("DELETING GAME OBJECT\n");
+	}
+
+	virtual void Init();
 	void Update();
 	void Terminate();
 
@@ -24,7 +62,7 @@ public:
 	void SetSprite(Sprite _sprite);
 	void SetActive(bool _isActive);
 private:
-	Sprite gSprite;
+	Sprite objSprite;
 	bool isActive;
 };
 

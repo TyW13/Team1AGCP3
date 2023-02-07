@@ -145,12 +145,11 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
 {
-	rManager = new ResourceManager;
-	rManager->Init(d3d.GetDevice(), d3d);
-	PlayerCharacter* newChar = new PlayerCharacter(d3d, rManager, rManager->GetTexture("testTexture"), Vector2(1, 1));
-	rManager->AddGameObject(newChar);
+	rManager.Init(d3d.GetDevice(), d3d);
+	PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
+	rManager.AddGameObject(d3d,newChar);
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	mMissile.Init(d3d);
@@ -164,8 +163,8 @@ void PlayMode::Release()
 {
 	delete mpFont;
 	mpFont = nullptr;
-	delete rManager;
-	rManager = nullptr;
+	//delete rManager;
+	//rManager = nullptr;
 }
 
 void PlayMode::UpdateMissile(float dTime)
@@ -198,7 +197,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
-	rManager->Render(batch);
+	rManager.Render(batch);
 	bGround.Render(batch);
 	if (Player.ship.GetActive())
 	{

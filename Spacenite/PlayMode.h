@@ -29,7 +29,7 @@ private:
 
 	MyD3D& mD3D;					//PMODE Exclusive
 	DirectX::SpriteFont* mpFont = nullptr;//PMODE Exclusive
-	ResourceManager* rManager;
+	ResourceManager rManager;
 
 
 	std::vector<Asteroid> mAsteroids;//PMODE Exclusive
