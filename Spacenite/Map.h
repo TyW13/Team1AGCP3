@@ -52,6 +52,9 @@ class Layers
 {
 public:
 
+	Layers(rapidjson::Value& value);
+	~Layers();
+
 	std::vector<int> getData() { return data; }
 	int getHeight() { return height; }
 	int getId() { return id; }
