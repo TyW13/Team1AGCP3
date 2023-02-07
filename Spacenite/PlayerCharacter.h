@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "newGameObject.h"
 
+class Sprite;
 
 class PlayerCharacter : public GameObject
 {
@@ -58,6 +59,11 @@ public:
 	}
 
 	void Init(Texture tex, DirectX::SimpleMath::Vector2 scale, bool active);
+
+	Sprite GetSprite() override;
+	bool GetActive() override;
+	void SetSprite(Sprite _sprite) override;
+	void SetActive(bool _isActive) override;
 private:
 	bool isActive;
 	Sprite objSprite;

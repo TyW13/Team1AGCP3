@@ -18,3 +18,23 @@ void PlayerCharacter::Init(Texture tex, Vector2 scale, bool active)
 	WinUtil::Get().GetClientExtents(w, h);
 	objSprite.mPos = Vector2(w / 2, h / 2);
 }
+
+Sprite PlayerCharacter::GetSprite()
+{
+	return objSprite;
+}
+
+bool PlayerCharacter::GetActive()
+{
+	return isActive;
+}
+
+void PlayerCharacter::SetSprite(Sprite _sprite)
+{
+	objSprite = _sprite;
+}
+
+void PlayerCharacter::SetActive(bool _isActive)
+{
+	isActive = _isActive;
+}

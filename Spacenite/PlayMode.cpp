@@ -197,7 +197,6 @@ void PlayMode::Update(float dTime, bool& _endGame)
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
-	rManager.Render(batch);
 	bGround.Render(batch);
 	if (Player.ship.GetActive())
 	{
@@ -205,6 +204,7 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batc
 		mMissile.Render(batch);
 
 	}
+	rManager.Render(batch);
 
 	RenderAsteroids(batch);
 

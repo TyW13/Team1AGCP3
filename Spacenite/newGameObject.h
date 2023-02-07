@@ -57,10 +57,10 @@ public:
 	void Update();
 	void Terminate();
 
-	Sprite GetSprite();
-	bool GetActive();
-	void SetSprite(Sprite _sprite);
-	void SetActive(bool _isActive);
+	virtual Sprite GetSprite();
+	virtual bool GetActive();
+	virtual void SetSprite(Sprite _sprite);
+	virtual void SetActive(bool _isActive);
 private:
 	Sprite objSprite;
 	bool isActive;

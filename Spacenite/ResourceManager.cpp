@@ -11,7 +11,7 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 
 void ResourceManager::Render(SpriteBatch& batch)
 {
-	for (GameObject* currentObj : m_gObjects)
+	for (PlayerCharacter* currentObj : m_gObjects)
 	{
 		if (currentObj->GetActive())
 		{			  
