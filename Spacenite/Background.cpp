@@ -13,10 +13,11 @@ void Background::Init(MyD3D& mD3D)
 		//{ "bgnd2","backgroundlayers/mountains01_004.dds" },
 		//{ "bgnd3","backgroundlayers/mountains01_003.dds" },
 		//{ "bgnd4","backgroundlayers/mountains01_002.dds" },
-		//{ "bgnd5","backgroundlayers/mountains01_001.dds" },
+	/*	{ "bgnd5","backgroundlayers/mountains01_001.dds" },*/
 		//{ "bgnd6","backgroundlayers/mountains01_000.dds" },
 		/*{ "bgnd7","backgroundlayers/mountains01_006.dds" }*/
 		{ "bgnd7","backgroundlayers/AmazingProgrammerBackground.dds" }
+
 	};
 	int i = 0;
 	for (auto& f : files)

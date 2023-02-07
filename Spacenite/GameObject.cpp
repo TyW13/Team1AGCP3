@@ -191,8 +191,7 @@ void Player::Init(MyD3D& mD3D)
 	player.SetScale(Vector2(0.1f, 0.1f));
 	player.origin = player.GetTexData().dim / 2.0f;
 
-	//DirectX::XMFLOAT2 playerPos(100.0f, 100.0f);
-	//DirectX::XMFLOAT2 playerVel(0.0f, 0.0f);
+	
 
 	//setup the play area
 	int w, h;
@@ -279,11 +278,20 @@ Platform::Platform(MyD3D& d3d)
 
 void Platform::Init(MyD3D& pld3d)
 {
-	//load and orientate the player
+	//load and orientate the platform
 	ID3D11ShaderResourceView* pl = pld3d.GetCache().LoadTexture(&pld3d.GetDevice(), "ProgTestPlat.dds");  // Platform
 	platform.SetTex(*pl);
-	platform.SetScale(Vector2(0.f, 0.1f));
+	platform.SetScale(Vector2(0.5f, 1.0f));
 	platform.origin = platform.GetTexData().dim / 2.0f;
+
+	int w, h;
+	WinUtil::Get().GetClientExtents(w, h);
+
+	platform.mPos = Vector2(w / 2, h / 2);
+
+
+	
+	/*platform.origin = platform.GetTexData().dim / 2.0f;*/
 
 
 }
@@ -293,9 +301,18 @@ void Platform::Render(DirectX::SpriteBatch& batch)
 	platformRender(batch);
 }
 
-void Platform::Update(float dTime)
+void Platform::Update(float dTime, Sprite& _mPlayer)
 {
-	/*UpdateInput(dTime);*/
+	float radius = 32.0f;
+
+	// Check collision between platform - player
+	if (((_mPlayer.mPos.x > platform.mPos.x - radius) && (_mPlayer.mPos.x < platform.mPos.x + 10))
+		&& ((_mPlayer.mPos.y > platform.mPos.y - radius) && (_mPlayer.mPos.y < platform.mPos.y + 10)))
+	{
+
+		_mPlayer.SetActive(false);
+	}
+
 }
 
 
@@ -303,4 +320,3 @@ void Platform::platformRender(DirectX::SpriteBatch& batch)
 {
 	platform.Draw(batch);
 }
-F

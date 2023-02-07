@@ -18,6 +18,7 @@ class PlayMode
 public:
 	PlayMode(MyD3D& d3d);
 	void Release();
+	//void Update(float dTime, bool& _endGame, Sprite& _mPlayer);
 	void Update(float dTime, bool& _endGame);
 	void Render(float dTime, int& pScore, DirectX::SpriteBatch& batch);
 
@@ -39,7 +40,8 @@ private:
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
-	Platform Platform;
+	Platform mPlatform;
+
 
 
 	//make it move, reset it once it leaves the screen, only one at once
@@ -55,6 +57,11 @@ private:
 	void InitAsteroids();
 	void UpdateAsteroids(float dTime);
 	void RenderAsteroids(DirectX::SpriteBatch& batch);
+
+	Platform* CheckPlatformColl(Platform& player);
+	void InitPlatform();
+	void UpdatePlatform(float dTime);
+	void RenderPlatform(DirectX::SpriteBatch& batch);
 };
 
 

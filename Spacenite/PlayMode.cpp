@@ -143,13 +143,37 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 	}
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
-PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d), Platform(d3d)
+
+
+Platform* PlayMode::CheckPlatformColl(Platform& player)
 {
+	return 0;
+}
+void PlayMode::InitPlatform()
+{
+
+}
+void PlayMode::UpdatePlatform(float dTime)
+{
+
+}
+void PlayMode::RenderPlatform(DirectX::SpriteBatch& batch)
+{
+	
+	mPlatform.Render(batch);
+	
+}
+
+
+PlayMode::PlayMode(MyD3D& d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), mPlatform(d3d)
+{
+	mPlatform.Init(d3d);
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	mMissile.Init(d3d);
-	Platform.Init(d3d);
+	
+	InitPlatform();
 	InitAsteroids();
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
@@ -173,9 +197,10 @@ void PlayMode::UpdateMissile(float dTime)
 }
 
 
-void PlayMode::Update(float dTime, bool& _endGame)
+void PlayMode::Update(float dTime, bool& _endGame/* Sprite& _mPlayer**/)
 {
 	bGround.Update(dTime);
+	//mPlatform.Update(dTime, _mPlayer);
 
 	if (Player.player.GetActive())
 	{
@@ -187,6 +212,7 @@ void PlayMode::Update(float dTime, bool& _endGame)
 		_endGame = true;
 	}
 
+	UpdatePlatform(dTime);
 	UpdateAsteroids(dTime);
 }
 
@@ -197,11 +223,16 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	{
 		Player.Render(batch);
 		mMissile.Render(batch);
-
+		mPlatform.Render(batch);
+		
 	}
 
+	RenderPlatform(batch);
 	RenderAsteroids(batch);
 	
+	
+	
+
 	// Increase score over time
 	pScore = (int)GetClock() * 10 + additionalScore;
 	stringstream ss;
@@ -210,3 +241,5 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	WinUtil::Get().GetClientExtents(w, h);
 	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.86f, h * 0.85f), Vector4(1, 1, 1, 1));
 }
+
+
