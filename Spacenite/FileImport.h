@@ -5,10 +5,10 @@ class FileImport
 
 public:
 
-	void FileParse();
-
 	
 private:
-	
-	Document document;
+
 };
+
+
+void FileParse();

@@ -6,6 +6,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "FileImport.h"
+
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -153,6 +155,9 @@ PlayMode::PlayMode(MyD3D& d3d)
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
+
+	// json test
+	FileParse();
 }
 
 void PlayMode::Release()

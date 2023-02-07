@@ -8,15 +8,14 @@ using namespace rapidjson;
 using namespace std;
 
 
-void FileImport::FileParse()
+void FileParse()
 {
-	Document document;
+	FILE* filePointer = fopen("data/testMap.json", "rb");		// Opens json file via pointer
 
-	FILE* filePointer = fopen("testMap.json", "rb");
-
-	char readBuffer[5000];
+	char readBuffer[5000];		// User provided buffer
 	FileReadStream is(filePointer, readBuffer, sizeof(readBuffer));
 
+	Document document;				
 	document.ParseStream(is);
 
 	GenericArray layerArray = document["layers"].GetArray();
@@ -25,8 +24,9 @@ void FileImport::FileParse()
 	{
 		if (i->IsArray() == true)
 		{
-			auto obj = i->GetArray();
+			GenericArray dataArray = i->GetArray();
 		}
+		
 
 		//if (obj.HasMember("data"))
 		//{
