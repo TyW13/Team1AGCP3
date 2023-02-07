@@ -188,7 +188,7 @@ void Player::Init(MyD3D& mD3D)
 	//load a orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
 	character.SetTex(*p);
-	character.SetScale(Vector2(0.15f, 0.15f));
+	character.SetScale(Vector2(0.10f, 0.10f));
 	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
 	
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
@@ -214,11 +214,11 @@ void Player::Update(float dTime)
 	}
 	if (character.mVel.x < PLAYER_SPEED || character.mVel.x > -PLAYER_SPEED)
 	{
-		character.mVel.x *= DRAG;
+		character.mVel.x *= DRAGX;
 	}
 	if (character.mVel.y < - 0)
 	{
-		character.mVel.y *= 0.995;
+		character.mVel.y *= DRAGY;
 	}
 
 	UpdateInput(dTime);
