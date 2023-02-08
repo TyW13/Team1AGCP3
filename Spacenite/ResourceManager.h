@@ -94,6 +94,7 @@ public:
 	void AddGameObject(MyD3D& d3d, GameObject newObject);
 	Texture GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
+	void LoadJson();
 private:
 	std::map<std::string, Texture> m_Textures;
 	std::vector<PlayerCharacter*> m_gObjects;										// NOTE: Once we have rapidjson, maybe use .reserve to allocate enough memory on construction/declaration

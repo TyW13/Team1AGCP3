@@ -1,4 +1,7 @@
 #include "D3D.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/document.h"
+#include <cstdio>
 #include "ResourceManager.h"
 #include "PlayerCharacter.h"
 
@@ -67,4 +70,18 @@ std::string ResourceManager::SetTexName(std::string path)
 	auto lastSlash = noSuff.find_last_of("/");
 	std::string noPath = noSuff.substr(lastSlash + 1, noSuff.length() - lastSlash);
 	return noPath;
+}
+
+void ResourceManager::LoadJson()
+{
+	FILE* fp = fopen("data/test_level_jump1.json", "rb"); // non-Windows use "r"
+
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	rapidjson::Document d;
+	d.ParseStream(is);
+	assert(d.IsObject());
+	assert(d.HasMember("layers"));
+	fclose(fp);
 }

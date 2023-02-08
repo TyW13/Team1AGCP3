@@ -52,8 +52,6 @@ public:
 	}
 
 	void Init(const std::string& path);
-	void Update();
-	void Terminate();
 
 	std::string GetName()
 	{
@@ -71,7 +69,6 @@ public:
 	}
 
 private:
-
 	void SetName(std::string path)
 	{
 		// path is data/textures/

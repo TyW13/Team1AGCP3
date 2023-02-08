@@ -10,8 +10,6 @@ class Sprite;
 class PlayerCharacter : public GameObject
 {
 public:
-	/*PlayerCharacter(MyD3D& d3d) : GameObject(d3d), objSprite(d3d){}*/
-
 	PlayerCharacter(MyD3D& d3d, Texture objTex, DirectX::SimpleMath::Vector2 scale, bool active)	// Default constructor
 		: GameObject(d3d), objSprite(d3d)
 	{
@@ -52,11 +50,7 @@ public:
 		return *this;
 	}
 
-	~PlayerCharacter()																											// Destructor
-	{
-		DBOUT("DELETING PLAYER CHARACTER OBJECT\n")
-		printf("DELETING PLAYER CHARACTER OBJECT\n");
-	}
+	~PlayerCharacter(){}																											// Destructor
 
 	void Init(Texture tex, DirectX::SimpleMath::Vector2 scale, bool active);
 
@@ -68,4 +62,3 @@ private:
 	bool isActive;
 	Sprite objSprite;
 };
-

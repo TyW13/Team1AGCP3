@@ -48,7 +48,7 @@
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(LibraryPath);$(SolutionDir)DirectXTK\Bin\Desktop_2022\Win32\Debug\</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(LibraryPath);$(SolutionDir)DirectXTK\Bin\Desktop_2022\Win32\Debug\;$(SolutionDir)include\</LibraryPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -67,7 +67,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/wd4005 %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc\;$(SolutionDir)include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -124,6 +124,9 @@
     <ClCompile Include="WindowUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\rapidjson\filereadstream.h" />
+    <ClInclude Include="..\rapidjson\document.h" />
+    <ClInclude Include="..\rapidjson\rapidjson.h" />
     <ClInclude Include="Background.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="D3DUtil.h" />
