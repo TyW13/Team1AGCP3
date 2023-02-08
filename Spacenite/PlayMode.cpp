@@ -200,6 +200,7 @@ void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 {
+	int w, h;
 	bGround.Render(batch);
 	if (Player.character.GetActive())
 	{
@@ -209,12 +210,16 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	}
 	//RenderAsteroids(batch);
 
-
+	if (Paused == true)
+	{
+		string pause = "Paused";
+		WinUtil::Get().GetClientExtents(w, h);
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
+	}
 	// Increase score over time
 
 	stringstream ss;
 	ss << pScore;
-	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
 	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.5f, h * 0.05f), Vector4(1, 1, 1, 1));
 }

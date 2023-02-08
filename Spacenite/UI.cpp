@@ -29,14 +29,10 @@ void UserI::Update(int& pScore, float dTime, bool& Paused)
 			Timer = 0.0f;
 		}
 	}
-	if (Paused == false)
-	{
-
-	}
 
 	if (Game::sMKIn.IsPressed(VK_P) == true)
 	{
-		this_thread::sleep_for(chrono::milliseconds(80)); // delay to stop it instantly unpausing
+		this_thread::sleep_for(chrono::milliseconds(200)); // delay to stop it instantly unpausing
 		Paused = !Paused;
 	}
 }
