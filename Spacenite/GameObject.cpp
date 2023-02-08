@@ -186,9 +186,9 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_character1.dds");
 	character.SetTex(*p);
-	character.SetScale(Vector2(0.10f, 0.10f));
+	character.SetScale(Vector2(4.f, 4.f));
 	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
 	
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
@@ -201,7 +201,7 @@ void Player::Update(float dTime)
 	character.mPos.y += character.mVel.y * dTime;
 
 	//decrease velocity by gravity
-	character.mPos.y += GRAVITY * dTime;
+	character.mPos.y += gravity * dTime;
 	
 	//if reaches max speed 
 	if (character.mVel.x > PLAYER_SPEED)
@@ -245,7 +245,12 @@ void Player::UpdateInput(float dTime)
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
 	{
 		character.mVel.y = -JUMP_SPEED;
+		gravity = 0;
 		isGrounded = false;
+	}
+	else
+	{
+		gravity = GRAVITY_SPEED;
 	}
 }
 
