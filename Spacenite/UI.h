@@ -9,8 +9,7 @@ public:
 	UserI();
 	~UserI();
 	void Init();
-	void Update(int&, float, bool&);
-
+	void Update(int&, float, bool&, bool&);
 
 private:
 	float Timer = 0.0f;

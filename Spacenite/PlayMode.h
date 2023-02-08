@@ -35,6 +35,7 @@ private:
 	/*bool shipActive = true;*/
 	int additionalScore = 0;							//PMODE Exclusive
 	bool Paused = false;
+	bool EndScreen = false;
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;

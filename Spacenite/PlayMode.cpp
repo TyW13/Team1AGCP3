@@ -174,25 +174,31 @@ void PlayMode::UpdateMissile(float dTime)
 
 void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 {
-	UserInterface.Update(pScore, dTime, Paused);
-	if (Paused == false)
+	if (EndScreen == false)
 	{
-		bGround.Update(dTime, IsTop, IsBottom);
-		if (Player.character.GetActive())
+		UserInterface.Update(pScore, dTime, Paused, EndScreen);
+		if (Paused == false)
 		{
-			//UpdateMissile(dTime);
-			Player.Update(dTime);
-			IsTop = Player.IsTop();
-			IsBottom = Player.IsBottom();
-		}
-		else
-		{
-			_endGame = true;
+			bGround.Update(dTime, IsTop, IsBottom);
+			if (Player.character.GetActive())
+			{
+				//UpdateMissile(dTime);
+				Player.Update(dTime);
+				IsTop = Player.IsTop();
+				IsBottom = Player.IsBottom();
+			}
+			else
+			{
+				_endGame = true;
+			}
 		}
 	}
 	else
 	{
-
+		if (Game::sMKIn.IsPressed(VK_SPACE) == true)
+		{
+			_endGame = true;
+		}
 	}
 
 	//UpdateAsteroids(dTime);
@@ -214,7 +220,13 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	{
 		string pause = "Paused";
 		WinUtil::Get().GetClientExtents(w, h);
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
+	}
+	if (EndScreen == true)
+	{
+		string pause = "Congratulations you win! \n Press space to continue";
+		WinUtil::Get().GetClientExtents(w, h);
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
 	}
 	// Increase score over time
 

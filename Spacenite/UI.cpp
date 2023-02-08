@@ -18,7 +18,7 @@ void UserI::Init()
 {
 
 }
-void UserI::Update(int& pScore, float dTime, bool& Paused)
+void UserI::Update(int& pScore, float dTime, bool& Paused, bool& EndScreen)
 {
 	if (Paused == false)
 	{
@@ -34,5 +34,10 @@ void UserI::Update(int& pScore, float dTime, bool& Paused)
 	{
 		this_thread::sleep_for(chrono::milliseconds(200)); // delay to stop it instantly unpausing
 		Paused = !Paused;
+	}
+	if (Game::sMKIn.IsPressed(VK_H) == true)
+	{
+
+		EndScreen = true;
 	}
 }
