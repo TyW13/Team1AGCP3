@@ -144,13 +144,14 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), PauseSpr(d3d)
 {
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);
 	//InitAsteroids();
-
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "backgroundlayers/mountains01_007.dds");
+	PauseSpr.SetTex(*p);
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
 }
@@ -207,6 +208,7 @@ void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 {
 	int w, h;
+	WinUtil::Get().GetClientExtents(w, h);
 	bGround.Render(batch);
 	if (Player.character.GetActive())
 	{
@@ -215,18 +217,21 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 
 	}
 	//RenderAsteroids(batch);
-
 	if (Paused == true)
 	{
 		string pause = "Paused";
-		WinUtil::Get().GetClientExtents(w, h);
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
+		PauseSpr.origin = (Vector2(255, 127));
+		PauseSpr.mPos = (Vector2(w * 0.5f, h * 0.5f));
+		PauseSpr.Draw(batch);
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
 	}
 	if (EndScreen == true)
 	{
+		PauseSpr.origin = (Vector2(255, 127));
+		PauseSpr.mPos = (Vector2(w * 0.5f, h * 0.5f));
+		PauseSpr.Draw(batch);
 		string pause = "Congratulations you win! \n Press space to continue";
-		WinUtil::Get().GetClientExtents(w, h);
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.f), Vector4(1, 1, 1, 1));
 	}
 	// Increase score over time
 

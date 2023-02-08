@@ -44,6 +44,8 @@ private:
 	bool IsTop = false;
 	bool IsBottom = false;
 
+	Sprite PauseSpr;
+
 	//make it move, reset it once it leaves the screen, only one at once
 	void UpdateMissile(float dTime);
 

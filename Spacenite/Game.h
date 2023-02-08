@@ -58,6 +58,8 @@ private:
 	std::stringstream scoresSS;
 	std::wstring pName;
 	int pScore = 1000;
+	int Seconds = 0;
+	int Minutes = 0;
 	std::vector<std::string> topPlayers;
 	std::vector<std::string> newTopPlayers;
 	std::vector<int> highScores;
