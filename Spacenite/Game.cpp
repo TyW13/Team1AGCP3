@@ -47,6 +47,17 @@ void Game::Update(float dTime)
 		}
 		case State::PLAY:
 		{
+			GameTimer += dTime;
+			if (GameTimer >= 1)
+			{
+				++Seconds;
+				GameTimer = 0;
+			}
+			if (Seconds >= 60)
+			{
+				++Minutes;
+				Seconds = 0;
+			}
 			mPMode.Update(dTime, endGame, pScore);
 			if (endGame == true)
 			{
@@ -181,6 +192,10 @@ void Game::RenderName(SpriteBatch& batch)
 	stringstream playersScoreSS;
 	playersScoreSS << "Score: " << pScore;
 	mpSF->DrawString(&batch, playersScoreSS.str().c_str(), Vector2(w * 0.4f, h * 0.1f), Vector4(1, 1, 1, 1));
+
+	stringstream EndTime;
+	EndTime << "Final Time: " << Minutes << ":" << Seconds;
+	mpSF->DrawString(&batch, EndTime.str().c_str(), Vector2(w * 0.6f, h * 0.1f), Vector4(1, 1, 1, 1));
 
 	stringstream nameSS;
 	nameSS << pName.c_str();

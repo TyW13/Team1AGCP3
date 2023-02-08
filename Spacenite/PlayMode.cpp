@@ -231,7 +231,7 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 		PauseSpr.mPos = (Vector2(w * 0.5f, h * 0.5f));
 		PauseSpr.Draw(batch);
 		string pause = "Congratulations you win! \n Press space to continue";
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.f), Vector4(1, 1, 1, 1));
+		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
 	}
 	// Increase score over time
 
