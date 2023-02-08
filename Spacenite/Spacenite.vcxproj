@@ -115,6 +115,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="PlayMode.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TexCache.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="PlayMode.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TexCache.h" />

@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "FileImport.h"
+#include "Map.h"
 
 using namespace std;
 using namespace DirectX;
@@ -156,8 +157,9 @@ PlayMode::PlayMode(MyD3D& d3d)
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
 
-	// json test
-	FileParse();
+	// json testing 
+	Map m("data/test_level_jump1.json");
+	m.getLayers()[0].getData();
 }
 
 void PlayMode::Release()

@@ -4,6 +4,59 @@
 #include <vector>
 #include <string>
 
+class TileSetMap
+{
+public:
+
+	TileSetMap(rapidjson::Value& value) {
+		firstgid = value["firstgid"].GetInt();
+		source = value["source"].GetString();
+	}
+
+	~TileSetMap() {}
+
+	int getFirstGId() { return firstgid; }
+	std::string getSource() { return source; }
+
+private:
+
+	int firstgid;
+	std::string source;
+};
+
+class Layers
+{
+public:
+
+	Layers(rapidjson::Value& value);
+	~Layers();
+
+	std::vector<int> getData() { return data; }
+	int getHeight() { return height; }
+	int getId() { return id; }
+	std::string getImage() { return image; }
+	std::string getName() { return name; }
+	int getOpacity() { return opacity; }
+	std::string getType() { return type; }
+	bool isVisible() { return visible; }
+	int getWidth() { return width; }
+	int getX() { return x; }
+	int getY() { return y; }
+
+private:
+
+	std::vector<int> data;
+	int height;
+	int id;
+	std::string image;
+	std::string name;
+	int opacity;
+	std::string type;
+	bool visible;
+	int width;
+	int x;
+	int y;
+};
 
 class Map								// This class represents all the data from the json after it has been parsed
 {
@@ -48,57 +101,4 @@ private:
 
 };
 
-class Layers
-{
-public:
-
-	Layers(rapidjson::Value& value);
-	~Layers();
-
-	std::vector<int> getData() { return data; }
-	int getHeight() { return height; }
-	int getId() { return id; }
-	std::string getImage() { return image; }
-	std::string getName() { return name; }
-	int getOpacity() { return opacity; }
-	std::string getType() { return type; }
-	bool isVisible() { return visible; }
-	int getWidth() { return width; }
-	int getX() { return x; }
-	int getY() { return y; }
-
-private:
-
-	std::vector<int> data;
-	int height;
-	int id;
-	std::string image;
-	std::string name;
-	int opacity;
-	std::string type;
-	bool visible;
-	int width;
-	int x;
-	int y;
-};
-
-class TileSetMap
-{
-public:
-
-	TileSetMap(rapidjson::Value& value) {
-		firstgid = value["firstgid"].GetInt();
-		source = value["source"].GetString();
-	}
-
-	~TileSetMap() {}
-
-	int getFirstGId() { return firstgid; }
-	std::string getSource() { return source; }
-
-private: 
-
-	int firstgid;
-	std::string source;
-};
 
