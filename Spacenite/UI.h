@@ -11,6 +11,7 @@ public:
 	void Init();
 	void Update(int&, float, bool&);
 
+
 private:
 	float Timer = 0.0f;
 };
