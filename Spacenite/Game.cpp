@@ -47,7 +47,7 @@ void Game::Update(float dTime)
 		}
 		case State::PLAY:
 		{
-			mPMode.Update(dTime, endGame);
+			mPMode.Update(dTime, endGame, pScore);
 			if (endGame == true)
 			{
 				state = State::GETNAME;
@@ -151,21 +151,26 @@ void Game::Render(float dTime)
 
 void Game::InitIntro(MyD3D& d3d)
 {
-	ID3D11ShaderResourceView* ppp = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "BasicIntroScreen.dds", "IntroScreen", true);
-	introSpr.SetTex(*ppp);
 }
 void Game::UpdateIntro()
 {
 	ResetClock();
 	if (sMKIn.IsPressed(VK_SPACE))
 	{
+
 		this_thread::sleep_for(chrono::milliseconds(80)); // delay to stop missile from spawning
 		state = State::PLAY;
 	}
 }
 void Game::RenderIntro(SpriteBatch& batch)
 {
-	introSpr.Draw(batch);
+	int w, h;
+	WinUtil::Get().GetClientExtents(w, h);
+
+	string Title = "Temp Title";
+	string SubTitle = "Press Space to Continue";
+	mpSF->DrawString(&batch, Title.c_str(), Vector2(w * 0.35f, h * 0.5f), Vector4(1, 1, 1, 1),0.0f,Vector2(0.0f,0.0f),Vector2(3.0f,3.0f));
+	mpSF->DrawString(&batch, SubTitle.c_str(), Vector2(w * 0.4f, h * 0.8f), Vector4(1, 1, 1, 1), 0.0f, Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f));
 }
 
 void Game::RenderName(SpriteBatch& batch)

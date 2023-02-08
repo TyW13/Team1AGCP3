@@ -10,15 +10,14 @@
 #include "Sprite.h"
 #include "Background.h"
 #include "GameObject.h"
-
-
+#include "UI.h"
 
 class PlayMode
 {
 public:
 	PlayMode(MyD3D& d3d);
 	void Release();
-	void Update(float dTime, bool& _endGame);
+	void Update(float dTime, bool& _endGame, int&);
 	void Render(float dTime, int& pScore, DirectX::SpriteBatch& batch);
 
 
@@ -35,10 +34,11 @@ private:
 	int asteroidID = 0;//PMODE Exclusive
 	/*bool shipActive = true;*/
 	int additionalScore = 0;							//PMODE Exclusive
-
+	bool Paused = false;
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
+	UserI UserInterface;
 
 	bool IsTop = false;
 	bool IsBottom = false;

@@ -172,21 +172,27 @@ void PlayMode::UpdateMissile(float dTime)
 }
 
 
-void PlayMode::Update(float dTime, bool& _endGame)
+void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 {
 	bGround.Update(dTime, IsTop, IsBottom);
-
-	if (Player.character.GetActive())
+	if (Paused == false)
 	{
-		//UpdateMissile(dTime);
-		Player.Update(dTime);
-		IsTop = Player.IsTop();
-		IsBottom = Player.IsBottom();
-
+		if (Player.character.GetActive())
+		{
+			//UpdateMissile(dTime);
+			Player.Update(dTime);
+			UserInterface.Update(pScore, dTime, Paused);
+			IsTop = Player.IsTop();
+			IsBottom = Player.IsBottom();
+		}
+		else
+		{
+			_endGame = true;
+		}
 	}
 	else
 	{
-		_endGame = true;
+
 	}
 
 	//UpdateAsteroids(dTime);
@@ -201,14 +207,14 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 		//mMissile.Render(batch);
 
 	}
-
 	//RenderAsteroids(batch);
 
+
 	// Increase score over time
-	pScore = (int)GetClock() * 10 + additionalScore;
+
 	stringstream ss;
-	//ss << std::setfill('0') << std::setw(3) << pScore;
+	ss << pScore;
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
-	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.86f, h * 0.85f), Vector4(1, 1, 1, 1));
+	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.5f, h * 0.05f), Vector4(1, 1, 1, 1));
 }

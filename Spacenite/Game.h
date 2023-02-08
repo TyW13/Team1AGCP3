@@ -11,6 +11,8 @@
 #include "Background.h"
 #include "GameObject.h"
 #include "PlayMode.h"
+#include "UI.h"
+
 //#include "..\..\sqlite\sqlite3.h"
 
 /*
@@ -55,7 +57,7 @@ private:
 	std::fstream playerScoresFile;
 	std::stringstream scoresSS;
 	std::wstring pName;
-	int pScore = 0;
+	int pScore = 1000;
 	std::vector<std::string> topPlayers;
 	std::vector<std::string> newTopPlayers;
 	std::vector<int> highScores;
