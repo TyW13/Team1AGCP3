@@ -201,9 +201,9 @@ void Player::Update(float dTime)
 	character.mPos.y += character.mVel.y * dTime;
 
 	//decrease velocity by gravity
-	character.mPos.y += gravity * dTime;
+	character.mPos.y += GRAVITY_SPEED * dTime;
 	
-	//if reaches max speed 
+	//if velocity is is more than max speed 
 	if (character.mVel.x > PLAYER_SPEED)
 	{
 		character.mVel.x = PLAYER_SPEED;
@@ -216,9 +216,17 @@ void Player::Update(float dTime)
 	{
 		character.mVel.x *= DRAGX;
 	}
-	if (character.mVel.y < - 0)
+	if (character.mVel.y < 0 && Game::sMKIn.IsPressed(VK_SPACE))
 	{
-		character.mVel.y *= DRAGY;
+		character.mVel.y *= DRAGY_Higher;	//jump higher when space is hold
+	}
+	else if (character.mVel.y < 0)
+	{
+		character.mVel.y *= DRAGY_Lower;	//jump lower when space is not hold anymore
+	}
+	else if (character.mVel.y >= 0)
+	{
+ 		character.mVel.y *= DRAGY_Higher;	//make sure the character's falling down is smooth
 	}
 
 	UpdateInput(dTime);
@@ -245,12 +253,11 @@ void Player::UpdateInput(float dTime)
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
 	{
 		character.mVel.y = -JUMP_SPEED;
-		gravity = 0;
 		isGrounded = false;
 	}
-	else
+	if (Game::sMKIn.IsPressed(VK_SPACE) == false && character.mVel.y < 0)
 	{
-		gravity = GRAVITY_SPEED;
+		isGrounded = false;
 	}
 }
 
