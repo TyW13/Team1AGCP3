@@ -7,6 +7,9 @@
 #include <iostream>
 #include "PlayerCharacter.h"
 
+#include "rapidjson/filereadstream.h"
+#include "Map.h"
+
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -144,6 +147,8 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 	}
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
+
+
 PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
 {
@@ -158,6 +163,11 @@ PlayMode::PlayMode(MyD3D& d3d)
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
+
+	// json testing
+
+	Map testMap;
+	testMap.getLayers()[0].getData();		 
 }
 
 void PlayMode::Release()

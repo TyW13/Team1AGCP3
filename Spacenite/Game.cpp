@@ -2,6 +2,7 @@
 #include "WindowUtils.h"
 #include "D3Dutil.h"
 #include "CommonStates.h"
+
 //#include "..\..\sqlite\sqlite3.h"
 
 #include <thread>
