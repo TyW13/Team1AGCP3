@@ -8,10 +8,7 @@ class TileSetMap
 {
 public:
 
-	TileSetMap(rapidjson::Value& value) {
-		firstgid = value["firstgid"].GetInt();
-		source = value["source"].GetString();
-	}
+	TileSetMap(rapidjson::Value& value);
 
 	~TileSetMap() {}
 
@@ -29,7 +26,8 @@ class Layers
 public:
 
 	Layers(rapidjson::Value& value);
-	~Layers();
+
+	~Layers() {}
 
 	std::vector<int> getData() { return data; }
 	int getHeight() { return height; }
@@ -62,8 +60,9 @@ class Map								// This class represents all the data from the json after it ha
 {
 public:
 
-	Map(const char* map);
-	~Map();
+	Map::Map();
+
+	~Map() {}
 
 	int getHeight() { return height; }
 	bool isInfinite() { return infinite; }
@@ -77,7 +76,6 @@ public:
 	std::vector<TileSetMap> getTileSetMap() { return tilesets; }
 	int getTileWidth() { return tilewidth; }
 	std::string getType() { return type; }
-	float getVersion() { return version; }
 	int getWidth() { return width; }
 
 private:
@@ -94,11 +92,8 @@ private:
 	std::vector<TileSetMap> tilesets;
 	int tilewidth;
 	std::string type;
-	float version;
 	int width;
-
-	rapidjson::Document document;
-
 };
+
 
 

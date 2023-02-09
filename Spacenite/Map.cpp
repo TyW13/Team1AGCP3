@@ -1,12 +1,21 @@
 #include "Map.h"
 #include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
 using namespace rapidjson;
 using namespace std;
 
-Map::Map(const char* mapName)
+Map::Map()
 {
-	document.Parse(mapName);
+	FILE* fp = fopen("data/test_level_jump1.json", "rb");		// opens json file 
+
+	char readBuffer[10000];
+	FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	Document document;
+	document.ParseStream(is);			// parses json file 
+
+	fclose(fp);
 
 	// Stores all the data from the json file in the respective variables from the class
 
@@ -20,16 +29,15 @@ Map::Map(const char* mapName)
 	tiledversion = document["tiledversion"].GetString();
 	tileheight = document["tileheight"].GetInt();
 
-	rapidjson::Value::Array layersArray = document["layers"].GetArray();				// Gets everything in the layers array in json and stores in new array 
-	for (size_t i = 0; i < layersArray.Capacity(); i++)
-	{
-		Layers layer(layersArray[i]);
-		layers.push_back(layer);
-	}
+	GenericArray layersArray = document["layers"].GetArray();									// Gets everything in the layers array in json and stores in new 
+		GenericObject test = layersArray.begin()->GetObject();
+		GenericArray data = test["data"].GetArray();
+		int data1 = data[696].GetInt();
+		string floor = test["name"].GetString();
+		//layers.push_back(layer);
 
 	tilewidth = document["tilewidth"].GetInt();
 	type = document["type"].GetString();
-	version = document["version"].GetFloat();
 	width = document["width"].GetInt();
 
 	rapidjson::Value::Array tileArray = document["tilesets"].GetArray();
@@ -38,11 +46,6 @@ Map::Map(const char* mapName)
 		TileSetMap tileset(tileArray[i]);
 		tilesets.push_back(tileset);
 	}
-}
-
-Map::~Map()
-{
-
 }
 
 Layers::Layers(rapidjson::Value& value)			
@@ -81,7 +84,8 @@ Layers::Layers(rapidjson::Value& value)
 	y = value["y"].GetInt();
 }
 
-Layers::~Layers()
+TileSetMap::TileSetMap(rapidjson::Value& value) 
 {
-
+	firstgid = value["firstgid"].GetInt();
+	source = value["source"].GetString();
 }

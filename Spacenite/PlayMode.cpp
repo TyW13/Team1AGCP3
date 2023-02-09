@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "FileImport.h"
+#include "rapidjson/filereadstream.h"
 #include "Map.h"
 
 using namespace std;
@@ -146,6 +146,8 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 	}
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
+
+
 PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d)
 {
@@ -157,9 +159,10 @@ PlayMode::PlayMode(MyD3D& d3d)
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
 
-	// json testing 
-	Map m("data/test_level_jump1.json");
-	m.getLayers()[0].getData();
+	// json testing
+
+	Map testMap;
+	testMap.getLayers()[0].getData();		 
 }
 
 void PlayMode::Release()

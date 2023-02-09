@@ -10,7 +10,7 @@ using namespace std;
 
 void FileParse()
 {
-	FILE* filePointer = fopen("data/testMap.json", "rb");		// Opens json file via pointer
+	FILE* filePointer = fopen("data/test_level_jump1.json", "rb");		// Opens json file via pointer
 
 	char readBuffer[5000];		// User provided buffer
 	FileReadStream is(filePointer, readBuffer, sizeof(readBuffer));
