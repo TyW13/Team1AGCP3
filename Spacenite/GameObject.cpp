@@ -279,15 +279,23 @@ Platform::Platform(MyD3D& d3d)
 void Platform::Init(MyD3D& pld3d)
 {
 	//load and orientate the platform
-	ID3D11ShaderResourceView* pl = pld3d.GetCache().LoadTexture(&pld3d.GetDevice(), "ProgTestPlat.dds");  // Platform
+	//"ProgTestPlat.dds"
+	ID3D11ShaderResourceView* pl = pld3d.GetCache().LoadTexture(&pld3d.GetDevice(), "ProgTestSpike.dds");  // Platform
 	platform.SetTex(*pl);
 	platform.SetScale(Vector2(0.5f, 1.0f));
 	platform.origin = platform.GetTexData().dim / 2.0f;
+
+
+	//ID3D11ShaderResourceView* pl = pld3d.GetCache().LoadTexture(&pld3d.GetDevice(), "ProgTestPlat.dds");  // Platform
+	//platform.SetTex(*pl);
+	//platform.SetScale(Vector2(0.5f, 1.0f));
+	//platform.origin = platform.GetTexData().dim / 2.0f;
 
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
 
 	platform.mPos = Vector2(w / 2, h / 2);
+	//spike.mPos  Vector2(w / 2, h / 2);
 
 
 	
