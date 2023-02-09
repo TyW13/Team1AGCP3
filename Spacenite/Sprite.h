@@ -71,11 +71,12 @@ public:
 	DirectX::SimpleMath::Vector4 colour;
 	float rotation;
 	DirectX::SimpleMath::Vector2 origin;
+	float degrees;
 
 	Sprite(MyD3D& d3d)
 		:mPos(0, 0), mVel(0, 0),
 		depth(0), mTexRect{ 0,0,0,0 }, colour(1, 1, 1, 1),
-		rotation(0), scale(1, 1), origin(0, 0), mpTex(nullptr),
+		degrees(0),rotation(0), scale(1, 1), origin(0, 0), mpTex(nullptr),
 		mD3D(d3d), mAnim(*this), mActive(true)
 	{}
 	Sprite(const Sprite& rhs)
@@ -103,6 +104,21 @@ public:
 	{
 		mActive = _active;
 	}
+
+	float GetDegrees() const
+	{
+		return degrees;
+	}
+
+	float GetRadians() const
+	{
+		return degrees * (PI / 180.f);
+	}
+	const DirectX::SimpleMath::Vector2& GetPos() const
+	{
+		return mPos;
+	}
+
 
 	//getters
 	MyD3D& GetD3D()

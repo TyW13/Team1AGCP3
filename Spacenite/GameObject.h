@@ -84,6 +84,13 @@ class Player
 {
 public:
 
+	bool onGround;
+	float xPos;
+	float yPos;
+	float xVel;
+	float yVel;
+
+
 
 	Player(MyD3D& d3d);
 
@@ -107,6 +114,12 @@ private:
 class Platform
 {
 public:
+
+	float xPos;
+	float yPos;
+	float xVel;
+	float yVel;
+	int scale;
 
 	Platform(MyD3D& d3d);
 	Sprite platform;

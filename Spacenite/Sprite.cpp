@@ -64,6 +64,7 @@ Sprite& Sprite::operator=(const Sprite& rhs) {
 	mpTex = rhs.mpTex;
 	mAnim = rhs.mAnim;
 	mActive = rhs.mActive;
+	mD3D = rhs.mD3D; // Added
 	return *this;
 }
 void Sprite::Draw(SpriteBatch& batch)
