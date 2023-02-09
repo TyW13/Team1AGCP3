@@ -40,8 +40,16 @@ public:
     };
 
     // Function to check if two rectangles are colliding
-    static bool CheckCollision(const Rect& a, const Rect& b)
-    {
+	static bool CheckCollision(const Rect& a, const Rect& b)
+	{
+		//// Check collision between asteroid-player
+		//if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
+		//	&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
+		//{
+		//	float radius = 32.0f;
+		//	active = false;
+		//	_mPlayer.SetActive(false);
+	
         return (a.x < b.x + b.width &&
             a.x + a.width > b.x &&
             a.y < b.y + b.height &&

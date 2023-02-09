@@ -7,14 +7,14 @@
 //{
 //	float radius = 32.0f;
 //
-//	// Check collision between asteroid-player
-//	if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
-//		&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
-//	{
-//		float radius = 32.0f;
-//		active = false;
-//		_mPlayer.SetActive(false);
-//	}
+	//// Check collision between asteroid-player
+	//if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
+	//	&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
+	//{
+	//	float radius = 32.0f;
+	//	active = false;
+	//	_mPlayer.SetActive(false);
+	//}
 //}
 //
 //int Collision::BulletCollision()
@@ -31,6 +31,10 @@
 
 int Collision::PlatformCollision()
 {
+	// Player RECT1
+	// Platform RECT2
+	
+	
 	// Create two rectangles
 	Collision2D::Rect rect1(0.0f, 0.0f, 100.0f, 100.0f);
 	Collision2D::Rect rect2(50.0f, 50.0f, 100.0f, 100.0f);
@@ -38,18 +42,27 @@ int Collision::PlatformCollision()
 	// Check if they are colliding
 	bool isColliding = Collision2D::CheckCollision(rect1, rect2);
 
+	// Player Collision
+
+	//bool isColliding = Collision2D::CheckCollision(player);
+
+	// Collision Check
+
 	if (isColliding)
 	{
+		// Output to state collision
 		std::cout << "The rectangles are colliding!" << std::endl;
 	}
 	else
 	{
+		// Output to state NO collision
 		std::cout << "The rectangles are not colliding." << std::endl;
 	}
 
 	return 0;
 }
 
+// Axis Aligned Bounding Box > AABB
 int Collision::CheckCollisionAABBAABB(AABB A, AABB B)
 {
 	// Exit with no intersection if seperated along an axis
