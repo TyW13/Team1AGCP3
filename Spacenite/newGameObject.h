@@ -14,44 +14,46 @@ public:
 		//Init();
 	}
 
-	GameObject(const GameObject& other)	: objSprite(other.objSprite)															// Copy constructor
-	{
-		this->isActive = other.isActive;
-		this->objSprite = other.objSprite;
-	}
+	// Commented out Copy and move constructors and assignment operators
 
-	GameObject& operator=(const GameObject& other)																		// Copy assignment operator
-	{
-		if (this != &other)
-		{
-			this->isActive = other.isActive;
-			this->objSprite = other.objSprite;
-		}
-
-		return *this;
-	}
-
-	GameObject(GameObject&& other) noexcept : objSprite(other.GetSprite())										// Move constructor
-	{
-		this->isActive = other.isActive;
-		this->objSprite = other.objSprite;
-	}
-
-	GameObject& operator=(GameObject&& other)	noexcept																// Move assignment operator
-	{
-		if (this != &other)
-		{
-			this->isActive = other.isActive;
-			this->objSprite = other.objSprite;
-		}
-
-		return *this;
-	}
-
-	~GameObject()																											// Destructor
-	{
-		printf("DELETING GAME OBJECT\n");
-	}
+	//GameObject(const GameObject& other)	: objSprite(other.objSprite)															// Copy constructor
+	//{
+	//	this->isActive = other.isActive;
+	//	this->objSprite = other.objSprite;
+	//}
+	//
+	//GameObject& operator=(const GameObject& other)																		// Copy assignment operator
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->isActive = other.isActive;
+	//		this->objSprite = other.objSprite;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//GameObject(GameObject&& other) noexcept : objSprite(other.GetSprite())										// Move constructor
+	//{
+	//	this->isActive = other.isActive;
+	//	this->objSprite = other.objSprite;
+	//}
+	//
+	//GameObject& operator=(GameObject&& other)	noexcept																// Move assignment operator
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->isActive = other.isActive;
+	//		this->objSprite = other.objSprite;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//~GameObject()																											// Destructor
+	//{
+	//	printf("DELETING GAME OBJECT\n");
+	//}	
 
 	virtual void Init();
 	void Update();

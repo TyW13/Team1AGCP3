@@ -10,7 +10,7 @@ class Sprite;
 class PlayerCharacter : public GameObject
 {
 public:
-	PlayerCharacter(MyD3D& d3d, Texture objTex, DirectX::SimpleMath::Vector2 scale, bool active)	// Default constructor
+	PlayerCharacter(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 scale, bool active)	// Default constructor
 		: GameObject(d3d), objSprite(d3d)
 	{
 		Init(objTex, scale, active);
@@ -52,7 +52,7 @@ public:
 
 	~PlayerCharacter(){}																											// Destructor
 
-	void Init(Texture tex, DirectX::SimpleMath::Vector2 scale, bool active);
+	void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active);
 
 	Sprite GetSprite() override;
 	bool GetActive() override;

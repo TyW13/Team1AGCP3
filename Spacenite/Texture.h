@@ -11,45 +11,51 @@ class Texture
 {
 public:
 	Texture(){}
-
-	Texture(const Texture& other)																								// Copy constructor
+	Texture(const std::string& path)
 	{
-		this->tName = other.tName;
-		this->tPath = other.tPath;
+		Init(path);
 	}
 
-	Texture& operator=(Texture& other)
-	{
-		if (this != &other)
-		{
-			this->tName = other.tName;
-			this->tPath = other.tPath;
-		}
+	// Commented out copy and move constructors and asssignment operators
 
-		return *this;
-	}
-
-	Texture(Texture&& other) noexcept																		// Move constructor
-	{
-		this->tName = other.tName;
-		this->tPath = other.tPath;
-	}
-
-	Texture& operator=(Texture&& other)	noexcept																// Move assignment operator
-	{
-		if (this != &other)
-		{
-			this->tName = other.tName;
-			this->tPath = other.tPath;
-		}
-
-		return *this;
-	}
-
-	~Texture()																											// Destructor
-	{
-		printf("DELETING TEXTURE OBJECT\n");
-	}
+	//Texture(const Texture& other)																								// Copy constructor
+	//{
+	//	this->tName = other.tName;
+	//	this->tPath = other.tPath;
+	//}
+	//
+	//Texture& operator=(Texture& other)
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->tName = other.tName;
+	//		this->tPath = other.tPath;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//Texture(Texture&& other) noexcept																		// Move constructor
+	//{
+	//	this->tName = other.tName;
+	//	this->tPath = other.tPath;
+	//}
+	//
+	//Texture& operator=(Texture&& other)	noexcept																// Move assignment operator
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->tName = other.tName;
+	//		this->tPath = other.tPath;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//~Texture()																											// Destructor
+	//{
+	//	printf("DELETING TEXTURE OBJECT\n");
+	//}
 
 	void Init(const std::string& path);
 

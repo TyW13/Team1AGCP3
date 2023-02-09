@@ -8,13 +8,11 @@
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
 	CreateTexture(pDevice, "testTexture.dds");
-	//AddTexture(pDevice, "data/textures/testtexture.dds");
-	//AddGameObject(d3d);
 }
 
 void ResourceManager::Render(SpriteBatch& batch)
 {
-	for (PlayerCharacter* currentObj : m_gObjects)
+	for (GameObject* currentObj : m_gObjects)
 	{
 		if (currentObj->GetActive())
 		{			  
@@ -25,29 +23,34 @@ void ResourceManager::Render(SpriteBatch& batch)
 
 void ResourceManager::Terminate()
 {
-	//for (const auto& tex : m_Textures)
-	//{
-	//	delete tex.second;
-	//}
+	for (const auto& tex : m_Textures)
+	{
+		delete tex.second;
+	}
+	 
+	for (const auto& obj : m_gObjects)
+	{
+		delete obj;
+	}
 }
 
 void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fPath)
 {
-	pTex.Init(fPath);
+	//pTex.Init(fPath);
+	Texture* t = new Texture(fPath);
 
-	m_Textures.emplace(pTex.GetName(), pTex);
+	m_Textures.emplace(t->GetName(), t);
 }
 
 void ResourceManager::AddGameObject(MyD3D& d3d, GameObject newObject)
 {
-	PlayerCharacter* p = new PlayerCharacter(d3d, GetTexture("testTexture"), Vector2(1, 1), true);
-	//pObj = &newObject;
-	//GameObject tempObj = &p;
-	m_gObjects.emplace_back(p);
+	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("testTexture"), Vector2(1, 1), true);
+
+	m_gObjects.emplace_back(obj);
 }
 
 // Get function for given texture using its std::string name used in the std::map
-Texture ResourceManager::GetTexture(const std::string& tName)
+Texture* ResourceManager::GetTexture(const std::string& tName)
 {
 	// If given texture is not found in m_texture map, print error
 	if (m_Textures.find(tName) != m_Textures.end())
@@ -70,18 +73,4 @@ std::string ResourceManager::SetTexName(std::string path)
 	auto lastSlash = noSuff.find_last_of("/");
 	std::string noPath = noSuff.substr(lastSlash + 1, noSuff.length() - lastSlash);
 	return noPath;
-}
-
-void ResourceManager::LoadJson()
-{
-	FILE* fp = fopen("data/test_level_jump1.json", "rb"); // non-Windows use "r"
-
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-
-	rapidjson::Document d;
-	d.ParseStream(is);
-	assert(d.IsObject());
-	assert(d.HasMember("layers"));
-	fclose(fp);
 }
