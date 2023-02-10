@@ -14,7 +14,7 @@ public:
 		//Init();
 	}
 
-	// Commented out Copy and move constructors and assignment operators
+	// Commented out unneeded Copy and move constructors and assignment operators
 
 	//GameObject(const GameObject& other)	: objSprite(other.objSprite)															// Copy constructor
 	//{
@@ -55,8 +55,8 @@ public:
 	//	printf("DELETING GAME OBJECT\n");
 	//}	
 
-	virtual void Init();
-	void Update();
+	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active);
+	virtual void Update(float dTime);
 	void Terminate();
 
 	virtual Sprite GetSprite();

@@ -10,16 +10,35 @@
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
+	// Will eventually not need to hard code in file, should read from .json file
 	CreateTexture(pDevice, "testTexture.dds");
+	CreateTexture(pDevice, "ship.dds");
+}
+
+void ResourceManager::Update(float dTime)
+{
+	if (m_gObjects.size() > 0)
+	{
+		for (GameObject* currentObj : m_gObjects)
+		{
+			if (currentObj->GetActive())
+			{
+				currentObj->Update(dTime);
+			}
+		}
+	}
 }
 
 void ResourceManager::Render(SpriteBatch& batch)
 {
-	for (GameObject* currentObj : m_gObjects)
+	if (m_gObjects.size() > 0)
 	{
-		if (currentObj->GetActive())
-		{			  
-			currentObj->GetSprite().Draw(batch);
+		for (GameObject* currentObj : m_gObjects)
+		{
+			if (currentObj->GetActive())
+			{
+				currentObj->GetSprite().Draw(batch);
+			}
 		}
 	}
 }
@@ -37,17 +56,18 @@ void ResourceManager::Terminate()
 	}
 }
 
+// Creates a new texture object to add to the std::map
 void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fPath)
 {
-	//pTex.Init(fPath);
 	Texture* t = new Texture(fPath);
 
 	m_Textures.emplace(t->GetName(), t);
 }
 
-void ResourceManager::AddGameObject(MyD3D& d3d, GameObject newObject)
+// Function to add gameobjects to resource manager. Will eventually work with json file to mass import objects
+void ResourceManager::AddGameObject(MyD3D& d3d)
 {
-	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("testTexture"), Vector2(1, 1), true);
+	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(0.5, 0.5), true);							// Manually creating new player object
 
 	m_gObjects.emplace_back(obj);
 }
@@ -59,7 +79,6 @@ Texture* ResourceManager::GetTexture(const std::string& tName)
 	if (m_Textures.find(tName) != m_Textures.end())
 	{
 		return m_Textures.at(tName);
-
 	}
 	else 
 	{
@@ -67,9 +86,10 @@ Texture* ResourceManager::GetTexture(const std::string& tName)
 	}
 }
 
+// Reduces the given texture path to just the image name to give it a more appropriate name
 std::string ResourceManager::SetTexName(std::string path)
 {
-	// path is data/textures/
+	// path is data/(.dds)
 	path.substr(0, 1);
 	auto itr = path.find_last_of(".");
 	std::string noSuff = path.substr(0, itr);
@@ -78,9 +98,8 @@ std::string ResourceManager::SetTexName(std::string path)
 	return noPath;
 }
 
+// Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
 void ResourceManager::LoadJSON()
 {
 	Map testMap;
-
-	//testMap.getTileSetMap()[0].get
 }

@@ -16,7 +16,7 @@ public:
 		Init(path);
 	}
 
-	// Commented out copy and move constructors and asssignment operators
+	// Commented out unneeded copy and move constructors and asssignment operators
 
 	//Texture(const Texture& other)																								// Copy constructor
 	//{

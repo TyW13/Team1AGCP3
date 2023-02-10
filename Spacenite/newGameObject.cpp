@@ -1,9 +1,12 @@
 #include "newGameObject.h"
 #include "Texture.h"
 
-void GameObject::Init()
+void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active)
 {
+}
 
+void GameObject::Update(float dTime)
+{
 }
 
 Sprite GameObject::GetSprite()

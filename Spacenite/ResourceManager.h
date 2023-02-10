@@ -87,10 +87,11 @@ public:
 	ResourceManager(MyD3D& d3d){}
 
 	void Init(ID3D11Device& pDevice, MyD3D& d3d);
+	void Update(float dTime);
 	void Render(SpriteBatch& batch);
 	void Terminate();
 	void CreateTexture(ID3D11Device& pDevice, const std::string &fPath);
-	void AddGameObject(MyD3D& d3d, GameObject newObject);
+	void AddGameObject(MyD3D& d3d);
 	Texture* GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
 	void LoadJSON();

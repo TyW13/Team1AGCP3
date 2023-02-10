@@ -16,43 +16,47 @@ public:
 		Init(objTex, scale, active);
 	}
 
-	PlayerCharacter(const PlayerCharacter& other) : GameObject(other), objSprite(other.objSprite)									// Copy constructor
-	{
-		this->isActive = other.isActive;
-		this->objSprite = other.objSprite;
-	}
+	// Commented out unneeded copy and move constructors and overloaded assignment operators
 
-	PlayerCharacter& operator=(const PlayerCharacter& other)																		// Copy assignment operator
-	{
-		if (this != &other)
-		{
-			this->isActive = other.isActive;
-			this->objSprite = other.objSprite;
-		}
+	//PlayerCharacter(const PlayerCharacter& other) : GameObject(other), objSprite(other.objSprite)									// Copy constructor
+	//{
+	//	this->isActive = other.isActive;
+	//	this->objSprite = other.objSprite;
+	//}
+	//
+	//PlayerCharacter& operator=(const PlayerCharacter& other)																		// Copy assignment operator
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->isActive = other.isActive;
+	//		this->objSprite = other.objSprite;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//PlayerCharacter(PlayerCharacter&& other) noexcept : GameObject(other), objSprite(other.objSprite)									// Move constructor
+	//{
+	//	this->isActive = other.isActive;
+	//	this->objSprite = other.objSprite;
+	//}
+	//
+	//PlayerCharacter& operator=(PlayerCharacter&& other)	noexcept																// Move assignment operator
+	//{
+	//	if (this != &other)
+	//	{
+	//		this->isActive = other.isActive;
+	//		this->objSprite = other.objSprite;
+	//	}
+	//
+	//	return *this;
+	//}
+	//
+	//~PlayerCharacter(){}																											// Destructor
 
-		return *this;
-	}
-
-	PlayerCharacter(PlayerCharacter&& other) noexcept : GameObject(other), objSprite(other.objSprite)									// Move constructor
-	{
-		this->isActive = other.isActive;
-		this->objSprite = other.objSprite;
-	}
-
-	PlayerCharacter& operator=(PlayerCharacter&& other)	noexcept																// Move assignment operator
-	{
-		if (this != &other)
-		{
-			this->isActive = other.isActive;
-			this->objSprite = other.objSprite;
-		}
-
-		return *this;
-	}
-
-	~PlayerCharacter(){}																											// Destructor
-
-	void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active);
+	void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active) override;
+	void Update(float dTime) override;
+	void Terminate();
 
 	Sprite GetSprite() override;
 	bool GetActive() override;
@@ -61,4 +65,18 @@ public:
 private:
 	bool isActive;
 	Sprite objSprite;
+
+	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
+	void CheckCollision();											// temporary collision function, Kieron can swap it for his collision once merged
+
+	const float JUMP_SPEED = 1200;
+	const float GRAVITY = 400;
+	const float PLAYER_SPEED = 350;									//PLAYER EXCLUSIVE
+	const float JUMP_HEIGHT = 100;
+	const float PAD_SPEED = 500;									//PLAYER EXCLUSIVE
+	const float DRAG = 0.985;										//for deceleration
+
+	bool isGrounded = false;													//Player
+	bool isTop = false;			// For kacper temp collision
+	bool isBottom = false;		// For kacper temp collision
 };
