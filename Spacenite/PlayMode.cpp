@@ -7,9 +7,6 @@
 #include <iostream>
 #include "PlayerCharacter.h"
 
-#include "rapidjson/filereadstream.h"
-#include "Map.h"
-
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -155,19 +152,14 @@ PlayMode::PlayMode(MyD3D& d3d)
 	rManager.Init(d3d.GetDevice(), d3d);
 	PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
 	rManager.AddGameObject(d3d,newChar);
-	//rManager.LoadJson();
+	rManager.LoadJSON();
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	mMissile.Init(d3d);
 	InitAsteroids();
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
-	assert(mpFont);
-
-	// json testing
-
-	Map testMap;
-	testMap.getLayers()[0].getData();		 
+	assert(mpFont);	
 }
 
 void PlayMode::Release()

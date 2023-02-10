@@ -93,6 +93,7 @@ public:
 	void AddGameObject(MyD3D& d3d, GameObject newObject);
 	Texture* GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
+	void LoadJSON();
 private:
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;

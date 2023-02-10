@@ -5,6 +5,9 @@
 #include "ResourceManager.h"
 #include "PlayerCharacter.h"
 
+#include "rapidjson/filereadstream.h"
+#include "Map.h"
+
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
 	CreateTexture(pDevice, "testTexture.dds");
@@ -73,4 +76,11 @@ std::string ResourceManager::SetTexName(std::string path)
 	auto lastSlash = noSuff.find_last_of("/");
 	std::string noPath = noSuff.substr(lastSlash + 1, noSuff.length() - lastSlash);
 	return noPath;
+}
+
+void ResourceManager::LoadJSON()
+{
+	Map testMap;
+
+	//testMap.getTileSetMap()[0].get
 }

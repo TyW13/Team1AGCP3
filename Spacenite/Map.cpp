@@ -22,6 +22,13 @@ Map::Map()
 	height = document["height"].GetInt();
 	infinite = document["infinite"].GetBool();			
 
+	//GenericArray layersA = document["layers"].GetArray();
+	//for (size_t i = 0; i < layersA.Capacity(); i++)
+	//{
+	//	Layers layer(layersA[i]);
+	//	layers.push_back(layer);
+	//}
+
 	nextlayerid = document["nextlayerid"].GetInt();
 	nextobjectid = document["nextobjectid"].GetInt();
 	orientation = document["orientation"].GetString();
@@ -30,15 +37,11 @@ Map::Map()
 	tileheight = document["tileheight"].GetInt();
 
 	GenericArray layersArray = document["layers"].GetArray();									// Gets everything in the layers array in json and stores in new 
-		GenericObject test = layersArray.begin()->GetObject();
-		GenericArray data = test["data"].GetArray();
-		int data1 = data[696].GetInt();
-		string floor = test["name"].GetString();
-		//layers.push_back(layer);
-
-	tilewidth = document["tilewidth"].GetInt();
-	type = document["type"].GetString();
-	width = document["width"].GetInt();
+	GenericObject test = layersArray.begin()->GetObject();
+	GenericArray data = test["data"].GetArray();
+	int data1 = data[696].GetInt();
+	string floor = test["name"].GetString();
+	//layers.push_back(layer);
 
 	rapidjson::Value::Array tileArray = document["tilesets"].GetArray();
 	for (size_t i = 0; i < tileArray.Capacity(); i++)
@@ -46,6 +49,14 @@ Map::Map()
 		TileSetMap tileset(tileArray[i]);
 		tilesets.push_back(tileset);
 	}
+
+	tilewidth = document["tilewidth"].GetInt();
+	type = document["type"].GetString();
+	width = document["width"].GetInt();
+
+	
+
+	delete[](fp);
 }
 
 Layers::Layers(rapidjson::Value& value)			
@@ -88,4 +99,26 @@ TileSetMap::TileSetMap(rapidjson::Value& value)
 {
 	firstgid = value["firstgid"].GetInt();
 	source = value["source"].GetString();
+}
+
+
+TileSet::TileSet(int firstgid, const char* tileset)
+{
+	this->firstgid = firstgid;
+	Document tilesetDoc;
+	tilesetDoc.Parse(tileset);
+
+	columns = tilesetDoc["columns"].GetInt();
+	image = tilesetDoc["image"].GetString();
+	imageHeight = tilesetDoc["imageheight"].GetInt();
+	imageWidth = tilesetDoc["imagewidth"].GetInt();
+	margin = tilesetDoc["margin"].GetInt();
+	name = tilesetDoc["name"].GetString();
+	spacing = tilesetDoc["spacing"].GetInt();
+	tilecount = tilesetDoc["tilecount"].GetInt();
+	tileheight = tilesetDoc["tileheight"].GetInt();
+	tilewidth = tilesetDoc["tilewidth"].GetInt();
+	type = tilesetDoc["type"].GetString();
+
+	delete[](tileset);
 }

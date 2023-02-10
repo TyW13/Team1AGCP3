@@ -3,6 +3,74 @@
 #include "rapidjson/document.h"
 #include <vector>
 #include <string>
+#include <map>
+
+// TEST CLASS
+class LayerData 
+{
+public:
+	std::vector<int> GetData() { return data; };
+	int GetHeight() { return height; };
+	int GetId() { return id; };
+	std::string GetName() { return name; };
+	float GetOpacity() { return opacity; };
+	std::string GetType() { return type; };
+	bool IsVisible() { return visible; };
+	float GetWidth() { return width; };
+	float GetX() { return x; };
+	float GetY() { return y; };
+
+private:
+	std::vector<int> data;
+	int height;
+	int id;
+	std::string name;
+	float opacity;
+	std::string type;
+	bool visible;
+	float width;
+	float x;
+	float y;
+};
+
+class TileSet
+{
+public:
+
+	TileSet(){}
+	TileSet(int firstgid, const char* tileset);
+	~TileSet();
+
+	int getFirstGid() { return firstgid; }
+	int getColumns() { return columns; }
+	std::string getImaage() { return image; }
+	int getImageHeight() { return imageHeight; }
+	int getImageWidth() { return imageWidth; }
+	int getMargin() { return margin; }
+	std::string getName() { return name; }
+	int getSpacing(){ return spacing; }
+	int getTileCOunt() { return tilecount; }
+	int getTileHeight() { return tileheight; }
+	int getTIleWidth() { return tilewidth; }
+	std::string getType() { return type; }
+
+private:
+
+	int firstgid;
+	int columns;
+	std::string image;
+	int imageHeight;
+	int imageWidth;
+	int margin;
+	std::string name;
+	int spacing;
+	int tilecount;
+	std::string tiledversion;
+	int tileheight;
+	int tilewidth;
+	std::string type;
+	float version;
+};
 
 class TileSetMap
 {
@@ -83,6 +151,7 @@ private:
 	int height;
 	bool infinite;
 	std::vector<Layers> layers;
+	std::map<std::string, LayerData> layerData;
 	int nextlayerid;
 	int nextobjectid;
 	std::string orientation;
