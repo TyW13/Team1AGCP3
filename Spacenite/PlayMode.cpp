@@ -159,10 +159,9 @@ PlayMode::PlayMode(MyD3D& d3d)
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
 
-	// json testing
+	// JSON TESTING. DONT KEEP HERE. MOVE WHEN FIND A SUITABLE PLACE FOR IT 
 
-	Map testMap;
-	testMap.getLayers()[0].getData();		 
+	Map testMap; 
 }
 
 void PlayMode::Release()

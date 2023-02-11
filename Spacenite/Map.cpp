@@ -15,12 +15,23 @@ Map::Map()
 	Document document;
 	document.ParseStream(is);			// parses json file 
 
-	fclose(fp);
+	fclose(fp);		// closes json once it has been read 
 
 	// Stores all the data from the json file in the respective variables from the class
 
 	height = document["height"].GetInt();
-	infinite = document["infinite"].GetBool();			
+	infinite = document["infinite"].GetBool();	
+
+	GenericArray layersArray = document["layers"].GetArray();									// Gets everything in the layers array in json and stores in new 
+	GenericObject layersObj = layersArray.begin()->GetObject();
+	GenericArray dataArray = layersObj["data"].GetArray();
+	name = layersObj["name"].GetString();
+	id = layersObj["id"].GetInt();
+	opacity = layersObj["opacity"].GetInt();
+	layersType = layersObj["type"].GetString();
+	visible = layersObj["visible"].GetBool();
+	x = layersObj["x"].GetInt();
+	y = layersObj["y"].GetInt();
 
 	nextlayerid = document["nextlayerid"].GetInt();
 	nextobjectid = document["nextobjectid"].GetInt();
@@ -29,63 +40,54 @@ Map::Map()
 	tiledversion = document["tiledversion"].GetString();
 	tileheight = document["tileheight"].GetInt();
 
-	GenericArray layersArray = document["layers"].GetArray();									// Gets everything in the layers array in json and stores in new 
-		GenericObject test = layersArray.begin()->GetObject();
-		GenericArray data = test["data"].GetArray();
-		int data1 = data[696].GetInt();
-		string floor = test["name"].GetString();
-		//layers.push_back(layer);
+	rapidjson::Value::Array tileArray = document["tilesets"].GetArray();
+	GenericObject tileObj = tileArray.begin()->GetObject();
+	firstgid = tileObj["firstgid"].GetInt();
+	source = tileObj["source"].GetString();
 
 	tilewidth = document["tilewidth"].GetInt();
 	type = document["type"].GetString();
 	width = document["width"].GetInt();
-
-	rapidjson::Value::Array tileArray = document["tilesets"].GetArray();
-	for (size_t i = 0; i < tileArray.Capacity(); i++)
-	{
-		TileSetMap tileset(tileArray[i]);
-		tilesets.push_back(tileset);
-	}
 }
 
-Layers::Layers(rapidjson::Value& value)			
-{
-	if (value.HasMember("data"))
-	{
-		for (auto& v : value.GetArray()) 
-		{
-			data.push_back(v.GetInt());
-		}
-	}
-	
-	if (value.HasMember("height"))
-	{
-		height = value["height"].GetInt();
-	}
+//Layers::Layers(rapidjson::Value& value)			
+//{
+//	if (value.HasMember("data"))
+//	{
+//		for (auto& v : value.GetArray()) 
+//		{
+//			data.push_back(v.GetInt());
+//		}
+//	}
+//	
+//	if (value.HasMember("height"))
+//	{
+//		height = value["height"].GetInt();
+//	}
+//
+//	id = value["id"].GetInt();
+//
+//	if (value.HasMember("image")) 
+//	{
+//		image = value["image"].GetString();
+//	}
+//
+//	name = value["name"].GetString();
+//	opacity = value["opacity"].GetInt();
+//	type = value["type"].GetString();
+//	visible = value["visible"].GetBool();
+//
+//	if (value.HasMember("width")) 
+//	{
+//		width = value["width"].GetInt();
+//	}
+//
+//	x = value["x"].GetInt();
+//	y = value["y"].GetInt();
+//}
 
-	id = value["id"].GetInt();
-
-	if (value.HasMember("image")) 
-	{
-		image = value["image"].GetString();
-	}
-
-	name = value["name"].GetString();
-	opacity = value["opacity"].GetInt();
-	type = value["type"].GetString();
-	visible = value["visible"].GetBool();
-
-	if (value.HasMember("width")) 
-	{
-		width = value["width"].GetInt();
-	}
-
-	x = value["x"].GetInt();
-	y = value["y"].GetInt();
-}
-
-TileSetMap::TileSetMap(rapidjson::Value& value) 
-{
-	firstgid = value["firstgid"].GetInt();
-	source = value["source"].GetString();
-}
+//TileSetMap::TileSetMap(rapidjson::Value& value) 
+//{
+//	firstgid = value["firstgid"].GetInt();
+//	source = value["source"].GetString();
+//}
