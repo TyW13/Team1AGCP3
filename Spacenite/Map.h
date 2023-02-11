@@ -1,7 +1,4 @@
 #pragma once
-
-#include "rapidjson/document.h"
-#include <vector>
 #include <string>
 
 class Map	
