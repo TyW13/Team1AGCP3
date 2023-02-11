@@ -23,7 +23,7 @@ Game::Game(MyD3D& d3d)
 	sGamepads.Initialise();
 	InitIntro(d3d);
 	InitEnd(d3d);
-	mpSB = new SpriteBatch(&mD3D.GetDeviceCtx());
+	mpSB = new DirectX::DX11::SpriteBatch(&mD3D.GetDeviceCtx());
 	mpSF = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 }
 //any memory or resources we made need releasing at the end
@@ -164,12 +164,12 @@ void Game::UpdateIntro()
 		state = State::PLAY;
 	}
 }
-void Game::RenderIntro(SpriteBatch& batch)
+void Game::RenderIntro(DirectX::DX11::SpriteBatch& batch)
 {
 	introSpr.Draw(batch);
 }
 
-void Game::RenderName(SpriteBatch& batch)
+void Game::RenderName(DirectX::DX11::SpriteBatch& batch)
 {
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
@@ -193,7 +193,7 @@ void Game::UpdateEnd()
 {
 	ResetClock();
 }
-void Game::RenderEnd(SpriteBatch& batch)
+void Game::RenderEnd(DirectX::DX11::SpriteBatch& batch)
 {
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);

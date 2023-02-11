@@ -196,6 +196,8 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
+	isBottom = false;
+	isTop = false;
 	//update player core movement
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
@@ -220,7 +222,6 @@ void Player::Update(float dTime)
 	{
 		character.mVel.y *= 0.995;
 	}
-
 	UpdateInput(dTime);
 	CheckCollision();
 }
@@ -242,10 +243,10 @@ void Player::UpdateInput(float dTime)
 		character.mVel.x -= PLAYER_SPEED;
 	}
 	
-	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
+	if (Game::sMKIn.IsPressed(VK_SPACE))
 	{
 		character.mVel.y = -JUMP_SPEED;
-		isGrounded = false;
+		//isGrounded = false;
 	}
 }
 
@@ -253,6 +254,17 @@ void Player::shipRender(DirectX::SpriteBatch& batch)
 {
 	character.Draw(batch);
 }
+
+bool Player::IsTop()
+{
+	return isTop;
+}
+
+bool Player::IsBottom()
+{
+	return isBottom;
+}
+
 
 void Player::CheckCollision()
 {
@@ -263,24 +275,26 @@ void Player::CheckCollision()
 	//check for player and screen borders collision
 
 	//bottom
-	if (character.mPos.y > WinUtil::Get().GetClientHeight())
+	if (character.mPos.y > WinUtil::Get().GetClientHeight() + 60)
 	{
-		character.mPos.y = WinUtil::Get().GetClientHeight();
+   		character.mPos.y = playerOrigin.y;
+		isBottom = true;
 	}
 	//top
-	if (character.mPos.y < playerOrigin.y * 2)
+	if (character.mPos.y < playerOrigin.y)
 	{
-		character.mPos.y = playerOrigin.y * 2;
+		character.mPos.y = WinUtil::Get().GetClientHeight() + 30;
+		isTop = true;
 	}
 	//right
-	if (character.mPos.x + playerOrigin.x > WinUtil::Get().GetClientWidth())
+	if (character.mPos.x > WinUtil::Get().GetClientWidth() + 15)
 	{
-		character.mPos.x = WinUtil::Get().GetClientWidth() - playerOrigin.x;
+		character.mPos.x = WinUtil::Get().GetClientWidth() + 14;
 	}
 	//left
-	if (character.mPos.x - playerOrigin.x < 0)
+	if (character.mPos.x < -15)
 	{
-		character.mPos.x = playerOrigin.x;
+		character.mPos.x = -14;
 	}
 
 	//if the player is on the bottom line (let's say it's the ground for now)

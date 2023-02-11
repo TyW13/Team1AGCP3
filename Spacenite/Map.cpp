@@ -20,9 +20,9 @@ Map::Map()
 	// Stores all the data from the json file in the respective variables from the class
 
 	height = document["height"].GetInt();
-	infinite = document["infinite"].GetBool();	
+	infinite = document["infinite"].GetBool();
 
-	GenericArray layersArray = document["layers"].GetArray();								
+	GenericArray layersArray = document["layers"].GetArray();
 	GenericObject layersObj = layersArray.begin()->GetObject();
 	GenericArray dataArray = layersObj["data"].GetArray();
 	name = layersObj["name"].GetString();

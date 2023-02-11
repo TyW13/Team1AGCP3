@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class Map	
+class Map
 {
 public:
 

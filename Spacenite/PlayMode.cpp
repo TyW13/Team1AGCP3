@@ -5,9 +5,8 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-
-#include "rapidjson/filereadstream.h"
-#include "Map.h"
+#include "PlayerCharacter.h"
+#include "Map.h"			// CAN REMOVE THIS WHEN FIND BETTER PLACE TO PUT IT 
 
 using namespace std;
 using namespace DirectX;
@@ -138,7 +137,7 @@ void PlayMode::UpdateAsteroids(float dTime)
 	}
 }
 
-void PlayMode::RenderAsteroids(SpriteBatch& batch)
+void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 {
 	for (Asteroid& asteroid : mAsteroids)
 	{
@@ -149,25 +148,33 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 
 
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
 {
-	//bGround.Init(d3d);
+	rManager.Init(d3d.GetDevice(), d3d);
+	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
+	rManager.AddGameObject(d3d);
+	//rManager.LoadJSON();
+	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);
 	//InitAsteroids();
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
+
 	assert(mpFont);
 
 	// JSON TESTING. DONT KEEP HERE. MOVE WHEN FIND A SUITABLE PLACE FOR IT 
-
 	Map testMap; 
+
+	assert(mpFont);	
 }
 
 void PlayMode::Release()
 {
 	delete mpFont;
 	mpFont = nullptr;
+	//delete rManager;
+	//rManager = nullptr;
 }
 
 void PlayMode::UpdateMissile(float dTime)
@@ -183,32 +190,37 @@ void PlayMode::UpdateMissile(float dTime)
 
 void PlayMode::Update(float dTime, bool& _endGame)
 {
-	//bGround.Update(dTime);
+	bGround.Update(dTime, IsTop, IsBottom);
+	rManager.Update(dTime);
+	//if (Player.character.GetActive())
+	//{
+	//	//UpdateMissile(dTime);
+	//	Player.Update(dTime);
+	//	IsTop = Player.IsTop();
+	//	IsBottom = Player.IsBottom();
 
-	if (Player.character.GetActive())
-	{
-		//UpdateMissile(dTime);
-		Player.Update(dTime);
-	}
-	else
-	{
-		_endGame = true;
-	}
+	//}
+	//else
+	//{
+	//	_endGame = true;
+	//}
 
 	//UpdateAsteroids(dTime);
 }
 
-void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
+void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
-	//bGround.Render(batch);
-	if (Player.character.GetActive())
-	{
-		Player.Render(batch);
-		//mMissile.Render(batch);
+	bGround.Render(batch);
+	//if (Player.character.GetActive())
+	//{
+	//	Player.Render(batch);
+	//	//mMissile.Render(batch);
 
-	}
+	//}
+	rManager.Render(batch);
 
 	//RenderAsteroids(batch);
+
 
 	// Increase score over time
 	pScore = (int)GetClock() * 10 + additionalScore;

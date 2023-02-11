@@ -1,4 +1,4 @@
-[{ "compressionlevel":-1,
+{ "compressionlevel":-1,
  "height":23,
  "infinite":false,
  "layers":[
@@ -51,4 +51,4 @@
  "type":"map",
  "version":"1.9",
  "width":40
-}]
+}

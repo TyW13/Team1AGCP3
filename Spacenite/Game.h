@@ -5,13 +5,14 @@
 
 #include "Input.h"
 #include "D3D.h"
-#include "SpriteBatch.h"
 #include "SpriteFont.h"
 #include "Sprite.h"
 #include "Background.h"
 #include "GameObject.h"
 #include "PlayMode.h"
 //#include "..\..\sqlite\sqlite3.h"
+
+//class ResourceManager;
 
 /*
 Basic wrapper for a game
@@ -34,9 +35,9 @@ public:
 	void InitEnd(MyD3D& d3d);
 	void UpdateIntro();
 	void UpdateEnd();
-	void RenderIntro(DirectX::SpriteBatch& batch);
-	void RenderName(DirectX::SpriteBatch& batch);
-	void RenderEnd(DirectX::SpriteBatch& batch);
+	void RenderIntro(DirectX::DX11::SpriteBatch& batch);
+	void RenderName(DirectX::DX11::SpriteBatch& batch);
+	void RenderEnd(DirectX::DX11::SpriteBatch& batch);
 	std::string EncryptName(std::wstring pName, char encryptKey);
 	std::string EncryptScore(int playerScore, char encryptKey);
 	void ReadScoreFile(char encryptKey);
