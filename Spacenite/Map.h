@@ -4,65 +4,15 @@
 #include <vector>
 #include <string>
 
-//class TileSetMap
-//{
-//public:
-//
-//	TileSetMap(rapidjson::Value& value);
-//
-//	~TileSetMap() {}
-//
-//	int getFirstGId() { return firstgid; }
-//	std::string getSource() { return source; }
-//
-//private:
-//
-//	int firstgid;
-//	std::string source;
-//};
-
-//class Layers
-//{
-//public:
-//
-//	Layers(rapidjson::Value& value);
-//
-//	~Layers() {}
-//
-//	std::vector<int> getData() { return data; }
-//	int getHeight() { return height; }
-//	int getId() { return id; }
-//	std::string getImage() { return image; }
-//	std::string getName() { return name; }
-//	int getOpacity() { return opacity; }
-//	std::string getType() { return type; }
-//	bool isVisible() { return visible; }
-//	int getWidth() { return width; }
-//	int getX() { return x; }
-//	int getY() { return y; }
-//
-//private:
-//
-//	std::vector<int> data;
-//	int height;
-//	int id;
-//	std::string image;
-//	std::string name;
-//	int opacity;
-//	std::string type;
-//	bool visible;
-//	int width;
-//	int x;
-//	int y;
-//};
-
-class Map					// This class represents all the data from the json after it has been parsed
+class Map	
 {
 public:
 
 	Map::Map();
 
 	~Map() {}
+
+	// All functions are below are Getters that return the value requested 
 
 	// Layers array functions 
 	int getID() { return id; }
@@ -92,29 +42,29 @@ public:
 private:
 
 	// Layers array data
-	int id;
-	std::string name;
-	int opacity;
-	std::string layersType;
-	bool visible;
-	int x;
-	int y;
+	int id;								// layer ID 
+	std::string name;					// name of layer 
+	int opacity;						// how transparent layer is between 0-1 
+	std::string layersType;				// type of layer 
+	bool visible;						// whether layer is shown or hidden 
+	int x;								// horizontal layer offset
+	int y;								// vertical layer offset
 
-	int height;
-	bool infinite;
+	int height;							// height of the map in tiles 
+	bool infinite;						// refers to if map has infinite height/width 
 	int nextlayerid;
 	int nextobjectid;
-	std::string orientation;
-	std::string renderorder;
-	std::string tiledversion;
-	int tileheight;
-	int tilewidth;
+	std::string orientation;			// shape of each tile - "orthogonal" = square tiles 
+	std::string renderorder;			// the order that tiles are rendered in - "right-down" = begins rendering from the top left corner of map 
+	std::string tiledversion;			// tiled version number 
+	int tileheight;						// height of one tile 
+	int tilewidth;						// width of one tile 
 	std::string type;
-	int width;
+	int width;							// width of the map in tiles 
 
 	// Tilesets array data
-	int firstgid;
-	std::string source;
+	int firstgid;						// refers to which tile set was used to create the map 
+	std::string source;					// links to the tile set used to create map 
 };
 
 

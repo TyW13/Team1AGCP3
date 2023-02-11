@@ -22,7 +22,7 @@ Map::Map()
 	height = document["height"].GetInt();
 	infinite = document["infinite"].GetBool();	
 
-	GenericArray layersArray = document["layers"].GetArray();									// Gets everything in the layers array in json and stores in new 
+	GenericArray layersArray = document["layers"].GetArray();								
 	GenericObject layersObj = layersArray.begin()->GetObject();
 	GenericArray dataArray = layersObj["data"].GetArray();
 	name = layersObj["name"].GetString();
@@ -49,45 +49,3 @@ Map::Map()
 	type = document["type"].GetString();
 	width = document["width"].GetInt();
 }
-
-//Layers::Layers(rapidjson::Value& value)			
-//{
-//	if (value.HasMember("data"))
-//	{
-//		for (auto& v : value.GetArray()) 
-//		{
-//			data.push_back(v.GetInt());
-//		}
-//	}
-//	
-//	if (value.HasMember("height"))
-//	{
-//		height = value["height"].GetInt();
-//	}
-//
-//	id = value["id"].GetInt();
-//
-//	if (value.HasMember("image")) 
-//	{
-//		image = value["image"].GetString();
-//	}
-//
-//	name = value["name"].GetString();
-//	opacity = value["opacity"].GetInt();
-//	type = value["type"].GetString();
-//	visible = value["visible"].GetBool();
-//
-//	if (value.HasMember("width")) 
-//	{
-//		width = value["width"].GetInt();
-//	}
-//
-//	x = value["x"].GetInt();
-//	y = value["y"].GetInt();
-//}
-
-//TileSetMap::TileSetMap(rapidjson::Value& value) 
-//{
-//	firstgid = value["firstgid"].GetInt();
-//	source = value["source"].GetString();
-//}
