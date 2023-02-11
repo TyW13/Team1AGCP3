@@ -48,6 +48,12 @@
     <ClCompile Include="PlayMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileImport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D.h">
@@ -80,8 +86,15 @@
     <ClInclude Include="PlayMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileImport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="..\data\testMap.json" />
   </ItemGroup>
 </Project>
