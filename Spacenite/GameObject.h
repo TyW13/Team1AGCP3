@@ -1,4 +1,6 @@
 #pragma once
+#include <d2d1.h>
+
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
@@ -132,3 +134,5 @@ private :
 	void platformRender(DirectX::SpriteBatch& batch);
 
 };
+
+
