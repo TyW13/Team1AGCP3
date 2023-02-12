@@ -6,6 +6,7 @@
 #include <SimpleMath.h>
 #include <math.h>
 
+#include "Sprite.h"
 
 
 // Region R = { (x.y.z) | min.x < = x <= max.x, min,y <= y <=max.y, min.z <= z <= max.z }
@@ -42,6 +43,11 @@ public:
     // Function to check if two rectangles are colliding
 	static bool CheckCollision(const Rect& a, const Rect& b)
 	{
+		// If play > Asteroid
+		// If Missile > Asteroid
+		// If Player > Platform
+		// If Asteroid > Platform
+
 		//// Check collision between asteroid-player
 		//if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
 		//	&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))

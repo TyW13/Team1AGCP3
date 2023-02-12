@@ -2,32 +2,33 @@
 #include "GameObject.h"
 #include "Game.h"
 #include <iostream>
+#include "Sprite.h"
 
-//int Collision::AsteroidCollision(float dTime, Sprite& _mPlayer, Sprite& _mMissile)
-//{
-//	float radius = 32.0f;
-//
-	//// Check collision between asteroid-player
-	//if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
-	//	&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
-	//{
-	//	float radius = 32.0f;
-	//	active = false;
-	//	_mPlayer.SetActive(false);
-	//}
-//}
-//
-//int Collision::BulletCollision()
-//{
-//	// Check collision between asteroid-bullet
-//	if (((_mMissile.mPos.x > asteroidSpr.mPos.x - radius) && (_mMissile.mPos.x < asteroidSpr.mPos.x + 10))
-//		&& ((_mMissile.mPos.y > asteroidSpr.mPos.y - radius) && (_mMissile.mPos.y < asteroidSpr.mPos.y + 10)))
-//	{
-//		additionalScore += 10;
-//		active = false;
-//		_mMissile.SetActive(false);
-//	}
-//}
+int Collision::AsteroidCollision(float dTime, Sprite& _mPlayer, Sprite& _mMissile)
+{
+	float radius = 32.0f;
+
+	// Check collision between asteroid-player
+	if (((_mPlayer.mPos.x > asteroidSpr.mPos.x - radius) && (_mPlayer.mPos.x < asteroidSpr.mPos.x + 10))
+		&& ((_mPlayer.mPos.y > asteroidSpr.mPos.y - radius) && (_mPlayer.mPos.y < asteroidSpr.mPos.y + 10)))
+	{
+		float radius = 32.0f;
+		active = false;
+		_mPlayer.SetActive(false);
+	}
+}
+
+int Collision::BulletCollision()
+{
+	// Check collision between asteroid-bullet
+	if (((_mMissile.mPos.x > asteroidSpr.mPos.x - radius) && (_mMissile.mPos.x < asteroidSpr.mPos.x + 10))
+		&& ((_mMissile.mPos.y > asteroidSpr.mPos.y - radius) && (_mMissile.mPos.y < asteroidSpr.mPos.y + 10)))
+	{
+		additionalScore += 10;
+		active = false;
+		_mMissile.SetActive(false);
+	}
+}
 
 int Collision::PlatformCollision()
 {
