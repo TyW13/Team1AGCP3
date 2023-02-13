@@ -1,13 +1,94 @@
 #pragma once
+<<<<<<< Updated upstream
 #include <string>
+=======
+
+#include <vector>
+#include <map>
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+
+using namespace rapidjson;
+
+// TEST CLASS
+class LayerData 
+{
+public:
+	std::vector<int> GetData() { return data; };
+	int GetHeight() { return height; };
+	int GetId() { return id; };
+	std::string GetName() { return name; };
+	float GetOpacity() { return opacity; };
+	std::string GetType() { return type; };
+	bool IsVisible() { return visible; };
+	float GetWidth() { return width; };
+	float GetX() { return x; };
+	float GetY() { return y; };
+
+private:
+	std::vector<int> data;
+	int height;
+	int id;
+	std::string name;
+	float opacity;
+	std::string type;
+	bool visible;
+	float width;
+	float x;
+	float y;
+};
+
+class TileSet
+{
+public:
+
+	TileSet::TileSet();
+	TileSet::TileSet(int firstgid, const char* tileset);
+	~TileSet(){}
+
+	int getFirstGid() { return firstgid; }
+	int getColumns() { return columns; }
+	std::string getImaage() { return image; }
+	int getImageHeight() { return imageHeight; }
+	int getImageWidth() { return imageWidth; }
+	int getMargin() { return margin; }
+	std::string getName() { return name; }
+	int getSpacing(){ return spacing; }
+	int getTileCount() { return tilecount; }
+	int getTileHeight() { return tileheight; }
+	int getTileWidth() { return tilewidth; }
+	std::string getType() { return type; }
+>>>>>>> Stashed changes
 
 class Map
 {
 public:
 
+<<<<<<< Updated upstream
 	Map::Map();
 
 	~Map() {}
+=======
+	TileSetMap(Value& value);
+
+	~TileSetMap() {}
+
+	int getFirstGId() { return firstgid; }
+	std::string getSource() { return source; }
+
+private:
+
+	int firstgid;
+	std::string source;
+};
+
+class Layers
+{
+public:
+	Layers(){}
+
+	Layers(Value& value);
+>>>>>>> Stashed changes
 
 	// All functions are below are Getters that return the value requested 
 

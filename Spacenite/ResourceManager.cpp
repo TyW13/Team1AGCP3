@@ -1,12 +1,8 @@
 #include "D3D.h"
-#include "rapidjson/filereadstream.h"
-#include "rapidjson/document.h"
 #include <cstdio>
 #include "ResourceManager.h"
-#include "PlayerCharacter.h"
 
-#include "rapidjson/filereadstream.h"
-#include "Map.h"
+
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
@@ -102,4 +98,52 @@ std::string ResourceManager::SetTexName(std::string path)
 void ResourceManager::LoadJSON()
 {
 	Map testMap;
+	std::vector<TileSet> tilesets;
+	std::vector<TileSetMap> tilesetMaps = testMap.getTileSetMap();
+
+	for (size_t i = 0; i < tilesetMaps.size(); i++)
+	{
+		std::string file = tilesetMaps[i].getSource();
+		file = file.substr(0, file.size() - 4) + ".json";
+
+		TileSet tileset(tilesetMaps[i].getFirstGId(), ("data/"+ file).c_str());
+		tilesets.push_back(tileset);
+
+		LoadTiles(tilesets[0], testMap.getLayers()[0]);
+	}
+}
+
+void ResourceManager::LoadTiles(TileSet tileset, Layers layer)
+{
+	//FILE* fp = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
+
+	//char readBuffer[10000];
+	//FileReadStream stream(fp, readBuffer, sizeof(readBuffer));
+
+	//Document tsDoc;
+	//tsDoc.ParseStream(stream);			// parses json file 
+
+	//fclose(fp);
+
+	//Document tsDoc;
+	//tsDoc.Parse()
+
+	std::vector<int> data = layer.getData();
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		if (data[i] != 0)
+		{
+			size_t columns = tileset.getColumns();
+			size_t val = data[i] - tileset.getFirstGid();
+
+			size_t x = val % columns;
+			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats bigger than original value)
+
+			size_t xPos = i % layer.getWidth();
+			size_t yPos = floor(i / layer.getWidth());
+
+			float tileXPos = xPos * tileset.getTileWidth();
+			float tileYPos = yPos * tileset.getTileHeight();
+		}
+	}
 }
