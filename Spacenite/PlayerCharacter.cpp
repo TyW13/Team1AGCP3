@@ -28,6 +28,7 @@ void PlayerCharacter::Update(float dTime)
 	//update player core movement
 	objSprite.mPos.x += objSprite.mVel.x * dTime;
 	objSprite.mPos.y += objSprite.mVel.y * dTime;
+	objSprite.mPos.y += objSprite.mVel.y * dTime;
 
 	//decrease velocity by gravity
 	objSprite.mPos.y += GRAVITY * dTime;
@@ -52,6 +53,8 @@ void PlayerCharacter::Update(float dTime)
 	UpdateInput(dTime);
 	CheckCollision();
 }
+
+
 
 void PlayerCharacter::UpdateInput(float dTime)
 {

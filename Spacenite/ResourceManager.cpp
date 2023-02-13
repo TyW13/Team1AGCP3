@@ -12,7 +12,7 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
 	// Will eventually not need to hard code in file, should read from .json file
 	CreateTexture(pDevice, "testTexture.dds");
-	CreateTexture(pDevice, "ship.dds");
+	CreateTexture(pDevice, "ProgChar.dds");
 }
 
 void ResourceManager::Update(float dTime)
@@ -67,7 +67,7 @@ void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fP
 // Function to add gameobjects to resource manager. Will eventually work with json file to mass import objects
 void ResourceManager::AddGameObject(MyD3D& d3d)
 {
-	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(0.5, 0.5), true);							// Manually creating new player object
+	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ProgChar"), Vector2(0.5, 0.5), true);							// Manually creating new player object
 
 	m_gObjects.emplace_back(obj);
 }

@@ -108,6 +108,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Collision2D.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="D3DUtil.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -116,6 +117,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="newGameObject.cpp" />
+    <ClCompile Include="PlatformClass.cpp" />
     <ClCompile Include="PlayerCharacter.cpp" />
     <ClCompile Include="PlayMode.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -128,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collision2D.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="D3DUtil.h" />
     <ClInclude Include="Game.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="newGameObject.h" />
+    <ClInclude Include="PlatformClass.h" />
     <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="PlayMode.h" />
     <ClInclude Include="ResourceManager.h" />

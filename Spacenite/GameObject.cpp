@@ -186,7 +186,7 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "ship.dds");
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "/Prog/ProgChar.dds");
 	character.SetTex(*p);
 	character.SetScale(Vector2(0.15f, 0.15f));
 	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
