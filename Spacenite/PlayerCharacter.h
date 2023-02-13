@@ -55,7 +55,7 @@ public:
 	//~PlayerCharacter(){}																											// Destructor
 
 	void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active) override;
-	void Update(float dTime) override;
+	void Update(float dTime);
 	void Terminate();
 
 	Sprite GetSprite() override;

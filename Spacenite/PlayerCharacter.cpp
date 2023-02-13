@@ -3,7 +3,8 @@
 #include "PlayerCharacter.h"
 #include "Texture.h"
 #include "ResourceManager.h"
-
+#include "GameObject.h"
+#include "newGameObject.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -29,6 +30,11 @@ void PlayerCharacter::Update(float dTime)
 	objSprite.mPos.x += objSprite.mVel.x * dTime;
 	objSprite.mPos.y += objSprite.mVel.y * dTime;
 	objSprite.mPos.y += objSprite.mVel.y * dTime;
+
+	
+	// Keep the player within windows bounds
+
+	
 
 	//decrease velocity by gravity
 	objSprite.mPos.y += GRAVITY * dTime;

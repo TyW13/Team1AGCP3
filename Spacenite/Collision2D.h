@@ -28,7 +28,33 @@ public:
 	
 };
 
-
+//class Collision2D
+//{
+//public:
+//    Collision2D() {}
+//
+//    // This function takes in two rectangles and returns true if they are intersecting.
+//    bool CheckRectangleCollision(DirectX::XMFLOAT2 rect1Pos, DirectX::XMFLOAT2 rect1Size, DirectX::XMFLOAT2 rect2Pos, DirectX::XMFLOAT2 rect2Size)
+//    {
+//        float rect1Left = rect1Pos.x - rect1Size.x / 2.0f;
+//        float rect1Right = rect1Pos.x + rect1Size.x / 2.0f;
+//        float rect1Top = rect1Pos.y + rect1Size.y / 2.0f;
+//        float rect1Bottom = rect1Pos.y - rect1Size.y / 2.0f;
+//
+//        float rect2Left = rect2Pos.x - rect2Size.x / 2.0f;
+//        float rect2Right = rect2Pos.x + rect2Size.x / 2.0f;
+//        float rect2Top = rect2Pos.y + rect2Size.y / 2.0f;
+//        float rect2Bottom = rect2Pos.y - rect2Size.y / 2.0f;
+//
+//        if (rect1Right > rect2Left && rect1Left < rect2Right &&
+//            rect1Top > rect2Bottom && rect1Bottom < rect2Top)
+//        {
+//            return true;
+//        }
+//
+//        return false;
+//    }
+//};
 
 class Collision
 {

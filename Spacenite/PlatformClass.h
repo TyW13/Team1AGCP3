@@ -3,6 +3,44 @@
 
 using namespace DirectX;
 
+
+class Platform
+{
+public:
+
+    // Create instances
+
+    Platform(float x, float y, float width, float height)
+        : X(x), Y(y), Width(width), Height(height)
+    {}
+
+    // Retrieve Position
+
+    XMFLOAT2 GetPosition() const
+    {
+        return XMFLOAT2(X, Y);
+    }
+
+    // Get Size
+    XMFLOAT2 GetSize() const
+    {
+        return XMFLOAT2(Width, Height);
+    }
+
+    // Check for intersects with
+
+    bool IntersectsWith(const Platform& other) const
+    {
+        return X < other.X + other.Width && X + Width > other.X &&
+            Y < other.Y + other.Height && Y + Height > other.Y;
+    }
+
+private:
+    float X, Y;
+    float Width, Height;
+};
+
+
 class Platformer
 {
 private:

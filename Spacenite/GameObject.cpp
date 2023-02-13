@@ -202,6 +202,12 @@ void Player::Update(float dTime)
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
 
+	// KA
+	// Keep the player within the window bounds
+
+	if (character.mPos.x < 0) character.mPos.x = 0;
+	if (character.mPos.x + character.width
+
 	//decrease velocity by gravity
 	character.mPos.y += GRAVITY * dTime;
 	
