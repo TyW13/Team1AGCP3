@@ -4,6 +4,7 @@
 =======
 
 #include <vector>
+#include <string>
 #include <map>
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
