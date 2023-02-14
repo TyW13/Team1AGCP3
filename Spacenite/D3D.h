@@ -45,6 +45,9 @@ public:
 		return *mpWrapSampler;
 	}
 
+	void DrawBox(float x, float y, float width, float height);
+
+
 private:
 	TexCache mTexCache;
 	//what type of gpu have we got - hopefully a hardware one

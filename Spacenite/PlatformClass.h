@@ -1,17 +1,27 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "Sprite.h"
+#include "WindowUtils.h"
 
 using namespace DirectX;
 
+
+// Vertex structure for a 2D platform
+struct PlatformVertex
+{
+    XMFLOAT3 Position;
+    XMFLOAT4 Color;
+};
 
 class Platform
 {
 public:
 
+ 
     // Create instances
 
-    Platform(float x, float y, float width, float height)
-        : X(x), Y(y), Width(width), Height(height)
+    Platform(float xPos, float yPos, float width, float height)
+        : X(xPos), Y(yPos), Width(width), Height(height)
     {}
 
     // Retrieve Position
@@ -27,18 +37,52 @@ public:
         return XMFLOAT2(Width, Height);
     }
 
-    // Check for intersects with
+    void RenderPlatform()
+    {
+        // Create a platform instance
+        Platform platform(100.0f, 200.0f, 300.0f, 50.0f);
 
+        // Create the vertex buffer for the platform
+        PlatformVertex vertices[] =
+        {
+            { XMFLOAT3(platform.GetPosition().x, platform.GetPosition().y, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+            { XMFLOAT3(platform.GetPosition().x + platform.GetSize().x, platform.GetPosition().y, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+            { XMFLOAT3(platform.GetPosition().x, platform.GetPosition().y + platform.GetSize().y, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+            { XMFLOAT3(platform.GetPosition().x + platform.GetSize().x, platform.GetPosition().y + platform.GetSize().y, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+        };
+
+        // Code to set up Direct3D device and rendering context...
+
+        // Create the vertex buffer
+        D3D11_BUFFER_DESC vertexBufferDesc = {};
+        vertexBufferDesc.ByteWidth = sizeof(PlatformVertex) * 4;
+        vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        vertexBufferDesc.CPUAccessFlags = 0;
+    }
+
+
+    // Check for intersects with
+    // Platform
+    // Other - Player/Missile
     bool IntersectsWith(const Platform& other) const
     {
         return X < other.X + other.Width && X + Width > other.X &&
             Y < other.Y + other.Height && Y + Height > other.Y;
     }
 
+    
+
 private:
     float X, Y;
     float Width, Height;
+
+
+
 };
+
+
+
 
 
 class Platformer
@@ -99,6 +143,13 @@ public:
         platformSize = XMFLOAT2(10.0f, 2.0f);
     }
 
+    void PlatformInit()
+    {
+        
+    }
+
+
+ 
     void Update(float deltaTime)
     {
         if (OnGround())
@@ -107,6 +158,7 @@ public:
         }
     }
 };
+
 
 //
 //// Check for player-platform collision

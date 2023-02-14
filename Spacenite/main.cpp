@@ -6,6 +6,7 @@
 
 #include "WindowUtils.h"
 #include "Game.h"
+#include "PlatformClass.h"
 
 using namespace std;
 using namespace DirectX;
@@ -53,6 +54,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	int w(320 * 6), h(180 * 6);
 	if (!WinUtil::Get().InitMainWindow(w, h, hInstance, "Spacenite", MainWndProc, true))
 		assert(false);
+
+	
 
 	MyD3D d3d;
 	if (!d3d.InitDirect3D(OnResize))

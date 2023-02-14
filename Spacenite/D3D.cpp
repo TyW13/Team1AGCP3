@@ -29,7 +29,17 @@ void MyD3D::EndRender()
 	HR(mpSwapChain->Present(0, 0));
 }
 
+void MyD3D::DrawBox(float x, float y, float width, float height)
+{
 
+	// Bind vertex buffers
+	// Maybe set winding order
+	// Some other stuff - look at rastertek
+	int nVerts = 0; // Number of verticies
+	int StartVexterLocation = 0;
+
+	mpd3dImmediateContext->Draw(nVerts, StartVexterLocation);
+}
 
 // Resize the swap chain and recreate the render target view.
 void MyD3D::ResizeSwapChain(int screenWidth, int screenHeight)
