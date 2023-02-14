@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)
 {
 
-	int w(1920 * 0.65), h(1080 * 0.65);
+	int w(1920), h(1080);
 	if (!WinUtil::Get().InitMainWindow(w, h, hInstance, "Spacenite", MainWndProc, true))
 		assert(false);
 

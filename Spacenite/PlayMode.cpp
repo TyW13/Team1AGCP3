@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include "PlayerCharacter.h"
-#include "Map.h"			// CAN REMOVE THIS WHEN FIND BETTER PLACE TO PUT IT 
+//#include "Map.h"			// CAN REMOVE THIS WHEN FIND BETTER PLACE TO PUT IT 
 
 //#include "rapidjson/document.h"
 //#include "rapidjson/filereadstream.h"
@@ -16,6 +16,7 @@
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+
 
 Asteroid* PlayMode::CheckAsteroidColl(Asteroid& asteroid)
 {
@@ -158,10 +159,8 @@ PlayMode::PlayMode(MyD3D& d3d)
 	rManager.Init(d3d.GetDevice(), d3d);
 	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
 	rManager.AddGameObject(d3d);
-	
-	Map testMap;
 
-	rManager.LoadJSON(testMap);
+	rManager.LoadJSON();
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);

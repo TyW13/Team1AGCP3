@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="testtileset" tilewidth="8" tileheight="8" tilecount="15" columns="5">
- <image source="../../OneDrive/Desktop/Team1AGCP3/Team1AGCP3/data/test_sheet.png" trans="ff00ff" width="40" height="24"/>
+ <image source="../../data/test_sheet.png" trans="ff00ff" width="40" height="24"/>
  <tile id="0">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="8" height="8"/>

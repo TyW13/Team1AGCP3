@@ -1,14 +1,21 @@
 #include <cstdio>
 #include "ResourceManager.h"
 #include "Map.h"
+#include "Tile.h"
+
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
 using namespace rapidjson;
+using namespace DirectX;
+
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
 	// Will eventually not need to hard code in file, should read from .json file
 	CreateTexture(pDevice, "testTexture.dds");
 	CreateTexture(pDevice, "ship.dds");
+	CreateTexture(pDevice, "test_sheet.dds");
 }
 
 void ResourceManager::Update(float dTime)
@@ -63,9 +70,15 @@ void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fP
 // Function to add gameobjects to resource manager. Will eventually work with json file to mass import objects
 void ResourceManager::AddGameObject(MyD3D& d3d)
 {
-	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(20, 20), Vector2(0.5, 0.5), true);							// Manually creating new player object
+	//PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(20, 20), Vector2(0.5, 0.5), true);							// Manually creating new player object
 
-	m_gObjects.emplace_back(obj);
+	//m_gObjects.emplace_back(obj);
+
+	for (int i = 0; i < tileRects.size(); i++)
+	{
+		Tile* newTile = new Tile(d3d, GetTexture("test_sheet"), tilePositions[i], Vector2(6, 4), true, tileRects[i]);
+		m_gObjects.emplace_back(newTile);
+	}
 }
 
 // Get function for given texture using its std::string name used in the std::map
@@ -94,18 +107,26 @@ std::string ResourceManager::SetTexName(std::string path)
 	return noPath;
 }
 
+
+
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
-void ResourceManager::LoadJSON(Map& map)
+void ResourceManager::LoadJSON()
 {
-	//Map testMap;
-	FILE* f = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
+	Map testMap("data/TestingLevel0.json");
+
+	// IMPORT CODE TO CONVERT TSX FILE TO JSON FILE
+	std::string newSource = "data/" + testMap.getSource().substr(0, testMap.getSource().size() - 4) + ".json";
+
+
+	FILE* f = fopen(newSource.c_str(), "rb");		// opens json file 
 
 	if (!f)
 	{
 		printf("didnt work");
+		assert(false);
 	}
 
-	char readBuffer[10000];
+	char readBuffer[4096];
 	FileReadStream is(f, readBuffer, sizeof(readBuffer));
 
 	Document tilesetDoc;
@@ -113,30 +134,115 @@ void ResourceManager::LoadJSON(Map& map)
 
 	fclose(f);
 
-	TileSet tileSet;
-	tileSet.Init(tilesetDoc);
+	ts_Columns = tilesetDoc["columns"].GetInt();
+	ts_Image = tilesetDoc["image"].GetString();
+	ts_ImageHeight = tilesetDoc["imageheight"].GetInt();
+	ts_ImageWidth = tilesetDoc["imagewidth"].GetInt();
+	ts_Margin = tilesetDoc["margin"].GetInt();
+	ts_Name = tilesetDoc["name"].GetString();
+	ts_Spacing = tilesetDoc["spacing"].GetInt();
+	ts_Tilecount = tilesetDoc["tilecount"].GetInt();
+	ts_Tileheight = tilesetDoc["tileheight"].GetInt();
+	ts_Tilewidth = tilesetDoc["tilewidth"].GetInt();
+	ts_Type = tilesetDoc["type"].GetString();
+
+	LoadTileSet(testMap);
 }
 
-void ResourceManager::LoadTileSet(TileSet& tileSet, Map map)
+void ResourceManager::LoadTileSet(Map map)
 {
 	std::vector<int> data = map.getData();
 	for (size_t i = 0; i < data.size(); i++)
 	{
 		if (data[i] != 0)
 		{
-			size_t columns = tileSet.getColumns();
-			size_t val = data[i] - tileSet.getFirstGid();
+			size_t columns = ts_Columns;
+			size_t val = data[i] - map.getFirstgid();								// Value of tile in tileset starting from 0 -> 13
 
-			size_t x = val % columns;
-			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats bigger than original value)
+			size_t x = val % columns;												// Position of tile on the tile map, (0,0) is top left going down and to the right
+			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats lower than original value)
+			
+			size_t xPos = i % map.getWidth();										//
+			size_t yPos = floor(i / map.getWidth());								//
 
-			size_t xPos = i % map.getWidth();
-			size_t yPos = floor(i / map.getWidth());
+			float tileXPos = xPos * ts_Tilewidth;									// Tile object x and y position on screen
+			float tileYPos = yPos * ts_Tileheight;
 
-			float tileXPos = xPos * tileSet.getTileWidth();
-			float tileYPos = yPos * tileSet.getTileHeight();
+			tilePositions.push_back(Vector2(xPos, yPos));
+
+			float x1 = x * ts_Tilewidth;											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			float x2 = (x + 1) * ts_Tilewidth;
+			float y1 = y * ts_Tileheight;
+			float y2 = (y + 1) * ts_Tileheight;
 
 			// CONSTRUCT TILE WITH POSITIONS or JUST CHECK POSITIONS FOR FUTUre
+
+			RECTF tileRect;
+			tileRect.left = x1;
+			tileRect.right = x2;
+			tileRect.top = y1;
+			tileRect.bottom = y2;
+
+			tileRects.push_back(tileRect);
 		}
 	}
+}
+
+Map::Map(const char* filePath)
+{
+	FILE* fp = fopen(filePath, "rb");		// opens json file 
+
+	char readBuffer[10000];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	rapidjson::Document document;
+	document.ParseStream(is);			// parses json file 
+
+	fclose(fp);		// closes json once it has been read 
+
+	// Stores all the data from the json file in the respective variables from the class
+
+	height = document["height"].GetInt();
+	infinite = document["infinite"].GetBool();
+	
+	Value::Array layersArray = document["layers"].GetArray();
+	//rapidjson::GenericObject layersObj = layersArray[0]
+
+	GenericArray layersA = document["layers"].GetArray();
+	//GenericObject test = layersA.begin()->GetObject();
+	//Value:: layerValue = layersA[0];					////// FIX THIS LOOP STUFF ////
+
+	for (size_t i = 0; i < layersA.Capacity(); i++)
+	{
+		if (layersA[0].HasMember("data"))
+		{
+			for (auto& v : layersA[0]["data"].GetArray())
+			{
+				data.push_back(v.GetInt());
+			}
+		}
+	}
+
+	
+	name = layersA[0]["name"].GetString();
+	id = layersA[0]["id"].GetInt();
+	opacity = layersA[0]["opacity"].GetInt();
+	layersType = layersA[0]["type"].GetString();
+	visible = layersA[0]["visible"].GetBool();
+	x = layersA[0]["x"].GetInt();
+	y = layersA[0]["y"].GetInt();
+
+	nextobjectid = document["nextobjectid"].GetInt();
+	orientation = document["orientation"].GetString();
+	renderorder = document["renderorder"].GetString();
+	tileheight = document["tileheight"].GetInt();
+
+	Value::Array tilesets = document["tilesets"].GetArray();
+
+	firstgid = tilesets[0]["firstgid"].GetInt();
+	source = tilesets[0]["source"].GetString();
+
+	tilewidth = document["tilewidth"].GetInt();
+	type = document["type"].GetString();
+	width = document["width"].GetInt();
 }

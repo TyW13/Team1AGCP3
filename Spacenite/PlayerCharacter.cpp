@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include "ResourceManager.h"
 
-
+using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool active)
