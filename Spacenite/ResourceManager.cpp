@@ -1,8 +1,8 @@
-#include "D3D.h"
 #include <cstdio>
 #include "ResourceManager.h"
+#include "Map.h"
 
-
+using namespace rapidjson;
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
@@ -63,7 +63,7 @@ void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fP
 // Function to add gameobjects to resource manager. Will eventually work with json file to mass import objects
 void ResourceManager::AddGameObject(MyD3D& d3d)
 {
-	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(0.5, 0.5), true);							// Manually creating new player object
+	PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(20, 20), Vector2(0.5, 0.5), true);							// Manually creating new player object
 
 	m_gObjects.emplace_back(obj);
 }
@@ -95,55 +95,48 @@ std::string ResourceManager::SetTexName(std::string path)
 }
 
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
-void ResourceManager::LoadJSON()
+void ResourceManager::LoadJSON(Map& map)
 {
-	Map testMap;
-	std::vector<TileSet> tilesets;
-	std::vector<TileSetMap> tilesetMaps = testMap.getTileSetMap();
+	//Map testMap;
+	FILE* f = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
 
-	for (size_t i = 0; i < tilesetMaps.size(); i++)
+	if (!f)
 	{
-		std::string file = tilesetMaps[i].getSource();
-		file = file.substr(0, file.size() - 4) + ".json";
-
-		TileSet tileset(tilesetMaps[i].getFirstGId(), ("data/"+ file).c_str());
-		tilesets.push_back(tileset);
-
-		LoadTiles(tilesets[0], testMap.getLayers()[0]);
+		printf("didnt work");
 	}
+
+	char readBuffer[10000];
+	FileReadStream is(f, readBuffer, sizeof(readBuffer));
+
+	Document tilesetDoc;
+	tilesetDoc.ParseStream(is);			// parses json file 
+
+	fclose(f);
+
+	TileSet tileSet;
+	tileSet.Init(tilesetDoc);
 }
 
-void ResourceManager::LoadTiles(TileSet tileset, Layers layer)
+void ResourceManager::LoadTileSet(TileSet& tileSet, Map map)
 {
-	//FILE* fp = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
-
-	//char readBuffer[10000];
-	//FileReadStream stream(fp, readBuffer, sizeof(readBuffer));
-
-	//Document tsDoc;
-	//tsDoc.ParseStream(stream);			// parses json file 
-
-	//fclose(fp);
-
-	//Document tsDoc;
-	//tsDoc.Parse()
-
-	std::vector<int> data = layer.getData();
+	std::vector<int> data = map.getData();
 	for (size_t i = 0; i < data.size(); i++)
 	{
 		if (data[i] != 0)
 		{
-			size_t columns = tileset.getColumns();
-			size_t val = data[i] - tileset.getFirstGid();
+			size_t columns = tileSet.getColumns();
+			size_t val = data[i] - tileSet.getFirstGid();
 
 			size_t x = val % columns;
 			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats bigger than original value)
 
-			size_t xPos = i % layer.getWidth();
-			size_t yPos = floor(i / layer.getWidth());
+			size_t xPos = i % map.getWidth();
+			size_t yPos = floor(i / map.getWidth());
 
-			float tileXPos = xPos * tileset.getTileWidth();
-			float tileYPos = yPos * tileset.getTileHeight();
+			float tileXPos = xPos * tileSet.getTileWidth();
+			float tileYPos = yPos * tileSet.getTileHeight();
+
+			// CONSTRUCT TILE WITH POSITIONS or JUST CHECK POSITIONS FOR FUTUre
 		}
 	}
 }

@@ -7,7 +7,7 @@
 
 using namespace DirectX::SimpleMath;
 
-void PlayerCharacter::Init(Texture* tex, Vector2 scale, bool active)
+void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool active)
 {
 	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true);
 	objSprite.SetTex(*objTex);
@@ -18,7 +18,7 @@ void PlayerCharacter::Init(Texture* tex, Vector2 scale, bool active)
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
 	//objSprite.mPos = Vector2(w / 2, h / 2);
-	objSprite.mPos = Vector2(20, 20);
+	objSprite.mPos = position;
 }
 
 void PlayerCharacter::Update(float dTime)

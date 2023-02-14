@@ -8,6 +8,11 @@
 #include "PlayerCharacter.h"
 #include "Map.h"			// CAN REMOVE THIS WHEN FIND BETTER PLACE TO PUT IT 
 
+//#include "rapidjson/document.h"
+//#include "rapidjson/filereadstream.h"
+//
+//using namespace rapidjson;
+
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -153,7 +158,10 @@ PlayMode::PlayMode(MyD3D& d3d)
 	rManager.Init(d3d.GetDevice(), d3d);
 	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
 	rManager.AddGameObject(d3d);
-	rManager.LoadJSON();
+	
+	Map testMap;
+
+	rManager.LoadJSON(testMap);
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);
@@ -164,8 +172,18 @@ PlayMode::PlayMode(MyD3D& d3d)
 	assert(mpFont);
 
 	// JSON TESTING. DONT KEEP HERE. MOVE WHEN FIND A SUITABLE PLACE FOR IT 
-	Map testMap; 
+	//FILE* f = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
 
+	//if (!f)
+	//{
+	//	printf("didnt work");
+	//}
+
+	//char readBuffer[10000];
+	//rapidjson::FileReadStream is(f, readBuffer, sizeof(readBuffer));
+
+	//Document tilesetDoc;
+	//tilesetDoc.ParseStream(is);			// parses json file 
 	assert(mpFont);	
 }
 

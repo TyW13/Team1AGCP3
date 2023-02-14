@@ -4,6 +4,7 @@
 #include <SpriteFont.h>
 #include "Sprite.h"
 #include "Texture.h"
+#include "D3DUtil.h"
 
 class GameObject
 {
@@ -55,7 +56,7 @@ public:
 	//	printf("DELETING GAME OBJECT\n");
 	//}	
 
-	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 scale, bool active);
+	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active);
 	virtual void Update(float dTime);
 	void Terminate();
 

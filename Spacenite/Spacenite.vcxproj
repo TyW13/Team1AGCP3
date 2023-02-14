@@ -123,6 +123,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TexCache.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="WindowUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TexCache.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TileMap.h" />
     <ClInclude Include="WindowUtils.h" />
   </ItemGroup>
   <ItemGroup>

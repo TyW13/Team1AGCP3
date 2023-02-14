@@ -5,15 +5,14 @@
 #include "Texture.h"
 #include "newGameObject.h"
 #include "PlayerCharacter.h"
-#include "Map.h"
 
 using namespace DirectX;
 
 class Texture;
 class GameObject;
 class PlayerCharacter;
-//class TileSet;
-//class Layers;
+class TileSet;
+class Map;
 
 class ResourceManager
 {
@@ -97,8 +96,8 @@ public:
 	void AddGameObject(MyD3D& d3d);
 	Texture* GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
-	void LoadJSON();
-	void LoadTiles(TileSet tileset, Layers layer);
+	void LoadJSON(Map& map);
+	void LoadTileSet(TileSet& tileSet, Map map);
 private:
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
