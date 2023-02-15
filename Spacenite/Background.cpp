@@ -31,6 +31,7 @@ void Background::Init(MyD3D& mD3D)
 		ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), f.second, f.first);
 		if (!p)
 			assert(false);
+		//sets the textures for each point in the array
 		bGroundTest[x][y].SetTex(*p);
 		++x;
 		if (x == 2)
@@ -51,18 +52,20 @@ void Background::Update(float dTime, Vector2& Pos)
 	//Check the player to see where they are (Needs moving back to GameObject)
 	CheckBounds(Pos);
 	//Change the x and y position of background array
-	Increase(IsTop, IsBottom);
+	Increase();
 	//Move the backgrounds(Not Needed after levels are included)
 	bGroundTest[currentx][currenty].Scroll(dTime * SCROLL_SPEED, 0);
 }
 
 void Background::Render(DirectX::SpriteBatch& batch)
 {
+	//This draws the current background that should be loaeded
 	bGroundTest[currentx][currenty].Draw(batch);
 }
 
-void Background::Increase(bool IsTop, bool IsBottom)
+void Background::Increase()
 {
+	//If the player is at the top of the screen it adds to the current y for the next background and prevents the amount from being increased if we are at the cap
 	if (IsTop == true)
 	{
 		++currenty;
@@ -76,6 +79,7 @@ void Background::Increase(bool IsTop, bool IsBottom)
 			IsMaxY = false;
 		}
 	}
+	//If the player is at the Bottom of the screen it decreases the current y for the next background and prevents the amount from being decreased if we are at the cap
 	if (IsBottom == true)
 	{
 		--currenty;
@@ -89,6 +93,7 @@ void Background::Increase(bool IsTop, bool IsBottom)
 			IsMinY = false;
 		}
 	}
+	//If the player is at the far left of the screen it increases x for the next background and prevents the amount from being increased if we are at the cap
 	if (IsLeft == true)
 	{
 		++currentx;
@@ -103,6 +108,7 @@ void Background::Increase(bool IsTop, bool IsBottom)
 		}
 
 	}
+	//If the player is at the far right of the screen it decreases x for the next background and prevents the amount from being decreased if we are at the cap
 	if (IsRight == true)
 	{
 		--currentx;
@@ -124,12 +130,12 @@ void Background::CheckBounds(Vector2& mPos)
 	Vector2 playerOrigin = Vector2((38.4, 38.4));
 
 	//check for player and screen borders collision
-
-	//bottom
+	//Bottom
 	if (mPos.y > WinUtil::Get().GetClientHeight() + 60)
 	{
 		if (IsMinY == true)
 		{
+			//Prevents the player going further down if the array is at its cap 
 			mPos.y = WinUtil::Get().GetClientHeight() + 59;
 		}
 		else
@@ -144,6 +150,7 @@ void Background::CheckBounds(Vector2& mPos)
 	{
 		if (IsMaxY == true)
 		{
+			//Prevents the player going further up if the array is at its cap 
 			mPos.y = playerOrigin.y + 1;
 		}
 		else
@@ -158,6 +165,7 @@ void Background::CheckBounds(Vector2& mPos)
 	{
 		if (IsMinX == true)
 		{
+			//Prevents the player going further right if the array is at its cap 
 			mPos.x = WinUtil::Get().GetClientWidth() + 14;
 		}
 		else
@@ -172,6 +180,7 @@ void Background::CheckBounds(Vector2& mPos)
 	{
 		if (IsMaxX == true)
 		{
+			//Prevents the player going further left if the array is at its cap
 			mPos.x = -14;
 		}
 		else

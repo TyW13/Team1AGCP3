@@ -19,7 +19,7 @@ public:
 	void Init(MyD3D& d3d);
 	void Update(float dTime, DirectX::SimpleMath::Vector2& mPos);
 	void Render(DirectX::SpriteBatch& batch);
-	void Increase(bool, bool);
+	void Increase();
 	void CheckBounds(DirectX::SimpleMath::Vector2& mPos);
 
 private:

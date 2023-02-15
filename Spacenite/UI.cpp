@@ -18,12 +18,15 @@ UserI::~UserI()
 
 void UserI::Init(MyD3D& d3d)
 {
+	//sets the texture for the background to the UI
 	ID3D11ShaderResourceView* p = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "backgroundlayers/mountains01_007.dds");
 	PauseSpr.SetTex(*p);
+	//Sets the font for the text
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 }
 void UserI::Update(int& pScore, float dTime)
 {
+	//NOT SURE IF NEEDED
 	if (Paused == false)
 	{
 		Timer += dTime;
@@ -34,6 +37,7 @@ void UserI::Update(int& pScore, float dTime)
 		}
 	}
 
+	//On key presses the game either ends or pauses
 	if (Game::sMKIn.IsPressed(VK_P) == true)
 	{
 		Paused = !Paused;
@@ -48,6 +52,7 @@ void UserI::Render(float dTime, DirectX::SpriteBatch& batch)
 	int w, h;
 	w = 540;
 	h = 270;
+	//if the game is paused displays the appropriate background and text
 	if (Paused == true)
 	{
 		string pause = "Paused";
@@ -56,6 +61,7 @@ void UserI::Render(float dTime, DirectX::SpriteBatch& batch)
 		PauseSpr.Draw(batch);
 		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
 	}
+	//if the game has ended displays the appropriate background and text
 	if (EndScreen == true)
 	{
 		PauseSpr.origin = (Vector2(255, 127));
