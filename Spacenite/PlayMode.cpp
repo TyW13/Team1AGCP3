@@ -158,9 +158,9 @@ PlayMode::PlayMode(MyD3D& d3d)
 {
 	rManager.Init(d3d.GetDevice(), d3d);
 	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
+	rManager.LoadJSON();
 	rManager.AddGameObject(d3d);
 
-	rManager.LoadJSON();
 	bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);

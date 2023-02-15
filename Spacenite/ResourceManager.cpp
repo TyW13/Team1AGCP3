@@ -112,7 +112,7 @@ std::string ResourceManager::SetTexName(std::string path)
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
 void ResourceManager::LoadJSON()
 {
-	Map testMap("data/TestingLevel0.json");
+	Map testMap("data/test_level_jump1.json");
 
 	// IMPORT CODE TO CONVERT TSX FILE TO JSON FILE
 	std::string newSource = "data/" + testMap.getSource().substr(0, testMap.getSource().size() - 4) + ".json";
@@ -165,10 +165,10 @@ void ResourceManager::LoadTileSet(Map map)
 			size_t xPos = i % map.getWidth();										//
 			size_t yPos = floor(i / map.getWidth());								//
 
-			float tileXPos = xPos * ts_Tilewidth;									// Tile object x and y position on screen
-			float tileYPos = yPos * ts_Tileheight;
+			float tileXPos = xPos * ts_Tilewidth * 6;									// Tile object x and y position on screen
+			float tileYPos = yPos * ts_Tileheight * 6;
 
-			tilePositions.push_back(Vector2(xPos, yPos));
+			tilePositions.emplace_back(Vector2(tileXPos, tileYPos));
 
 			float x1 = x * ts_Tilewidth;											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
 			float x2 = (x + 1) * ts_Tilewidth;
@@ -183,7 +183,7 @@ void ResourceManager::LoadTileSet(Map map)
 			tileRect.top = y1;
 			tileRect.bottom = y2;
 
-			tileRects.push_back(tileRect);
+			tileRects.emplace_back(tileRect);
 		}
 	}
 }

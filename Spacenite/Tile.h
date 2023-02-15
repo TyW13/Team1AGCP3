@@ -6,7 +6,7 @@ class Tile : public GameObject
 public:
 	Tile(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect) : GameObject(d3d), objSprite(d3d)
 	{
-		Init(objTex, scale, position, active, tileRect);
+		Init(objTex, position, scale, active, tileRect);
 	}
 
 	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect);

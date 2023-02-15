@@ -42,7 +42,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"TS-TestingLevel0.tsx"
+         "source":"TSTestingLevel0.tsx"
         }],
  "tilewidth":8,
  "type":"map",

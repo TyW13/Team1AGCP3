@@ -1,0 +1,15 @@
+{ "columns":5,
+ "image":"..\/..\/..\/..\/..\/Downloads\/test_sheet (1).png",
+ "imageheight":24,
+ "imagewidth":40,
+ "margin":0,
+ "name":"TSJump",
+ "spacing":0,
+ "tilecount":15,
+ "tiledversion":"1.9.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "transparentcolor":"#ff00ff",
+ "type":"tileset",
+ "version":"1.9"
+}
