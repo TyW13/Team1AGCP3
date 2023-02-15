@@ -21,6 +21,7 @@ public:
 	void Render(DirectX::SpriteBatch& batch);
 	void Increase(bool, bool);
 	void CheckBounds(DirectX::SimpleMath::Vector2& mPos);
+
 private:
 	const float SCROLL_SPEED = 10.f;
 	static const int BGND_LAYERS = 8;
@@ -30,6 +31,10 @@ private:
 	bool IsBottom = false;
 	bool IsLeft = false;
 	bool IsRight = false;
+	bool IsMaxY = false;
+	bool IsMinY = false;
+	bool IsMinX = false;
+	bool IsMaxX = false;
 };
 
 
