@@ -196,8 +196,6 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-	isBottom = false;
-	isTop = false;
 	//update player core movement
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
@@ -255,47 +253,41 @@ void Player::shipRender(DirectX::SpriteBatch& batch)
 	character.Draw(batch);
 }
 
-bool Player::IsTop()
+Vector2& Player::GetPos()
 {
-	return isTop;
+	return character.mPos;
 }
 
-bool Player::IsBottom()
-{
-	return isBottom;
-}
 
 
 void Player::CheckCollision()
 {
 
-	//for code clarity
-	Vector2 playerOrigin = Vector2(((character.GetTexData().dim.x / 2.f) * character.GetScale().x, character.GetTexData().dim.y / 2.f) * character.GetScale().y);
+	////for code clarity
+ 	//Vector2 playerOrigin = Vector2(((character.GetTexData().dim.x / 2.f) * character.GetScale().x, character.GetTexData().dim.y / 2.f) * character.GetScale().y);
 
-	//check for player and screen borders collision
+	////check for player and screen borders collision
 
-	//bottom
-	if (character.mPos.y > WinUtil::Get().GetClientHeight() + 60)
-	{
-   		character.mPos.y = playerOrigin.y;
-		isBottom = true;
-	}
-	//top
-	if (character.mPos.y < playerOrigin.y)
-	{
-		character.mPos.y = WinUtil::Get().GetClientHeight() + 30;
-		isTop = true;
-	}
-	//right
-	if (character.mPos.x > WinUtil::Get().GetClientWidth() + 15)
-	{
-		character.mPos.x = WinUtil::Get().GetClientWidth() + 14;
-	}
-	//left
-	if (character.mPos.x < -15)
-	{
-		character.mPos.x = -14;
-	}
+	////bottom
+	//if (character.mPos.y > WinUtil::Get().GetClientHeight() + 60)
+	//{
+ //  		character.mPos.y = playerOrigin.y;
+	//}
+	////top
+	//if (character.mPos.y < playerOrigin.y)
+	//{
+	//	character.mPos.y = WinUtil::Get().GetClientHeight() + 30;
+	//}
+	////right
+	//if (character.mPos.x > WinUtil::Get().GetClientWidth() + 15)
+	//{
+	//	character.mPos.x = WinUtil::Get().GetClientWidth() + 14;
+	//}
+	////left
+	//if (character.mPos.x < -15)
+	//{
+	//	character.mPos.x = -14;
+	//}
 
 	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())

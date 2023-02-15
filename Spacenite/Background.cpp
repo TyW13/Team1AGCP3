@@ -1,10 +1,16 @@
 #include "Background.h"
+
+#include "WindowUtils.h"
 using namespace std;
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
 void Background::Init(MyD3D& mD3D)
 {
 	//a sprite for each layer
-	assert(bGround.empty());
-	bGround.insert(bGround.begin(), BGND_LAYERS, Sprite(mD3D));
+	//assert(bGround.empty());
+	//bGround.insert(bGround.begin(), BGND_LAYERS, Sprite(mD3D));
+
+
 
 	//a neat way to package pairs of things (nicknames and filenames)
 	pair<string, string> files[BGND_LAYERS]{
@@ -17,46 +23,110 @@ void Background::Init(MyD3D& mD3D)
 		{ "bgnd6","backgroundlayers/mountains01_000.dds" },
 		{ "bgnd7","backgroundlayers/mountains01_006.dds" }
 	};
-	int i = 0;
+	int x = 0;
+	int y = 0;
 	for (auto& f : files)
 	{
 		//set each texture layer
 		ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), f.second, f.first);
 		if (!p)
 			assert(false);
-		bGround[i++].SetTex(*p);
+		bGroundTest[x][y].SetTex(*p);
+		++x;
+		if (x == 2)
+		{
+			++y;
+			x = 0;
+		}
 	}
 }
 
-void Background::Update(float dTime, bool IsTop, bool IsBottom)
+void Background::Update(float dTime, Vector2& Pos)
 {
+	//Reset all booleans on each update loop
+	IsTop = false;
+	IsBottom = false;
+	IsLeft = false;
+	IsRight = false;
+	//Check the player to see where they are (Needs moving back to GameObject)
+	CheckBounds(Pos);
+	//Change the x and y position of background array
 	Increase(IsTop, IsBottom);
-	bGround[current].Scroll(dTime * SCROLL_SPEED, 0);
+	//Move the backgrounds(Not Needed after levels are included)
+	bGroundTest[currentx][currenty].Scroll(dTime * SCROLL_SPEED, 0);
 }
 
 void Background::Render(DirectX::SpriteBatch& batch)
 {
-	bGround[current].Draw(batch);
+	bGroundTest[currentx][currenty].Draw(batch);
 }
 
 void Background::Increase(bool IsTop, bool IsBottom)
 {
 	if (IsTop == true)
 	{
-		++current;
-		if (current >= 8)
+		++currenty;
+		if (currenty >= 4)
 		{
-			current = 0;
+			currenty = 0;
 		}
 	}
 	if (IsBottom == true)
 	{
-		--current;
-		if (current <= 0)
+		--currenty;
+		if (currenty < 0)
 		{
-			current = 7;
+			currenty = 3;
 		}
 	}
+	if (IsLeft == true)
+	{
+		++currentx;
+		if (currentx >= 2)
+		{
+			currentx = 0;
+		}
 
+	}
+	if (IsRight == true)
+	{
+		--currentx;
+		if (currentx < 0)
+		{
+			currentx = 1;
+		}
+	}
+}
 
+void Background::CheckBounds(Vector2& mPos)
+{
+	//for code clarity
+	Vector2 playerOrigin = Vector2((38.4, 38.4));
+
+	//check for player and screen borders collision
+
+	//bottom
+	if (mPos.y > WinUtil::Get().GetClientHeight() + 60)
+	{
+		mPos.y = playerOrigin.y;
+		IsBottom = true;
+	}
+	//top
+	if (mPos.y < playerOrigin.y)
+	{
+		mPos.y = WinUtil::Get().GetClientHeight() + 30;
+		IsTop = true;
+	}
+	//right
+	if (mPos.x > WinUtil::Get().GetClientWidth() + 15)
+	{
+		mPos.x = -14;
+		IsRight = true;
+	}
+	//left
+	if (mPos.x < -15)
+	{
+		mPos.x = WinUtil::Get().GetClientWidth() + 14;
+		IsLeft = true;
+	}
 }

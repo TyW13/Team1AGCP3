@@ -144,7 +144,7 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d), UserInterface(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), UserInterface(d3d), bGround(d3d)
 {
 	bGround.Init(d3d);
 	Player.Init(d3d);
@@ -179,13 +179,11 @@ void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 		UserInterface.Update(pScore, dTime);
 		if (UserInterface.Paused == false)
 		{
-			bGround.Update(dTime, IsTop, IsBottom);
+			bGround.Update(dTime, Player.GetPos());
 			if (Player.character.GetActive())
 			{
 				//UpdateMissile(dTime);
 				Player.Update(dTime);
-				IsTop = Player.IsTop();
-				IsBottom = Player.IsBottom();
 			}
 			else
 			{
@@ -193,6 +191,7 @@ void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 			}
 		}
 	}
+
 	else
 	{
 		if (Game::sMKIn.IsPressed(VK_SPACE) == true)
