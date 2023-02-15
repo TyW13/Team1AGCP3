@@ -70,12 +70,13 @@ void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fP
 // Function to add gameobjects to resource manager. Will eventually work with json file to mass import objects
 void ResourceManager::AddGameObject(MyD3D& d3d)
 {
-	//PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(20, 20), Vector2(0.5, 0.5), true);							// Manually creating new player object
+	//PlayerCharacter* obj = new PlayerCharacter(d3d, GetTexture("ship"), Vector2(20, 20), Vector2(0.1, 0.1), true);							// Manually creating new player object
 
 	//m_gObjects.emplace_back(obj);
 
 	for (int i = 0; i < tileRects.size(); i++)
 	{
+		//Tile newTile(d3d, GetTexture("test_sheet"), tilePositions[i], Vector2(6, 4), true, tileRects[i]);
 		Tile* newTile = new Tile(d3d, GetTexture("test_sheet"), tilePositions[i], Vector2(6, 4), true, tileRects[i]);
 		m_gObjects.emplace_back(newTile);
 	}
@@ -89,7 +90,7 @@ Texture* ResourceManager::GetTexture(const std::string& tName)
 	{
 		return m_Textures.at(tName);
 	}
-	else 
+	else
 	{
 		WDBOUT("ERROR: CANT FIND TEXTURE");
 	}
@@ -106,7 +107,6 @@ std::string ResourceManager::SetTexName(std::string path)
 	std::string noPath = noSuff.substr(lastSlash + 1, noSuff.length() - lastSlash);
 	return noPath;
 }
-
 
 
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
