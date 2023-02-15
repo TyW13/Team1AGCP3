@@ -144,14 +144,13 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d), PauseSpr(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), UserInterface(d3d)
 {
 	bGround.Init(d3d);
 	Player.Init(d3d);
+	UserInterface.Init(d3d);
 	//mMissile.Init(d3d);
 	//InitAsteroids();
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "backgroundlayers/mountains01_007.dds");
-	PauseSpr.SetTex(*p);
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
 }
@@ -175,10 +174,10 @@ void PlayMode::UpdateMissile(float dTime)
 
 void PlayMode::Update(float dTime, bool& _endGame, int& pScore)
 {
-	if (EndScreen == false)
+	if (UserInterface.EndScreen == false)
 	{
-		UserInterface.Update(pScore, dTime, Paused, EndScreen);
-		if (Paused == false)
+		UserInterface.Update(pScore, dTime);
+		if (UserInterface.Paused == false)
 		{
 			bGround.Update(dTime, IsTop, IsBottom);
 			if (Player.character.GetActive())
@@ -214,29 +213,6 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	{
 		Player.Render(batch);
 		//mMissile.Render(batch);
-
 	}
-	//RenderAsteroids(batch);
-	if (Paused == true)
-	{
-		string pause = "Paused";
-		PauseSpr.origin = (Vector2(255, 127));
-		PauseSpr.mPos = (Vector2(w * 0.5f, h * 0.5f));
-		PauseSpr.Draw(batch);
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
-	}
-	if (EndScreen == true)
-	{
-		PauseSpr.origin = (Vector2(255, 127));
-		PauseSpr.mPos = (Vector2(w * 0.5f, h * 0.5f));
-		PauseSpr.Draw(batch);
-		string pause = "Congratulations you win! \n Press space to continue";
-		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.4f, h * 0.5f), Vector4(1, 1, 1, 1));
-	}
-	// Increase score over time
-
-	stringstream ss;
-	ss << pScore;
-	WinUtil::Get().GetClientExtents(w, h);
-	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.5f, h * 0.05f), Vector4(1, 1, 1, 1));
+	UserInterface.Render(dTime, batch);
 }

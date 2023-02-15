@@ -3,6 +3,7 @@
 
 #include <fstream>
 
+#include "UI.h"
 #include "Input.h"
 #include "D3D.h"
 #include "SpriteBatch.h"
@@ -10,7 +11,6 @@
 #include "Sprite.h"
 #include "Background.h"
 #include "GameObject.h"
-#include "UI.h"
 
 class PlayMode
 {
@@ -34,8 +34,6 @@ private:
 	int asteroidID = 0;//PMODE Exclusive
 	/*bool shipActive = true;*/
 	int additionalScore = 0;							//PMODE Exclusive
-	bool Paused = false;
-	bool EndScreen = false;
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
@@ -44,7 +42,6 @@ private:
 	bool IsTop = false;
 	bool IsBottom = false;
 
-	Sprite PauseSpr;
 
 	//make it move, reset it once it leaves the screen, only one at once
 	void UpdateMissile(float dTime);
