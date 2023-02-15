@@ -188,11 +188,9 @@ void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
-	character.SetTex(*p);
+	character.SetTex(*p, spriteFrames[0]);
 	character.SetScale(Vector2(6.f, 6.f));
-	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
-//	character.GetTexData();
-	
+	character.origin = Vector2(0, character.GetTexData().dim.y);
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
 }
 
@@ -205,14 +203,24 @@ void Player::Update(float dTime)
 	character.mPos.y += gravity * dTime;
 	
 	gravity = GRAVITY_SPEED;
+
 	//if velocity is is more than max speed 
-	if (character.mVel.x > PLAYER_SPEED)
+	//
+	//if player goes right
+	if (character.mVel.x > PLAYER_SPEED && character.mVel.x != 0)
 	{
 		character.mVel.x = PLAYER_SPEED;
+		animState = "Right";
 	}
-	if (character.mVel.x < -PLAYER_SPEED)
+	//if player goes left
+	if (character.mVel.x < -PLAYER_SPEED && character.mVel.x != 0)
 	{
 		character.mVel.x = -PLAYER_SPEED;
+		animState = "Left";
+	}
+	if (character.mVel.x == 0)
+	{
+		animState = "Stand";
 	}
 	if (character.mVel.x < PLAYER_SPEED || character.mVel.x > -PLAYER_SPEED)
 	{
@@ -233,11 +241,104 @@ void Player::Update(float dTime)
 
 	UpdateInput(dTime);
 	CheckCollision();
+	UpdateAnimation(dTime);
 }
 
 void Player::Render(DirectX::SpriteBatch& batch)
 {
-	shipRender(batch);
+	playerRender(batch);
+}
+
+void Player::UpdateAnimation(float dTime)
+{
+	if (animState == "Right")
+	{
+		//calculate elapsed time
+		float deltaTime = dTime;
+		elapsedTime += deltaTime;
+
+		//advance to the next frame if enough time has passed
+		if (elapsedTime >= frameDuration)
+		{
+			currentFrame++;
+			if (currentFrame >= 5)
+			{
+				currentFrame = 0;
+			}
+			elapsedTime -= frameDuration;
+		}
+
+		//flip back 
+		character.SetScale(Vector2(6, character.GetScale().y));
+
+		switch (currentFrame)
+		{
+		case 0:
+			character.SetTexRect(spriteFrames[0]);
+			break;
+		case 1:
+			character.SetTexRect(spriteFrames[1]);
+			break;
+		case 2:
+			character.SetTexRect(spriteFrames[2]);
+			break;
+		case 3:
+			character.SetTexRect(spriteFrames[3]);
+			break;
+		case 4:
+			character.SetTexRect(spriteFrames[4]);
+			break;
+		default:
+			character.SetTexRect(spriteFrames[0]);
+			break;
+		}
+	}
+	if (animState == "Left")
+	{
+		//calculate elapsed time
+		float deltaTime = dTime;
+		elapsedTime += deltaTime;
+
+		//advance to the next frame if enough time has passed
+		if (elapsedTime >= frameDuration)
+		{
+			currentFrame++;
+			if (currentFrame >= 5)
+			{
+				currentFrame = 0;
+			}
+			elapsedTime -= frameDuration;
+		}
+
+		//flip
+		character.SetScale(Vector2(-6, character.GetScale().y));
+
+		switch (currentFrame)
+		{
+		case 0:
+			character.SetTexRect(flipped_spriteFrames[0]);
+			break;
+		case 1:
+			character.SetTexRect(flipped_spriteFrames[1]);
+			break;
+		case 2:
+			character.SetTexRect(flipped_spriteFrames[2]);
+			break;
+		case 3:
+			character.SetTexRect(flipped_spriteFrames[3]);
+			break;
+		case 4:
+			character.SetTexRect(flipped_spriteFrames[4]);
+			break;
+		default:
+			character.SetTexRect(flipped_spriteFrames[0]);
+			break;
+		}
+	}
+	if (animState == "Stand")
+	{
+		character.SetTexRect(spriteFrames[0]);
+	}
 }
 
 void Player::UpdateInput(float dTime)
@@ -283,7 +384,7 @@ void Player::UpdateInput(float dTime)
 	}
 }
 
-void Player::shipRender(DirectX::SpriteBatch& batch)
+void Player::playerRender(DirectX::SpriteBatch& batch)
 {
 	character.Draw(batch);
 }
@@ -323,3 +424,5 @@ void Player::CheckCollision()
 		isGrounded = true;
 	}
 }
+
+

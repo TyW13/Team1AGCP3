@@ -87,10 +87,8 @@ class Player
 {
 public:
 
-
 	Player(MyD3D& d3d);
-
-	Sprite character;		//jet											//PLAYER EXCLUSIVE
+	Sprite character;		//											//PLAYER EXCLUSIVE
 	void Init(MyD3D& d3d); //THIS IS CALLED
 	//This needs to follow where its called "mMissile.Init(mD3D);"
 	void Update(float dTime);											//PLAYER EXCLUSIVE
@@ -108,12 +106,26 @@ private:
 	float gravity = 0;
 
 	bool isGrounded = false;										//Player
-	
-	DirectX::SimpleMath::Vector2 mousePos;
+
+	//------ animation variables 
+	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
+	float elapsedTime = 0.0f;
+	int currentFrame = 0;
+	std::string animState;
+	RECTF spriteFrames[5] = {{0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16}};
+	RECTF flipped_spriteFrames[5] = { 
+		{-spriteFrames[0].left, spriteFrames[0].top, -spriteFrames[0].right, spriteFrames[0].bottom},
+		{-spriteFrames[1].left, spriteFrames[1].top, -spriteFrames[1].right, spriteFrames[1].bottom},
+		{-spriteFrames[2].left, spriteFrames[2].top, -spriteFrames[2].right, spriteFrames[2].bottom},
+		{-spriteFrames[3].left, spriteFrames[3].top, -spriteFrames[3].right, spriteFrames[3].bottom},
+		{-spriteFrames[4].left, spriteFrames[4].top, -spriteFrames[4].right, spriteFrames[4].bottom}};
+
+	//------ animation functions
+	void UpdateAnimation(float dTime);
 	
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
-	void shipRender(DirectX::SpriteBatch& batch);
+	void playerRender(DirectX::SpriteBatch& batch);
 
 	//for my little solution only, Kieron can swap it for his collision once merged
 	void CheckCollision();	
