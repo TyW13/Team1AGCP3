@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "WindowUtils.h"
 #include "Input.h"
+#include "cmath"
 
 
 using namespace std;
@@ -186,10 +187,11 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_character1.dds");
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
 	character.SetTex(*p);
 	character.SetScale(Vector2(6.f, 6.f));
 	character.origin = Vector2(character.GetTexData().dim.x / 2.f, character.GetTexData().dim.y);
+//	character.GetTexData();
 	
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
 }
@@ -248,6 +250,25 @@ void Player::UpdateInput(float dTime)
 	if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
 		character.mVel.x -= PLAYER_SPEED;
+	}
+
+	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON))
+	{
+		mousePos = Game::sMKIn.GetMousePos(true);
+		DirectX::SimpleMath::Vector2 playerPos = character.mPos;
+
+		// Calculate the magnitudes of the vectors
+		double mag1 = sqrt(playerPos.x * playerPos.x + playerPos.y * playerPos.y);
+		double mag2 = sqrt(mousePos.x * mousePos.x + mousePos.y * mousePos.y);
+
+		// Normalize the vectors
+		double nx1 = playerPos.x / mag1;
+		double ny1 = mousePos.x / mag1;
+
+		double nx2 = playerPos.y / mag2;
+		double ny2 = mousePos.y / mag2;
+
+		DirectX::SimpleMath::Vector2 direction (nx1- ny1, nx2 - ny2);
 	}
 	
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)

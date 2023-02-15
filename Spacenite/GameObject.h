@@ -109,7 +109,8 @@ private:
 
 	bool isGrounded = false;										//Player
 	
-
+	DirectX::SimpleMath::Vector2 mousePos;
+	
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
 	void shipRender(DirectX::SpriteBatch& batch);
