@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 
+#include "Audio.h"
 #include "GameObject.h"
 
 class MainMenu
@@ -27,7 +28,7 @@ private:
     std::shared_ptr<GameObject> m_title;
     std::shared_ptr<GameObject> m_startButton;
 
-  /*  std::unique_ptr<DirectX::SoundEffect> m_backgroundMusic;
-    std::unique_ptr<DirectX::SoundEffectInstance> m_backgroundMusicInstance;*/
+    std::unique_ptr<DirectX::SoundEffect> m_backgroundMusic;
+    std::unique_ptr<DirectX::SoundEffectInstance> m_backgroundMusicInstance;
 };
 

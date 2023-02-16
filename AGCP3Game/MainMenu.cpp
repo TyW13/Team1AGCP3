@@ -5,9 +5,8 @@
 #include "WICTextureLoader.h"
 
 #include <SoundCommon.h>
-#include <Audio.h>
 
-
+#include "Audio.h"
 #include "SimpleMath.h"
 #include "WICTextureLoader.h"
 
@@ -46,10 +45,10 @@ MainMenu::MainMenu(ID3D12Device* device, ID3D12GraphicsCommandList* commandList,
     m_startButton->SetPosition(Vector2(m_width * 0.5f, m_height * 0.5f));
     m_gameObjects.push_back(m_startButton);
 
-    //// Load background music
-    //m_backgroundMusic = std::make_unique<SoundEffect>(m_device, L"background_music.wav");
-    //m_backgroundMusicInstance = m_backgroundMusic->CreateInstance(SoundEffectInstance_Use3D);
-    //m_backgroundMusicInstance->Play(true);
+    // Load background music
+    m_backgroundMusic = std::make_unique<SoundEffect>(m_device, L"background_music.wav");
+    m_backgroundMusicInstance = m_backgroundMusic->CreateInstance(SoundEffectInstance_Use3D);
+    m_backgroundMusicInstance->Play(true);
 }
 
 MainMenu::~MainMenu()

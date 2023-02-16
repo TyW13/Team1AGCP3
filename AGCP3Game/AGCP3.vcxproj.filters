@@ -75,6 +75,9 @@
     <ClInclude Include="Audio.h">
       <Filter>Math Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="SoundCommon.h">
+      <Filter>Audio Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
       <Filter>Math Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundCommon.cpp">
+      <Filter>Audio Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

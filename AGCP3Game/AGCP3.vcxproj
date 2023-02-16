@@ -121,6 +121,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Platformer.h" />
     <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="SoundCommon.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="WICTextureLoader.h" />
     <ClInclude Include="Win32Application.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Platformer.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="SoundCommon.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="Win32Application.cpp" />
