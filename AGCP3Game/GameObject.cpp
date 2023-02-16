@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
+
+
 GameObject::GameObject()
 {
     m_x = 0;
@@ -25,7 +27,9 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-    // Implement in child classes as needed
+    // Update the object's position based on its velocity
+  /*  m_position.x += m_velocity.x * deltaTime;
+    m_position.y += m_velocity.y * deltaTime;*/
 }
 
 void GameObject::Render()

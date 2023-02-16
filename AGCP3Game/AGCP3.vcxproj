@@ -117,8 +117,10 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Platformer.h" />
     <ClInclude Include="SpriteClass.h" />
+    <ClInclude Include="WICTextureLoader.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="AGCP3.h" />
     <ClInclude Include="d3dx12.h" />
@@ -131,8 +133,10 @@
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Platformer.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
+    <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="AGCP3.cpp" />
     <ClCompile Include="DXSample.cpp" />

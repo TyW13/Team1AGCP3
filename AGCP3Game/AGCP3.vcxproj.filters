@@ -13,6 +13,15 @@
     <Filter Include="Assets\Shaders">
       <UniqueIdentifier>{8b0cb0c9-e0d8-4107-91c8-11654fac88e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio Helpers">
+      <UniqueIdentifier>{c3b7760d-d214-4b8d-9589-f76ca31c038d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Loader Helpers">
+      <UniqueIdentifier>{d20ecc02-dd07-4b54-b01f-8650ef81ad79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math Helpers">
+      <UniqueIdentifier>{7e029a60-cf99-43af-bd04-88d56a2ee2b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -33,9 +42,6 @@
     <ClInclude Include="Win32Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SpriteClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,6 +60,15 @@
     <ClInclude Include="Collision2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Loader Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>Loader Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -71,9 +86,6 @@
     <ClCompile Include="Win32Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SpriteClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,6 +100,15 @@
     </ClCompile>
     <ClCompile Include="Collision2D.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>Loader Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Loader Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
