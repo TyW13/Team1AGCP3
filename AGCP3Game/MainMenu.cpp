@@ -4,8 +4,7 @@
 
 #include "WICTextureLoader.h"
 
-#include <SoundCommon.h>
-
+#include "SoundCommon.h"
 #include "Audio.h"
 #include "SimpleMath.h"
 #include "WICTextureLoader.h"
