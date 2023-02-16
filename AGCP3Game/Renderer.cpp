@@ -17,6 +17,8 @@ using namespace Microsoft::WRL;
 DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 
+
+
 void Renderer::CreateDevice()
 {
 	// pAdapter = Specifies the display adapter we want the created device to rep.
@@ -29,6 +31,12 @@ void Renderer::CreateDevice()
 		// ppDevice = Returns the created device
 		void** ppDevice);
 
+	// Create DXGIFactory
+    HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&m_factory));
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to create DXGI factory");
+    }
 
 }
 
@@ -139,7 +147,13 @@ void Renderer::CreateSwapChain(HWND hWnd, int width, int height)
 	sd.OutputWindow = hWnd; // mhMainWnd
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+	// Note Swap Chain uses queue to perfom flush.
+	ThrowIfFailed(m_factory->CreateSwapChain(
+		mCommandQueue.Get(),
+		&sd,
+		mSwapChain.GetAddressOf()));
 
 
 
