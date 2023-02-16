@@ -112,6 +112,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="AGCP3.h" />
     <ClInclude Include="d3dx12.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="AGCP3.cpp" />
     <ClCompile Include="DXSample.cpp" />
