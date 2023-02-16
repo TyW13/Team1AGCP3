@@ -196,15 +196,9 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-	if (lower_jump)
+	if (currentVel.y >= 0 && isJumping && !Game::sMKIn.IsPressed(VK_SPACE))
 	{
-		jumpSpeed *= 0.85;
-		currentVel.y = -jumpSpeed;
-	}
-	if (higher_jump)
-	{
-		jumpSpeed *= 0.95;
-		currentVel.y = -jumpSpeed;
+		currentVel.y += -GRAVITY * dTime;
 	}
 
 	//update player core movement
@@ -253,7 +247,7 @@ void Player::UpdateInput(float dTime)
 
 		// Start the jump
 		isJumping = true;
-		currentVel.y = -JUMP_INIT_VEL;
+		currentVel.y = -JUMP_VEL;
 	}
 	else if (!Game::sMKIn.IsPressed(VK_SPACE) && isJumping) 
 	{
@@ -264,15 +258,12 @@ void Player::UpdateInput(float dTime)
 		// End the jump
 		if (elapsed_time < 0.09)
 		{
-			jumpSpeed = 1000;
-			lower_jump = true;
+			currentVel.y = currentVel.y * 0.75;
 		}
 		else
 		{
-			jumpSpeed = 1500;
-			higher_jump = true;
+			currentVel.y = currentVel.y * 0.99;
 		}
-		isJumping = false;
 	}
 }
 
@@ -409,7 +400,8 @@ void Player::CheckCollision()
 	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
-		//isGrounded = true;
+		isGrounded = true;
+		isJumping = false;
 	}
 }
 
