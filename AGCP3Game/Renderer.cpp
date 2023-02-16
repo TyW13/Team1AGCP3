@@ -14,6 +14,8 @@ using namespace Microsoft::WRL;
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+
 
 void Renderer::CreateDevice()
 {
@@ -119,6 +121,26 @@ void Renderer::CreateCommandList()
 
 void Renderer::CreateSwapChain(HWND hWnd, int width, int height)
 {
+	// Create the Swap Chain
+
+	DXGI_SWAP_CHAIN_DESC sd;
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = mBackBufferFormat;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	sd.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+	sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = SwapChainBufferCount;
+	sd.OutputWindow = hWnd; // mhMainWnd
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+
 
 
 }
