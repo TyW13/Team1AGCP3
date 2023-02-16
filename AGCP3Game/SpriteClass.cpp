@@ -59,7 +59,7 @@ void Sprite::SetVelocity(float x, float y)
 {
     m_velocity = DirectX::XMFLOAT2(x, y);
 }
-
+//
 void Sprite::SetScale(float scale)
 {
     m_scale = scale;
