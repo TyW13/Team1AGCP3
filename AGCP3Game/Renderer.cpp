@@ -32,15 +32,28 @@ void Renderer::CreateDevice()
 
 void Renderer::CreateFence()
 {
-	// Descriptor Sizes can vary across GPU so we must query.
-	ThrowIfFailed(md3dDevice->CreateFemce(
+	// Descriptor Sizes can vary across GPU so we must query this info.
+
+	ThrowIfFailed(m_device->CreateFence(
 		0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
 
-	mRtvDescriptorSize = m3dDevice->GetDescriptorHandleIncrementSize(
+	mRtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	mDsvDescriptorSize = m3dDevice->GetDescriptor
+	mDsvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
+	mCbvSrvDescriptorSize = md3dDevic->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	
+
+
+}
+
+void Renderer::Check4xMSSA()
+{
+	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
+	msQualityLevels.Format = mBackBufferFormat;
 
 }
 

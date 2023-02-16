@@ -17,6 +17,7 @@ public:
 private:
     void CreateDevice();
     void CreateFence();
+    void Check4xMSSA();
 
 
     void CreateSwapChain(HWND hWnd, int width, int height);
@@ -24,7 +25,7 @@ private:
     
     void WaitForPreviousFrame();
 
-    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    Microsoft::WRL::ComPtr<ID3D12Device> m_device; // FRNK LUNA (md3dDevice)
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
     Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets[2];
