@@ -112,7 +112,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collision2D.h" />
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="Win32Application.h" />
@@ -123,6 +125,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collision2D.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="SpriteClass.cpp" />

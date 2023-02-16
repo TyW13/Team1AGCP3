@@ -19,6 +19,12 @@ public:
     void SetScale(float scale);
     void Move(float dx, float dy);
 
+ /*   bool CheckCollision(Sprite sprite1, Sprite sprite2)
+    {
+       
+	    
+    }*/
+
     //bool LoadTextureFromFile(ID3D12Device* device, const wchar_t* fileName);
 
 private:
