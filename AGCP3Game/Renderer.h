@@ -19,11 +19,11 @@ private:
     void CreateFence();
     void Check4xMSSA();
 
-
-    void CreateSwapChain(HWND hWnd, int width, int height);
     void CreateCommandList();
+    void CreateSwapChain(HWND hWnd, int width, int height);
+ 
     
-    void WaitForPreviousFrame();
+    void WaitForPreviousFrame(); // Wait for GPU?
 
     Microsoft::WRL::ComPtr<ID3D12Device> m_device; // FRNK LUNA (md3dDevice)
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
