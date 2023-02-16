@@ -209,17 +209,15 @@ void Player::Update(float dTime)
 	if (character.mVel.x > PLAYER_SPEED && character.mVel.x != 0)
 	{
 		character.mVel.x = PLAYER_SPEED;
-		animState = "Right";
 	}
 	//if player goes left
 	if (character.mVel.x < -PLAYER_SPEED && character.mVel.x != 0)
 	{
 		character.mVel.x = -PLAYER_SPEED;
-		animState = "Left";
 	}
 	if (character.mVel.x == 0)
 	{
-		animState = "Stand";
+		
 	}
 	if (character.mVel.x < PLAYER_SPEED || character.mVel.x > -PLAYER_SPEED)
 	{
@@ -336,6 +334,9 @@ void Player::UpdateAnimation(float dTime)
 	}
 	if (animState == "Stand")
 	{
+		//flip back 
+		character.SetScale(Vector2(6, character.GetScale().y));
+
 		character.SetTexRect(spriteFrames[0]);
 	}
 }
@@ -345,11 +346,18 @@ void Player::UpdateInput(float dTime)
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
 		character.mVel.x += PLAYER_SPEED;
-	}
 
-	if (Game::sMKIn.IsPressed(VK_A) == true)
+		animState = "Right";
+	}
+	else if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
 		character.mVel.x -= PLAYER_SPEED;
+
+		animState = "Left";
+	}
+	else
+	{
+		animState = "Stand";
 	}
 	
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
