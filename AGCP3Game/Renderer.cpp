@@ -96,6 +96,24 @@ void Renderer::CreateCommandList()
 		&queueDesc, IID_PPV_ARGS(&mCommandQueue)));
 
 
+	ThrowIfFailed(m_device->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
+
+	ThrowIfFailed(m_device->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		mDirectCmdListAlloc.Get(), // Associated Command allocator
+		nullptr,                    // Initial Pipeline State Object (PSO)
+		IID_PPV_ARGS(mCommandList.GetAddressOf())));
+
+	// Start off in  closed state. This is because the first time we 
+	// refer to the command list we reset it, and it needs to be 
+	// closed before calling Reset.
+
+	mCommandList->Close();
+
+
 }
 
 
