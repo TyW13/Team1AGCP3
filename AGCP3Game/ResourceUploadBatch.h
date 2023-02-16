@@ -26,7 +26,7 @@
 #include <future>
 #include <memory>
 
-#include "GraphicsMemory.h"
+//#include "GraphicsMemory.h"
 
 
 namespace DirectX
