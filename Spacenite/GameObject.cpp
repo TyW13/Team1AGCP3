@@ -196,14 +196,17 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-	if (currentVel.y >= 0 && isJumping && !Game::sMKIn.IsPressed(VK_SPACE))
+	/*if (currentVel.y >= 0 && !isGrounded && !Game::sMKIn.IsPressed(VK_SPACE))
 	{
 		currentVel.y += -GRAVITY * dTime;
-	}
+	}*/
 
 	//update player core movement
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
+
+	if(isJumping)
+		character.mVel.y += GRAVITY * dTime;
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -241,28 +244,36 @@ void Player::UpdateInput(float dTime)
 
 	//--------- y-axis
 	//up
-	if (Game::sMKIn.IsPressed(VK_SPACE) && !isJumping) 
+	if (Game::sMKIn.IsPressed(VK_SPACE) && isGrounded) 
 	{
 		start_time = std::chrono::steady_clock::now();
 
-		// Start the jump
-		isJumping = true;
 		currentVel.y = -JUMP_VEL;
+		isGrounded = false;
 	}
-	else if (!Game::sMKIn.IsPressed(VK_SPACE) && isJumping) 
+	else if (!Game::sMKIn.IsPressed(VK_SPACE) && !isGrounded) 
 	{
-		end_time = std::chrono::steady_clock::now();
-		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
-		double elapsed_time = elapsed_seconds.count();
+		if (!isJumping)
+		{
+			end_time = std::chrono::steady_clock::now();
+			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+			elapsed_time = elapsed_seconds.count();
+		}
 
-		// End the jump
+		//Slow the player down til they reach 0 vel_y
 		if (elapsed_time < 0.09)
 		{
-			currentVel.y = currentVel.y * 0.75;
+			currentVel.y *= 0.685;
 		}
 		else
 		{
-			currentVel.y = currentVel.y * 0.99;
+			currentVel.y *= 0.985;
+		}
+		isJumping = true;
+
+		if (currentVel.y < 0)
+		{
+			currentVel.y *= 0.985;
 		}
 	}
 }

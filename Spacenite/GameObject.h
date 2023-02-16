@@ -101,16 +101,17 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> start_time;
 	std::chrono::time_point<std::chrono::steady_clock> end_time;
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
-	const float JUMP_VEL = 2500.0f;
+	const float JUMP_VEL = 500.0f;
 	const float GRAVITY = 2000.f;
 	const float PLAYER_MAX_SPEED = 350;
 	const float DRAG_X = 0.985;									//for deceleration in x-axis
 	float currentPlayerSpeed = 0;
 	float jumpSpeed = 0;
+	double elapsed_time = 0;
 
 	bool higher_jump, lower_jump = false;
-	bool isJumping = false;
 	bool isGrounded = false;
+	bool isJumping = false;
 
 	//------ animation variables 
 	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
