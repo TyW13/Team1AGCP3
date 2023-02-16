@@ -4,7 +4,8 @@
 #include <stdexcept>
 #include <fstream>
 #include <wrl/client.h>
-
+#include "pch.h"
+#include "DXSampleHelper.h" // throw if failed
 using namespace DirectX;
 
 #include <DirectXMath.h>
@@ -12,6 +13,54 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 #pragma comment(lib, "d3dcompiler.lib")
+
+
+void Renderer::CreateDevice()
+{
+	// pAdapter = Specifies the display adapter we want the created device to rep.
+	HRESULT WINAPI D3D12CreateDevice(
+		IUnknown * pAdapter,
+		// Minimum Feature Level 
+		D3D_FEATURE_LEVEL MinimumFeatureLevel,
+		// Riid = The COM ID of the ID3DDevice interface we want to create
+		REFIID riid, // Expected: ID3D12DEVICE,
+		// ppDevice = Returns the created device
+		void** ppDevice);
+
+
+}
+
+void Renderer::CreateFence()
+{
+	// Descriptor Sizes can vary across GPU so we must query.
+	ThrowIfFailed(md3dDevice->CreateFemce(
+		0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
+
+	mRtvDescriptorSize = m3dDevice->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	mDsvDescriptorSize = m3dDevice->GetDescriptor
+
+
+}
+
+void Renderer::CreateSwapChain(HWND hWnd, int width, int height)
+{
+
+}
+
+void Renderer::CreateCommandList()
+{
+}
+
+
+
+void Renderer::WaitForPreviousFrame()
+{
+}
+
+
+
 
 //Renderer::Renderer(HWND hWnd, int width, int height)
 //{
@@ -198,4 +247,22 @@ using namespace Microsoft::WRL;
 //    // wait for GPU
 //}
 
+void Renderer::CreateDevice()
+{
+}
 
+void Renderer::CreateSwapChain(HWND hWnd, int width, int height)
+{
+}
+
+void Renderer::CreateCommandList()
+{
+}
+
+void Renderer::CreateFence()
+{
+}
+
+void Renderer::WaitForPreviousFrame()
+{
+}

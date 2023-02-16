@@ -6,32 +6,35 @@
 #include <wrl/client.h>
 
 
-//class Renderer
-//{
-//public:
-//    Renderer(HWND hWnd, int width, int height);
-//    ~Renderer();
-//
-//    void Render();
-//
-//private:
-//    void CreateDevice();
-//    void CreateSwapChain(HWND hWnd, int width, int height);
-//    void CreateCommandList();
-//    void CreateFence();
-//    void WaitForPreviousFrame();
-//
-//    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
-//    Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
-//    Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
-//    Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets[2];
-//    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators[2];
-//    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
-//    Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-//    UINT64 m_fenceValue;
-//    HANDLE m_fenceEvent;
-//    UINT m_frameIndex;
-//};
+class Renderer
+{
+public:
+    Renderer(HWND hWnd, int width, int height);
+    ~Renderer();
+
+    void Render();
+
+private:
+    void CreateDevice();
+    void CreateFence();
+
+
+    void CreateSwapChain(HWND hWnd, int width, int height);
+    void CreateCommandList();
+    
+    void WaitForPreviousFrame();
+
+    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
+    Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets[2];
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators[2];
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
+    UINT64 m_fenceValue;
+    HANDLE m_fenceEvent;
+    UINT m_frameIndex;
+};
 
 
 //class Renderer
