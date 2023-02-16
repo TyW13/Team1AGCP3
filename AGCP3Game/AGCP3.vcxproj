@@ -113,6 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="AGCP3.h" />
@@ -123,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="AGCP3.cpp" />
