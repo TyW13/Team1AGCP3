@@ -9,6 +9,9 @@
 //
 //*********************************************************
 //
+
+// https://github.com/microsoft/DirectXTK12 - Sound stuff / Helpers / DDSTex/WIC etc
+
 #include "stdafx.h"
 #include "AGCP3.h"
 
