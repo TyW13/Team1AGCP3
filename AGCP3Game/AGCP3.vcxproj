@@ -112,6 +112,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="AGCP3.h" />
@@ -121,6 +122,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="AGCP3.cpp" />
