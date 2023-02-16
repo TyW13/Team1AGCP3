@@ -1,64 +1,44 @@
 #pragma once
 
+#include <d3d12.h>
+#include <dxgi1_4.h>
+#include <DirectXMath.h>
+#include <wrl/client.h>
 
-using namespace Microsoft::WRL;
-using namespace Windows::Foundation;
-
-using namespace DirectX;
-
-class Renderer {
+class Renderer
+{
 public:
-    Renderer(ID3D12Device* device, HWND hwnd, int width, int height);
+    Renderer(HWND hWnd, int width, int height);
     ~Renderer();
 
+    void Update();
     void Render();
 
+    void Resize(int width, int height);
+
 private:
-    // DirectX objects
-    ID3D12Device*                 m_device;
-    IDXGISwapChain3*              m_swapChain;
-    ID3D12CommandQueue*           m_commandQueue;
+    HWND m_hWnd;
+    int m_width;
+    int m_height;
 
-    ID3D12DescriptorHeap*         m_rtvDescriptorHeap;
-    UINT				          m_rtvDescriptorSize;
+    Microsoft::WRL::ComPtr<IDXGIFactory4> m_factory;
+    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
+    Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
+    Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets[2];
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+    UINT m_rtvDescriptorSize;
 
+    UINT m_frameIndex;
 
-    ID3D12DescriptorHeap*         m_dsvDescriptorHeap;
- 
-    ID3D12Resource*               m_backBufferRenderTarget[2];
-
-    ID3D12GraphicsCommandList*    m_commandList;
-
-    ID3D12CommandAllocator*       m_commandAllocator;
-
-    D3D12_RENDER_TARGET_VIEW_DESC m_renderTargets;
-
-
-    ComPtr<ID3D12Fence>					fence;
-    UINT64								fenceValue = 0;
-
-    HANDLE								fenceEvent;
-
-
-
-    //
-
-    //// Window size
-    //int m_width;
-    //int m_height;
-
-    //// Frame synchronization
-    //UINT m_frameIndex;
-    //HANDLE m_fenceEvent;
-    //ID3D12Fence* m_fence;
-    //UINT64 m_fenceValue;
-
-    //// Initialization methods
-    //void CreateDevice();
-    //void CreateSwapChain(HWND hwnd);
-    //void CreateCommandObjects();
-    //void CreateRenderTargetViews();
-    //void CreateFence();
-    //void WaitForPreviousFrame();
+    void InitD3D(HWND hWnd);
+    void CreateCommandObjects();
+    void CreateSwapChain(HWND hWnd);
+    void CreateDescriptorHeaps();
+    void LoadAssets();
+    void PopulateCommandList();
+    void WaitForPreviousFrame();
 };
-

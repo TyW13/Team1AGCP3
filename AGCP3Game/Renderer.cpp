@@ -1,8 +1,77 @@
-#include "stdafx.h"
+
 #include "Renderer.h"
 
+#include <stdexcept>
+#include <fstream>
+#include <wrl/client.h>
 
+using namespace DirectX;
 
+Renderer::Renderer(HWND hWnd, int width, int height)
+    : m_hWnd(hWnd), m_width(width), m_height(height), m_frameIndex(0)
+{
+    InitD3D(hWnd);
+    LoadAssets();
+}
+
+Renderer::~Renderer()
+{
+    WaitForPreviousFrame();
+}
+
+void Renderer::Update()
+{
+
+}
+
+void Renderer::Render()
+{
+    PopulateCommandList();
+
+    ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
+    m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+    WaitForPreviousFrame();
+}
+
+void Renderer::Resize(int width, int height)
+{
+    if (m_swapChain)
+    {
+        WaitForPreviousFrame();
+
+        m_commandList->Reset(m_commandAllocator.Get(), nullptr);
+
+        for (UINT i = 0; i < _countof(m_renderTargets); i++)
+        {
+            m_renderTargets[i].Reset();
+        }
+        m_rtvHeap.Reset();
+
+        m_width = width;
+        m_height = height;
+
+        DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+        m_swapChain->GetDesc(&swapChainDesc);
+        m_swapChain->ResizeBuffers(swapChainDesc.BufferCount, width, height, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags);
+
+        CreateDescriptorHeaps();
+    }
+}
+
+void Renderer::InitD3D(HWND hWnd)
+{
+    // Create DXGIFactory
+    HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&m_factory));
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to create DXGI factory");
+    }
+
+    // Create device
+    Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_12_0 };
+    for (UINT i
 
 
 
@@ -61,3 +130,5 @@
 //{
 //    // wait for GPU
 //}
+
+
