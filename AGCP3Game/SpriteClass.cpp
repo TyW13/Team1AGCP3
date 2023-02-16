@@ -1,118 +1,121 @@
 
 
-#include"stdafx.h"
+#include "stdafx.h"
 #include "DDSTextureLoader.h"
 #include "SpriteClass.h"
-#include <stdexcept>
+#include <fstream>
+#include "DDSTextureLoader.h"
 
-
-Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
-    : m_device(device), m_commandList(commandList), m_x(0.0f), m_y(0.0f), m_scaleX(1.0f), m_scaleY(1.0f)
+Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName, int spriteWidth, int spriteHeight) :
+    m_position(0.0f, 0.0f),
+    m_velocity(0.0f, 0.0f),
+    m_scale(1.0f),
+    m_rotation(0.0f),
+    m_device(device),
+    m_loadingComplete(false)
 {
-    CreateVertexBuffer();
-    CreateIndexBuffer();
-    CreateConstantBuffer();
-    CreateRootSignature();
-    CreatePipelineState();
+    CreateDeviceDependentResources(fileName);
+    CreateTextureResource(fileName);
+    CreateVertexBuffer(spriteWidth, spriteHeight);
+
+    m_commandList = commandList;
 }
 
 Sprite::~Sprite()
 {
 }
 
-void Sprite::SetPosition(float x, float y)
+void Sprite::Update(float deltaTime)
 {
-    m_x = x;
-    m_y = y;
-
-    DirectX::XMFLOAT4X4 transform;
-    DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixScaling(m_scaleX, m_scaleY, 1.0f) * DirectX::XMMatrixTranslation(m_x, m_y, 0.0f));
-    m_commandList->SetGraphicsRoot32BitConstants(0, 16, &transform, 0);
-}
-
-void Sprite::SetScale(float x, float y)
-{
-    m_scaleX = x;
-    m_scaleY = y;
-
-    DirectX::XMFLOAT4X4 transform;
-    DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixScaling(m_scaleX, m_scaleY, 1.0f) * DirectX::XMMatrixTranslation(m_x, m_y, 0.0f));
-    m_commandList->SetGraphicsRoot32BitConstants(0, 16, &transform, 0);
-}
-
-void Sprite::SetTexture(ID3D12Resource* texture, D3D12_SRV_DIMENSION textureViewDimension)
-{
-
+    // Update sprite position based on velocity
+    m_position.x += m_velocity.x * deltaTime;
+    m_position.y += m_velocity.y * deltaTime;
 }
 
 void Sprite::Draw()
 {
-  
+
+    // Set the vertex buffer and texture
+    m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+    m_commandList->SetGraphicsRootDescriptorTable(0, m_srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+
+    // Draw the sprite
+    m_commandList->DrawInstanced(6, 1, 0, 0);
 }
 
 
-
-void Sprite::CreateVertexBuffer()
+void Sprite::SetPosition(float x, float y)
 {
-    // Create the vertex buffer
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex) * 4);
-    hr = device->CreateCommittedResource(
-        &heapProperties,
-        D3D12_HEAP_FLAG_NONE,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_vertexBuffer));
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to create vertex buffer");
-    }
-
-    // Map the vertex buffer
-    Vertex* vertices;
-    CD3DX12_RANGE readRange(0, 0);
-    hr = m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&vertices));
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to map vertex buffer");
-    }
-
-    // Define the vertices of the sprite
-    float left = static_cast<float>(-m_texture.GetMetadata().width) / 2.0f;
-    float right = left + static_cast<float>(m_texture.GetMetadata().width);
-    float top = static_cast<float>(m_texture.GetMetadata().height) / 2.0f;
-    float bottom = top - static_cast<float>(m_texture.GetMetadata().height);
-    vertices[0] = { DirectX::XMFLOAT3(left, top, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f) };
-    vertices[1] = { DirectX::XMFLOAT3(right, top, 0.0f), DirectX::XMFLOAT2(1.0f, 0.0f) };
-    vertices[2] = { DirectX::XMFLOAT3(left, bottom, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f) };
-    vertices[3] = { DirectX::XMFLOAT3(right, bottom, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f) };
-
-    // Unmap the vertex buffer
-    m_vertexBuffer->Unmap(0, nullptr);
-
-    // Create the vertex buffer view
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    m_vertexBufferView.SizeInBytes = sizeof(Vertex) * 4;
+    m_position = DirectX::XMFLOAT2(x, y);
 }
 
-void Sprite::CreateIndexBuffer()
+void Sprite::Move(float dx, float dy)
+{
+    m_x += dx;
+    m_y += dy;
+}
+
+void Sprite::SetVelocity(float x, float y)
+{
+    m_velocity = DirectX::XMFLOAT2(x, y);
+}
+
+void Sprite::SetScale(float scale)
+{
+    m_scale = scale;
+}
+
+
+
+
+void Sprite::CreateDeviceDependentResources(const wchar_t* fileName)
 {
 
 }
 
-void Sprite::CreateConstantBuffer()
+void Sprite::CreateTextureResource(const wchar_t* fileName)
 {
 
 }
 
-void Sprite::CreateRootSignature()
+void Sprite::CreateVertexBuffer(int spriteWidth, int spriteHeight)
 {
 
 }
 
-void Sprite::CreatePipelineState()
-{
 
-}
+//// Load the texture from a file
+//bool Sprite::LoadTextureFromFile(ID3D12Device* device, const wchar_t* fileName)
+//{
+//    // Load the texture
+//    HRESULT hr = CreateDDSTextureFromFile(device, fileName, &m_texture, &m_textureUploadHeap);
+//    if (FAILED(hr))
+//    {
+//        return false;
+//    }
+//
+//    // Get the texture description to obtain the width and height
+//    D3D12_RESOURCE_DESC textureDesc = m_texture->GetDesc();
+//    m_textureWidth = textureDesc.Width;
+//    m_textureHeight = textureDesc.Height;
+//
+//    // Create the sampler for the texture
+//    D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+//    heapDesc.NumDescriptors = 1;
+//    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+//    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+//    device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_samplerHeap));
+//
+//    D3D12_SAMPLER_DESC samplerDesc = {};
+//    samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+//    samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+//    samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+//    samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+//    samplerDesc.MinLOD = 0;
+//    samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+//    samplerDesc.MipLODBias = 0.0f;
+//    samplerDesc.MaxAnisotropy = 1;
+//    device->CreateSampler(&samplerDesc, m_samplerHeap->GetCPUDescriptorHandleForHeapStart());
+//
+//    return true;
+//}

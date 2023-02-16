@@ -1,68 +1,58 @@
 #pragma once
 
 #include <d3d12.h>
-#include <dxgi1_6.h>
-#include <wrl.h>
-#include <vector>
+#include <dxgi1_4.h>
+#include <wrl/client.h>
 #include <DirectXMath.h>
-
-#include "d3dx12.h"
-
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
-
-using Microsoft::WRL::ComPtr;
-
-struct Vertex
-{
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT2 texCoord;
-};
 
 class Sprite
 {
 public:
-    Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+    Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName, int spriteWidth, int spriteHeight);
     ~Sprite();
 
-    void SetPosition(float x, float y);
-    void SetScale(float x, float y);
-    void SetTexture(ID3D12Resource* texture, D3D12_SRV_DIMENSION textureViewDimension);
+    void Update(float deltaTime);
     void Draw();
 
-private:
-    void CreateVertexBuffer();
-    void CreateIndexBuffer();
-    void CreateConstantBuffer();
-    void CreateRootSignature();
-    void CreatePipelineState();
+    void SetPosition(float x, float y);
+    void SetVelocity(float x, float y);
+    void SetScale(float scale);
+    void Move(float dx, float dy);
 
-    struct ConstantBufferData
+    //bool LoadTextureFromFile(ID3D12Device* device, const wchar_t* fileName);
+
+private:
+    struct Vertex
     {
-        DirectX::XMFLOAT4X4 transform;
+        DirectX::XMFLOAT3 position;
+        DirectX::XMFLOAT2 uv;
     };
 
-    ID3D12Device* m_device;
-    ID3D12GraphicsCommandList* m_commandList;
+    void CreateDeviceDependentResources(const wchar_t* fileName);
+    void CreateTextureResource(const wchar_t* fileName);
+    void CreateVertexBuffer(int spriteWidth, int spriteHeight);
 
-    ComPtr<ID3D12Resource> m_vertexBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_srvDescriptorHeap;
 
-    ComPtr<ID3D12Resource> m_indexBuffer;
-    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
 
-    ComPtr<ID3D12Resource> m_constantBuffer;
-    ConstantBufferData m_constantBufferData;
-    UINT8* m_mappedConstantBuffer;
+    DirectX::XMFLOAT2 m_position;
+    DirectX::XMFLOAT2 m_velocity;
+    float m_scale;
+    float m_rotation;
+    
+    float m_x, m_y;
 
-    ComPtr<ID3D12RootSignature> m_rootSignature;
-    ComPtr<ID3D12PipelineState> m_pipelineState;
+    bool m_loadingComplete;
 
-    ComPtr<ID3D12Resource> m_texture;
-    D3D12_SHADER_RESOURCE_VIEW_DESC m_textureSRVDesc;
+    const int m_vertexBufferSize = 6;
+    const int m_numFrames = 1;
+    int m_currentFrame = 0;
 
-    float m_x;
-    float m_y;
-    float m_scaleX;
-    float m_scaleY;
+    ID3D12Device* m_device;
 };
