@@ -66,9 +66,6 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Loader Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="WICTextureLoader.h">
-      <Filter>Loader Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>Math Helpers</Filter>
     </ClInclude>
@@ -86,12 +83,6 @@
     </ClInclude>
     <ClInclude Include="DirectXHelpers.h">
       <Filter>Math Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="LoaderHelpers.h">
-      <Filter>Loader Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceUploadBatch.h">
-      <Filter>Loader Helpers</Filter>
     </ClInclude>
     <ClInclude Include="DDS.h">
       <Filter>Loader Helpers</Filter>
@@ -131,9 +122,6 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WICTextureLoader.cpp">
-      <Filter>Loader Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Loader Helpers</Filter>
     </ClCompile>
@@ -148,9 +136,6 @@
     </ClCompile>
     <ClCompile Include="DirectXHelpers.cpp">
       <Filter>Math Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceUploadBatch.cpp">
-      <Filter>Loader Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
