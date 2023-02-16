@@ -35,15 +35,18 @@ void Renderer::CreateFence()
 	// Descriptor Sizes can vary across GPU so we must query this info.
 
 	ThrowIfFailed(m_device->CreateFence(
-		0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
+		0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
 
+	//
 	mRtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
+	//
 	mDsvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
-	mCbvSrvDescriptorSize = md3dDevic->GetDescriptorHandleIncrementSize(
+	//
+	mCbvSrvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	
 
@@ -52,8 +55,19 @@ void Renderer::CreateFence()
 
 void Renderer::Check4xMSSA()
 {
+	// Check for the supported quality level.
+
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
-	msQualityLevels.Format = mBackBufferFormat;
+	msQualityLevels.Format = mBackBufferFormat; // back buffer index?
+	msQualityLevels.SampleCount = 4;
+	msQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
+	msQualityLevels.NumQualityLevels = 0;
+	ThrowIfFailed(m_device->CheckFeatureSupport(
+		D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
+		&msQualityLevels,
+		sizeof(msQualityLevels)));
+
+
 
 }
 

@@ -32,6 +32,14 @@ private:
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators[2];
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
+
+   /* Microsoft::WRL::ComPtr<ID3D12Descriptor*/
+
+    // PlaceHolder Descriptor Sizes
+    UINT mRtvDescriptorSize;
+    UINT mDsvDescriptorSize;
+    UINT mCbvSrvDescriptorSize;
+
     UINT64 m_fenceValue;
     HANDLE m_fenceEvent;
     UINT m_frameIndex;
