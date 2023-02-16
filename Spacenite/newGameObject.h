@@ -9,10 +9,10 @@
 class GameObject
 {
 public:
-	GameObject(MyD3D& d3d)
+	GameObject(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum)
 		: objSprite(d3d)
 	{
-		//Init();
+		Init(objTex, position, scale, active, tileRect, objnum);
 	}
 
 	// Commented out unneeded Copy and move constructors and assignment operators
@@ -56,7 +56,7 @@ public:
 	//	printf("DELETING GAME OBJECT\n");
 	//}	
 
-	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active);
+	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum);
 	virtual void Update(float dTime);
 	void Terminate();
 

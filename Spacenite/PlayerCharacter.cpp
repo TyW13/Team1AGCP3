@@ -7,7 +7,7 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool active)
+void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool active, RECTF tileRect, int objnum)
 {
 	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true);
 	objSprite.SetTex(*objTex);
