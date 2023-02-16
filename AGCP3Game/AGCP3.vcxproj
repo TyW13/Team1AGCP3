@@ -114,12 +114,18 @@
   <ItemGroup>
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Collision2D.h" />
+    <ClInclude Include="DDS.h" />
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="DirectXHelpers.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="LoaderHelpers.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="Platformer.h" />
+    <ClInclude Include="PlatformHelpers.h" />
+    <ClInclude Include="ResourceUploadBatch.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="SoundCommon.h" />
     <ClInclude Include="SpriteClass.h" />
@@ -134,10 +140,13 @@
   <ItemGroup>
     <ClCompile Include="Collision2D.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="DirectXHelpers.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="pch.cpp" />
     <ClCompile Include="Platformer.cpp" />
+    <ClCompile Include="ResourceUploadBatch.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="SoundCommon.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
@@ -156,6 +165,9 @@
       <FileType>Document</FileType>
       <DeploymentContent>true</DeploymentContent>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

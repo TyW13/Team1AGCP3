@@ -8,6 +8,8 @@
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
+#include "stdafx.h"
+
 #include "pch.h"
 #include "SoundCommon.h"
 

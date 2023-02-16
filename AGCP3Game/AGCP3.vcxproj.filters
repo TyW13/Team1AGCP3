@@ -78,6 +78,24 @@
     <ClInclude Include="SoundCommon.h">
       <Filter>Audio Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="PlatformHelpers.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXHelpers.h">
+      <Filter>Math Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="LoaderHelpers.h">
+      <Filter>Loader Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceUploadBatch.h">
+      <Filter>Loader Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="DDS.h">
+      <Filter>Loader Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -125,10 +143,24 @@
     <ClCompile Include="SoundCommon.cpp">
       <Filter>Audio Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXHelpers.cpp">
+      <Filter>Math Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceUploadBatch.cpp">
+      <Filter>Loader Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl">
+      <Filter>Math Helpers</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "DXSampleHelper.h"
 #include "PlatformHelpers.h"
 
 #ifdef USING_XAUDIO2_9
