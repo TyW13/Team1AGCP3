@@ -100,7 +100,7 @@ private:
 	const float PLAYER_SPEED = 350;									//PLAYER EXCLUSIVE
 	const float JUMP_HEIGHT = 100;
 	const float PAD_SPEED = 500;									//PLAYER EXCLUSIVE
-	const float DRAGX = 0.885;										//for deceleration
+	const float DRAGX = 0.915;										//for deceleration
 	const float DRAGY_Higher = 0.993;
 	const float DRAGY_Lower = 0.970;
 	float gravity = 0;
