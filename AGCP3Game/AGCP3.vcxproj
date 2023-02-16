@@ -112,6 +112,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="Collision2D.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Entity.h" />
@@ -119,6 +120,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Platformer.h" />
+    <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="WICTextureLoader.h" />
     <ClInclude Include="Win32Application.h" />
@@ -135,6 +137,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Platformer.cpp" />
+    <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="Win32Application.cpp" />

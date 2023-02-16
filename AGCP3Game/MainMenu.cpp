@@ -6,8 +6,9 @@
 
 #include <SoundCommon.h>
 #include <Audio.h>
-#include <SimpleMath.h>
 
+
+#include "SimpleMath.h"
 #include "WICTextureLoader.h"
 
 using namespace DirectX;

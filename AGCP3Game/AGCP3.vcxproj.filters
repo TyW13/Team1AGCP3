@@ -69,6 +69,12 @@
     <ClInclude Include="WICTextureLoader.h">
       <Filter>Loader Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>Math Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Math Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -109,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Loader Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>Math Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
