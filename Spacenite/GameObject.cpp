@@ -196,48 +196,20 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-	//update player core movement
-	character.mPos.x += character.mVel.x * dTime;
-	character.mPos.y += character.mVel.y * dTime;
-	//decrease velocity by gravity
-	character.mPos.y += gravity * dTime;
-	
-	gravity = GRAVITY_SPEED;
+	if (lower_jump)
+	{
+		jumpSpeed *= 0.85;
+		currentVel.y = -jumpSpeed;
+	}
+	if (higher_jump)
+	{
+		jumpSpeed *= 0.95;
+		currentVel.y = -jumpSpeed;
+	}
 
-	//if velocity is is more than max speed 
-	//
-	//if player goes right
-	if (character.mVel.x > PLAYER_SPEED && character.mVel.x != 0)
-	{
-		character.mVel.x = PLAYER_SPEED;
-		animState = "Right";
-	}
-	//if player goes left
-	if (character.mVel.x < -PLAYER_SPEED && character.mVel.x != 0)
-	{
-		character.mVel.x = -PLAYER_SPEED;
-		animState = "Left";
-	}
-	if (character.mVel.x == 0)
-	{
-		animState = "Stand";
-	}
-	if (character.mVel.x < PLAYER_SPEED || character.mVel.x > -PLAYER_SPEED)
-	{
-		character.mVel.x *= DRAGX;
-	}
-	if (character.mVel.y < 0 && Game::sMKIn.IsPressed(VK_SPACE))
-	{
-		character.mVel.y *= DRAGY_Higher;	//jump higher when space is hold
-	}
-	else if (character.mVel.y < 0)
-	{
-		character.mVel.y *= DRAGY_Lower;	//jump lower when space is not hold anymore
-	}
-	else if (character.mVel.y >= 0)
-	{
- 		character.mVel.y *= DRAGY_Higher;	//make sure the character's falling down is smooth
-	}
+	//update player core movement
+	character.mVel += currentVel * dTime;
+	character.mPos += currentVel * dTime;
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -247,6 +219,61 @@ void Player::Update(float dTime)
 void Player::Render(DirectX::SpriteBatch& batch)
 {
 	playerRender(batch);
+}
+
+void Player::UpdateInput(float dTime)
+{
+	//--------- x-axis
+	//right
+	if (Game::sMKIn.IsPressed(VK_D))
+	{
+		currentPlayerSpeed = PLAYER_MAX_SPEED;
+		currentVel.x = currentPlayerSpeed;
+		animState = "Right";
+	}
+	//left
+	else if (Game::sMKIn.IsPressed(VK_A))
+	{
+		currentPlayerSpeed = -PLAYER_MAX_SPEED;
+		currentVel.x = currentPlayerSpeed;
+		animState = "Left";
+	}
+	//deceleration
+	else
+	{
+		currentVel.x *= DRAG_X;
+		animState = "Stand";
+	}
+
+	//--------- y-axis
+	//up
+	if (Game::sMKIn.IsPressed(VK_SPACE) && !isJumping) 
+	{
+		start_time = std::chrono::steady_clock::now();
+
+		// Start the jump
+		isJumping = true;
+		currentVel.y = -JUMP_INIT_VEL;
+	}
+	else if (!Game::sMKIn.IsPressed(VK_SPACE) && isJumping) 
+	{
+		end_time = std::chrono::steady_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+		double elapsed_time = elapsed_seconds.count();
+
+		// End the jump
+		if (elapsed_time < 0.09)
+		{
+			jumpSpeed = 1000;
+			lower_jump = true;
+		}
+		else
+		{
+			jumpSpeed = 1500;
+			higher_jump = true;
+		}
+		isJumping = false;
+	}
 }
 
 void Player::UpdateAnimation(float dTime)
@@ -337,50 +364,11 @@ void Player::UpdateAnimation(float dTime)
 	}
 	if (animState == "Stand")
 	{
+		//flip back 
+		character.SetScale(Vector2(6, character.GetScale().y));
+
+		//set default frame back
 		character.SetTexRect(spriteFrames[0]);
-	}
-}
-
-void Player::UpdateInput(float dTime)
-{
-	if (Game::sMKIn.IsPressed(VK_D) == true)
-	{
-		character.mVel.x += PLAYER_SPEED;
-	}
-
-	if (Game::sMKIn.IsPressed(VK_A) == true)
-	{
-		character.mVel.x -= PLAYER_SPEED;
-	}
-
-	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON))
-	{
-		mousePos = Game::sMKIn.GetMousePos(true);
-		DirectX::SimpleMath::Vector2 playerPos = character.mPos;
-
-		// Calculate the magnitudes of the vectors
-		double mag1 = sqrt(playerPos.x * playerPos.x + playerPos.y * playerPos.y);
-		double mag2 = sqrt(mousePos.x * mousePos.x + mousePos.y * mousePos.y);
-
-		// Normalize the vectors
-		double nx1 = playerPos.x / mag1;
-		double ny1 = mousePos.x / mag1;
-
-		double nx2 = playerPos.y / mag2;
-		double ny2 = mousePos.y / mag2;
-
-		DirectX::SimpleMath::Vector2 direction (nx1- ny1, nx2 - ny2);
-	}
-	
-	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
-	{
-		character.mVel.y = -JUMP_SPEED;
-		gravity = 0;
-		isGrounded = false;
-	}
-	if (Game::sMKIn.IsPressed(VK_SPACE) == false && character.mVel.y < 0)
-	{
-		isGrounded = false;
 	}
 }
 
@@ -421,7 +409,7 @@ void Player::CheckCollision()
 	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
-		isGrounded = true;
+		//isGrounded = true;
 	}
 }
 

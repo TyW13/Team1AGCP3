@@ -4,6 +4,7 @@
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
+#include <chrono>
 
 class Asteroid 
 {
@@ -95,20 +96,25 @@ public:
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
-	const float JUMP_SPEED = 2400;
-	const float GRAVITY_SPEED = 400;
-	const float PLAYER_SPEED = 350;									//PLAYER EXCLUSIVE
-	const float JUMP_HEIGHT = 100;
-	const float PAD_SPEED = 500;									//PLAYER EXCLUSIVE
-	const float DRAGX = 0.885;										//for deceleration
-	const float DRAGY_Higher = 0.993;
-	const float DRAGY_Lower = 0.970;
-	float gravity = 0;
 
-	bool isGrounded = false;										//Player
+	//------ movement variables
+	std::chrono::time_point<std::chrono::steady_clock> start_time;
+	std::chrono::time_point<std::chrono::steady_clock> end_time;
+	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
+	const float JUMP_INIT_VEL = 2500.0f;
+	const float JUMP_MAX_HEIGHT = 200.0f;
+	const float GRAVITY = 2000.f;
+	const float PLAYER_MAX_SPEED = 350;
+	const float DRAG_X = 0.985;									//for deceleration in x-axis
+	float currentPlayerSpeed = 0;
+	float jumpSpeed = 0;
+
+	bool higher_jump, lower_jump = false;
+	bool isJumping = false;
+	//bool isGrounded = false;
 
 	//------ animation variables 
-	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
+	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = 0.0f;
 	int currentFrame = 0;
 	std::string animState;
