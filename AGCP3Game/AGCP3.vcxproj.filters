@@ -87,6 +87,7 @@
     <ClInclude Include="Audio.h">
       <Filter>Audio Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -137,6 +138,7 @@
     <ClCompile Include="DirectXHelpers.cpp">
       <Filter>Math Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">
