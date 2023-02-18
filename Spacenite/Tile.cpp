@@ -7,14 +7,13 @@ void Tile::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::Si
 
 	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName() + std::to_string(objnum), true, tempTileRect); // TILE DISPLAY SOMETHING TO DO WITH &tempTileRect
 	objSprite.SetTex(*objTex);																																			// OR GET ANIM FUNCTION BELOW FIRST 2 VALUES
-	objSprite.origin = Vector2((tileRect.right + tileRect.left) / 2, (tileRect.top + tileRect.bottom) / 2);			// <----
+
 	objSprite.SetScale(scale);
+	objSprite.origin = Vector2(0, 8);					// Swap between (0 ,0) or (0, 8) to test which looks better (fits all the tiles correctly on y axis)
 	isActive = active;
 
 	objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
 
-	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
 	objSprite.mPos = position;
 }
 

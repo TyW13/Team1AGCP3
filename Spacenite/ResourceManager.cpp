@@ -76,8 +76,7 @@ void ResourceManager::AddGameObject(MyD3D& d3d)
 
 	for (int i = 0; i < tileRects.size(); i++)
 	{
-		//Tile newTile(d3d, GetTexture("test_sheet"), tilePositions[i], Vector2(6, 4), true, tileRects[i]);
-		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(1, 1), true, tileRects[i], i);
+		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
 		m_gObjects.emplace_back(newTile);
 	}
 }
@@ -112,6 +111,7 @@ std::string ResourceManager::SetTexName(std::string path)
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
 void ResourceManager::LoadJSON()
 {
+	//Map testMap("data/TestingLevel0.json");					// Tyrese testing map
 	Map testMap("data/test_level_jump1.json");
 
 	// IMPORT CODE TO CONVERT TSX FILE TO JSON FILE
@@ -152,10 +152,11 @@ void ResourceManager::LoadJSON()
 void ResourceManager::LoadTileSet(Map map)
 {
 	std::vector<int> data = map.getData();
+
 	for (size_t i = 0; i < data.size(); i++)
 	{
-		//if (data[i] != 0)
-		//{
+		if (data[i] != 0)
+		{
 			size_t columns = ts_Columns;
 			size_t val = data[i] - map.getFirstgid();								// Value of tile in tileset starting from 0 -> 13
 
@@ -184,7 +185,7 @@ void ResourceManager::LoadTileSet(Map map)
 			tileRect.bottom = y2;
 
 			tileRects.emplace_back(tileRect);
-		//}
+		}
 	}
 }
 

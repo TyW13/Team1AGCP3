@@ -8,14 +8,13 @@ void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, Direc
 
 	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), "test_sheet.dds", "test_sheet" + std::to_string(objnum), true, tempTileRect); // TILE DISPLAY SOMETHING TO DO WITH &tempTileRect
 	objSprite.SetTex(*objTex);																																			// OR GET ANIM FUNCTION BELOW FIRST 2 VALUES
-	objSprite.origin = Vector2(tileRect.left, tileRect.top);			// <----
+	
 	objSprite.SetScale(scale);
-	isActive = true;
+	objSprite.origin = Vector2(0, 8);
+	isActive = active;
 
 	objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
 
-	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
 	objSprite.mPos = Vector2(position);
 }
 
