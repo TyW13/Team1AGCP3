@@ -21,12 +21,14 @@ struct Vertex
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(float x, float y, float width, float height);
     ~GameObject();
 
     bool Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap,
         int textureIndex, int numVertices, int numIndices, Vertex* vertices, DWORD* indices);
+
     void Update(float deltaTime);
+
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap, ID3D12RootSignature* rootSignature,
         ID3D12PipelineState* pipelineState, DirectX::XMMATRIX viewProjectionMatrix);
 
@@ -38,6 +40,8 @@ public:
     DirectX::XMFLOAT2 GetPosition() const { return m_position; }
     float GetRotation() const { return m_rotation; }
     float GetScale() const { return m_scale; }
+
+    bool isColliding(GameObject* other);
 
 protected:
     struct VertexBufferView
