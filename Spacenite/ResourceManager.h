@@ -278,6 +278,6 @@ private:
 	std::vector<Map> m_Levels;
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
-	std::vector<std::vector<Tile*>> m_Tiles;
+	std::vector<Tile*> m_Tiles;
 	int currentMapNum;
 };

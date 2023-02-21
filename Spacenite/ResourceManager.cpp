@@ -16,13 +16,6 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 	CreateTexture(pDevice, "ship.dds");
 	CreateTexture(pDevice, "test_sheet2.dds");
 
-	std::vector<Tile*> zoneTiles;
-	for (int i = 0; i < tileRects.size(); i++)
-	{
-		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-		zoneTiles.emplace_back(newTile);
-	}
-
 	ReloadMap(d3d, 0);
 }
 
@@ -261,14 +254,14 @@ void ResourceManager::RenderTiles()
 
 void ResourceManager::UnloadZone()
 {
-	//if (m_Tiles.size() > 0)
-	//{
-	//	for (Tile* obj : m_Tiles)
-	//	{
-	//		delete obj;
-	//		obj = nullptr;
-	//	}
-	//}
+	if (m_Tiles.size() > 0)
+	{
+		for (Tile* obj : m_Tiles)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
 
 }
 
@@ -315,6 +308,13 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			tileRect.bottom = y2;
 
 			tileRects.emplace_back(tileRect);
+
+			std::vector<Tile*> zoneTiles;
+			for (int i = 0; i < tileRects.size(); i++)
+			{
+				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
+				zoneTiles.emplace_back(newTile);
+			}
 		}
 	}
 }
