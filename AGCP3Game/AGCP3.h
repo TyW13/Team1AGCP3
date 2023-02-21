@@ -44,19 +44,42 @@ private:
         XMFLOAT2 uv;
     };
 
-    // Pipeline objects.
+    static constexpr size_t MAX_BACK_BUFFER_COUNT = 3;
+
+    // Direct 3D Objects
+    ComPtr<ID3D12Device> m_device;
+    ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    ComPtr<ID3D12CommandQueue> m_commandQueue;
+    ComPtr<ID3D12CommandAllocator> m_commandAllocator;
+
+    // Swap Chain Objects
+    ComPtr<IDXGISwapChain3> m_swapChain;
+    ComPtr<IDXGIFactory4> m_dxgiFactory;
+    ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
+
+    // Presentation fence Objects
+    ComPtr<ID3D12Fence> m_fence;
+    UINT64              m_fenceValues[MAX_BACK_BUFFER_COUNT];
+
+
+    // Direct3D rendering Objects
+    ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+    ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
+    ComPtr<ID3D12DescriptorHeap> m_srvHeap;
     CD3DX12_VIEWPORT m_viewport;
     CD3DX12_RECT m_scissorRect;
-    ComPtr<IDXGISwapChain3> m_swapChain;
-    ComPtr<ID3D12Device> m_device;
-    ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
-    ComPtr<ID3D12CommandAllocator> m_commandAllocator;
-    ComPtr<ID3D12CommandQueue> m_commandQueue;
+    
+   
+
+    
+
+
+   
+   
     ComPtr<ID3D12RootSignature> m_rootSignature;
-    ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
-    ComPtr<ID3D12DescriptorHeap> m_srvHeap;
+  
     ComPtr<ID3D12PipelineState> m_pipelineState;
-    ComPtr<ID3D12GraphicsCommandList> m_commandList;
+ 
     UINT m_rtvDescriptorSize;
 
     // App resources.
@@ -67,7 +90,7 @@ private:
     // Synchronization objects.
     UINT m_frameIndex;
     HANDLE m_fenceEvent;
-    ComPtr<ID3D12Fence> m_fence;
+  
     UINT64 m_fenceValue;
 
     void LoadPipeline();
