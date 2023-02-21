@@ -15,6 +15,6 @@
 _Use_decl_annotations_
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
-    AGCP3 sample(1280, 720, L"AGCP3 Game");
+    AGCP3 sample(1280, 720, L"TEAM 1 GAME - Maybe");
     return Win32Application::Run(&sample, hInstance, nCmdShow);
 }

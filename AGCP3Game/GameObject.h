@@ -7,7 +7,7 @@
 #include <wrl/client.h>
 
 
-#include "AGCP3.h"
+#include "AGCP3.h" 
 
 
 
@@ -21,70 +21,31 @@ struct Vertex
 class GameObject
 {
 public:
+    GameObject();
     GameObject(float x, float y, float width, float height);
-    ~GameObject();
+    virtual ~GameObject();
 
-    bool Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap,
-        int textureIndex, int numVertices, int numIndices, Vertex* vertices, DWORD* indices);
+    // Getters and setters
+    float GetX() const { return m_x; }
+    void SetX(float x) { m_x = x; }
+    float GetY() const { return m_y; }
+    void SetY(float y) { m_y = y; }
+    float GetWidth() const { return m_width; }
+    void SetWidth(float width) { m_width = width; }
+    float GetHeight() const { return m_height; }
+    void SetHeight(float height) { m_height = height; }
 
-    void Update(float deltaTime);
+    // Update and render
+    virtual void Update(float deltaTime);
+    virtual void Render();
 
-    void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap, ID3D12RootSignature* rootSignature,
-        ID3D12PipelineState* pipelineState, DirectX::XMMATRIX viewProjectionMatrix);
-
-    void SetPosition(float x, float y);
-    void SetPosition(DirectX::XMFLOAT2 position);
-    void SetRotation(float angle);
-    void SetScale(float scale);
-
-    DirectX::XMFLOAT2 GetPosition() const { return m_position; }
-    float GetRotation() const { return m_rotation; }
-    float GetScale() const { return m_scale; }
-
-    bool isColliding(GameObject* other);
+    // Check for collision with another game object
+    bool IsColliding(GameObject* other);
 
 protected:
-    struct VertexBufferView
-    {
-        D3D12_VERTEX_BUFFER_VIEW view;
-        UINT stride;
-        UINT sizeInBytes;
-    };
-    VertexBufferView m_vertexBufferView;
-
-    struct IndexBufferView
-    {
-        D3D12_INDEX_BUFFER_VIEW view;
-        UINT sizeInBytes;
-    };
-    IndexBufferView m_indexBufferView;
-
-    int m_textureIndex;
-    ID3D12Resource* m_texture = nullptr;
-    D3D12_GPU_DESCRIPTOR_HANDLE m_textureDescriptorHandle;
-
-    XMFLOAT2 m_position;
-    float m_rotation;
-    float m_scale;
-
-    XMFLOAT4X4 m_worldMatrix;
-
-    void CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
-    void CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, Vertex* vertices, int numVertices);
-    void CreateIndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, DWORD* indices, int numIndices);
-
-private:
-    ID3D12Resource* m_vertexBuffer = nullptr;
-    ID3D12Resource* m_vertexBufferUploadHeap = nullptr;
-    ID3D12Resource* m_indexBuffer = nullptr;
-    ID3D12Resource* m_indexBufferUploadHeap = nullptr;
-
-    int m_numVertices;
-    int m_numIndices;
-
-    void UpdateWorldMatrix();
+    float m_x, m_y;
+    float m_width, m_height;
 };
-
 
 
 //using namespace Microsoft::WRL;

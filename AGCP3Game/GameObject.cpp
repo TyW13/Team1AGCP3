@@ -3,50 +3,40 @@
 #include "GameObject.h"
 #include "DDSTextureLoader.h"
 
+GameObject::GameObject()
+{
+    m_x = 0;
+    m_y = 0;
+    m_width = 0;
+    m_height = 0;
+}
+
 GameObject::GameObject(float x, float y, float width, float height)
 {
+    m_x = x;
+    m_y = y;
+    m_width = width;
+    m_height = height;
 }
 
 GameObject::~GameObject()
 {
-}
 
-bool GameObject::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap, int textureIndex, int numVertices, int numIndices, Vertex* vertices, DWORD* indices)
-{
-	return false;
 }
 
 void GameObject::Update(float deltaTime)
 {
-
+    // Update the object's position based on its velocity
+  /*  m_position.x += m_velocity.x * deltaTime;
+    m_position.y += m_velocity.y * deltaTime;*/
 }
 
-void GameObject::Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap, ID3D12RootSignature* rootSignature, ID3D12PipelineState* pipelineState, DirectX::XMMATRIX viewProjectionMatrix)
+void GameObject::Render()
 {
-
+    // Implement in child classes as needed
 }
 
-void GameObject::SetPosition(float x, float y)
-{
-
-}
-
-void GameObject::SetPosition(DirectX::XMFLOAT2 position)
-{
-
-}
-
-void GameObject::SetRotation(float angle)
-{
-
-}
-
-void GameObject::SetScale(float scale)
-{
-
-}
-
-bool GameObject::isColliding(GameObject* other)
+bool GameObject::IsColliding(GameObject* other)
 {
     float left1 = m_x - m_width / 2.0f;
     float right1 = m_x + m_width / 2.0f;
@@ -59,23 +49,4 @@ bool GameObject::isColliding(GameObject* other)
     float bottom2 = other->GetY() + other->GetHeight() / 2.0f;
 
     return !(left1 > right2 || left2 > right1 || top1 > bottom2 || top2 > bottom1);
-}
-
-void GameObject::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap)
-{
-
-}
-
-void GameObject::CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, Vertex* vertices, int numVertices)
-{
-
-}
-
-void GameObject::CreateIndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, DWORD* indices, int numIndices)
-{
-}
-
-void GameObject::UpdateWorldMatrix()
-{
-
 }

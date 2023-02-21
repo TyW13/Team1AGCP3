@@ -17,8 +17,8 @@ Player::~Player()
 void Player::Update(float deltaTime)
 {
     // Update position based on velocity and delta time
-    m_position.x += m_velocity.x * deltaTime;
-    m_position.y += m_velocity.y * deltaTime;
+    //m_position.x += m_velocity.x * deltaTime;
+    //m_position.y += m_velocity.y * deltaTime;
 
     // Call parent class update function
     GameObject::Update(deltaTime);
