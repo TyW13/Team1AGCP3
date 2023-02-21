@@ -5,12 +5,87 @@
 #include "Texture.h"
 #include "newGameObject.h"
 #include "PlayerCharacter.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
-//using namespace DirectX;
+using namespace rapidjson;
 
 class Texture;
 class GameObject;
 class PlayerCharacter;
+class Tile;
+
+//class TileSet
+//{
+//public:
+//	TileSet::TileSet() {}
+//	//	TileSet::TileSet(int firstgid, const char* tileset);
+//	~TileSet() {}
+//
+//	void Init()
+//	{
+//
+//	}
+//
+//	void LoadTileSetData(int firstgid, const char* tileset);
+//	int getFirstGid() { return firstgid; }
+//	int getColumns() { return columns; }
+//	std::string getImaage() { return image; }
+//	int getImageHeight() { return imageHeight; }
+//	int getImageWidth() { return imageWidth; }
+//	int getMargin() { return margin; }
+//	std::string getName() { return name; }
+//	int getSpacing() { return spacing; }
+//	int getTileCount() { return tilecount; }
+//	int getTileHeight() { return tileheight; }
+//	int getTileWidth() { return tilewidth; }
+//	std::string getType() { return type; }
+//private:
+//	int firstgid;
+//	int columns;
+//	std::string image;
+//	int imageHeight;
+//	int imageWidth;
+//	int margin;
+//	std::string name;
+//	int spacing;
+//	int tilecount;
+//	int tileheight;
+//	int tilewidth;
+//	std::string type;
+//};
+
+class Layer
+{
+public:
+	Layer() {}
+	Layer(Value& value);
+	~Layer() {}
+
+	std::vector<int> GetData() { return data; }
+	std::string GetName() { return name; }
+	int GetId() { return id; }
+	int GetOpacity() { return opacity; }
+	int GetHeight() { return height; }
+	int GetWidth() { return width; }
+	std::string GetImage() { return image; }
+	std::string GetLayersType() { return layersType; }
+	bool IsVisible() { return visible; }
+	int GetX() { return x; }
+	int GetY() { return y; }
+private:
+	std::vector<int> data;
+	std::string name;
+	int id;
+	int opacity;
+	int height;
+	int width;
+	std::string image;
+	std::string layersType;
+	bool visible;
+	int x;
+	int y;
+};
 
 class Map
 {
@@ -23,14 +98,13 @@ public:
 	// All functions are below are Getters that return the value requested 
 
 	// Layers array functions 
-	int getID() { return id; }
-	std::string getName() { return name; }
-	std::vector<int> getData() { return data; }
-	int getOpacity() { return opacity; }
-	std::string getLayersType() { return layersType; }
-	bool getVisible() { return visible; }
-	int getX() { return x; }
-	int getY() { return y; }
+	//int getID() { return id; }
+	//std::string getName() { return name; }
+	//int getOpacity() { return opacity; }
+	//std::string getLayersType() { return layersType; }
+	//bool getVisible() { return visible; }
+	//int getX() { return x; }
+	//int getY() { return y; }
 
 	int getHeight() { return height; }
 	bool isInfinite() { return infinite; }
@@ -43,21 +117,33 @@ public:
 	int getWidth() { return width; }
 
 	// Tilesets array functions 
-	int getFirstgid() { return firstgid; }
-	std::string getSource() { return source; }
+	int getFirstgid() { return ts_firstgid; }
+	std::string getSource() { return ts_source; }
+	int GetColumns() { return ts_Columns; }
+	std::vector<Tile*> GetTiles() { return tiles; }
+	std::vector<RECTF> GetTilesRects() { return tileRects; }
+	std::vector<Vector2> GetTilePositions() { return tilePositions; }
+
+
+	std::vector<Layer> GetLayers() { return layers; }
+	Layer GetCurrentZone() { return layers[currentZoneNum]; }
+	int GetCurrentZoneNum() { return currentZoneNum; }
+	void SetCurrentZoneNum(int zoneNum) { currentZoneNum = zoneNum; }
 
 private:
 
-	// Layers array data
-	int id;								// layer ID 
-	std::string name;					// name of layer 
-	int opacity;						// how transparent layer is between 0-1 
-	std::string layersType;				// type of layer 
-	bool visible;						// whether layer is shown or hidden 
-	int x;								// horizontal layer offset
-	int y;								// vertical layer offset
+	//// Layers array data
+	//int id;								// layer ID 
+	//std::string name;					// name of layer 
+	//int opacity;						// how transparent layer is between 0-1 
+	//std::string layersType;				// type of layer 
+	//bool visible;						// whether layer is shown or hidden 
+	//int x;								// horizontal layer offset
+	//int y;								// vertical layer offset
 
-	std::vector<int> data;				// Data from layers data array
+	int currentZoneNum;
+	std::vector<Layer> layers;				// Layers are being used to represent each zone of a map
+
 	int height;							// height of the map in tiles 
 	bool infinite;						// refers to if map has infinite height/width 
 	int nextobjectid;
@@ -68,50 +154,27 @@ private:
 	std::string type;
 	int width;							// width of the map in tiles 
 
-	// Tilesets array data
+	// Tilesets data
 
-	int firstgid;						// refers to which tile set was used to create the map 
-	std::string source;					// links to the tile set used to create map 
-};
+		// Tile set vars (since we are using a single tileset per level)
+	int ts_Firstgid;
+	int ts_Columns;
+	std::string ts_Image;
+	int ts_ImageHeight;
+	int ts_ImageWidth;
+	int ts_Margin;
+	std::string ts_Name;
+	int ts_Spacing;
+	int ts_Tilecount;
+	int ts_Tileheight;
+	int ts_Tilewidth;
+	std::string ts_Type;
 
-class TileSet
-{
-public:
-	TileSet::TileSet() {}
-	//	TileSet::TileSet(int firstgid, const char* tileset);
-	~TileSet() {}
-
-	void Init()
-	{
-
-	}
-
-	void LoadTileSetData(int firstgid, const char* tileset);
-	int getFirstGid() { return firstgid; }
-	int getColumns() { return columns; }
-	std::string getImaage() { return image; }
-	int getImageHeight() { return imageHeight; }
-	int getImageWidth() { return imageWidth; }
-	int getMargin() { return margin; }
-	std::string getName() { return name; }
-	int getSpacing() { return spacing; }
-	int getTileCount() { return tilecount; }
-	int getTileHeight() { return tileheight; }
-	int getTileWidth() { return tilewidth; }
-	std::string getType() { return type; }
-private:
-	int firstgid;
-	int columns;
-	std::string image;
-	int imageHeight;
-	int imageWidth;
-	int margin;
-	std::string name;
-	int spacing;
-	int tilecount;
-	int tileheight;
-	int tilewidth;
-	std::string type;
+	int ts_firstgid;						 //refers to which tile set was used to create the map 
+	std::string ts_source;					 //links to the tile set used to create map 
+	std::vector<Tile*> tiles;
+	std::vector<RECTF> tileRects;
+	std::vector<Vector2> tilePositions;
 };
 
 class ResourceManager
@@ -192,31 +255,29 @@ public:
 	void Update(float dTime);
 	void Render(DirectX::DX11::SpriteBatch& batch);
 	void Terminate();
+	void LoadLevelsFromFile();
 	void CreateTexture(ID3D11Device& pDevice, const std::string &fPath);
 	void AddGameObject(MyD3D& d3d);
 	Texture* GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
-	void LoadJSON();
-	void LoadTileSet(Map map);
+
+	Map GetCurrentMap() { return m_Levels[currentMapNum]; }
+	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
+	void LoadCurrentMap(MyD3D& d3d);
+	void LoadNextMap(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadPreviousMap(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void ReloadMap(MyD3D& d3d, int mapNum);											// Load specific map by providing map num in vector
+
+	void UnloadZone();
+	void LoadZoneInfo(MyD3D& d3d, int zoneNum);										// Load specific map by providing map num in vector
+	void LoadNextZone(MyD3D& d3d);															// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadPreviousZone(MyD3D& d3d);														// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void RenderTiles();
+
 private:
+	std::vector<Map> m_Levels;
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
-
-
-	// Tile set vars
-	int ts_Firstgid;
-	int ts_Columns;
-	std::string ts_Image;
-	int ts_ImageHeight;
-	int ts_ImageWidth;
-	int ts_Margin;
-	std::string ts_Name;
-	int ts_Spacing;
-	int ts_Tilecount;
-	int ts_Tileheight;
-	int ts_Tilewidth;
-	std::string ts_Type;
-
-	std::vector<RECTF> tileRects;
-	std::vector<Vector2> tilePositions;
+	std::vector<std::vector<Tile*>> m_Tiles;
+	int currentMapNum;
 };

@@ -3,19 +3,27 @@
 #include "Map.h"
 #include "Tile.h"
 
-#include "rapidjson/document.h"
-#include "rapidjson/filereadstream.h"
 
-using namespace rapidjson;
 using namespace DirectX;
 
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
+	LoadLevelsFromFile();
+
 	// Will eventually not need to hard code in file, should read from .json file
 	CreateTexture(pDevice, "testTexture.dds");
 	CreateTexture(pDevice, "ship.dds");
 	CreateTexture(pDevice, "test_sheet2.dds");
+
+	std::vector<Tile*> zoneTiles;
+	for (int i = 0; i < tileRects.size(); i++)
+	{
+		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
+		zoneTiles.emplace_back(newTile);
+	}
+
+	ReloadMap(d3d, 0);
 }
 
 void ResourceManager::Update(float dTime)
@@ -59,6 +67,25 @@ void ResourceManager::Terminate()
 	}
 }
 
+// Goes through levels json file to add all needed level names to vector
+void ResourceManager::LoadLevelsFromFile()
+{
+	FILE* gLevelsFile = fopen("data/GameLevels.json", "rb");
+	char readBuffer[4096];
+	FileReadStream is(gLevelsFile, readBuffer, sizeof(readBuffer));
+	Document levelsDoc;
+	levelsDoc.ParseStream(is);
+
+
+	Value::Array levelsArray = levelsDoc["levels"].GetArray();
+	for (int i = 0; i < levelsArray.Size(); i++)
+	{
+		std::string file = levelsArray[i].GetString();
+		Map newMap(("data/" + file).c_str());
+		m_Levels.push_back(newMap);
+	}
+}
+
 // Creates a new texture object to add to the std::map
 void ResourceManager::CreateTexture(ID3D11Device& pDevice, const std::string& fPath)
 {
@@ -74,11 +101,7 @@ void ResourceManager::AddGameObject(MyD3D& d3d)
 
 	//m_gObjects.emplace_back(obj);
 
-	for (int i = 0; i < tileRects.size(); i++)
-	{
-		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-		m_gObjects.emplace_back(newTile);
-	}
+
 }
 
 // Get function for given texture using its std::string name used in the std::map
@@ -107,30 +130,96 @@ std::string ResourceManager::SetTexName(std::string path)
 	return noPath;
 }
 
+void ResourceManager::SetCurrentMap(int _currentMapNum)
+{
+	currentMapNum = _currentMapNum;
+}
+
+void ResourceManager::LoadCurrentMap(MyD3D& d3d)
+{
+	ReloadMap(d3d, currentMapNum);
+}
+
+void ResourceManager::LoadNextMap(MyD3D& d3d)
+{
+	if (currentMapNum < m_Levels.size() - 1)
+	{
+		currentMapNum++;
+		ReloadMap(d3d, currentMapNum);
+	}
+}
+
+void ResourceManager::LoadPreviousMap(MyD3D& d3d)
+{
+	if (currentMapNum > 0)
+	{
+		currentMapNum--;
+		ReloadMap(d3d, currentMapNum);
+	}
+}
 
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
-void ResourceManager::LoadJSON()
+void ResourceManager::ReloadMap(MyD3D& d3d, int mapNum)
 {
-	//Map testMap("data/TestingLevel0.json");					// Tyrese testing map
-	Map testMap("data/test_level_jump1.json");
+	SetCurrentMap(mapNum);
 
-	// IMPORT CODE TO CONVERT TSX FILE TO JSON FILE
-	std::string newSource = "data/" + testMap.getSource().substr(0, testMap.getSource().size() - 4) + ".json";
+	LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
+}
 
+Map::Map(const char* filePath)
+{
+	currentZoneNum = 0;
+
+	FILE* fp = fopen(filePath, "rb");		// opens json file 
+
+	char readBuffer[4096];
+	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
+
+	rapidjson::Document document;
+	document.ParseStream(mapStream);			// parses json file 
+
+	fclose(fp);		// closes json once it has been read 
+
+	// Stores all the data from the json file in the respective variables from the class
+	height = document["height"].GetInt();
+	infinite = document["infinite"].GetBool();
+
+	GenericArray layersA = document["layers"].GetArray();
+	for (size_t i = 0; i < layersA.Capacity(); i++)
+	{
+		Layer layer(layersA[i]);
+		layers.push_back(layer);
+	}
+
+	nextobjectid = document["nextobjectid"].GetInt();
+	orientation = document["orientation"].GetString();
+	renderorder = document["renderorder"].GetString();
+	tileheight = document["tileheight"].GetInt();
+	tilewidth = document["tilewidth"].GetInt();
+	type = document["type"].GetString();
+	width = document["width"].GetInt();
+
+
+
+	Value::Array tilesets = document["tilesets"].GetArray();
+	ts_firstgid = tilesets[0]["firstgid"].GetInt();
+	ts_source = tilesets[0]["source"].GetString();
+
+	// IMPORT CODE TO CONVERT TILESET TSX FILE TO JSON FILE
+	std::string newSource = "data/" + ts_source.substr(0, ts_source.size() - 4) + ".json";
 
 	FILE* f = fopen(newSource.c_str(), "rb");		// opens json file 
 
 	if (!f)
 	{
-		printf("didnt work");
 		assert(false);
 	}
 
-	char readBuffer[4096];
-	FileReadStream is(f, readBuffer, sizeof(readBuffer));
+	readBuffer[4096];
+	FileReadStream tsStream(f, readBuffer, sizeof(readBuffer));
 
 	Document tilesetDoc;
-	tilesetDoc.ParseStream(is);			// parses json file 
+	tilesetDoc.ParseStream(tsStream);			// parses json file 
 
 	fclose(f);
 
@@ -145,36 +234,77 @@ void ResourceManager::LoadJSON()
 	ts_Tileheight = tilesetDoc["tileheight"].GetInt();
 	ts_Tilewidth = tilesetDoc["tilewidth"].GetInt();
 	ts_Type = tilesetDoc["type"].GetString();
-
-	LoadTileSet(testMap);
 }
 
-void ResourceManager::LoadTileSet(Map map)
+void ResourceManager::LoadNextZone(MyD3D& d3d)
 {
-	std::vector<int> data = map.getData();
+	if (GetCurrentMap().GetCurrentZoneNum() < GetCurrentMap().GetLayers().size())							// Check to see if incrementing zone num will go over max zones or not
+	{
+		GetCurrentMap().SetCurrentZoneNum(GetCurrentMap().GetCurrentZoneNum() + 1);
+		LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());
+	}
+}
+
+void ResourceManager::LoadPreviousZone(MyD3D& d3d)
+{
+	if (GetCurrentMap().GetCurrentZoneNum() > 0)
+	{
+		GetCurrentMap().SetCurrentZoneNum(GetCurrentMap().GetCurrentZoneNum() - 1);
+		LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());
+	}
+}
+
+void ResourceManager::RenderTiles()
+{
+
+}
+
+void ResourceManager::UnloadZone()
+{
+	//if (m_Tiles.size() > 0)
+	//{
+	//	for (Tile* obj : m_Tiles)
+	//	{
+	//		delete obj;
+	//		obj = nullptr;
+	//	}
+	//}
+
+}
+
+void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
+{
+	UnloadZone();
+
+	GetCurrentMap().SetCurrentZoneNum(zoneNum);
+
+	std::vector<int> data = GetCurrentMap().GetCurrentZone().GetData();
+
+	std::vector<Vector2> tilePositions;
+	std::vector<RECTF> tileRects;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
 		if (data[i] != 0)
 		{
-			size_t columns = ts_Columns;
-			size_t val = data[i] - map.getFirstgid();								// Value of tile in tileset starting from 0 -> 13
+			size_t columns = GetCurrentMap().GetColumns();
+			size_t val = data[i] - GetCurrentMap().getFirstgid();								// Value of tile in tileset starting from 0 -> 13
 
 			size_t x = val % columns;												// Position of tile on the tile map, (0,0) is top left going down and to the right
 			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats lower than original value)
-			
-			size_t xPos = i % map.getWidth();										//
-			size_t yPos = floor(i / map.getWidth());								//
 
-			float tileXPos = xPos * ts_Tilewidth * 6;									// Tile object x and y position on screen
-			float tileYPos = yPos * ts_Tileheight * 6;
+			size_t xPos = i % GetCurrentMap().getWidth();										//
+			size_t yPos = floor(i / GetCurrentMap().getWidth());								//
+
+			float tileXPos = xPos * GetCurrentMap().getTileWidth() * 6;									// Tile object x and y position on screen
+			float tileYPos = yPos * GetCurrentMap().getTileWidth() * 6;
 
 			tilePositions.emplace_back(Vector2(tileXPos, tileYPos));
 
-			float x1 = x * ts_Tilewidth;											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
-			float x2 = (x + 1) * ts_Tilewidth;
-			float y1 = y * ts_Tileheight;
-			float y2 = (y + 1) * ts_Tileheight;
+			float x1 = x * GetCurrentMap().getTileWidth();											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			float x2 = (x + 1) * GetCurrentMap().getTileWidth();
+			float y1 = y * GetCurrentMap().getTileHeight();
+			float y2 = (y + 1) * GetCurrentMap().getTileHeight();
 
 			// CONSTRUCT TILE WITH POSITIONS or JUST CHECK POSITIONS FOR FUTUre
 
@@ -189,61 +319,33 @@ void ResourceManager::LoadTileSet(Map map)
 	}
 }
 
-Map::Map(const char* filePath)
+Layer::Layer(Value& value)
 {
-	FILE* fp = fopen(filePath, "rb");		// opens json file 
-
-	char readBuffer[4096];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-
-	rapidjson::Document document;
-	document.ParseStream(is);			// parses json file 
-
-	fclose(fp);		// closes json once it has been read 
-
-	// Stores all the data from the json file in the respective variables from the class
-
-	height = document["height"].GetInt();
-	infinite = document["infinite"].GetBool();
-	
-	Value::Array layersArray = document["layers"].GetArray();
-	//rapidjson::GenericObject layersObj = layersArray[0]
-
-	GenericArray layersA = document["layers"].GetArray();
-	//GenericObject test = layersA.begin()->GetObject();
-	//Value:: layerValue = layersA[0];					////// FIX THIS LOOP STUFF ////
-
-	for (size_t i = 0; i < layersA.Capacity(); i++)
-	{
-		if (layersA[0].HasMember("data"))
-		{
-			for (auto& v : layersA[0]["data"].GetArray())
-			{
-				data.push_back(v.GetInt());
-			}
+	if (value.HasMember("data")) {
+		for (auto& a : value["data"].GetArray()) {
+			data.push_back(a.GetInt());
 		}
 	}
 
-	
-	name = layersA[0]["name"].GetString();
-	id = layersA[0]["id"].GetInt();
-	opacity = layersA[0]["opacity"].GetInt();
-	layersType = layersA[0]["type"].GetString();
-	visible = layersA[0]["visible"].GetBool();
-	x = layersA[0]["x"].GetInt();
-	y = layersA[0]["y"].GetInt();
+	if (value.HasMember("height")) {
+		height = value["height"].GetInt();
+	}
 
-	nextobjectid = document["nextobjectid"].GetInt();
-	orientation = document["orientation"].GetString();
-	renderorder = document["renderorder"].GetString();
-	tileheight = document["tileheight"].GetInt();
+	id = value["id"].GetInt();
 
-	Value::Array tilesets = document["tilesets"].GetArray();
+	if (value.HasMember("image")) {
+		image = value["image"].GetString();
+	}
 
-	firstgid = tilesets[0]["firstgid"].GetInt();
-	source = tilesets[0]["source"].GetString();
+	name = value["name"].GetString();
+	opacity = value["opacity"].GetInt();
+	layersType = value["type"].GetString();
+	visible = value["visible"].GetBool();
 
-	tilewidth = document["tilewidth"].GetInt();
-	type = document["type"].GetString();
-	width = document["width"].GetInt();
+	if (value.HasMember("width")) {
+		width = value["width"].GetInt();
+	}
+
+	x = value["x"].GetInt();
+	y = value["y"].GetInt();
 }
