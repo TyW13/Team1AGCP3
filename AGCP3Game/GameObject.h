@@ -6,12 +6,17 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
-#include <DirectXMath.h>
+
 #include "AGCP3.h"
 
 
 
 using namespace DirectX;
+
+struct Vertex
+{
+   int m_vertices;
+};
 
 class GameObject
 {
