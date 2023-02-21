@@ -101,57 +101,15 @@ void Game::Render()
 
     float time = float(m_timer.GetTotalSeconds());
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //// Default
-    //ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap() };
-    //commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
-
-    //m_spriteBatch->Begin(commandList);
-
-    //// Default
-    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
-    //    GetTextureSize(m_texture.Get()),
-    //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-    // To spin sprite for no reason
-   /* m_screenPos, nullptr, Colors::White, cosf(time) * 4.f, m_origin);*/
-
-    // To scale Sprite - using cosf to give us a time-varying value between -1 and 1
-    //m_screenPos, nullptr, Colors::White, 0.f, m_origin, cosf(time) + 2.f);
-
-    // Tinting a Sprite
-  /*  m_screenPos, nullptr, Colors::Green, 0.f, m_origin);*/
-
-    // Tile the Sprite
-
-   //ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
-   // commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
-
-   // m_spriteBatch->Begin(commandList);
-
-   // //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
-   // //    GetTextureSize(m_texture.Get()),
-   // //    m_screenPos, &m_tileRect, Colors::White, 0.f, m_origin);
-
-   // // Stretch the Sprite
-
-
-   // m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
-   //     GetTextureSize(m_texture.Get()),
-   //     m_stretchRect, nullptr, Colors::White);
-
-
+   
     ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
     commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
 
     m_spriteBatch->Begin(commandList);
 
-    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Background),
-    //    GetTextureSize(m_background.Get()),
-    //    m_fullscreenRect);
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Background),
+        GetTextureSize(m_background.Get()),
+        m_fullscreenRect);
 
     m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
         GetTextureSize(m_texture.Get()),
