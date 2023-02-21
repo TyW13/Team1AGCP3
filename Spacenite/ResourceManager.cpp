@@ -16,12 +16,12 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 	CreateTexture(pDevice, "ship.dds");
 	CreateTexture(pDevice, "test_sheet2.dds");
 
-	std::vector<Tile*> zoneTiles;
-	for (int i = 0; i < tileRects.size(); i++)
-	{
-		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-		zoneTiles.emplace_back(newTile);
-	}
+	//std::vector<Tile*> zoneTiles;
+	//for (int i = 0; i < tileRects.size(); i++)
+	//{
+	//	Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
+	//	zoneTiles.emplace_back(newTile);
+	//}
 
 	ReloadMap(d3d, 0);
 }
@@ -276,6 +276,17 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 {
 	UnloadZone();
 
+	FILE* fp = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
+
+	char readBuffer[4096];
+	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
+
+	Document tilesetDoc;
+	tilesetDoc.ParseStream(mapStream);
+
+	fclose(fp);
+
+
 	GetCurrentMap().SetCurrentZoneNum(zoneNum);
 
 	std::vector<int> data = GetCurrentMap().GetCurrentZone().GetData();
@@ -315,6 +326,17 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			tileRect.bottom = y2;
 
 			tileRects.emplace_back(tileRect);
+
+			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();
+			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
+
+			Vector2 collisionBounds = Vector2(collisionWidth, collisionHeight);
+
+			for (int i = 0; i < tileRects.size(); i++)
+			{
+				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], collisionBounds, i);
+				zoneTiles.emplace_back(newTile);
+			}
 		}
 	}
 }

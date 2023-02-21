@@ -280,4 +280,9 @@ private:
 	std::vector<GameObject*> m_gObjects;
 	std::vector<std::vector<Tile*>> m_Tiles;
 	int currentMapNum;
+
+	std::vector<Tile*> zoneTiles;
+
+	int collisionWidth;
+	int collisionHeight;
 };

@@ -1,7 +1,7 @@
 #include "newGameObject.h"
 #include "Texture.h"
 
-void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum)
+void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)
 {
 	std::vector<RECTF>* tempTileRect = new std::vector<RECTF>;
 	tempTileRect->push_back(tileRect);
@@ -16,6 +16,8 @@ void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, Direc
 	objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
 
 	objSprite.mPos = Vector2(position);
+
+	collision_Bounds = collisionBounds;
 }
 
 void GameObject::Update(float dTime)
