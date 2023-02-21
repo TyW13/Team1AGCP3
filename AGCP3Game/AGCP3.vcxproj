@@ -113,6 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="AGCP3.h" />
     <ClInclude Include="d3dx12.h" />
@@ -122,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="AGCP3.cpp" />
     <ClCompile Include="DXSample.cpp" />
