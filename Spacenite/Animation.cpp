@@ -5,7 +5,6 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 Animation::Animation()
 {
-
 }
 
 Animation::~Animation()
@@ -51,9 +50,8 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 	}
 	if (animState == "Left")
 	{
-		//Need to find a way to flip rects without needing a seperate rect;
-		Player.SetTexRect(-spriteFrames[currentFrame]);
 		Player.SetScale(Vector2(-6, Player.GetScale().y));
+		Player.SetTexRect(-spriteFrames[currentFrame]);
 	}
 }
 
