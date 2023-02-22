@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 
+#include "Animation.h"
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
-#include "Animation.h"
 
 class Asteroid 
 {
@@ -112,8 +112,6 @@ private:
 	//------ animation variables 
 	std::string animState;
 
-	//------ animation functions
-	void UpdateAnimation(float dTime);
 	
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE

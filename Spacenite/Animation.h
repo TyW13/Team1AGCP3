@@ -10,15 +10,14 @@ public:
 	void Update(float, Sprite&, std::string);
 
 private:
-	void SwitchTex(Sprite&, int);
+	void SwitchTex(Sprite&, int, std::string);
 	void LoadAnimation(std::string);
 
 	const int Zero = 0;
-
 	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	int currentFrame = Zero;
-	std::string animState;
+	const std::string InitState = "Stand";
 	const RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
 	const RECTF flipped_spriteFrames[5] = {
 		{-spriteFrames[0].left, spriteFrames[0].top, -spriteFrames[0].right, spriteFrames[0].bottom},
@@ -29,11 +28,3 @@ private:
 	const int PlayerFrames = 5;
 };
 
-Animation::Animation()
-{
-
-}
-
-Animation::~Animation()
-{
-}

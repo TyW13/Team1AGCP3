@@ -1,9 +1,21 @@
 #include "Animation.h"
+#include "D3D.h"
+
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
+Animation::Animation()
+{
+
+}
+
+Animation::~Animation()
+{
+}
 
 void Animation::Init(std::string jsonPath, Sprite& Sprite)
 {
 	LoadAnimation(jsonPath);
-	SwitchTex(Sprite, Zero);
+	SwitchTex(Sprite, Zero, InitState);
 }
 void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 {
@@ -12,8 +24,6 @@ void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 	elapsedTime += deltaTime;
 
 	//advance to the next frame if enough time has passed
-	if (animState == "Right" || animState == "Left")
-	{
 		if (elapsedTime >= frameDuration)
 		{
 			currentFrame++;
@@ -22,19 +32,28 @@ void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 				currentFrame = Zero;
 			}
 			elapsedTime -= frameDuration;
-			SwitchTex(Sprite, currentFrame);
 		}
-	}
+	SwitchTex(Sprite, currentFrame, animState);
 
-	if (animState == "Stand")
-	{
-		SwitchTex(Sprite, Zero);
-	}
 }
 
-void Animation::SwitchTex(Sprite &Player, int currentFrame)
+void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animState)
 {
-	Player.SetTexRect(spriteFrames[currentFrame]);
+	if (animState == "Stand")
+	{
+		Player.SetScale(Vector2(6, Player.GetScale().y));
+		Player.SetTexRect(spriteFrames[Zero]);
+	}
+	if (animState == "Right")
+	{
+		Player.SetScale(Vector2(6, Player.GetScale().y));
+		Player.SetTexRect(spriteFrames[currentFrame]);
+	}
+	if (animState == "Left")
+	{
+		Player.SetScale(Vector2(-6, Player.GetScale().y));
+		Player.SetTexRect(flipped_spriteFrames[currentFrame]);
+	}
 }
 
 void Animation::LoadAnimation(std::string jsonPath)

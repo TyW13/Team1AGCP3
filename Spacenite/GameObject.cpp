@@ -196,6 +196,7 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
+
 	//update player core movement
 	character.mPos.x += character.mVel.x * dTime;
 	character.mPos.y += character.mVel.y * dTime;
@@ -237,9 +238,10 @@ void Player::Update(float dTime)
  		character.mVel.y *= DRAGY_Higher;	//make sure the character's falling down is smooth
 	}
 
+
 	UpdateInput(dTime);
 	CheckCollision();
-	UpdateAnimation(dTime);
+	PlayerAnim.Update(dTime, character, animState);
 }
 
 void Player::Render(DirectX::SpriteBatch& batch)
@@ -247,25 +249,6 @@ void Player::Render(DirectX::SpriteBatch& batch)
 	playerRender(batch);
 }
 
-void Player::UpdateAnimation(float dTime)
-{
-	PlayerAnim.Update(dTime, character, animState);
-	if (animState == "Right")
-	{
-		//flip back 
-		character.SetScale(Vector2(6, character.GetScale().y));
-	}
-	if (animState == "Left")
-	{
-		//flip back 
-		character.SetScale(Vector2(6, character.GetScale().y));
-	}
-	if (animState == "Stand")
-	{
-		//flip back 
-		character.SetScale(Vector2(6, character.GetScale().y));
-	}
-}
 
 void Player::UpdateInput(float dTime)
 {
