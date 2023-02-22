@@ -101,14 +101,22 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> start_time;
 	std::chrono::time_point<std::chrono::steady_clock> end_time;
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
-	const float JUMP_VEL = 500.0f;
+	const float INIT_JUMP_VEL = 500.0f;
+	const float MIN_JUMP_VEL = 200.0f;
+	const float MAX_JUMP_VEL = 400.0f;
 	const float GRAVITY = 2000.f;
 	const float PLAYER_MAX_SPEED = 350;
 	const float DRAG_X = 0.985;									//for deceleration in x-axis
-	float currentPlayerSpeed = 0;
+
+	const float HIGH_JUMP_TIME = 0.30;
+	const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;
 	float jumpSpeed = 0;
 	double elapsed_time = 0;
-
+	
+	
+	bool timeMouseClickDetected = false;
+	bool recordJumpTime = false;
+	bool stopDetectSpaceKey = false;
 	bool higher_jump, lower_jump = false;
 	bool isGrounded = false;
 	bool isJumping = false;
@@ -116,6 +124,7 @@ private:
 	//------ animation variables 
 	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = 0.0f;
+	float mouseClickElapsedTime = 0.f;
 	int currentFrame = 0;
 	std::string animState;
 	RECTF spriteFrames[5] = {{0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16}};

@@ -196,17 +196,12 @@ void Player::Init(MyD3D& mD3D)
 
 void Player::Update(float dTime)
 {
-	/*if (currentVel.y >= 0 && !isGrounded && !Game::sMKIn.IsPressed(VK_SPACE))
-	{
-		currentVel.y += -GRAVITY * dTime;
-	}*/
-
 	//update player core movement
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
 
-	if(isJumping)
-		character.mVel.y += GRAVITY * dTime;
+	/*if(isJumping)
+		character.mVel.y += GRAVITY * dTime;*/
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -224,15 +219,13 @@ void Player::UpdateInput(float dTime)
 	//right
 	if (Game::sMKIn.IsPressed(VK_D))
 	{
-		currentPlayerSpeed = PLAYER_MAX_SPEED;
-		currentVel.x = currentPlayerSpeed;
+		currentVel.x = PLAYER_MAX_SPEED;
 		animState = "Right";
 	}
 	//left
 	else if (Game::sMKIn.IsPressed(VK_A))
 	{
-		currentPlayerSpeed = -PLAYER_MAX_SPEED;
-		currentVel.x = currentPlayerSpeed;
+		currentVel.x = -PLAYER_MAX_SPEED;
 		animState = "Left";
 	}
 	//deceleration
@@ -244,38 +237,65 @@ void Player::UpdateInput(float dTime)
 
 	//--------- y-axis
 	//up
-	if (Game::sMKIn.IsPressed(VK_SPACE) && isGrounded) 
+	if (Game::sMKIn.IsPressed(VK_SPACE) && !stopDetectSpaceKey)
 	{
+		stopDetectSpaceKey = true;
+		recordJumpTime = true;
 		start_time = std::chrono::steady_clock::now();
-
-		currentVel.y = -JUMP_VEL;
-		isGrounded = false;
+		currentVel.y = -MAX_JUMP_VEL;
 	}
-	else if (!Game::sMKIn.IsPressed(VK_SPACE) && !isGrounded) 
-	{
-		if (!isJumping)
-		{
-			end_time = std::chrono::steady_clock::now();
-			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
-			elapsed_time = elapsed_seconds.count();
-		}
 
-		//Slow the player down til they reach 0 vel_y
-		if (elapsed_time < 0.09)
+	if (recordJumpTime)
+	{
+		end_time = std::chrono::steady_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+		elapsed_time = elapsed_seconds.count();
+		if (elapsed_time > HIGH_JUMP_TIME)
+			elapsed_time = HIGH_JUMP_TIME;
+	}
+
+	if (!Game::sMKIn.IsPressed(VK_SPACE) && !timeMouseClickDetected || elapsed_time == HIGH_JUMP_TIME)
+	{
+		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+		mouseClickElapsedTime = elapsed_seconds.count();
+		if (mouseClickElapsedTime > LOW_JUMP_TIME)
 		{
-			currentVel.y *= 0.685;
+			mouseClickElapsedTime = HIGH_JUMP_TIME;
 		}
 		else
 		{
-			currentVel.y *= 0.985;
+			mouseClickElapsedTime = LOW_JUMP_TIME;
 		}
-		isJumping = true;
+		timeMouseClickDetected = true;
 
-		if (currentVel.y < 0)
+	}
+	
+	if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time < HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
+	{
+		if (mouseClickElapsedTime ==  LOW_JUMP_TIME && elapsed_time >= mouseClickElapsedTime)
 		{
-			currentVel.y *= 0.985;
+			elapsed_time = 0;
+			currentVel.y = -MIN_JUMP_VEL;
+			recordJumpTime = false;
+		}
+		else if (mouseClickElapsedTime == HIGH_JUMP_TIME && elapsed_time == mouseClickElapsedTime)
+		{
+			elapsed_time = 0;
+			currentVel.y = -MAX_JUMP_VEL;
+			recordJumpTime = false;
 		}
 	}
+
+	if (currentVel.y < 0 && !recordJumpTime)
+	{
+		currentVel.y *= DRAG_X;
+	}
+
+	if (currentVel.y >= -1)
+	{
+		currentVel.y = GRAVITY;
+	}
+
 }
 
 void Player::UpdateAnimation(float dTime)
@@ -413,6 +433,7 @@ void Player::CheckCollision()
 	{
 		isGrounded = true;
 		isJumping = false;
+		stopDetectSpaceKey = false;
 	}
 }
 

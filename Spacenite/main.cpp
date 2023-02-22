@@ -68,7 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		if (canUpdateRender && dTime>0)
 		{
 			game.Update(dTime);
-			game.Render(dTime);
+ 			game.Render(dTime);
 		}
 		dTime = WinUtil::Get().EndLoop(canUpdateRender);
 	}
