@@ -13,6 +13,10 @@ struct RECTF
 	operator RECT() {
 		return RECT{ (int)left,(int)top,(int)right,(int)bottom };
 	}
+	 RECTF operator-()
+	{
+		return RECTF{ -(float)left,(float)top,-(float)right,(float)bottom };
+	}
 };
 
 //we only ever want one unique texture to be loaded
