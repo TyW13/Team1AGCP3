@@ -246,15 +246,6 @@ void Player::Render(DirectX::SpriteBatch& batch)
 {
 	playerRender(batch);
 }
-void LoadAnimation()
-{
-	/*FILE* Animation = fopen("Test.json", "rb");
-	char readBuffer[4096];
-	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
-	Document AnimationDoc;
-	AnimationDoc.ParseStream(is);*/
-
-}
 
 void Player::UpdateAnimation(float dTime)
 {

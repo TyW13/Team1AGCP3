@@ -24,6 +24,10 @@ void Animation::Update(float dTime, Sprite &Player, std::string animState)
 			SwitchTex(Player, currentFrame);
 		}
 	}
+	if (animState == "Stand")
+	{
+		SwitchTex(Player, 0);
+	}
 }
 
 void Animation::SwitchTex(Sprite &Player, int currentFrame)
