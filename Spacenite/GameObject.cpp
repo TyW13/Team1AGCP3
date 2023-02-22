@@ -187,6 +187,7 @@ void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
+	PlayerAnim.Init();
 	character.SetTex(*p, spriteFrames[0]);
 	character.SetScale(Vector2(6.f, 6.f));
 	character.origin = Vector2(0, character.GetTexData().dim.y);
@@ -245,99 +246,28 @@ void Player::Render(DirectX::SpriteBatch& batch)
 {
 	playerRender(batch);
 }
+void LoadAnimation()
+{
+	/*FILE* Animation = fopen("Test.json", "rb");
+	char readBuffer[4096];
+	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
+	Document AnimationDoc;
+	AnimationDoc.ParseStream(is);*/
+
+}
 
 void Player::UpdateAnimation(float dTime)
 {
+	PlayerAnim.Update(dTime, character);
 	if (animState == "Right")
 	{
-		//calculate elapsed time
-		float deltaTime = dTime;
-		elapsedTime += deltaTime;
-
-		//advance to the next frame if enough time has passed
-		if (elapsedTime >= frameDuration)
-		{
-			currentFrame++;
-			if (currentFrame >= 5)
-			{
-				currentFrame = 0;
-			}
-			elapsedTime -= frameDuration;
-		}
-
 		//flip back 
 		character.SetScale(Vector2(6, character.GetScale().y));
-
-		switch (currentFrame)
-		{
-		case 0:
-			character.SetTexRect(spriteFrames[0]);
-			break;
-		case 1:
-			character.SetTexRect(spriteFrames[1]);
-			break;
-		case 2:
-			character.SetTexRect(spriteFrames[2]);
-			break;
-		case 3:
-			character.SetTexRect(spriteFrames[3]);
-			break;
-		case 4:
-			character.SetTexRect(spriteFrames[4]);
-			break;
-		default:
-			character.SetTexRect(spriteFrames[0]);
-			break;
-		}
-	}
-	if (animState == "Left")
-	{
-		//calculate elapsed time
-		float deltaTime = dTime;
-		elapsedTime += deltaTime;
-
-		//advance to the next frame if enough time has passed
-		if (elapsedTime >= frameDuration)
-		{
-			currentFrame++;
-			if (currentFrame >= 5)
-			{
-				currentFrame = 0;
-			}
-			elapsedTime -= frameDuration;
-		}
-
-		//flip
-		character.SetScale(Vector2(-6, character.GetScale().y));
-
-		switch (currentFrame)
-		{
-		case 0:
-			character.SetTexRect(flipped_spriteFrames[0]);
-			break;
-		case 1:
-			character.SetTexRect(flipped_spriteFrames[1]);
-			break;
-		case 2:
-			character.SetTexRect(flipped_spriteFrames[2]);
-			break;
-		case 3:
-			character.SetTexRect(flipped_spriteFrames[3]);
-			break;
-		case 4:
-			character.SetTexRect(flipped_spriteFrames[4]);
-			break;
-		default:
-			character.SetTexRect(flipped_spriteFrames[0]);
-			break;
-		}
 	}
 	if (animState == "Stand")
 	{
 		//flip back 
 		character.SetScale(Vector2(6, character.GetScale().y));
-
-		character.SetTexRect(spriteFrames[0]);
 	}
 }
 
