@@ -4,7 +4,6 @@
 #include "D3D.h"
 #include <SpriteFont.h>
 #include "Sprite.h"
-#include <chrono>
 
 class Asteroid 
 {
@@ -98,17 +97,18 @@ public:
 private:
 
 	//------ movement variables
-	std::chrono::time_point<std::chrono::steady_clock> start_time;
-	std::chrono::time_point<std::chrono::steady_clock> end_time;
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
-	const float JUMP_VEL = 500.0f;
-	const float GRAVITY = 2000.f;
+	const float JUMP_VEL = 1500.0f;
+	const float GRAVITY = 200.f;
 	const float PLAYER_MAX_SPEED = 350;
 	const float DRAG_X = 0.985;									//for deceleration in x-axis
 	float currentPlayerSpeed = 0;
 	float jumpSpeed = 0;
 	double elapsed_time = 0;
 
+	bool stoppedJumping = false;
+	bool spaceDown = false;
+	bool spaceReleased = true;
 	bool higher_jump, lower_jump = false;
 	bool isGrounded = false;
 	bool isJumping = false;

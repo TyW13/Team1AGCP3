@@ -205,8 +205,14 @@ void Player::Update(float dTime)
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
 
-	if(isJumping)
-		character.mVel.y += GRAVITY * dTime;
+	if(stoppedJumping)
+	currentVel.y += GRAVITY/20;
+	if (currentVel.y > GRAVITY)
+		currentVel.y = GRAVITY;
+
+	/*if(isJumping)
+		character.mVel.y += GRAVITY * dTime;*/
+	//currentVel.y = GRAVITY;
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -244,38 +250,28 @@ void Player::UpdateInput(float dTime)
 
 	//--------- y-axis
 	//up
-	if (Game::sMKIn.IsPressed(VK_SPACE) && isGrounded) 
+	
+	if (Game::sMKIn.IsPressed(VK_SPACE) && !spaceDown && spaceReleased)
 	{
-		start_time = std::chrono::steady_clock::now();
-
 		currentVel.y = -JUMP_VEL;
-		isGrounded = false;
+
+		stoppedJumping = false;
+		spaceDown = true;
+		spaceReleased = false;
 	}
-	else if (!Game::sMKIn.IsPressed(VK_SPACE) && !isGrounded) 
+
+	if (!Game::sMKIn.IsPressed(VK_SPACE) && spaceDown && !spaceReleased)
 	{
-		if (!isJumping)
-		{
-			end_time = std::chrono::steady_clock::now();
-			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
-			elapsed_time = elapsed_seconds.count();
-		}
-
-		//Slow the player down til they reach 0 vel_y
-		if (elapsed_time < 0.09)
-		{
-			currentVel.y *= 0.685;
-		}
-		else
-		{
-			currentVel.y *= 0.985;
-		}
-		isJumping = true;
-
-		if (currentVel.y < 0)
-		{
-			currentVel.y *= 0.985;
-		}
+		spaceDown = false;
+		spaceReleased = true;
 	}
+
+	currentVel.y *= DRAG_X;
+
+	if(currentVel.y >= -20)
+		stoppedJumping = true;
+
+
 }
 
 void Player::UpdateAnimation(float dTime)
