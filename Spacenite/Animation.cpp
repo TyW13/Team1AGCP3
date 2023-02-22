@@ -1,32 +1,34 @@
 #include "Animation.h"
 
-void Animation::Init()
+void Animation::Init(std::string jsonPath, Sprite& Sprite)
 {
-	//LoadAnimation("Test.json");
+	LoadAnimation(jsonPath);
+	SwitchTex(Sprite, Zero);
 }
-void Animation::Update(float dTime, Sprite &Player, std::string animState)
+void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 {
 	//calculate elapsed time
 	float deltaTime = dTime;
 	elapsedTime += deltaTime;
 
 	//advance to the next frame if enough time has passed
-	if (animState == "Right")
+	if (animState == "Right" || animState == "Left")
 	{
 		if (elapsedTime >= frameDuration)
 		{
 			currentFrame++;
-			if (currentFrame >= 5)
+			if (currentFrame >= PlayerFrames)
 			{
-				currentFrame = 0;
+				currentFrame = Zero;
 			}
 			elapsedTime -= frameDuration;
-			SwitchTex(Player, currentFrame);
+			SwitchTex(Sprite, currentFrame);
 		}
 	}
+
 	if (animState == "Stand")
 	{
-		SwitchTex(Player, 0);
+		SwitchTex(Sprite, Zero);
 	}
 }
 
@@ -37,9 +39,10 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame)
 
 void Animation::LoadAnimation(std::string jsonPath)
 {
-	/*FILE* Animation = fopen("Test.json", "rb");
-char readBuffer[4096];
-FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
-Document AnimationDoc;
-AnimationDoc.ParseStream(is);*/
+	//Need rapidjson to test
+	/*FILE* Animation = fopen(jsonPath, "rb");
+	char readBuffer[4096];
+	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
+	Document AnimationDoc;
+	AnimationDoc.ParseStream(is);*/
 }

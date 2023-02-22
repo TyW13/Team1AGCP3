@@ -187,8 +187,8 @@ void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
 	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
-	PlayerAnim.Init();
-	character.SetTex(*p, spriteFrames[0]);
+	character.SetTex(*p);
+	PlayerAnim.Init("test_chara_walk.json", character);
 	character.SetScale(Vector2(6.f, 6.f));
 	character.origin = Vector2(0, character.GetTexData().dim.y);
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
@@ -249,8 +249,13 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateAnimation(float dTime)
 {
-	PlayerAnim.Update(dTime, character);
+	PlayerAnim.Update(dTime, character, animState);
 	if (animState == "Right")
+	{
+		//flip back 
+		character.SetScale(Vector2(6, character.GetScale().y));
+	}
+	if (animState == "Left")
 	{
 		//flip back 
 		character.SetScale(Vector2(6, character.GetScale().y));
