@@ -113,6 +113,8 @@ private:
 	const float LOW_JUMP_TIME	= HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
 
 	double elapsed_time			= 0;					//measure how much time has elapsed between starting and ending time counting
+
+	std::string jumpType;
 	
 	bool grounded				= false;
 	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump

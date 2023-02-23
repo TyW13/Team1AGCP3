@@ -275,21 +275,23 @@ void Player::UpdateInput(float dTime)
 
 		}
 
-		//detect during which of two time frames the space button has been released and set the var based on it 
+		//detect during which of two time frames the space button has been released and set the jump type based on it 
 		if (!Game::sMKIn.IsPressed(VK_SPACE) && !timeSpaceClickDetected || elapsed_time == HIGH_JUMP_TIME)
 		{
 			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
 			spaceClickElapsedTime = elapsed_seconds.count();
 
-
+			//get the jump type
 			if (spaceClickElapsedTime > LOW_JUMP_TIME)
 			{
-				spaceClickElapsedTime = HIGH_JUMP_TIME;
+				//spaceClickElapsedTime = HIGH_JUMP_TIME;
+				jumpType = "HighJump";
 
 			}
 			else
 			{
-				spaceClickElapsedTime = LOW_JUMP_TIME;
+				//spaceClickElapsedTime = LOW_JUMP_TIME;
+				jumpType = "LowJump";
 
 			}
 			timeSpaceClickDetected = true;
@@ -300,23 +302,27 @@ void Player::UpdateInput(float dTime)
 		//set the velocity to minimum if the space button was clicked during the former time frame 
 		//OR 
 		//set to maximum if was clicked during the latter time frame
-		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time < HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
+		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time <= HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
 		{
-			if (spaceClickElapsedTime == LOW_JUMP_TIME && elapsed_time >= spaceClickElapsedTime)
+			if (jumpType == "LowJump" && elapsed_time >= LOW_JUMP_TIME)
 			{
+				jumpType = "";
 				elapsed_time = 0;
 				currentVel.y = -MIN_JUMP_VEL;
 				recordJumpTime = false;
 
-
 			}
-			else if (spaceClickElapsedTime == HIGH_JUMP_TIME && elapsed_time == spaceClickElapsedTime)
+			else if (jumpType == "HighJump" && elapsed_time == HIGH_JUMP_TIME)
 			{
+				jumpType = "";
 				elapsed_time = 0;
 				currentVel.y = -MAX_JUMP_VEL;
 				recordJumpTime = false;
 
-
+			}
+			else
+			{
+				recordJumpTime = false;
 			}
 		}
 
