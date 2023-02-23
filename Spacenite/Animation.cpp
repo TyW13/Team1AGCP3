@@ -68,12 +68,32 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 
 void Animation::LoadAnimation(std::string jsonPath)
 {
+	//From Joshua Moxon project 2
 	//Need rapidjson to test
 	/*FILE* Animation = fopen(jsonPath, "rb");
 	char readBuffer[4096];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
-	AnimationDoc.ParseStream(is);*/
+	AnimationDoc.ParseStream(is);
+
+	//Here we go through the json file and iterate through the array of frames and then
+	int i = 0;
+	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
+		GenericArray fullArray = d[jsonFrames2].GetArray();
+		for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
+		{
+			GenericObject obj = itr->GetObject();
+			if (obj.HasMember(jsonFrame))
+			{
+				auto oneFrame = obj.FindMember(jsonFrame);
+				auto const& FrameData = oneFrame->value;
+				float FrameWidth = FrameData[jsonX].GetInt();
+				float FrameHeight = FrameData[jsonY].GetInt();
+				float FrameOffsetW = FrameData[jsonW].GetInt();
+				float FrameOffsetH = FrameData[jsonH].GetInt();
+			}
+			++i;
+		}*/
 }
 
 void Animation::CheckState(std::string jsonPath)
