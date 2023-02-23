@@ -93,7 +93,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 				float FrameOffsetH = FrameData[jsonH].GetInt();
 			}
 			++i;
-		}*/
+		}8/
 }
 
 void Animation::CheckState(std::string jsonPath)
