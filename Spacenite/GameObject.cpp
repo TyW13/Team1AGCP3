@@ -200,8 +200,14 @@ void Player::Update(float dTime)
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
 
-	/*if(isJumping)
-		character.mVel.y += GRAVITY * dTime;*/
+	if (currentVel.y > -20)
+	{
+		currentVel.y += 10;
+	}
+	if (currentVel.y >= GRAVITY)
+	{
+		currentVel.y = GRAVITY;
+	}
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -219,13 +225,13 @@ void Player::UpdateInput(float dTime)
 	//right
 	if (Game::sMKIn.IsPressed(VK_D))
 	{
-		currentVel.x = PLAYER_MAX_SPEED;
+		currentVel.x = PLAYER_SPEED;
 		animState = "Right";
 	}
 	//left
 	else if (Game::sMKIn.IsPressed(VK_A))
 	{
-		currentVel.x = -PLAYER_MAX_SPEED;
+		currentVel.x = -PLAYER_SPEED;
 		animState = "Left";
 	}
 	//deceleration
@@ -237,65 +243,100 @@ void Player::UpdateInput(float dTime)
 
 	//--------- y-axis
 	//up
-	if (Game::sMKIn.IsPressed(VK_SPACE) && !stopDetectSpaceKey)
-	{
-		stopDetectSpaceKey = true;
-		recordJumpTime = true;
-		start_time = std::chrono::steady_clock::now();
-		currentVel.y = -MAX_JUMP_VEL;
-	}
 
-	if (recordJumpTime)
+	if (grounded)
 	{
-		end_time = std::chrono::steady_clock::now();
-		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
-		elapsed_time = elapsed_seconds.count();
-		if (elapsed_time > HIGH_JUMP_TIME)
-			elapsed_time = HIGH_JUMP_TIME;
-	}
-
-	if (!Game::sMKIn.IsPressed(VK_SPACE) && !timeMouseClickDetected || elapsed_time == HIGH_JUMP_TIME)
-	{
-		std::chrono::duration<double> elapsed_seconds = end_time - start_time;
-		mouseClickElapsedTime = elapsed_seconds.count();
-		if (mouseClickElapsedTime > LOW_JUMP_TIME)
+		//set initial velocity, start timer, record button pressed down during only the first frame
+		if (Game::sMKIn.IsPressed(VK_SPACE) && !stopDetectSpaceKey)
 		{
-			mouseClickElapsedTime = HIGH_JUMP_TIME;
+			start_time = std::chrono::steady_clock::now();
+			currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
+
+			stopDetectSpaceKey = true;
+			recordJumpTime = true;
+			grounded = false;
 		}
-		else
-		{
-			mouseClickElapsedTime = LOW_JUMP_TIME;
-		}
-		timeMouseClickDetected = true;
+
 
 	}
-	
-	if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time < HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
+	if (!grounded)
 	{
-		if (mouseClickElapsedTime ==  LOW_JUMP_TIME && elapsed_time >= mouseClickElapsedTime)
+		//record how much time has been passed since pressing down and releasing space button
+		if (recordJumpTime)
 		{
-			elapsed_time = 0;
-			currentVel.y = -MIN_JUMP_VEL;
-			recordJumpTime = false;
+			end_time = std::chrono::steady_clock::now();
+			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+			elapsed_time = elapsed_seconds.count();
+
+			//if pressed for max time set to high jump straightaway
+			if (elapsed_time > HIGH_JUMP_TIME)
+				elapsed_time = HIGH_JUMP_TIME;
+
+
 		}
-		else if (mouseClickElapsedTime == HIGH_JUMP_TIME && elapsed_time == mouseClickElapsedTime)
+
+		//detect during which of two time frames the space button has been released and set the var based on it 
+		if (!Game::sMKIn.IsPressed(VK_SPACE) && !timeSpaceClickDetected || elapsed_time == HIGH_JUMP_TIME)
 		{
-			elapsed_time = 0;
-			currentVel.y = -MAX_JUMP_VEL;
-			recordJumpTime = false;
+			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+			spaceClickElapsedTime = elapsed_seconds.count();
+
+
+			if (spaceClickElapsedTime > LOW_JUMP_TIME)
+			{
+				spaceClickElapsedTime = HIGH_JUMP_TIME;
+
+			}
+			else
+			{
+				spaceClickElapsedTime = LOW_JUMP_TIME;
+
+			}
+			timeSpaceClickDetected = true;
+
+
+		}
+
+		//set the velocity to minimum if the space button was clicked during the former time frame 
+		//OR 
+		//set to maximum if was clicked during the latter time frame
+		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time < HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
+		{
+			if (spaceClickElapsedTime == LOW_JUMP_TIME && elapsed_time >= spaceClickElapsedTime)
+			{
+				elapsed_time = 0;
+				currentVel.y = -MIN_JUMP_VEL;
+				recordJumpTime = false;
+
+
+			}
+			else if (spaceClickElapsedTime == HIGH_JUMP_TIME && elapsed_time == spaceClickElapsedTime)
+			{
+				elapsed_time = 0;
+				currentVel.y = -MAX_JUMP_VEL;
+				recordJumpTime = false;
+
+
+			}
+		}
+
+		//multiply velocity by drag to slown down the player moving upward
+		if (currentVel.y < 0 && !recordJumpTime)
+		{
+			currentVel.y *= DRAG_Y;
+
+
+		}
+
+		//if the player has slowed down moving upward activate the gravity to take them back down
+		if (currentVel.y >= -40)
+		{
+			if (currentVel.y > GRAVITY) { currentVel.y = GRAVITY; }
+			else { currentVel.y += 1.01 * (GRAVITY / 20); }
+
+
 		}
 	}
-
-	if (currentVel.y < 0 && !recordJumpTime)
-	{
-		currentVel.y *= DRAG_X;
-	}
-
-	if (currentVel.y >= -1)
-	{
-		currentVel.y = GRAVITY;
-	}
-
 }
 
 void Player::UpdateAnimation(float dTime)
@@ -431,9 +472,8 @@ void Player::CheckCollision()
 	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
-		isGrounded = true;
-		isJumping = false;
 		stopDetectSpaceKey = false;
+		grounded = true;
 	}
 }
 

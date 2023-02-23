@@ -100,31 +100,29 @@ private:
 	//------ movement variables
 	std::chrono::time_point<std::chrono::steady_clock> start_time;
 	std::chrono::time_point<std::chrono::steady_clock> end_time;
-	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
-	const float INIT_JUMP_VEL = 500.0f;
-	const float MIN_JUMP_VEL = 200.0f;
-	const float MAX_JUMP_VEL = 400.0f;
-	const float GRAVITY = 2000.f;
-	const float PLAYER_MAX_SPEED = 350;
-	const float DRAG_X = 0.985;									//for deceleration in x-axis
 
-	const float HIGH_JUMP_TIME = 0.30;
-	const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;
-	float jumpSpeed = 0;
-	double elapsed_time = 0;
+	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
+
+	const float MAX_JUMP_VEL	= 400;
+	const float MIN_JUMP_VEL	= MAX_JUMP_VEL / 2;
+	const float GRAVITY			= 200;
+	const float PLAYER_SPEED	= 350;
+	const float DRAG_X			= 0.985;				//for deceleration in x-axis
+	const float	DRAG_Y			= 0.990;				//for deceleration in y-axis
+	const float HIGH_JUMP_TIME	= 0.20;					//how much time it takes to do a higher jump
+	const float LOW_JUMP_TIME	= HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
+
+	double elapsed_time			= 0;					//measure how much time has elapsed between starting and ending time counting
 	
-	
-	bool timeMouseClickDetected = false;
-	bool recordJumpTime = false;
-	bool stopDetectSpaceKey = false;
-	bool higher_jump, lower_jump = false;
-	bool isGrounded = false;
-	bool isJumping = false;
+	bool grounded				= false;
+	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
+	bool recordJumpTime			= false;				//start/stop recording jump time
+	bool stopDetectSpaceKey		= false;				//stop detecting the space button pressed down if it was already pressed down the frame before
 
 	//------ animation variables 
 	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = 0.0f;
-	float mouseClickElapsedTime = 0.f;
+	float spaceClickElapsedTime = 0.f;
 	int currentFrame = 0;
 	std::string animState;
 	RECTF spriteFrames[5] = {{0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16}};
