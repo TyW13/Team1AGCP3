@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <string>
 #include <sstream>
+#undef NOMINMAX
 #include <assert.h>
 
 class MyD3D;

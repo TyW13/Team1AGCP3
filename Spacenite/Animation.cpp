@@ -76,7 +76,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 	char readBuffer[bufferMemory];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
-	//AnimationDoc.ParseStream(is);
+	AnimationDoc.ParseStream(is);
 	/*int i = 0;
 	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 	GenericArray fullArray = d[jsonFrames2].GetArray();
