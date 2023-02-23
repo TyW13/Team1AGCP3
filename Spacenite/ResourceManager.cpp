@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "Map.h"
 #include "Tile.h"
+#include "Game.h"
 
 
 using namespace DirectX;
@@ -16,10 +17,10 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 	CreateTexture(pDevice, "ship.dds");
 	CreateTexture(pDevice, "test_sheet2.dds");
 
-	ReloadMap(d3d, 0);
+	ReloadMap(d3d, 1);
 }
 
-void ResourceManager::Update(float dTime)
+void ResourceManager::Update(MyD3D& d3d, float dTime)
 {
 	if (m_gObjects.size() > 0)
 	{
@@ -30,6 +31,16 @@ void ResourceManager::Update(float dTime)
 				currentObj->Update(dTime);
 			}
 		}
+	}
+
+	if (Game::sMKIn.IsPressed(VK_D) == true)
+	{
+		LoadNextZone(d3d);
+	}
+
+	if (Game::sMKIn.IsPressed(VK_A) == true)
+	{
+		LoadPreviousZone(d3d);
 	}
 }
 
@@ -45,10 +56,22 @@ void ResourceManager::Render(SpriteBatch& batch)
 			}
 		}
 	}
+	if (m_Tiles.size() > 0)
+	{
+		for (Tile* currentTile : m_Tiles)
+		{
+			currentTile->GetSprite().Draw(batch);
+		}
+	}
 }
 
 void ResourceManager::Terminate()
 {
+	for (Map* map : m_Levels)
+	{
+		delete map;
+		map = nullptr;
+	}
 	for (const auto& tex : m_Textures)
 	{
 		delete tex.second;
@@ -74,8 +97,8 @@ void ResourceManager::LoadLevelsFromFile()
 	for (int i = 0; i < levelsArray.Size(); i++)
 	{
 		std::string file = levelsArray[i].GetString();
-		Map newMap(("data/" + file).c_str());
-		m_Levels.push_back(newMap);
+		Map* newMap = new Map(("data/" + file).c_str());
+		m_Levels.emplace_back(newMap);
 	}
 }
 
@@ -156,7 +179,7 @@ void ResourceManager::ReloadMap(MyD3D& d3d, int mapNum)
 {
 	SetCurrentMap(mapNum);
 
-	LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
+	LoadZoneInfo(d3d, GetCurrentMap()->GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
 }
 
 Map::Map(const char* filePath)
@@ -231,47 +254,42 @@ Map::Map(const char* filePath)
 
 void ResourceManager::LoadNextZone(MyD3D& d3d)
 {
-	if (GetCurrentMap().GetCurrentZoneNum() < GetCurrentMap().GetLayers().size())							// Check to see if incrementing zone num will go over max zones or not
+	if (GetCurrentMap()->GetCurrentZoneNum() < GetCurrentMap()->GetLayers().size() - 1)							// Check to see if incrementing zone num will go over max zones or not
 	{
-		GetCurrentMap().SetCurrentZoneNum(GetCurrentMap().GetCurrentZoneNum() + 1);
-		LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());
+		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() + 1);
+		LoadZoneInfo(d3d, GetCurrentMap()->GetCurrentZoneNum());
 	}
 }
 
 void ResourceManager::LoadPreviousZone(MyD3D& d3d)
 {
-	if (GetCurrentMap().GetCurrentZoneNum() > 0)
+	if (GetCurrentMap()->GetCurrentZoneNum() > 0)
 	{
-		GetCurrentMap().SetCurrentZoneNum(GetCurrentMap().GetCurrentZoneNum() - 1);
-		LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());
+		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() - 1);
+		LoadZoneInfo(d3d, GetCurrentMap()->GetCurrentZoneNum());
 	}
-}
-
-void ResourceManager::RenderTiles()
-{
-
 }
 
 void ResourceManager::UnloadZone()
 {
 	if (m_Tiles.size() > 0)
 	{
-		for (Tile* obj : m_Tiles)
+		for (int i = m_Tiles.size() - 1; i >= 0; i--)
 		{
-			delete obj;
-			obj = nullptr;
+			delete m_Tiles[i];
+			m_Tiles[i] = nullptr;
+			m_Tiles.pop_back();
 		}
 	}
-
 }
 
 void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 {
 	UnloadZone();
 
-	GetCurrentMap().SetCurrentZoneNum(zoneNum);
+	GetCurrentMap()->SetCurrentZoneNum(zoneNum);
 
-	std::vector<int> data = GetCurrentMap().GetCurrentZone().GetData();
+	std::vector<int> data = GetCurrentMap()->GetCurrentZone().GetData();
 
 	std::vector<Vector2> tilePositions;
 	std::vector<RECTF> tileRects;
@@ -280,24 +298,24 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 	{
 		if (data[i] != 0)
 		{
-			size_t columns = GetCurrentMap().GetColumns();
-			size_t val = data[i] - GetCurrentMap().getFirstgid();								// Value of tile in tileset starting from 0 -> 13
+			size_t columns = GetCurrentMap()->GetColumns();
+			size_t val = data[i] - GetCurrentMap()->getFirstgid();								// Value of tile in tileset starting from 0 -> 13
 
 			size_t x = val % columns;												// Position of tile on the tile map, (0,0) is top left going down and to the right
 			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats lower than original value)
 
-			size_t xPos = i % GetCurrentMap().getWidth();										//
-			size_t yPos = floor(i / GetCurrentMap().getWidth());								//
+			size_t xPos = i % GetCurrentMap()->getWidth();										//
+			size_t yPos = floor(i / GetCurrentMap()->getWidth());								//
 
-			float tileXPos = xPos * GetCurrentMap().getTileWidth() * 6;									// Tile object x and y position on screen
-			float tileYPos = yPos * GetCurrentMap().getTileWidth() * 6;
+			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * 6;									// Tile object x and y position on screen
+			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * 6;
 
 			tilePositions.emplace_back(Vector2(tileXPos, tileYPos));
 
-			float x1 = x * GetCurrentMap().getTileWidth();											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
-			float x2 = (x + 1) * GetCurrentMap().getTileWidth();
-			float y1 = y * GetCurrentMap().getTileHeight();
-			float y2 = (y + 1) * GetCurrentMap().getTileHeight();
+			float x1 = x * GetCurrentMap()->getTileWidth();											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			float x2 = (x + 1) * GetCurrentMap()->getTileWidth();
+			float y1 = y * GetCurrentMap()->getTileHeight();
+			float y2 = (y + 1) * GetCurrentMap()->getTileHeight();
 
 			// CONSTRUCT TILE WITH POSITIONS or JUST CHECK POSITIONS FOR FUTUre
 
@@ -308,14 +326,13 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			tileRect.bottom = y2;
 
 			tileRects.emplace_back(tileRect);
-
-			std::vector<Tile*> zoneTiles;
-			for (int i = 0; i < tileRects.size(); i++)
-			{
-				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-				zoneTiles.emplace_back(newTile);
-			}
 		}
+	}
+
+	for (int i = 0; i < tileRects.size(); i++)
+	{
+		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
+		m_Tiles.emplace_back(newTile);
 	}
 }
 

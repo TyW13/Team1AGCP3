@@ -36,7 +36,7 @@ void Game::Release()
 	mPMode.Release();
 }
 //called over and over, use it to update game logic
-void Game::Update(float dTime)
+void Game::Update(MyD3D& d3d, float dTime)
 {
 	sGamepads.Update();
 	switch (state)
@@ -48,7 +48,7 @@ void Game::Update(float dTime)
 		}
 		case State::PLAY:
 		{
-			mPMode.Update(dTime, endGame);
+			mPMode.Update(d3d, dTime, endGame);
 			if (endGame == true)
 			{
 				state = State::GETNAME;

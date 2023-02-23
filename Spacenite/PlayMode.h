@@ -19,7 +19,7 @@ class PlayMode
 public:
 	PlayMode(MyD3D& d3d);
 	void Release();
-	void Update(float dTime, bool& _endGame);
+	void Update(MyD3D& d3d, float dTime, bool& _endGame);
 	void Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch);
 
 

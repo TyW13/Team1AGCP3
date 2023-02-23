@@ -157,7 +157,7 @@ PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
 {
 	rManager.Init(d3d.GetDevice(), d3d);
-	rManager.ReloadMap(d3d, 1);
+	//rManager.ReloadMap(d3d, 1);
 	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
 	//rManager.AddGameObject(d3d);
 
@@ -205,10 +205,10 @@ void PlayMode::UpdateMissile(float dTime)
 }
 
 
-void PlayMode::Update(float dTime, bool& _endGame)
+void PlayMode::Update(MyD3D& d3d, float dTime, bool& _endGame)
 {
 	bGround.Update(dTime, IsTop, IsBottom);
-	rManager.Update(dTime);
+	rManager.Update(d3d, dTime);
 	//if (Player.character.GetActive())
 	//{
 	//	//UpdateMissile(dTime);

@@ -252,7 +252,7 @@ public:
 	ResourceManager(MyD3D& d3d){}
 
 	void Init(ID3D11Device& pDevice, MyD3D& d3d);
-	void Update(float dTime);
+	void Update(MyD3D& d3d, float dTime);
 	void Render(DirectX::DX11::SpriteBatch& batch);
 	void Terminate();
 	void LoadLevelsFromFile();
@@ -261,7 +261,10 @@ public:
 	Texture* GetTexture(const std::string& tName);
 	std::string SetTexName(std::string path);
 
-	Map GetCurrentMap() { return m_Levels[currentMapNum]; }
+	Map* GetCurrentMap() 
+	{ 
+		return m_Levels[currentMapNum]; 
+	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
 	void LoadCurrentMap(MyD3D& d3d);
 	void LoadNextMap(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
@@ -272,10 +275,9 @@ public:
 	void LoadZoneInfo(MyD3D& d3d, int zoneNum);										// Load specific map by providing map num in vector
 	void LoadNextZone(MyD3D& d3d);															// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(MyD3D& d3d);														// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
-	void RenderTiles();
 
 private:
-	std::vector<Map> m_Levels;
+	std::vector<Map*> m_Levels;
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
 	std::vector<Tile*> m_Tiles;

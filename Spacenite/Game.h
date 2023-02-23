@@ -28,7 +28,7 @@ public:
 
 
 	void Release();
-	void Update(float dTime);
+	void Update(MyD3D& d3d, float dTime);
 	void Render(float dTime);
 
 	void InitIntro(MyD3D& d3d);
