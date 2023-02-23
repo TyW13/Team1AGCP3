@@ -7,10 +7,10 @@ class Sprite;
 class PlayerCharacter : public GameObject
 {
 public:
-	PlayerCharacter(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum)	// Default constructor
-		: GameObject(d3d, objTex, position, scale, active, tileRect, objnum), objSprite(d3d)
+	PlayerCharacter(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)	// Default constructor
+		: GameObject(d3d, objTex, position, scale, active, tileRect, collisionBounds, objnum), objSprite(d3d)
 	{
-		Init(objTex, position, scale, active, tileRect, objnum);
+		Init(objTex, position, scale, active, tileRect, collisionBounds, objnum);
 	}
 
 	// Commented out unneeded copy and move constructors and overloaded assignment operators
@@ -51,7 +51,7 @@ public:
 	//
 	//~PlayerCharacter(){}																											// Destructor
 
-	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum) override;
+	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum) override;
 	void Update(float dTime) override;
 	void Terminate();
 

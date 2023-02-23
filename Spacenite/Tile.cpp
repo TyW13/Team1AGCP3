@@ -1,6 +1,6 @@
 #include "Tile.h"
 
-void Tile::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, int objnum)
+void Tile::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)
 {
 	std::vector<RECTF>* tempTileRect = new std::vector<RECTF>;
 	tempTileRect->push_back(tileRect);
@@ -9,7 +9,7 @@ void Tile::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::Si
 	objSprite.SetTex(*objTex);
 
 	objSprite.SetScale(scale);
-	objSprite.origin = Vector2(0, 8);					// Swap between (0 ,0) or (0, 8) to test which looks better (fits all the tiles correctly on y axis)
+	objSprite.origin = Vector2(0, 0);					// Swap between (0 ,0) or (0, 8) to test which looks better (fits all the tiles correctly on y axis)
 	isActive = active;
 
 	objSprite.GetAnim().Init(0, 0, 0, true);

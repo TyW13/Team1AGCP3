@@ -1,6 +1,5 @@
 #include <cstdio>
 #include "ResourceManager.h"
-#include "Map.h"
 #include "Tile.h"
 #include "Game.h"
 
@@ -10,12 +9,13 @@ using namespace DirectX;
 
 void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 {
+	LoadTexturesFromFile();
 	LoadLevelsFromFile();
 
 	// Will eventually not need to hard code in file, should read from .json file
-	CreateTexture(pDevice, "testTexture.dds");
-	CreateTexture(pDevice, "ship.dds");
-	CreateTexture(pDevice, "test_sheet2.dds");
+	//CreateTexture(pDevice, "testTexture.dds");
+	//CreateTexture(pDevice, "ship.dds");
+	//CreateTexture(pDevice, "test_sheet2.dds");
 
 	ReloadMap(d3d, 1);
 }
@@ -33,15 +33,24 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 		}
 	}
 
+	// TEMPORARY FORCED MAP AND ZONE TRANSITIONS
+	if (Game::sMKIn.IsPressed(VK_RIGHT) == true)
+	{
+		LoadNextMap(d3d);
+	}
+	if (Game::sMKIn.IsPressed(VK_LEFT) == true)
+	{
+		LoadPreviousMap(d3d);
+	}
 	if (Game::sMKIn.IsPressed(VK_D) == true)
 	{
 		LoadNextZone(d3d);
 	}
-
 	if (Game::sMKIn.IsPressed(VK_A) == true)
 	{
 		LoadPreviousZone(d3d);
 	}
+
 }
 
 void ResourceManager::Render(SpriteBatch& batch)
@@ -81,6 +90,28 @@ void ResourceManager::Terminate()
 	{
 		delete obj;
 	}
+	for (Tile* tile : m_Tiles)
+	{
+		delete tile;
+		tile = nullptr;
+	}
+}
+
+void ResourceManager::LoadTexturesFromFile()
+{
+	FILE* gLevelsFile = fopen("data/GameTextures.json", "rb");
+	char readBuffer[4096];
+	FileReadStream is(gLevelsFile, readBuffer, sizeof(readBuffer));
+	Document texDoc;
+	texDoc.ParseStream(is);
+
+	Value::Array texturesArray = texDoc["textures"].GetArray();
+	for (int i = 0; i < texturesArray.Size(); i++)
+	{
+		std::string file = texturesArray[i].GetString();
+		Texture* t = new Texture((file).c_str());
+		m_Textures.emplace(t->GetName(), t);
+	}
 }
 
 // Goes through levels json file to add all needed level names to vector
@@ -91,7 +122,6 @@ void ResourceManager::LoadLevelsFromFile()
 	FileReadStream is(gLevelsFile, readBuffer, sizeof(readBuffer));
 	Document levelsDoc;
 	levelsDoc.ParseStream(is);
-
 
 	Value::Array levelsArray = levelsDoc["levels"].GetArray();
 	for (int i = 0; i < levelsArray.Size(); i++)
@@ -287,12 +317,23 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 {
 	UnloadZone();
 
+
+	FILE* fp = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
+	char readBuffer[4096];
+	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
+	Document tilesetDoc;
+	tilesetDoc.ParseStream(mapStream);
+	fclose(fp);
+
+
 	GetCurrentMap()->SetCurrentZoneNum(zoneNum);
 
 	std::vector<int> data = GetCurrentMap()->GetCurrentZone().GetData();
 
 	std::vector<Vector2> tilePositions;
 	std::vector<RECTF> tileRects;
+	int collisionWidth = 0;
+	int collisionHeight = 0;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -301,23 +342,21 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			size_t columns = GetCurrentMap()->GetColumns();
 			size_t val = data[i] - GetCurrentMap()->getFirstgid();								// Value of tile in tileset starting from 0 -> 13
 
-			size_t x = val % columns;												// Position of tile on the tile map, (0,0) is top left going down and to the right
-			size_t y = floor(val / columns);										// Floor rounds down (returns biggest int thats lower than original value)
+			size_t x = val % columns;															// Position of tile on the tile map, (0,0) is top left going down and to the right
+			size_t y = floor(val / columns);													// Floor rounds down (returns biggest int thats lower than original value)
 
 			size_t xPos = i % GetCurrentMap()->getWidth();										//
 			size_t yPos = floor(i / GetCurrentMap()->getWidth());								//
 
-			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * 6;									// Tile object x and y position on screen
+			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * 6;						// Tile object x and y position on screen
 			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * 6;
 
 			tilePositions.emplace_back(Vector2(tileXPos, tileYPos));
 
-			float x1 = x * GetCurrentMap()->getTileWidth();											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			float x1 = x * GetCurrentMap()->getTileWidth();										// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
 			float x2 = (x + 1) * GetCurrentMap()->getTileWidth();
 			float y1 = y * GetCurrentMap()->getTileHeight();
 			float y2 = (y + 1) * GetCurrentMap()->getTileHeight();
-
-			// CONSTRUCT TILE WITH POSITIONS or JUST CHECK POSITIONS FOR FUTUre
 
 			RECTF tileRect;
 			tileRect.left = x1;
@@ -326,14 +365,22 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			tileRect.bottom = y2;
 
 			tileRects.emplace_back(tileRect);
+
+			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();
+			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
+
+			Vector2 collisionBounds = Vector2(collisionWidth, collisionHeight);
+
+			Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, tileRect, i);
+			m_Tiles.emplace_back(newTile);
 		}
 	}
 
-	for (int i = 0; i < tileRects.size(); i++)
-	{
-		Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-		m_Tiles.emplace_back(newTile);
-	}
+	//for (int i = 0; i < tileRects.size(); i++)
+	//{
+	//	Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
+	//	m_Tiles.emplace_back(newTile);
+	//}
 }
 
 Layer::Layer(Value& value)

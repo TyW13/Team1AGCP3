@@ -15,46 +15,6 @@ class GameObject;
 class PlayerCharacter;
 class Tile;
 
-//class TileSet
-//{
-//public:
-//	TileSet::TileSet() {}
-//	//	TileSet::TileSet(int firstgid, const char* tileset);
-//	~TileSet() {}
-//
-//	void Init()
-//	{
-//
-//	}
-//
-//	void LoadTileSetData(int firstgid, const char* tileset);
-//	int getFirstGid() { return firstgid; }
-//	int getColumns() { return columns; }
-//	std::string getImaage() { return image; }
-//	int getImageHeight() { return imageHeight; }
-//	int getImageWidth() { return imageWidth; }
-//	int getMargin() { return margin; }
-//	std::string getName() { return name; }
-//	int getSpacing() { return spacing; }
-//	int getTileCount() { return tilecount; }
-//	int getTileHeight() { return tileheight; }
-//	int getTileWidth() { return tilewidth; }
-//	std::string getType() { return type; }
-//private:
-//	int firstgid;
-//	int columns;
-//	std::string image;
-//	int imageHeight;
-//	int imageWidth;
-//	int margin;
-//	std::string name;
-//	int spacing;
-//	int tilecount;
-//	int tileheight;
-//	int tilewidth;
-//	std::string type;
-//};
-
 class Layer
 {
 public:
@@ -131,16 +91,6 @@ public:
 	void SetCurrentZoneNum(int zoneNum) { currentZoneNum = zoneNum; }
 
 private:
-
-	//// Layers array data
-	//int id;								// layer ID 
-	//std::string name;					// name of layer 
-	//int opacity;						// how transparent layer is between 0-1 
-	//std::string layersType;				// type of layer 
-	//bool visible;						// whether layer is shown or hidden 
-	//int x;								// horizontal layer offset
-	//int y;								// vertical layer offset
-
 	int currentZoneNum;
 	std::vector<Layer> layers;				// Layers are being used to represent each zone of a map
 
@@ -255,6 +205,7 @@ public:
 	void Update(MyD3D& d3d, float dTime);
 	void Render(DirectX::DX11::SpriteBatch& batch);
 	void Terminate();
+	void LoadTexturesFromFile();
 	void LoadLevelsFromFile();
 	void CreateTexture(ID3D11Device& pDevice, const std::string &fPath);
 	void AddGameObject(MyD3D& d3d);
@@ -266,20 +217,20 @@ public:
 		return m_Levels[currentMapNum]; 
 	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
-	void LoadCurrentMap(MyD3D& d3d);
+	void LoadCurrentMap(MyD3D& d3d);												// Just reloads curren tmap
 	void LoadNextMap(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousMap(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void ReloadMap(MyD3D& d3d, int mapNum);											// Load specific map by providing map num in vector
 
-	void UnloadZone();
+	void UnloadZone();																// Deletes all tile objects in vector to make room for the new zones tiles
 	void LoadZoneInfo(MyD3D& d3d, int zoneNum);										// Load specific map by providing map num in vector
-	void LoadNextZone(MyD3D& d3d);															// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
-	void LoadPreviousZone(MyD3D& d3d);														// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadNextZone(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadPreviousZone(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 private:
-	std::vector<Map*> m_Levels;
-	std::map<std::string, Texture*> m_Textures;
-	std::vector<GameObject*> m_gObjects;
-	std::vector<Tile*> m_Tiles;
-	int currentMapNum;
+	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
+	std::map<std::string, Texture*> m_Textures;										// Map to store Texture object and its respective texture name string
+	std::vector<GameObject*> m_gObjects;											// Vector which will store collidable objects, reducing the collisions needing to check
+	std::vector<Tile*> m_Tiles;														// Vector to store current zone tiles
+	int currentMapNum;																// 
 };
