@@ -1,6 +1,7 @@
 #pragma once
 #include "Sprite.h"
 
+constexpr int bufferMemory = 8192;
 class Animation
 {
 public:
@@ -17,6 +18,7 @@ private:
 	enum class State {PLAYER};
 	State animType = State::PLAYER;
 	const int Zero = 0;
+	const int kSizeUp = 6;
 	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	int currentFrame = Zero;
