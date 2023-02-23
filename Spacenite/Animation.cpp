@@ -1,6 +1,9 @@
 #include "Animation.h"
 #include "D3D.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
+using namespace rapidjson;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 Animation::Animation()
@@ -70,30 +73,12 @@ void Animation::LoadAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
 	//Need rapidjson to test
-	/*FILE* Animation = fopen(jsonPath, "rb");
-	char readBuffer[4096];
+	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	char readBuffer[8192];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);
 
-	//Here we go through the json file and iterate through the array of frames and then
-	int i = 0;
-	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
-		GenericArray fullArray = d[jsonFrames2].GetArray();
-		for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
-		{
-			GenericObject obj = itr->GetObject();
-			if (obj.HasMember(jsonFrame))
-			{
-				auto oneFrame = obj.FindMember(jsonFrame);
-				auto const& FrameData = oneFrame->value;
-				float FrameWidth = FrameData[jsonX].GetInt();
-				float FrameHeight = FrameData[jsonY].GetInt();
-				float FrameOffsetW = FrameData[jsonW].GetInt();
-				float FrameOffsetH = FrameData[jsonH].GetInt();
-			}
-			++i;
-		}8/
 }
 
 void Animation::CheckState(std::string jsonPath)
