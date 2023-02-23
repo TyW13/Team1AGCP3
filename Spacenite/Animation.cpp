@@ -13,6 +13,8 @@ Animation::~Animation()
 
 void Animation::Init(std::string jsonPath, Sprite& Sprite)
 {
+	jsonPath = "data/" + jsonPath;
+	CheckState(jsonPath);
 	LoadAnimation(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
 }
@@ -38,20 +40,29 @@ void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 
 void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animState)
 {
-	if (animState == "Stand")
+	switch (animType)
 	{
-		Player.SetScale(Vector2(6, Player.GetScale().y));
-		Player.SetTexRect(spriteFrames[Zero]);
-	}
-	if (animState == "Right")
-	{
-		Player.SetScale(Vector2(6, Player.GetScale().y));
-		Player.SetTexRect(spriteFrames[currentFrame]);
-	}
-	if (animState == "Left")
-	{
-		Player.SetScale(Vector2(-6, Player.GetScale().y));
-		Player.SetTexRect(-spriteFrames[currentFrame]);
+
+	case State::PLAYER:
+		if (animState == "Stand")
+		{
+			Player.SetScale(Vector2(6, Player.GetScale().y));
+			Player.SetTexRect(spriteFrames[Zero]);
+		}
+		if (animState == "Right")
+		{
+			Player.SetScale(Vector2(6, Player.GetScale().y));
+			Player.SetTexRect(spriteFrames[currentFrame]);
+		}
+		if (animState == "Left")
+		{
+			Player.SetScale(Vector2(-6, Player.GetScale().y));
+			Player.SetTexRect(-spriteFrames[currentFrame]);
+		}
+		else
+		{
+			assert("Animation state invalid");
+		}
 	}
 }
 
@@ -64,3 +75,16 @@ void Animation::LoadAnimation(std::string jsonPath)
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);*/
 }
+
+void Animation::CheckState(std::string jsonPath)
+{
+	if (jsonPath == "data/test_chara_walk.json")
+	{
+		animType = State::PLAYER;
+	}
+	else
+	{
+		assert("Animation does not exist");
+	}
+}
+

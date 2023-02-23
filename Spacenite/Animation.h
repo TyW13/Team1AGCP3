@@ -12,7 +12,10 @@ public:
 private:
 	void SwitchTex(Sprite&, int, std::string);
 	void LoadAnimation(std::string);
+	void CheckState(std::string jsonPath);
 
+	enum class State {PLAYER};
+	State animType = State::PLAYER;
 	const int Zero = 0;
 	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
