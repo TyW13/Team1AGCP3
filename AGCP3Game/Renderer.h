@@ -9,11 +9,11 @@
 #pragma comment(lib, "dxgi.lib")
 
 
-class Render
+class Renderer
 {
 public:
-	Render(HWND hwnd, int width, int height);
-	~Render();
+	Renderer(HWND hwnd, int width, int height);
+	~Renderer();
 
 	void RenderFrame();
 

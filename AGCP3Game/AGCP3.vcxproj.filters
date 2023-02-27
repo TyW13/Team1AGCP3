@@ -40,7 +40,7 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="Render.h">
+    <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">

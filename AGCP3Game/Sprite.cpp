@@ -68,3 +68,15 @@ void Sprite::Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap
 
 
 }
+
+void Sprite::SetPosition(float x, float y)
+{
+}
+
+void Sprite::InitializeVertexBuffer()
+{
+}
+
+void Sprite::InitializeIndexBuffer()
+{
+}

@@ -1,21 +1,21 @@
-#include "Render.h"
+#include "Renderer.h"
 
 #include "d3dx12.h"
 
-Render::Render(HWND hwnd, int width, int height)
+Renderer::Renderer(HWND hwnd, int width, int height)
 {
 
 }
 
 
 
-void Render::CreateDevice()
+void Renderer::CreateDevice()
 {
 	D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device));
 
 }
 
-void Render::CreateCommandQueue()
+void Renderer::CreateCommandQueue()
 {
     D3D12_COMMAND_QUEUE_DESC desc = {};
     desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -24,7 +24,7 @@ void Render::CreateCommandQueue()
     m_device->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_commandQueue));
 }
 
-void Render::CreateSwapChain()
+void Renderer::CreateSwapChain()
 {
     DXGI_SWAP_CHAIN_DESC1 desc = {};
     desc.BufferCount = 2;
@@ -44,7 +44,7 @@ void Render::CreateSwapChain()
     factory->Release();
 }
 
-void Render::CreateRenderTargetView()
+void Renderer::CreateRenderTargetView()
 {
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
     desc.NumDescriptors = 2;
@@ -64,18 +64,18 @@ void Render::CreateRenderTargetView()
     }
 }
 
-void Render::CreateCommandAllocator()
+void Renderer::CreateCommandAllocator()
 {
     m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator));
 }
 
-void Render::CreateCommandList()
+void Renderer::CreateCommandList()
 {
     m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, nullptr, IID_PPV_ARGS(&m_commandList));
     m_commandList->Close();
 }
 
-void Render::PopulateCommandList()
+void Renderer::PopulateCommandList()
 {
     UINT clearColor[] = { 0, 0, 255, 0 };
     D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -88,7 +88,7 @@ void Render::PopulateCommandList()
     m_commandList->Close();
 }
 
-void Render::RenderFrame()
+void Renderer::RenderFrame()
 {
     PopulateCommandList();
 
@@ -102,7 +102,7 @@ void Render::RenderFrame()
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
-void Render::WaitForPreviousFrame()
+void Renderer::WaitForPreviousFrame()
 {
     const UINT64 fence = m_fenceValue;
     m_commandQueue->Signal(m_fence, fence);
