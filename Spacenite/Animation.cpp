@@ -49,17 +49,17 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 		if (animState == "Stand")
 		{
 			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(spriteFrames[Zero]);
+			Player.SetTexRect(spriteSheet[Zero]);
 		}
 		if (animState == "Right")
 		{
 			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(spriteFrames[currentFrame]);
+			Player.SetTexRect(spriteSheet[currentFrame]);
 		}
 		if (animState == "Left")
 		{
 			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(-spriteFrames[currentFrame]);
+			Player.SetTexRect(-spriteSheet[currentFrame]);
 		}
 		else
 		{
@@ -77,21 +77,25 @@ void Animation::LoadAnimation(std::string jsonPath)
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);
-	/*int i = 0;
+	int i = 0;
 	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
-	GenericArray fullArray = d[jsonFrames2].GetArray();
+	GenericArray fullArray = AnimationDoc["frames"].GetArray();
 	for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
 	{
-		GenericObject obj = itr->GetObject();
-		if (obj.HasMember(jsonFrame))
+		auto obj = itr->GetObj();
+		if (obj.HasMember("frame"))
 		{
-			auto oneFrame = obj.FindMember(jsonFrame);
+			auto oneFrame = obj.FindMember("frame");
 			auto const& FrameData = oneFrame->value;
-			float FrameWidth = FrameData[jsonX].GetInt();
-			float FrameHeight = FrameData[jsonY].GetInt();
-			float FrameOffsetW = FrameData[jsonW].GetInt();
-			float FrameOffsetH = FrameData[jsonH].GetInt();*/
-
+			float FrameWidth = FrameData["x"].GetInt();
+			float FrameHeight = FrameData["y"].GetInt();
+			float FrameOffsetW = FrameData["w"].GetInt();
+			float FrameOffsetH = FrameData["h"].GetInt();
+			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			spriteSheet[i] = TempRect;
+			++i;
+		}
+	}
 }
 
 void Animation::CheckState(std::string jsonPath)
