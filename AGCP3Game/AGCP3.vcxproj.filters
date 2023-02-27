@@ -66,7 +66,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Render.cpp">
+    <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">

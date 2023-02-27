@@ -1,5 +1,6 @@
 #include "SpriteRenderer.h"
 #include "Input.h"
+#include "DDSTextureLoader.h"
 
 SpriteRenderer::SpriteRenderer()
 {
