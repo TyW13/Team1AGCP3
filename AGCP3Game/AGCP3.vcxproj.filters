@@ -40,7 +40,7 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Render.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -56,7 +56,7 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">
