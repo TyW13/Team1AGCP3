@@ -3,45 +3,72 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <memory>
-
+#include "Renderer.h"
 
 class Renderer;
 class Texture;
 
+
+#include <string>
+
 class Sprite
 {
 public:
-    Sprite(Renderer* renderer);
-    ~Sprite();
+    Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+    virtual ~Sprite();
 
-    void LoadFromFile(const std::wstring& filename);
-    void SetTexture(Texture* texture);
+    bool LoadFromFile(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::wstring& fileName);
+
+    void SetTexture(ID3D12Resource* texture);
+
     void SetTransform(const DirectX::XMFLOAT2& position, float rotation, const DirectX::XMFLOAT2& scale);
 
-    void Render();
+    void Update(float deltaTime);
+
+    void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
 
 private:
-    std::unique_ptr<Texture> m_texture;
-    DirectX::XMFLOAT2 m_position;
-    float m_rotation;
-    DirectX::XMFLOAT2 m_scale;
-
-    Renderer* m_renderer;
-
     struct SpriteVertex
     {
         DirectX::XMFLOAT3 position;
         DirectX::XMFLOAT2 uv;
     };
 
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
-    
+    struct ConstantBuffer
+    {
+	    DirectX::XMMATRIX transform;
+    };
+
     void CreateVertexBuffer();
-    void CreatePipelineState();
-    void CreateRootSignature();
+    void CreateIndexBuffer();
+    void CreateConstantBuffer(ID3D12Device* device);
+    void CreatePipelineState(ID3D12Device* device);
+
+    ID3D12Device* m_device;
+    ID3D12Resource* m_vertexBuffer;
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+    ID3D12Resource* m_indexBuffer;
+    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+    ID3D12Resource* m_texture;
+    ID3D12DescriptorHeap* m_textureHeap;
+    UINT m_textureWidth;
+    UINT m_textureHeight;
+    
+    float m_rotation;
+   
+    ConstantBuffer m_constantBufferData;
+    ID3D12Resource* m_constantBuffer;
+    ID3D12Resource* m_mappedConstantBuffer;
+    D3D12_GPU_VIRTUAL_ADDRESS m_constantBufferAddress;
+    ID3D12PipelineState* m_pipelineState;
+
+   
+    DirectX::XMFLOAT2 m_position;
+    DirectX::XMFLOAT2 m_scale;
+    DirectX::XMMATRIX m_transformMatrix;
+
+
+    UINT m_numIndices;
 };
 
 
