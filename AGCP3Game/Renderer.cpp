@@ -3,6 +3,7 @@
 #include "d3dx12.h"
 #include "pch.h"
 #include "DXSampleHelper.h"
+#include "DirectXTex.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
 {

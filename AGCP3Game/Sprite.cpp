@@ -10,20 +10,19 @@
 #include "DXSampleHelper.h"
 
 
+
+Sprite::Sprite(ID3D12Device* m_device)
+{
+}
+
+Sprite::~Sprite()
+{
+}
+
 bool Sprite::LoadFromFile(const std::wstring& fileName)
 {
     
-    HRESULT hr = DirectX::CreateWICTextureFromFile(m_device.Get(), fileName.c_str(), nullptr, m_texture.ReleaseAndGetAddressOf());
-    if (FAILED(hr))
-    {
-        return false;
-    }
-
-    m_textureWidth = m_texture->GetDesc().Width;
-    m_textureHeight = m_texture->GetDesc().Height;
-    m_textureFormat = m_texture->GetDesc().Format;
-
-    return true;
+    
 }
 
 void Sprite::SetTexture(ID3D12Resource* texture)
@@ -74,7 +73,7 @@ void Sprite::SetTexture(ID3D12Resource* texture)
 
     // Transition texture resource to shader resource state
     CD3DX12_RESOURCE_BARRIER textureBarrier = CD3DX12_RESOURCE_BARRIER::Transition(textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-    commandList->ResourceBarrier(1, &textureBarrier);
+    m_commandList->ResourceBarrier(1, &textureBarrier);
 
     // Create shader resource view (SRV)
     CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvIndex, m_srvDescriptorSize);
@@ -106,6 +105,7 @@ void Sprite::SetTexture(ID3D12Resource* texture)
 void Sprite::setPosition(float x, float y)
 {
     m_position = DirectX::XMFLOAT2(x, y);
+  
 }
 
 void Sprite::SetVelocity(float x, float y)

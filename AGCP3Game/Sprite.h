@@ -5,7 +5,7 @@
 #include <memory>
 #include "Renderer.h"
 
-
+#include "DirectXTex.h"
 
 #include <string>
 
@@ -18,7 +18,7 @@
 class Sprite
 {
 public:
-    Sprite();
+    Sprite(ID3D12Device* m_device);
     ~Sprite();
 
     bool LoadFromFile(const std::wstring& fileName);
@@ -69,7 +69,10 @@ private:
 
     ID3D12Resource* m_srvIndex;
     ID3D12Resource* m_srvHeap;
+    ID3D12Resource* m_textureIndex;
+    /*ID3D12Resource* m_srvDescriptorSize;*/
 
+ 
     int m_textureWidth;
     int m_textureHeight;
     DXGI_FORMAT m_textureFormat;
@@ -77,6 +80,11 @@ private:
 
     ID3D12DescriptorHeap* m_rtvDescriptorHeap;
     ID3D12DescriptorHeap* m_dsvDescriptorHeap;
+
+    ID3D12DescriptorHeap& m_srvDescriptorSize;
+
+    // The RTV desc Size
+    UINT m_rtvDescriptorSize;
 
     DirectX::XMFLOAT2 m_position;
     DirectX::XMFLOAT2 m_size;

@@ -7,35 +7,34 @@ using namespace std;
 
 
 Texture::Texture(ID3D12Device* m_device, const wchar_t* filename)
-    : m_pGraphicsDevice(m_device)
 {
-    HRESULT hr;
+    //HRESULT hr;
 
-    // Determine file type based on file extension
-    std::wstring ext = std::filesystem::path(filename).extension().wstring();
-    if (ext == L".dds")
-    {
-        // Load DDS texture using DirectXTex
-        hr = DirectX::CreateDDSTextureFromFile(
-            m_pGraphicsDevice->GetDevice(),
-            filename,
-            &m_pTexture,
-            &m_SrvDesc);
-    }
-    else
-    {
-        // Load non-DDS texture using WIC (Windows Imaging Component)
-        hr = DirectX::CreateWICTextureFromFile(
-            m_pGraphicsDevice->GetDevice(),
-            filename,
-            &m_pTexture,
-            &m_SrvDesc);
-    }
+    //// Determine file type based on file extension
+    //std::wstring ext = std::filesystem::path(filename).extension().wstring();
+    //if (ext == L".dds")
+    //{
+    //    // Load DDS texture using DirectXTex
+    //    hr = DirectX::CreateDDSTextureFromFile(
+    //        m_device->GetDevice(),
+    //        filename,
+    //        &m_pTexture,
+    //        &m_SrvDesc);
+    //}
+    //else
+    //{
+    //    // Load non-DDS texture using WIC (Windows Imaging Component)
+    //    hr = DirectX::CreateWICTextureFromFile(
+    //        m_device->GetDevice(),
+    //        filename,
+    //        &m_pTexture,
+    //        &m_SrvDesc);
+    //}
 
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to load texture");
-    }
+    //if (FAILED(hr))
+    //{
+    //    throw std::runtime_error("Failed to load texture");
+    //}
 }
 
 Texture::~Texture()
