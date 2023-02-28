@@ -102,6 +102,8 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> end_time;
 
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
+	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
+	DirectX::SimpleMath::Vector2 direction = direction.Zero;
 
 	const float MAX_JUMP_VEL	= 400;
 	const float MIN_JUMP_VEL	= MAX_JUMP_VEL / 2;
@@ -120,6 +122,7 @@ private:
 	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
 	bool recordJumpTime			= false;				//start/stop recording jump time
 	bool stopDetectSpaceKey		= false;				//stop detecting the space button pressed down if it was already pressed down the frame before
+	bool stopDetectMouseClick	= false;
 
 	//------ animation variables 
 	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)

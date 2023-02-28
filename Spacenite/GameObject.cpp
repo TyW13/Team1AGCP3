@@ -200,14 +200,14 @@ void Player::Update(float dTime)
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
 
-	if (currentVel.y > -20)
+	/*if (currentVel.y > -20)
 	{
 		currentVel.y += 10;
 	}
 	if (currentVel.y >= GRAVITY)
 	{
 		currentVel.y = GRAVITY;
-	}
+	}*/
 
 	UpdateInput(dTime);
 	CheckCollision();
@@ -269,13 +269,13 @@ void Player::UpdateInput(float dTime)
 			elapsed_time = elapsed_seconds.count();
 
 			//if pressed for max time set to high jump straightaway
-			if (elapsed_time > HIGH_JUMP_TIME)
+			if (elapsed_time >= HIGH_JUMP_TIME)
 				elapsed_time = HIGH_JUMP_TIME;
 
 
 		}
 
-		//detect during which of two time frames the space button has been released and set the jump type based on it 
+		//detect during which of two time frames the space button has been released and then set the jump type based on it 
 		if (!Game::sMKIn.IsPressed(VK_SPACE) && !timeSpaceClickDetected || elapsed_time == HIGH_JUMP_TIME)
 		{
 			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
@@ -299,9 +299,9 @@ void Player::UpdateInput(float dTime)
 
 		}
 
-		//set the velocity to minimum if the space button was clicked during the former time frame 
+		//set the velocity to minimum jump vel if the space button was clicked during the former time frame 
 		//OR 
-		//set to maximum if was clicked during the latter time frame
+		//set to maximum jump vel if was clicked during the latter time frame
 		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time <= HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
 		{
 			if (jumpType == "LowJump" && elapsed_time >= LOW_JUMP_TIME)
@@ -326,7 +326,7 @@ void Player::UpdateInput(float dTime)
 			}
 		}
 
-		//multiply velocity by drag to slown down the player moving upward
+		//multiply the velocity by drag value to slown down the player moving upward
 		if (currentVel.y < 0 && !recordJumpTime)
 		{
 			currentVel.y *= DRAG_Y;
@@ -342,6 +342,31 @@ void Player::UpdateInput(float dTime)
 
 
 		}
+	}
+
+	//--------- mouse
+	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && !stopDetectMouseClick)
+	{
+		mousePos = Game::sMKIn.GetMousePos(true);
+		//playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
+
+		//calculate the direction vector from the player to the mouse click
+		direction = mousePos - character.mPos;
+
+		//reverse the direction vector
+		direction *= -1;
+
+		//normalize the direction vector
+		direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
+
+		//apply a jump force to the player character
+		currentVel = (direction * 1000);
+
+		stopDetectMouseClick = true;
+	}
+	if(!Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && stopDetectMouseClick)
+	{
+		stopDetectMouseClick = false;
 	}
 }
 
