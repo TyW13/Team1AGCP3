@@ -98,7 +98,7 @@ void Game::Render()
 
     Clear();
 
-    // TODO: Add your rendering code here.
+    // Add rendering code here.
 
     float time = float(m_timer.GetTotalSeconds());
 
