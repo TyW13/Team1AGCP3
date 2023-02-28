@@ -273,16 +273,21 @@ public:
 	void LoadNextZone(MyD3D& d3d);															// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(MyD3D& d3d);														// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void RenderTiles();
+	
+	std::vector<Tile*> GetTiles() { return m_Tiles; }
 
 private:
 	std::vector<Map> m_Levels;
 	std::map<std::string, Texture*> m_Textures;
 	std::vector<GameObject*> m_gObjects;
-	std::vector<std::vector<Tile*>> m_Tiles;
+	std::vector<Tile*> m_Tiles;
 	int currentMapNum;
 
 	std::vector<Tile*> zoneTiles;
 
 	int collisionWidth;
 	int collisionHeight;
+
+	int collisionStartX;
+	int collisionStartY;
 };

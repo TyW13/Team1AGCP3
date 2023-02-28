@@ -34,7 +34,7 @@ void ResourceManager::Update(float dTime)
 		{
 			if (currentObj->GetActive())
 			{
-				currentObj->Update(dTime);
+				currentObj->Update(dTime, *this);
 			}
 		}
 	}
@@ -199,8 +199,6 @@ Map::Map(const char* filePath)
 	type = document["type"].GetString();
 	width = document["width"].GetInt();
 
-
-
 	Value::Array tilesets = document["tilesets"].GetArray();
 	ts_firstgid = tilesets[0]["firstgid"].GetInt();
 	ts_source = tilesets[0]["source"].GetString();
@@ -327,10 +325,10 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 
 			tileRects.emplace_back(tileRect);
 
+			// Gets width, height, x and y for collision rects for each tile 
+
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
-
-			Vector2 collisionBounds = Vector2(collisionWidth, collisionHeight);
 
 			for (int i = 0; i < tileRects.size(); i++)
 			{

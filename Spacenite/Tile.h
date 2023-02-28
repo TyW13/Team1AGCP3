@@ -4,7 +4,7 @@
 class Tile : public GameObject
 {
 public:
-	Tile(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds,int objnum)
+	Tile(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds ,int objnum)
 		: GameObject(d3d, objTex, position, scale, active, tileRect, collisionBounds, objnum), objSprite(d3d)
 	{
 		Init(objTex, position, scale, active, tileRect, collisionBounds, objnum);
@@ -16,11 +16,14 @@ public:
 	bool GetActive() override;
 	void SetSprite(Sprite _sprite) override;
 	void SetActive(bool _isActive) override;
+
+	RECT GetCollisionBounds() { return collision_Bounds; }
+
 private:
 	Sprite objSprite;
 	bool isActive;
-	Vector2 collision_Bounds;
+	RECT collision_Bounds;
 
-	std::vector<RECTF> ownTileRect;
+	Vector2 collisionDimensions;
 };
 

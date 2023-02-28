@@ -3,6 +3,7 @@
 #include "PlayerCharacter.h"
 #include "Texture.h"
 #include "ResourceManager.h"
+#include "Tile.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -19,9 +20,14 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 	WinUtil::Get().GetClientExtents(w, h);
 	//objSprite.mPos = Vector2(w / 2, h / 2);
 	objSprite.mPos = position;
+
+	collisionPlayerRect.left = objSprite.mPos.x;
+	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
+	collisionPlayerRect.top = objSprite.mPos.y;
+	collisionPlayerRect.bottom = objSprite.mPos.y + objSprite.GetTexData().dim.y;
 }
 
-void PlayerCharacter::Update(float dTime)
+void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 {
 	isBottom = false;
 	isTop = false;
@@ -50,7 +56,13 @@ void PlayerCharacter::Update(float dTime)
 		objSprite.mVel.y *= 0.995;
 	}
 	UpdateInput(dTime);
-	CheckCollision();
+
+	collisionPlayerRect.left = objSprite.mPos.x;
+	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
+	collisionPlayerRect.top = objSprite.mPos.y;
+	collisionPlayerRect.bottom = objSprite.mPos.y + objSprite.GetTexData().dim.y;
+
+	CheckCollision(rManager);
 }
 
 void PlayerCharacter::UpdateInput(float dTime)
@@ -73,42 +85,65 @@ void PlayerCharacter::UpdateInput(float dTime)
 }
 
 																		// TEMP COLLISION FUNCTION //
-void PlayerCharacter::CheckCollision()
+void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 {
+	Vector2 currentPlayerPosition = objSprite.mPos;
 
-	//for code clarity
-	Vector2 playerOrigin = Vector2(((objSprite.GetTexData().dim.x / 2.f) * objSprite.GetScale().x, objSprite.GetTexData().dim.y / 2.f) * objSprite.GetScale().y);
+	for (Tile* tile : rManager.GetTiles())
+	{
+		if (this->GetPlayerCollisionBounds().left < tile->GetCollisionBounds().right)
+		{
+			objSprite.mPos.x = currentPlayerPosition.x;
+		}
+		if (this->GetPlayerCollisionBounds().right < tile->GetCollisionBounds().left)
+		{
+			objSprite.mPos.x = currentPlayerPosition.x;
 
-	//check for player and screen borders collision
+		}
+		if (this->GetPlayerCollisionBounds().top > tile->GetCollisionBounds().bottom)
+		{
+			objSprite.mPos.y = currentPlayerPosition.y;
 
-	//bottom
-	if (objSprite.mPos.y > WinUtil::Get().GetClientHeight() + 60)
-	{
-		objSprite.mPos.y = playerOrigin.y;
-		isBottom = true;
-	}
-	//top
-	if (objSprite.mPos.y < playerOrigin.y)
-	{
-		objSprite.mPos.y = WinUtil::Get().GetClientHeight() + 30;
-		isTop = true;
-	}
-	//right
-	if (objSprite.mPos.x > WinUtil::Get().GetClientWidth() + 15)
-	{
-		objSprite.mPos.x = WinUtil::Get().GetClientWidth() + 14;
-	}
-	//left
-	if (objSprite.mPos.x < -15)
-	{
-		objSprite.mPos.x = -14;
+		}
+		if (this->GetPlayerCollisionBounds().bottom < tile->GetCollisionBounds().top)
+		{
+			objSprite.mPos.y = currentPlayerPosition.y;
+		}
 	}
 
-	//if the player is on the bottom line (let's say it's the ground for now)
-	if (objSprite.mPos.y == WinUtil::Get().GetClientHeight())
-	{
-		isGrounded = true;
-	}
+	////for code clarity
+	//Vector2 playerOrigin = Vector2(((objSprite.GetTexData().dim.x / 2.f) * objSprite.GetScale().x, objSprite.GetTexData().dim.y / 2.f) * objSprite.GetScale().y);
+	//
+	////check for player and screen borders collision
+	//
+	////bottom
+	//if (objSprite.mPos.y > WinUtil::Get().GetClientHeight() + 60)
+	//{
+	//	objSprite.mPos.y = playerOrigin.y;
+	//	isBottom = true;
+	//}
+	////top
+	//if (objSprite.mPos.y < playerOrigin.y)
+	//{
+	//	objSprite.mPos.y = WinUtil::Get().GetClientHeight() + 30;
+	//	isTop = true;
+	//}
+	////right
+	//if (objSprite.mPos.x > WinUtil::Get().GetClientWidth() + 15)
+	//{
+	//	objSprite.mPos.x = WinUtil::Get().GetClientWidth() + 14;
+	//}
+	////left
+	//if (objSprite.mPos.x < -15)
+	//{
+	//	objSprite.mPos.x = -14;
+	//}
+	//
+	////if the player is on the bottom line (let's say it's the ground for now)
+	//if (objSprite.mPos.y == WinUtil::Get().GetClientHeight())
+	//{
+	//	isGrounded = true;
+	//}
 }
 
 Sprite PlayerCharacter::GetSprite()
