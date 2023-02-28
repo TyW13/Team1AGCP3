@@ -2,6 +2,7 @@
 
 #include "d3dx12.h"
 #include "pch.h"
+#include "DXSampleHelper.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
 {
@@ -20,6 +21,13 @@ void Renderer::CreateDevice()
 
 }
 
+void Renderer::CreateFence()
+{
+    ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+
+   
+}
+
 void Renderer::CreateCommandQueue()
 {
     // Create the command queue
@@ -29,7 +37,10 @@ void Renderer::CreateCommandQueue()
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
     m_device->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_commandQueue));
+
+    
 }
+
 
 void Renderer::CreateSwapChain()
 {
@@ -97,6 +108,10 @@ void Renderer::CreateRenderTargetView()
     }
 }
 
+void Renderer::CreateDepthStencilBuffer()
+{
+}
+
 void Renderer::CreateCommandAllocator()
 {
     m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator));
@@ -110,7 +125,7 @@ void Renderer::CreateCommandList()
 
 void Renderer::PopulateCommandList()
 {
-    UINT clearColor[] = { 0, 0, 255, 0 };
+    UINT clearColor[] = { 0, 0,255, 0 };
     D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_commandList->ResourceBarrier(1, &barrier);
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);

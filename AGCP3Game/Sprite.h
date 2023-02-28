@@ -11,7 +11,7 @@
 
 #pragma once
 
-
+////
 #include <string>
 #include <wrl/client.h>
 
@@ -23,7 +23,7 @@ public:
 
     bool LoadFromFile(const std::wstring& fileName);
     void SetTexture(ID3D12Resource* texture);
-
+    // comment
     void setPosition(float x, float y);
     void SetVelocity(float x, float y);
     void SetScale(float x, float y);
@@ -36,10 +36,15 @@ public:
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
 
 private:
+
+    // Vertex Buffer holds Pos, tex coords
+    void CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+
     struct SpriteVertex
     {
         DirectX::XMFLOAT3 position;
         DirectX::XMFLOAT2 texCoord;
+        DirectX::XMFLOAT4 color;
     };
 
     struct ConstantBuffer
@@ -50,6 +55,9 @@ private:
         DirectX::XMMATRIX viewMatrix;
         DirectX::XMMATRIX projectionMatrix;
     };
+
+    // The Command List used for recording rendering commands
+    ID3D12GraphicsCommandList* m_commandList;
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 
@@ -65,8 +73,14 @@ private:
     int m_textureWidth;
     int m_textureHeight;
     DXGI_FORMAT m_textureFormat;
-  
+    // The render target view RTV heap used for storing render targets
+
+    ID3D12DescriptorHeap* m_rtvDescriptorHeap;
+    ID3D12DescriptorHeap* m_dsvDescriptorHeap;
+
     DirectX::XMFLOAT2 m_position;
+    DirectX::XMFLOAT2 m_size;
+    DirectX::XMFLOAT4 m_color;
 
     DirectX::XMFLOAT2 m_scale;
     DirectX::XMFLOAT2 m_velocity;

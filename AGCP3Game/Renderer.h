@@ -19,12 +19,17 @@ public:
 
 private:
 	void CreateDevice();
+	void CreateFence();
 	void CreateCommandQueue();
+	void CreateCommandList();
 	void CreateSwapChain();
 	void CreateDescriptorHeaps();
 	void CreateRenderTargetView();
+
+
+	void CreateDepthStencilBuffer();
 	void CreateCommandAllocator();
-	void CreateCommandList();
+	
 	void PopulateCommandList();
 	void WaitForPreviousFrame();
 
