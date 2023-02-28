@@ -52,7 +52,7 @@ void Sprite::Update(float deltaTime)
     m_position.x += m_velocity.x * deltaTime;
     m_position.y += m_velocity.y * deltaTime;
 }
-
+//
 D3D12_GPU_DESCRIPTOR_HANDLE Sprite::GetSRV()
 {
     CD3DX12_GPU_DESCRIPTOR_HANDLE srvHandle(m_srvHeap->GetGPUDescriptorHandleForHeapStart());
