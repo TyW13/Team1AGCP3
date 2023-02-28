@@ -332,7 +332,7 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 
 			for (int i = 0; i < tileRects.size(); i++)
 			{
-				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], collisionBounds, i);
+				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], Vector2(collisionWidth, collisionHeight), i);
 				zoneTiles.emplace_back(newTile);
 			}
 		}
