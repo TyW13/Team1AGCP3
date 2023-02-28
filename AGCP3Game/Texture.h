@@ -11,11 +11,10 @@
 
 // Texture.h
 
-#pragma once
 
 
-#include "DDSTextureLoader.h"
-#include "WICTextureLoader/WICTextureLoader12.h"
+
+
 
 
 class Texture

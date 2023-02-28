@@ -1,10 +1,15 @@
 #include "Renderer.h"
 
 #include "d3dx12.h"
+#include "pch.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
 {
 
+}
+
+Renderer::~Renderer()
+{
 }
 
 
@@ -17,6 +22,8 @@ void Renderer::CreateDevice()
 
 void Renderer::CreateCommandQueue()
 {
+    // Create the command queue
+
     D3D12_COMMAND_QUEUE_DESC desc = {};
     desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -26,8 +33,12 @@ void Renderer::CreateCommandQueue()
 
 void Renderer::CreateSwapChain()
 {
+    // Describe the Swap Chain
+
     DXGI_SWAP_CHAIN_DESC1 desc = {};
     desc.BufferCount = 2;
+
+    // Screen Width & Height
     desc.Width = m_width;
     desc.Height = m_height;
     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -36,12 +47,34 @@ void Renderer::CreateSwapChain()
     desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     desc.SampleDesc.Count = 1;
 
+    // Create the Swap chain
+ /*   Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain;*/
     IDXGIFactory4* factory;
     CreateDXGIFactory1(IID_PPV_ARGS(&factory));
 
     factory->CreateSwapChainForHwnd(m_commandQueue, m_hwnd, &desc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&m_swapChain));
 
     factory->Release();
+}
+
+void Renderer::CreateDescriptorHeaps()
+{
+    // Describe and create a render target view (RTV) descriptor heap.
+    D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+    rtvHeapDesc.NumDescriptors = m_bufferCount;
+    rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+
+    DX::ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvDescriptorHeap)));
+
+    // Describe and create a depth stencil view (DSV) descriptor heap.
+    D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+    dsvHeapDesc.NumDescriptors = 1;
+    dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+
+    DX::ThrowIfFailed(m_device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvDescriptorHeap)));
+
+    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
 }
 
 void Renderer::CreateRenderTargetView()

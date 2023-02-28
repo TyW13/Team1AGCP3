@@ -10,6 +10,7 @@
 #include "ResourceUploadBatch.h"
 //#include "DDSTextureLoader.h"
 #include "DDSTextureLoader.h"
+#include "SpriteRenderer.h"
 
 extern void ExitGame() noexcept;
 
@@ -117,7 +118,7 @@ void Game::Render()
 
     m_spriteBatch->End();
 
-
+  
 
     // Show the new frame.
     m_deviceResources->Present();
