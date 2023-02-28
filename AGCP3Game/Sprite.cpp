@@ -6,189 +6,88 @@
 #include "d3dx12.h"
 #include "pch.h"
 
-Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) :
-    m_device(device),
-    m_texture(nullptr),
-    m_constantBuffer(nullptr),
-    m_mappedConstantBuffer(nullptr),
-    m_rotation(0.0f),
-    m_position(DirectX::XMFLOAT2(0.0f, 0.0f)),
-    m_scale(DirectX::XMFLOAT2(1.0f, 1.0f)),
-    m_transformMatrix(DirectX::XMMatrixIdentity())
+
+bool Sprite::LoadFromFile(const std::wstring& fileName)
 {
-    LoadFromFile(device, commandList, L"default.dds");
-    CreateVertexBuffer();
-    CreateIndexBuffer();
-    CreateConstantBuffer(device);
-    CreatePipelineState(device);
-}
-
-
-Sprite::~Sprite()
-{
-    if (m_texture)
-        m_texture->Release();
-
-    if (m_constantBuffer)
-        m_constantBuffer->Release();
-}
-
-bool Sprite::LoadFromFile(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::wstring& fileName)
-{
-    std::unique_ptr<DirectX::ScratchImage> image = std::make_unique<DirectX::ScratchImage>();
-    HRESULT hr = DirectX::LoadFromDDSFile(fileName.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, *image);
+    HRESULT hr = DirectX::CreateWICTextureFromFile(m_device.Get(), fileName.c_str(), nullptr, m_texture.ReleaseAndGetAddressOf());
     if (FAILED(hr))
+    {
         return false;
+    }
 
-    hr = CreateShaderResourceView(device, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &m_texture);
-    if (FAILED(hr))
-        return false;
+    m_textureWidth = m_texture->GetDesc().Width;
+    m_textureHeight = m_texture->GetDesc().Height;
+    m_textureFormat = m_texture->GetDesc().Format;
 
     return true;
 }
 
-
 void Sprite::SetTexture(ID3D12Resource* texture)
 {
-    m_texture = texture;
+    // Get shader visible descriptor handle
+    CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(descriptorHeap->GetCPUDescriptorHandleForHeapStart());
+    srvHandle.Offset(m_textureIndex, descriptorSize);
+
+    // Create shader resource view
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format = m_TextureFormat;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    m_device->CreateShaderResourceView(m_texture.Get(), &srvDesc, srvHandle);
+
+    // Set descriptor table
+    m_DescriptorTable = srvHandle;
 }
 
 void Sprite::SetTransform(const DirectX::XMFLOAT2& position, float rotation, const DirectX::XMFLOAT2& scale)
 {
     m_position = position;
-    m_scale = scale;
     m_rotation = rotation;
-
-    DirectX::XMMATRIX transform = DirectX::XMMatrixScaling(scale.x, scale.y, 1.0f) * DirectX::XMMatrixRotationZ(rotation) * DirectX::XMMatrixTranslation(position.x, position.y, 0.0f);
-    DirectX::XMStoreFloat4x4(&m_transformMatrix, transform);
-
+    m_scale = scale;
 }
 
 void Sprite::Update(float deltaTime)
 {
-	// Any sprite-specific update logic can go here
+    m_position.x += m_velocity.x * deltaTime;
+    m_position.y += m_velocity.y * deltaTime;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Sprite::GetSRV()
+{
+    CD3DX12_GPU_DESCRIPTOR_HANDLE srvHandle(m_srvHeap->GetGPUDescriptorHandleForHeapStart());
+    srvHandle.Offset(m_srvIndex, m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+    return srvHandle;
 }
 
 void Sprite::Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap)
 {
-    // Set the pipeline state object and root signature
-    commandList->SetPipelineState(mPipelineState.Get());
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    // Set the pipeline state object.
+    commandList->SetPipelineState(m_pipelineState.Get());
 
-    // Set the vertex buffer
-    commandList->IASetVertexBuffers(0, 1, &mVertexBufferView);
+    // Set the vertex buffer.
+    commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 
-    // Set the descriptor heap and bind the texture
-    ID3D12DescriptorHeap* heaps[] = { mDescriptorHeap.Get() };
-    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
-    CD3DX12_GPU_DESCRIPTOR_HANDLE descriptorHandle(mDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-    mRenderer->GetDevice()->CopyDescriptorsSimple(1, descriptorHandle, mTexture->GetShaderResourceView(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    // Set the index buffer.
+    commandList->IASetIndexBuffer(&m_indexBufferView);
 
-    // Set the transform matrix constant buffer
-    struct TransformConstants
-    {
-	    DirectX::XMFLOAT4X4 transform;
-    };
-    TransformConstants transformConstants;
-    transformConstants.transform = m_transformMatrix;
-    commandList->SetGraphicsRoot32BitConstants(0, sizeof(transformConstants) / 4, &transformConstants, 0);
+    // Set the constant buffer.
+    commandList->SetGraphicsRootDescriptorTable(0, descriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
-    // Draw the sprite
-    commandList->DrawInstanced(mNumVertices, 1, 0, 0);
-}
+    // Set the texture.
+    commandList->SetGraphicsRootDescriptorTable(1, m_texture->GetSRV());
 
-void Sprite::CreateVertexBuffer()
-{
-    // Define the geometry for a sprite.
-    SpriteVertex spriteVertices[] =
-    {
-        // Top left
-        { { -0.5f, 0.5f, 0.0f },{ 0.0f, 0.0f } },
-        // Top right
-        { { 0.5f, 0.5f, 0.0f },{ 1.0f, 0.0f } },
-        // Bottom left
-        { { -0.5f, -0.5f, 0.0f },{ 0.0f, 1.0f } },
-        // Bottom right
-        { { 0.5f, -0.5f, 0.0f },{ 1.0f, 1.0f } }
-    };
+    // Set the transform.
+    DirectX::XMFLOAT4X4 transform;
+    DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixScaling(m_scale.x, m_scale.y, 1.0f) * DirectX::XMMatrixRotationZ(m_Rotation) * DirectX::XMMatrixTranslation(m_Position.x, m_Position.y, 0.0f));
+    commandList->SetGraphicsRoot32BitConstants(2, sizeof(DirectX::XMFLOAT4X4) / sizeof(uint32_t), &transform, 0);
 
-    const UINT vertexBufferSize = sizeof(spriteVertices);
-
-    // Create default heap for the vertex buffer
-    HRESULT hr = m_device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        nullptr,
-        IID_PPV_ARGS(&m_vertexBuffer));
-
-    assert(SUCCEEDED(hr));
-
-    // Create upload heap for the vertex buffer
-    Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferUploadHeap;
-    hr = m_device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&vertexBufferUploadHeap));
-
-    assert(SUCCEEDED(hr));
-
-    // Copy vertex buffer data to the upload heap
-    D3D12_SUBRESOURCE_DATA vertexData = {};
-    vertexData.pData = reinterpret_cast<BYTE*>(spriteVertices);
-    vertexData.RowPitch = vertexBufferSize;
-    vertexData.SlicePitch = vertexBufferSize;
-
-    UpdateSubresources(m_commandList.Get(), m_vertexBuffer.Get(), vertexBufferUploadHeap.Get(), 0, 0, 1, &vertexData);
-
-    // Transition the vertex buffer to the vertex buffer state
-    m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
-
-    // Initialize the vertex buffer view
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(SpriteVertex);
-    m_vertexBufferView.SizeInBytes = vertexBufferSize;
-}
-
-void Sprite::CreateIndexBuffer()
-{
+    // Draw the sprite.
+    commandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
 
 }
 
-void Sprite::CreateConstantBuffer(ID3D12Device* device)
-{
 
-}
-
-void Sprite::CreatePipelineState(ID3D12Device* device)
-{
-    // define pipeline state object
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    psoDesc.InputLayout = { m_inputElementDescs.data(), (UINT)m_inputElementDescs.size() };
-    psoDesc.pRootSignature = m_rootSignature.Get();
-    psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vertexShader.Get());
-    psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_pixelShader.Get());
-    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-    psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    psoDesc.NumRenderTargets = 1;
-    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-    psoDesc.SampleDesc.Count = 1;
-
-    // create pipeline state object
-    HRESULT hr = m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState));
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to create pipeline state object.");
-    }
-
-}
 
 
 //Sprite::Sprite()
@@ -266,3 +165,4 @@ void Sprite::CreatePipelineState(ID3D12Device* device)
 //void Sprite::InitializeIndexBuffer()
 //{
 //}
+
