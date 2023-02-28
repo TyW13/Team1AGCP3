@@ -156,10 +156,7 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 PlayMode::PlayMode(MyD3D& d3d)
 	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
 {
-	rManager.Init(d3d.GetDevice(), d3d);
-	//rManager.ReloadMap(d3d, 1);
-	//PlayerCharacter newChar(d3d, rManager.GetTexture("testTexture"), Vector2(1, 1), true);
-	//rManager.AddGameObject(d3d);
+	rManager.Init(d3d);
 
 	bGround.Init(d3d);
 	Player.Init(d3d);

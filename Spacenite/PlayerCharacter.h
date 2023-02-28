@@ -13,44 +13,6 @@ public:
 		Init(objTex, position, scale, active, tileRect, collisionBounds, objnum);
 	}
 
-	// Commented out unneeded copy and move constructors and overloaded assignment operators
-
-	//PlayerCharacter(const PlayerCharacter& other) : GameObject(other), objSprite(other.objSprite)									// Copy constructor
-	//{
-	//	this->isActive = other.isActive;
-	//	this->objSprite = other.objSprite;
-	//}
-	//
-	//PlayerCharacter& operator=(const PlayerCharacter& other)																		// Copy assignment operator
-	//{
-	//	if (this != &other)
-	//	{
-	//		this->isActive = other.isActive;
-	//		this->objSprite = other.objSprite;
-	//	}
-	//
-	//	return *this;
-	//}
-	//
-	//PlayerCharacter(PlayerCharacter&& other) noexcept : GameObject(other), objSprite(other.objSprite)									// Move constructor
-	//{
-	//	this->isActive = other.isActive;
-	//	this->objSprite = other.objSprite;
-	//}
-	//
-	//PlayerCharacter& operator=(PlayerCharacter&& other)	noexcept																// Move assignment operator
-	//{
-	//	if (this != &other)
-	//	{
-	//		this->isActive = other.isActive;
-	//		this->objSprite = other.objSprite;
-	//	}
-	//
-	//	return *this;
-	//}
-	//
-	//~PlayerCharacter(){}																											// Destructor
-
 	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum) override;
 	void Update(float dTime) override;
 	void Terminate();

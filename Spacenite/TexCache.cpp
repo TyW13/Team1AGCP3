@@ -15,9 +15,9 @@ void TexCache::Release()
 }
 
 ID3D11ShaderResourceView* TexCache::LoadTexture(ID3D11Device*pDevice, const std::string& fileName, const std::string& texName, 
-										bool appendPath, const vector<RECTF> *frames)
+										bool appendPath, const vector<RECTF>* frames)
 {
-	string name = texName;;
+	string name = texName;
 	if (name.empty())
 	{
 		std::filesystem::path p(fileName);
