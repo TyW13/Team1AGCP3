@@ -111,6 +111,38 @@ void Renderer::CreateRenderTargetView()
 
 void Renderer::CreateDepthStencilBuffer()
 {
+    //// Create the depth stencil
+
+    //D3D12_RESOURCE_DESC depthStencilDesc;
+    //depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    //depthStencilDesc.Alignment = 0;
+    //depthStencilDesc.Width = mClientWidth;
+    //depthStencilDesc.Height = mClientHeight;
+    //depthStencilDesc.DepthOrArraySize = 1;
+    //depthStencilDesc.MipLevels = 1;
+    //depthStencilDesc.Format = mDepthStencilFormat;
+    //depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    //depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+    //D3D12_CLEAR_VALUE optClear;
+    //optClear.Format = mDepthStenclFormat;
+    //optClear.DepthStencil.Depth = 1.0f;
+    //optClear.DepthStencil.Stencil = 0;
+    //ThrowIfFailed(m_device->CreateCommittedResource(
+    //    &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &depthStencilDesc,
+    //    D3D12_RESOURCE_STATE_COMMON,
+    //    &optClear,
+    //    IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));
+
+    //// Create descriptor to mip level 0 of entire resource using the 
+    //// format of the resource.
+
+    //m_device->CreateDepthStencilView(
+    //    mDepthStencilBuffer.Get(),
+    //    nulltptr
+    //)
 }
 
 void Renderer::CreateCommandAllocator()

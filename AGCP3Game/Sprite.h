@@ -76,6 +76,8 @@ private:
     int m_textureWidth;
     int m_textureHeight;
     DXGI_FORMAT m_textureFormat;
+
+
     // The render target view RTV heap used for storing render targets
 
     ID3D12DescriptorHeap* m_rtvDescriptorHeap;

@@ -1,7 +1,46 @@
+#include "SpriteRenderer.h"
+#include "Game.h"
+#include "Sprite.h"
+#include <DescriptorHeap.h>
+
 //#include "SpriteRenderer.h"
 //#include "Input.h"
 //#include "DDSTextureLoader.h"
-//
+
+
+void SpriteRenderer::Init()
+{
+}
+
+void SpriteRenderer::LoadTexture()
+{
+
+}
+
+void SpriteRenderer::Update()
+{
+}
+
+void SpriteRenderer::Draw()
+{
+}
+
+void SpriteRenderer::CreateDeviceDependentResources()
+{
+	auto device = m_deviceResources->GetD3DDevice();
+
+	m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
+		Descriptors::Count);
+}
+
+
+
+
+
+
+
+
+
 //SpriteRenderer::SpriteRenderer()
 //{
 //    // Create an instance of the Render class
@@ -48,3 +87,4 @@
 //    // Present the frame
 //    m_render->Present();
 //}
+
