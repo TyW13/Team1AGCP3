@@ -11,22 +11,38 @@
 
 // Texture.h
 
-
+#include <d3d12.h>
+#include <wrl/client.h>
+#include <string>
 
 class Texture
 {
 public:
-    Texture(ID3D12Device* m_device, const wchar_t* filename);
+    Texture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::wstring& fileName);
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
     ~Texture();
 
-    ID3D12Resource* GetResource() const { return m_pTexture; }
-    D3D12_SHADER_RESOURCE_VIEW_DESC GetSrvDesc() const { return m_SrvDesc; }
+    ID3D12Resource* GetTexture() const { return m_texture.Get(); }
 
 private:
-    ID3D12Device* m_device;
-    ID3D12Resource* m_pTexture;
-    D3D12_SHADER_RESOURCE_VIEW_DESC m_SrvDesc;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
 };
+
+//class Texture
+//{
+//public:
+//    Texture(ID3D12Device* m_device, const wchar_t* filename);
+//    ~Texture();
+//
+//    ID3D12Resource* GetResource() const { return m_pTexture; }
+//    D3D12_SHADER_RESOURCE_VIEW_DESC GetSrvDesc() const { return m_SrvDesc; }
+//
+//private:
+//    ID3D12Device* m_device;
+//    ID3D12Resource* m_pTexture;
+//    D3D12_SHADER_RESOURCE_VIEW_DESC m_SrvDesc;
+//};
 
 //class Texture
 //{

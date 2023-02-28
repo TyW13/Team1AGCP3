@@ -13,6 +13,7 @@
 
 Sprite::Sprite(ID3D12Device* m_device)
 {
+
 }
 
 Sprite::~Sprite()
