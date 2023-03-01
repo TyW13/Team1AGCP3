@@ -21,6 +21,7 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 	//objSprite.mPos = Vector2(w / 2, h / 2);
 	objSprite.mPos = position;
 
+	// Initialize the players collision rect. This is in Init() and Update() to ensure no random values get put in based on order of function calling 
 	collisionPlayerRect.left = objSprite.mPos.x;
 	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
 	collisionPlayerRect.top = objSprite.mPos.y;
@@ -57,6 +58,7 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 	}
 	UpdateInput(dTime);
 
+	// Initializes the players collision rect 
 	collisionPlayerRect.left = objSprite.mPos.x;
 	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
 	collisionPlayerRect.top = objSprite.mPos.y;
@@ -84,15 +86,15 @@ void PlayerCharacter::UpdateInput(float dTime)
 	}
 }
 
-																		// TEMP COLLISION FUNCTION //
+																		// PLAYER COLLISION CHECK FUNCTION
 void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 {
-	Vector2 currentPlayerPosition = objSprite.mPos;
+	Vector2 currentPlayerPosition = objSprite.mPos;				// grabs current players position
 
-	for (Tile* tile : rManager.GetTiles())
+	for (Tile* tile : rManager.GetTiles())					    // loops through all tiles. Ideally only loops through tiles that have collision bounds set in TILED editors
 	{
-		if (this->GetPlayerCollisionBounds().left < tile->GetCollisionBounds().right)
-		{
+		if (this->GetPlayerCollisionBounds().left < tile->GetCollisionBounds().right)				// AABB collision checks between the player and tile rects
+		{																							// if colliding, sets players position to just before, not allowing them to go through the wall/tile
 			objSprite.mPos.x = currentPlayerPosition.x;
 		}
 		if (this->GetPlayerCollisionBounds().right < tile->GetCollisionBounds().left)
@@ -110,40 +112,6 @@ void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 			objSprite.mPos.y = currentPlayerPosition.y;
 		}
 	}
-
-	////for code clarity
-	//Vector2 playerOrigin = Vector2(((objSprite.GetTexData().dim.x / 2.f) * objSprite.GetScale().x, objSprite.GetTexData().dim.y / 2.f) * objSprite.GetScale().y);
-	//
-	////check for player and screen borders collision
-	//
-	////bottom
-	//if (objSprite.mPos.y > WinUtil::Get().GetClientHeight() + 60)
-	//{
-	//	objSprite.mPos.y = playerOrigin.y;
-	//	isBottom = true;
-	//}
-	////top
-	//if (objSprite.mPos.y < playerOrigin.y)
-	//{
-	//	objSprite.mPos.y = WinUtil::Get().GetClientHeight() + 30;
-	//	isTop = true;
-	//}
-	////right
-	//if (objSprite.mPos.x > WinUtil::Get().GetClientWidth() + 15)
-	//{
-	//	objSprite.mPos.x = WinUtil::Get().GetClientWidth() + 14;
-	//}
-	////left
-	//if (objSprite.mPos.x < -15)
-	//{
-	//	objSprite.mPos.x = -14;
-	//}
-	//
-	////if the player is on the bottom line (let's say it's the ground for now)
-	//if (objSprite.mPos.y == WinUtil::Get().GetClientHeight())
-	//{
-	//	isGrounded = true;
-	//}
 }
 
 Sprite PlayerCharacter::GetSprite()

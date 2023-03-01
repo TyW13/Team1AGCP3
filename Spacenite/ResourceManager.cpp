@@ -1,6 +1,5 @@
 #include <cstdio>
 #include "ResourceManager.h"
-#include "Map.h"
 #include "Tile.h"
 
 
@@ -15,13 +14,6 @@ void ResourceManager::Init(ID3D11Device& pDevice, MyD3D& d3d)
 	CreateTexture(pDevice, "testTexture.dds");
 	CreateTexture(pDevice, "ship.dds");
 	CreateTexture(pDevice, "test_sheet2.dds");
-
-	//std::vector<Tile*> zoneTiles;
-	//for (int i = 0; i < tileRects.size(); i++)
-	//{
-	//	Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), tilePositions[i], Vector2(6, 6), true, tileRects[i], i);
-	//	zoneTiles.emplace_back(newTile);
-	//}
 
 	ReloadMap(d3d, 0);
 }
@@ -163,7 +155,7 @@ void ResourceManager::ReloadMap(MyD3D& d3d, int mapNum)
 {
 	SetCurrentMap(mapNum);
 
-	LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
+	LoadZoneInfo(d3d, GetCurrentMap().GetCurrentZoneNum());				// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
 }
 
 Map::Map(const char* filePath)
@@ -176,7 +168,7 @@ Map::Map(const char* filePath)
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 
 	rapidjson::Document document;
-	document.ParseStream(mapStream);			// parses json file 
+	document.ParseStream(mapStream);		// parses json file 
 
 	fclose(fp);		// closes json once it has been read 
 
@@ -325,7 +317,7 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 
 			tileRects.emplace_back(tileRect);
 
-			// Gets width, height, x and y for collision rects for each tile 
+			// Gets width, height for collision rects for each tile 
 
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
