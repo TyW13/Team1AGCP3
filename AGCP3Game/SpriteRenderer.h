@@ -12,11 +12,11 @@ class SpriteRenderer
 public:
 
     void Initialize(ID3D12Device* m_device);
-  
+    void LoadTexture();
     void Update();
     void Render();
     void Draw();
-    void LoadFromFile();
+    void CreateDeviceDependentResources();
 
     void OnDeviceLost();
 
@@ -38,9 +38,6 @@ private:
 
     // Rendering loop timer.
     DX::StepTimer                               m_timer;
-
-
-    std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
     RECT m_fullscreenRect;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
