@@ -6,6 +6,8 @@
 #include "Texture.h"
 #include "D3DUtil.h"
 
+class ResourceManager;
+
 class GameObject
 {
 public:
@@ -16,15 +18,22 @@ public:
 	}
 
 	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum);
-	virtual void Update(float dTime);
+	virtual void Update(float dTime, ResourceManager& rManager);
 	void Terminate();
 
 	virtual Sprite GetSprite();
 	virtual bool GetActive();
 	virtual void SetSprite(Sprite _sprite);
 	virtual void SetActive(bool _isActive);
+
+	
+	RECT GetCollisionBounds() { return collision_Bounds; }
 private:
 	Sprite objSprite;
 	bool isActive;
+
+	RECT collision_Bounds;
+
+	Vector2 collisionDimensions;
 };
 

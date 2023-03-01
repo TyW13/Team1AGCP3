@@ -140,10 +140,15 @@ public:
 	void LoadNextZone(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
+	std::vector<Tile*> GetTiles() { return m_Tiles; }
+
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::map<std::string, Texture*> m_Textures;										// Map to store Texture object and its respective texture name string
 	std::vector<GameObject*> m_gObjects;											// Vector which will store collidable objects, reducing the collisions needing to check
 	std::vector<Tile*> m_Tiles;														// Vector to store current zone tiles
 	int currentMapNum;																
+
+	int collisionWidth;
+	int collisionHeight;
 };

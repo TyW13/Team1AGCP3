@@ -20,6 +20,13 @@ void Tile::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::Si
 	objSprite.GetAnim().Init(0, 0, 0, true);
 
 	objSprite.mPos = position;
+
+	collisionDimensions = collisionBounds;
+
+	collision_Bounds.left = objSprite.mPos.x;
+	collision_Bounds.top = objSprite.mPos.y;
+	collision_Bounds.right = objSprite.mPos.x + collisionDimensions.x;
+	collision_Bounds.bottom = objSprite.mPos.y + collisionDimensions.y;
 }
 
 Sprite Tile::GetSprite()

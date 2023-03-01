@@ -16,10 +16,14 @@ public:
 	bool GetActive() override;
 	void SetSprite(Sprite _sprite) override;
 	void SetActive(bool _isActive) override;
+
+	RECT GetCollisionBounds() { return collision_Bounds; }
+
 private:
 	Sprite objSprite;
 	bool isActive;
+	RECT collision_Bounds;
 
-	std::vector<RECTF> ownTileRect;
+	Vector2 collisionDimensions;
 };
 

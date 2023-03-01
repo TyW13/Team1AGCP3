@@ -12,7 +12,7 @@ void ResourceManager::Init(MyD3D& d3d)
 	LoadTexturesFromFile();
 	LoadLevelsFromFile();
 
-	ReloadMap(d3d, 1);
+	ReloadMap(d3d, 0);
 }
 
 void ResourceManager::Update(MyD3D& d3d, float dTime)
@@ -23,7 +23,7 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 		{
 			if (currentObj->GetActive())
 			{
-				currentObj->Update(dTime);
+				currentObj->Update(dTime, *this);
 			}
 		}
 	}
@@ -213,7 +213,7 @@ Map::Map(const char* filePath)
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 
 	rapidjson::Document document;
-	document.ParseStream(mapStream);			// parses json file 
+	document.ParseStream(mapStream);		// parses json file 
 
 	fclose(fp);		// closes json once it has been read 
 
@@ -235,8 +235,6 @@ Map::Map(const char* filePath)
 	tilewidth = document["tilewidth"].GetInt();
 	type = document["type"].GetString();
 	width = document["width"].GetInt();
-
-
 
 	Value::Array tilesets = document["tilesets"].GetArray();
 	ts_firstgid = tilesets[0]["firstgid"].GetInt();
@@ -316,7 +314,6 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 	tilesetDoc.ParseStream(mapStream);
 	fclose(fp);
 
-
 	GetCurrentMap()->SetCurrentZoneNum(zoneNum);
 
 	std::vector<int> data = GetCurrentMap()->GetCurrentZone().GetData();						// Initializing new vector<int> with current zones datavector (storing tile data)
@@ -354,9 +351,7 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Line to get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
 
-			Vector2 collisionBounds = Vector2(collisionWidth, collisionHeight);					// Creating a Vector2 to specify collision bounds width and height (may change to RECT)
-
-			Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, tileRect, collisionBounds, i);				// Creating and pushing tile objects ti m_Tiles vector
+			Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, tileRect, Vector2(collisionWidth, collisionHeight), i);				// Creating and pushing tile objects ti m_Tiles vector
 			m_Tiles.emplace_back(newTile);
 		}
 	}

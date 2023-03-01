@@ -3,6 +3,7 @@
 #include "newGameObject.h"
 
 class Sprite;
+class ResourceManager;
 
 class PlayerCharacter : public GameObject
 {
@@ -14,19 +15,22 @@ public:
 	}
 
 	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum) override;
-	void Update(float dTime) override;
+	void Update(float dTime, ResourceManager& rManager) override;
 	void Terminate();
 
 	Sprite GetSprite() override;
 	bool GetActive() override;
 	void SetSprite(Sprite _sprite) override;
 	void SetActive(bool _isActive) override;
+
+	RECT GetPlayerCollisionBounds() { return collisionPlayerRect; }
+
 private:
 	bool isActive;
 	Sprite objSprite;
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
-	void CheckCollision();											// temporary collision function, Kieron can swap it for his collision once merged
+	void CheckCollision(ResourceManager& rManager);											// temporary collision function, Kieron can swap it for his collision once merged
 
 	const float JUMP_SPEED = 1200;
 	const float GRAVITY = 400;
@@ -38,4 +42,8 @@ private:
 	bool isGrounded = false;													//Player
 	bool isTop = false;			// For kacper temp collision
 	bool isBottom = false;		// For kacper temp collision
+
+	RECT collisionPlayerRect;
+
+	Vector2 collisionDimensions;
 };

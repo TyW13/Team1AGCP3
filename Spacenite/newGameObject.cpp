@@ -1,4 +1,5 @@
 #include "newGameObject.h"
+#include "ResourceManager.h"
 #include "Texture.h"
 
 void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)
@@ -19,10 +20,22 @@ void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, Direc
 	objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
 
 	objSprite.mPos = Vector2(position);
+
+	collisionDimensions.x = collisionBounds.x;
+	collisionDimensions.y = collisionBounds.y;
+
+	collision_Bounds.left = objSprite.mPos.x;
+	collision_Bounds.top = objSprite.mPos.y;
+	collision_Bounds.right = objSprite.mPos.x + collisionDimensions.x;
+	collision_Bounds.bottom = objSprite.mPos.y + collisionDimensions.y;
 }
 
-void GameObject::Update(float dTime)
+void GameObject::Update(float dTime, ResourceManager& rManager)
 {
+	collision_Bounds.left = objSprite.mPos.x;
+	collision_Bounds.top = objSprite.mPos.y;
+	collision_Bounds.right = objSprite.mPos.x + collisionDimensions.x;
+	collision_Bounds.bottom = objSprite.mPos.y + collisionDimensions.y;
 }
 
 Sprite GameObject::GetSprite()
