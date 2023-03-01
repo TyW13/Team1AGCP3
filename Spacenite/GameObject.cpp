@@ -248,13 +248,13 @@ void Player::UpdateInput(float dTime)
 
 	//--------- x-axis
 	//right
-	if (Game::sMKIn.IsPressed(VK_D)/* && !deactivate_D*/)
+	if (Game::sMKIn.IsPressed(VK_D) && !deactivate_D)
 	{
 		currentVel.x = PLAYER_SPEED;
 		animState = "Right";
 	}
 	//left
-	else if (Game::sMKIn.IsPressed(VK_A)/* && !deactivate_A*/)
+	else if (Game::sMKIn.IsPressed(VK_A) && !deactivate_A)
 	{
 		currentVel.x = -PLAYER_SPEED;
 		animState = "Left";
@@ -375,11 +375,26 @@ void Player::UpdateInput(float dTime)
 		//wall jump
 		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE))
 		{
-			//wallJumped = true;
-			start_time_wall_jump = std::chrono::high_resolution_clock::now();
+			//start_time_wall_jump = std::chrono::high_resolution_clock::now();
 			currentVel.y = -currentVel.y;
 			currentVel.x = -2 * currentVel.x;
-		}
+			elapsedtime = 0;
+			hasWallJumped = true;
+		}/*
+		else if (hasWallJumped)
+		{
+			elapsedtime += dTime;
+
+			if (elapsedtime < 1)
+			{
+				deactivate_D = true;
+			}
+			else
+			{
+				deactivate_D = false;
+				hasWallJumped = false;
+			}
+		}*/
 		else
 		{
 			//climb upwards
