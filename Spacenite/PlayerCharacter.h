@@ -1,6 +1,7 @@
 #pragma once
 
 #include "newGameObject.h"
+#include <chrono>
 
 class Sprite;
 class ResourceManager;
@@ -29,21 +30,59 @@ private:
 	bool isActive;
 	Sprite objSprite;
 
-	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
 	void CheckCollision(ResourceManager& rManager);											// temporary collision function, Kieron can swap it for his collision once merged
-
-	const float JUMP_SPEED = 1200;
-	const float GRAVITY = 400;
-	const float PLAYER_SPEED = 350;									//PLAYER EXCLUSIVE
-	const float JUMP_HEIGHT = 100;
-	const float PAD_SPEED = 500;									//PLAYER EXCLUSIVE
-	const float DRAG = 0.985;										//for deceleration
-
-	bool isGrounded = false;													//Player
-	bool isTop = false;			// For kacper temp collision
-	bool isBottom = false;		// For kacper temp collision
 
 	RECT collisionPlayerRect;
 
 	Vector2 collisionDimensions;
+
+
+
+	// KACPER STUFF
+
+	std::chrono::time_point<std::chrono::steady_clock> start_time;
+	std::chrono::time_point<std::chrono::steady_clock> end_time;
+
+	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
+	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
+	DirectX::SimpleMath::Vector2 direction = direction.Zero;
+
+	const float MAX_JUMP_VEL = 400;
+	const float MIN_JUMP_VEL = MAX_JUMP_VEL / 2;
+	const float GRAVITY = 200;
+	const float PLAYER_SPEED = 350;
+	const float DRAG_X = 0.985;				//for deceleration in x-axis
+	const float	DRAG_Y = 0.990;				//for deceleration in y-axis
+	const float HIGH_JUMP_TIME = 0.20;					//how much time it takes to do a higher jump
+	const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
+
+	double elapsed_time = 0;					//measure how much time has elapsed between starting and ending time counting
+
+	std::string jumpType;
+
+	bool grounded = false;
+	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
+	bool recordJumpTime = false;				//start/stop recording jump time
+	bool stopDetectSpaceKey = false;				//stop detecting the space button pressed down if it was already pressed down the frame before
+	bool stopDetectMouseClick = false;
+
+	//------ animation variables 
+	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
+	float elapsedTime = 0.0f;
+	float spaceClickElapsedTime = 0.f;
+	int currentFrame = 0;
+	std::string animState;
+	RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} };
+	RECTF flipped_spriteFrames[5] = {
+		{-spriteFrames[0].left, spriteFrames[0].top, -spriteFrames[0].right, spriteFrames[0].bottom},
+		{-spriteFrames[1].left, spriteFrames[1].top, -spriteFrames[1].right, spriteFrames[1].bottom},
+		{-spriteFrames[2].left, spriteFrames[2].top, -spriteFrames[2].right, spriteFrames[2].bottom},
+		{-spriteFrames[3].left, spriteFrames[3].top, -spriteFrames[3].right, spriteFrames[3].bottom},
+		{-spriteFrames[4].left, spriteFrames[4].top, -spriteFrames[4].right, spriteFrames[4].bottom} };
+
+	//------ animation functions
+	void UpdateAnimation(float dTime);
+
+
+	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
 };
