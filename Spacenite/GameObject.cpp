@@ -221,23 +221,56 @@ void Player::Render(DirectX::SpriteBatch& batch)
 
 void Player::UpdateInput(float dTime)
 {
+	//--------- mouse
+	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && detectMouseClick)
+	{
+		mousePos = Game::sMKIn.GetMousePos(true);
+		//playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
+
+		//calculate the direction vector from the player to the mouse click
+		direction = mousePos - character.mPos;
+
+		//reverse the direction vector
+		direction *= -1;
+
+		//normalize the direction vector
+		direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
+
+		//apply a jump force to the player character
+		currentVel = (direction * 1500);
+
+		detectMouseClick = false;
+	}
+	if (!Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && !detectMouseClick)
+	{
+		detectMouseClick = true;
+	}
+
 	//--------- x-axis
 	//right
-	if (Game::sMKIn.IsPressed(VK_D))
+	if (Game::sMKIn.IsPressed(VK_D)/* && !deactivate_D*/)
 	{
 		currentVel.x = PLAYER_SPEED;
 		animState = "Right";
 	}
 	//left
-	else if (Game::sMKIn.IsPressed(VK_A))
+	else if (Game::sMKIn.IsPressed(VK_A)/* && !deactivate_A*/)
 	{
 		currentVel.x = -PLAYER_SPEED;
 		animState = "Left";
 	}
 	//deceleration
-	else
+	//
+	//if on the ground
+	else if (grounded)
 	{
 		currentVel.x *= DRAG_X;
+		animState = "Stand";
+	}
+	//if in the air
+	else if (!grounded)
+	{
+		currentVel.x *= DRAG_X_IN_AIR;
 		animState = "Stand";
 	}
 
@@ -247,12 +280,12 @@ void Player::UpdateInput(float dTime)
 	if (grounded)
 	{
 		//set initial velocity, start timer, record button pressed down during only the first frame
-		if (Game::sMKIn.IsPressed(VK_SPACE) && !stopDetectSpaceKey)
+		if (Game::sMKIn.IsPressed(VK_SPACE) && detectSpaceKey)
 		{
-			start_time = std::chrono::steady_clock::now();
+			start_time = std::chrono::high_resolution_clock::now();
 			currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
 
-			stopDetectSpaceKey = true;
+			detectSpaceKey = false;
 			recordJumpTime = true;
 			grounded = false;
 		}
@@ -264,7 +297,7 @@ void Player::UpdateInput(float dTime)
 		//record how much time has been passed since pressing down and releasing space button
 		if (recordJumpTime)
 		{
-			end_time = std::chrono::steady_clock::now();
+			end_time = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<double> elapsed_seconds = end_time - start_time;
 			elapsed_time = elapsed_seconds.count();
 
@@ -302,7 +335,7 @@ void Player::UpdateInput(float dTime)
 		//set the velocity to minimum jump vel if the space button was clicked during the former time frame 
 		//OR 
 		//set to maximum jump vel if was clicked during the latter time frame
-		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time <= HIGH_JUMP_TIME && stopDetectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
+		if ((!Game::sMKIn.IsPressed(VK_SPACE) && elapsed_time != 0 && elapsed_time <= HIGH_JUMP_TIME && !detectSpaceKey) || elapsed_time == HIGH_JUMP_TIME)
 		{
 			if (jumpType == "LowJump" && elapsed_time >= LOW_JUMP_TIME)
 			{
@@ -334,39 +367,56 @@ void Player::UpdateInput(float dTime)
 
 		}
 
+		
+
+
+		//--wall sliding/climbing
+		//
+		//wall jump
+		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE))
+		{
+			//wallJumped = true;
+			start_time_wall_jump = std::chrono::high_resolution_clock::now();
+			currentVel.y = -currentVel.y;
+			currentVel.x = -2 * currentVel.x;
+		}
+		else
+		{
+			//climb upwards
+			if (isWallSliding && Game::sMKIn.IsPressed(VK_W) && !Game::sMKIn.IsPressed(VK_SPACE))
+			{
+				currentVel.y = -CLIMB_VEL;
+			}
+			//climb downwards
+			else if (isWallSliding && Game::sMKIn.IsPressed(VK_S) && !Game::sMKIn.IsPressed(VK_SPACE))
+			{
+				currentVel.y = CLIMB_VEL;
+			}
+			//slide down if none of above
+			else if (isWallSliding && !Game::sMKIn.IsPressed(VK_W))
+			{
+				currentVel.y = SLIDE_DOWN_VEL;
+			}
+		}
+		
+		
+		/*if (ungroundedTime > jumpForgiveness)
+		{
+			activateWallJump = false;
+		}
+		else
+		{
+			activateWallJump = true;
+			ungroundedTime =+ dTime;
+		}*/
+		
+
 		//if the player has slowed down moving upward activate the gravity to take them back down
-		if (currentVel.y >= -40)
+		if (currentVel.y >= -40 && !isWallSliding)
 		{
 			if (currentVel.y > GRAVITY) { currentVel.y = GRAVITY; }
 			else { currentVel.y += 1.01 * (GRAVITY / 20); }
-
-
 		}
-	}
-
-	//--------- mouse
-	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && !stopDetectMouseClick)
-	{
-		mousePos = Game::sMKIn.GetMousePos(true);
-		//playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
-
-		//calculate the direction vector from the player to the mouse click
-		direction = mousePos - character.mPos;
-
-		//reverse the direction vector
-		direction *= -1;
-
-		//normalize the direction vector
-		direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
-
-		//apply a jump force to the player character
-		currentVel = (direction * 1000);
-
-		stopDetectMouseClick = true;
-	}
-	if(!Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && stopDetectMouseClick)
-	{
-		stopDetectMouseClick = false;
 	}
 }
 
@@ -490,22 +540,47 @@ void Player::CheckCollision()
 		character.mPos.y = playerOrigin.y * 2;
 	}
 	//right
-	if (character.mPos.x + playerOrigin.x > WinUtil::Get().GetClientWidth())
+	if (character.mPos.x + playerOrigin.x*2 > WinUtil::Get().GetClientWidth())
 	{
-		character.mPos.x = WinUtil::Get().GetClientWidth() - playerOrigin.x;
+		if (Game::sMKIn.IsPressed(VK_D))
+		{
+			isWallSliding = true;
+		}
+		else
+		{
+			isWallSliding = false;
+		}
+		character.mPos.x = WinUtil::Get().GetClientWidth() - playerOrigin.x *2;
 	}
 	//left
-	if (character.mPos.x - playerOrigin.x < 0)
+	else if (character.mPos.x - playerOrigin.x * 2 < 0)
 	{
-		character.mPos.x = playerOrigin.x;
+		if (Game::sMKIn.IsPressed(VK_A))
+		{
+			isWallSliding = true;
+		}
+		else
+		{
+			isWallSliding = false;
+		}
+		character.mPos.x = playerOrigin.x * 2;
+	}
+	else
+	{
+		isWallSliding = false;
 	}
 
 	//if the player is on the bottom line (let's say it's the ground for now)
 	if (character.mPos.y == WinUtil::Get().GetClientHeight())
 	{
-		stopDetectSpaceKey = false;
+		detectSpaceKey = true;
 		grounded = true;
 	}
 }
+
+//double get_current_time() {
+//	auto now = std::chrono::high_resolution_clock::now();
+//	return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / 1000.0;
+//}
 
 

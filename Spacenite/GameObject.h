@@ -98,8 +98,10 @@ public:
 private:
 
 	//------ movement variables
-	std::chrono::time_point<std::chrono::steady_clock> start_time;
-	std::chrono::time_point<std::chrono::steady_clock> end_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> end_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> start_time_wall_jump;
+	std::chrono::time_point<std::chrono::high_resolution_clock> end_time_wall_jump;
 
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
 	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
@@ -107,22 +109,27 @@ private:
 
 	const float MAX_JUMP_VEL	= 400;
 	const float MIN_JUMP_VEL	= MAX_JUMP_VEL / 2;
-	const float GRAVITY			= 200;
+	const float CLIMB_VEL		= 170;
+	const float SLIDE_DOWN_VEL	= 80;
+	const float GRAVITY			= 300;
 	const float PLAYER_SPEED	= 350;
-	const float DRAG_X			= 0.985;				//for deceleration in x-axis
+	const float DRAG_X			= 0.985;				//for deceleration in x-axis on the ground
+	const float DRAG_X_IN_AIR	= 0.994;				//for deceleration in x-axis in air
 	const float	DRAG_Y			= 0.990;				//for deceleration in y-axis
 	const float HIGH_JUMP_TIME	= 0.20;					//how much time it takes to do a higher jump
 	const float LOW_JUMP_TIME	= HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
 
 	double elapsed_time			= 0;					//measure how much time has elapsed between starting and ending time counting
+	float ungroundedTime		= 0;
+	float jumpForgiveness		= 1;
 
 	std::string jumpType;
 	
-	bool grounded				= false;
+	bool grounded				= false;				//
 	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
 	bool recordJumpTime			= false;				//start/stop recording jump time
-	bool stopDetectSpaceKey		= false;				//stop detecting the space button pressed down if it was already pressed down the frame before
-	bool stopDetectMouseClick	= false;
+	bool detectSpaceKey			= true;					//start detecting the space button pressed down
+	bool detectMouseClick		= true;					//
 
 	//------ animation variables 
 	const float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
@@ -147,4 +154,12 @@ private:
 
 	//for my little solution only, Kieron can swap it for his collision once merged
 	void CheckCollision();	
+
+	//------ simple "collisions"
+	double elapsedtime = 0;
+	bool isWallSliding = false;
+	//bool deactivate_A = false;
+	//bool deactivate_D = false;
+	/*bool collidesFromLeft = false;
+	bool collidesFromRight = false;*/
 };
