@@ -367,9 +367,6 @@ void Player::UpdateInput(float dTime)
 
 		}
 
-		
-
-
 		//--wall sliding/climbing
 		//
 		//wall jump
@@ -418,18 +415,6 @@ void Player::UpdateInput(float dTime)
 				currentVel.y = SLIDE_DOWN_VEL;
 			}
 		}
-		
-		
-		/*if (ungroundedTime > jumpForgiveness)
-		{
-			activateWallJump = false;
-		}
-		else
-		{
-			activateWallJump = true;
-			ungroundedTime =+ dTime;
-		}*/
-		
 
 		//if the player has slowed down moving upward activate the gravity to take them back down
 		if (currentVel.y >= -40 && !isWallSliding)

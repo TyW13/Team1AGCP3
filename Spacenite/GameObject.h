@@ -109,8 +109,8 @@ private:
 
 	const float MAX_JUMP_VEL	= 400;
 	const float MIN_JUMP_VEL	= MAX_JUMP_VEL / 2;
-	const float CLIMB_VEL		= 170;
-	const float SLIDE_DOWN_VEL	= 80;
+	const float CLIMB_VEL		= 170;					//player climbing velocity
+	const float SLIDE_DOWN_VEL	= 80;					//sliding down velocity
 	const float GRAVITY			= 300;
 	const float PLAYER_SPEED	= 350;
 	const float DRAG_X			= 0.985;				//for deceleration in x-axis on the ground
@@ -120,8 +120,6 @@ private:
 	const float LOW_JUMP_TIME	= HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
 
 	double elapsed_time			= 0;					//measure how much time has elapsed between starting and ending time counting
-	float ungroundedTime		= 0;
-	float jumpForgiveness		= 1;
 
 	std::string jumpType;
 	
@@ -156,9 +154,9 @@ private:
 	void CheckCollision();	
 
 	//------ simple "collisions"
-	double elapsedtime = 0;
-	bool isWallSliding = false;
-	bool deactivate_A = false;
-	bool deactivate_D = false;
-	bool hasWallJumped = false;
+	double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
+	bool isWallSliding = false;							//true whenever the player is wall sliding
+	bool deactivate_A = false;							//deactivate A key input while wall jumping
+	bool deactivate_D = false;							//deactivate D key input while wall jumping
+	bool hasWallJumped = false;							//detect if wall jumped
 };
