@@ -20,8 +20,6 @@ public:
 	virtual void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum);
 	virtual void Update(float dTime, ResourceManager& rManager);
 
-	void Terminate();
-
 	virtual Sprite GetSprite();
 	virtual bool GetActive();
 	virtual void SetSprite(Sprite _sprite);

@@ -8,9 +8,9 @@
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 #include "Sprite.h"
+#include "ResourceManager.h"
 #include "Background.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
 
 class ResourceManager;
 

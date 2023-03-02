@@ -1,6 +1,5 @@
 #pragma once
 #include "WindowUtils.h"
-#include "Input.h"
 #include "D3DUtil.h"
 #include <assert.h>
 #include <DDSTextureLoader.h>

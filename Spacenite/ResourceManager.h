@@ -4,7 +4,7 @@
 #include <string>
 #include "Texture.h"
 #include "newGameObject.h"
-#include "PlayerCharacter.h"
+
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 

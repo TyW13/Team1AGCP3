@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "ResourceManager.h"
+#include "PlayerCharacter.h"
 #include "Tile.h"
 #include "Game.h"
 
@@ -13,6 +14,14 @@ void ResourceManager::Init(MyD3D& d3d)
 	LoadLevelsFromFile();
 
 	ReloadMap(d3d, 0);
+	RECTF pRect;
+	pRect.left = 0.0f;
+	pRect.top = 0.0f;
+	pRect.right = 0.0f;
+	pRect.bottom = 0.0f;
+
+	PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("test_chara_walk"), Vector2(200, 200), Vector2(6, 6), true, pRect, Vector2(0, 0), 0);				// Creating and pushing tile objects ti m_Tiles vector
+	m_gObjects.emplace_back(player);
 }
 
 void ResourceManager::Update(MyD3D& d3d, float dTime)
@@ -29,23 +38,22 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 	}
 
 	// TEMPORARY FORCED MAP AND ZONE TRANSITIONS
-	if (Game::sMKIn.IsPressed(VK_RIGHT) == true)
-	{
-		LoadNextMap(d3d);
-	}
-	if (Game::sMKIn.IsPressed(VK_LEFT) == true)
-	{
-		LoadPreviousMap(d3d);
-	}
-	if (Game::sMKIn.IsPressed(VK_D) == true)
-	{
-		LoadNextZone(d3d);
-	}
-	if (Game::sMKIn.IsPressed(VK_A) == true)
-	{
-		LoadPreviousZone(d3d);
-	}
-
+	//if (Game::sMKIn.IsPressed(VK_RIGHT) == true)
+	//{
+	//	LoadNextMap(d3d);
+	//}
+	//if (Game::sMKIn.IsPressed(VK_LEFT) == true)
+	//{
+	//	LoadPreviousMap(d3d);
+	//}
+	//if (Game::sMKIn.IsPressed(VK_D) == true)
+	//{
+	//	LoadNextZone(d3d);
+	//}
+	//if (Game::sMKIn.IsPressed(VK_A) == true)
+	//{
+	//	LoadPreviousZone(d3d);
+	//}
 }
 
 void ResourceManager::Render(SpriteBatch& batch)
