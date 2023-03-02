@@ -373,28 +373,33 @@ void Player::UpdateInput(float dTime)
 		//--wall sliding/climbing
 		//
 		//wall jump
-		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE))
+		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE) && !hasWallJumped)
 		{
 			//start_time_wall_jump = std::chrono::high_resolution_clock::now();
-			currentVel.y = -currentVel.y;
-			currentVel.x = -2 * currentVel.x;
+			currentVel.y = -3*MAX_JUMP_VEL;
+			currentVel.x = -3*currentVel.x;
 			elapsedtime = 0;
 			hasWallJumped = true;
-		}/*
-		else if (hasWallJumped)
+			isWallSliding = false;
+		}
+		if (hasWallJumped)
 		{
 			elapsedtime += dTime;
 
-			if (elapsedtime < 1)
+			if (elapsedtime < 0.5)
 			{
+
+				currentVel *= 0.99;
+				deactivate_A = true;
 				deactivate_D = true;
 			}
 			else
 			{
-				deactivate_D = false;
 				hasWallJumped = false;
+				deactivate_A = false;
+				deactivate_D = false;
 			}
-		}*/
+		}
 		else
 		{
 			//climb upwards
@@ -557,7 +562,7 @@ void Player::CheckCollision()
 	//right
 	if (character.mPos.x + playerOrigin.x*2 > WinUtil::Get().GetClientWidth())
 	{
-		if (Game::sMKIn.IsPressed(VK_D))
+		if (Game::sMKIn.IsPressed(VK_D) && !deactivate_D)
 		{
 			isWallSliding = true;
 		}
@@ -570,7 +575,7 @@ void Player::CheckCollision()
 	//left
 	else if (character.mPos.x - playerOrigin.x * 2 < 0)
 	{
-		if (Game::sMKIn.IsPressed(VK_A))
+		if (Game::sMKIn.IsPressed(VK_A) && !deactivate_A)
 		{
 			isWallSliding = true;
 		}

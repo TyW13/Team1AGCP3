@@ -161,6 +161,4 @@ private:
 	bool deactivate_A = false;
 	bool deactivate_D = false;
 	bool hasWallJumped = false;
-	/*bool collidesFromLeft = false;
-	bool collidesFromRight = false;*/
 };
