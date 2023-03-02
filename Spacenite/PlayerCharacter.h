@@ -93,6 +93,8 @@ private:
 
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
+	Vector2 playerPreviousPos;
+	Vector2 playerPreviousVel;
 
 	//for my little solution only, Kieron can swap it for his collision once merged
 

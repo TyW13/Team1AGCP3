@@ -33,11 +33,16 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 
 void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 {
+	// NOTE STORE POSITION/VELOCITY IN TEMP VARIABLE, CHECK IF POISITION AFTER INPUTS WOULD CAUSE COLLISION:IF YES DONT MOVE, IF NO MOVE
+
 	// Initializes the players collision rect 
 	collisionPlayerRect.left = objSprite.mPos.x;
 	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
 	collisionPlayerRect.top = objSprite.mPos.y;
 	collisionPlayerRect.bottom = objSprite.mPos.y + objSprite.GetTexData().dim.y;
+
+	playerPreviousPos = objSprite.mPos;
+	playerPreviousVel = objSprite.mVel;
 
 	//update player core movement
 	objSprite.mVel += currentVel * dTime;
@@ -54,8 +59,12 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 
 	UpdateInput(dTime);
 
+
 	CheckCollision(rManager);
+
+
 	UpdateAnimation(dTime);
+
 }
 
 //void PlayerCharacter::UpdateInput(float dTime)
@@ -210,7 +219,6 @@ void PlayerCharacter::UpdateInput(float dTime)
 				elapsed_time = 0;
 				currentVel.y = -MAX_JUMP_VEL;
 				recordJumpTime = false;
-
 			}
 			else
 			{
@@ -404,6 +412,11 @@ void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
 			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
 		{
+			//objSprite.mPos = playerPreviousPos;
+			//objSprite.mPos.x = playerPreviousPos.x;
+			//objSprite.mPos.y = playerPreviousPos.y - 1;
+			objSprite.mPos.y = (tile->GetCollisionBounds().top + playerTexDims.y / 2) - 1;
+
 			//if (collisionPlayerRect.left < tile->GetCollisionBounds().right)											// Hitting right of tile
 			//{
 			//	objSprite.mPos.x = tile->GetCollisionBounds().right + playerTexDims.x / 2;
@@ -416,16 +429,14 @@ void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 			//{
 			//	objSprite.mPos.y = tile->GetCollisionBounds().bottom + playerTexDims.y / 2;
 			//}
-			if (collisionPlayerRect.bottom > tile->GetCollisionBounds().top)											// Hitting top of tile
-			{
-				//objSprite.mPos.y = tile->GetCollisionBounds().top - playerTexDims.y / 2;
-				//objSprite.mPos = Vector2(objSprite.mPos.x, tile->GetCollisionBounds().top - playerTexDims.y / 2);
+			//if (collisionPlayerRect.bottom > tile->GetCollisionBounds().top)											// Hitting top of tile
+			//{
+			//	objSprite.mPos.y = tile->GetCollisionBounds().top - playerTexDims.y / 2;
+			//	//objSprite.mPos = Vector2(objSprite.mPos.x, tile->GetCollisionBounds().top - playerTexDims.y / 2);
 
-				objSprite.mPos.y--;
-
-			}
+			//	//objSprite.mPos.y -= currentVel.y * 0.001;
+			//}
 		}
-
 
 		//if (this->GetPlayerCollisionBounds().left < tile->GetCollisionBounds().right)				// AABB collision checks between the player and tile rects
 		//{																							// if colliding, sets players position to just before, not allowing them to go through the wall/tile

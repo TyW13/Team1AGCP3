@@ -38,22 +38,22 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 	}
 
 	// TEMPORARY FORCED MAP AND ZONE TRANSITIONS
-	//if (Game::sMKIn.IsPressed(VK_RIGHT) == true)
-	//{
-	//	LoadNextMap(d3d);
-	//}
-	//if (Game::sMKIn.IsPressed(VK_LEFT) == true)
-	//{
-	//	LoadPreviousMap(d3d);
-	//}
-	//if (Game::sMKIn.IsPressed(VK_D) == true)
-	//{
-	//	LoadNextZone(d3d);
-	//}
-	//if (Game::sMKIn.IsPressed(VK_A) == true)
-	//{
-	//	LoadPreviousZone(d3d);
-	//}
+	if (Game::sMKIn.IsPressed(VK_P) == true)
+	{
+		LoadNextMap(d3d);
+	}
+	if (Game::sMKIn.IsPressed(VK_O) == true)
+	{
+		LoadPreviousMap(d3d);
+	}
+	if (Game::sMKIn.IsPressed(VK_K) == true)
+	{
+		LoadNextZone(d3d);
+	}
+	if (Game::sMKIn.IsPressed(VK_J) == true)
+	{
+		LoadPreviousZone(d3d);
+	}
 }
 
 void ResourceManager::Render(SpriteBatch& batch)
