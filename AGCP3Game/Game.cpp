@@ -8,7 +8,6 @@
 #include "GraphicsMemory.h"
 #include "SpriteBatch.h"
 #include "ResourceUploadBatch.h"
-//#include "DDSTextureLoader.h"
 #include "DDSTextureLoader.h"
 #include "SpriteRenderer.h"
 
