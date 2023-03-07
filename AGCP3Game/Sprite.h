@@ -12,6 +12,7 @@
 #pragma once
 
 ////
+#include <SimpleMath.h>
 #include <string>
 #include <wrl/client.h>
 
@@ -34,6 +35,17 @@ public:
     void Update(float deltaTime);
     D3D12_GPU_DESCRIPTOR_HANDLE GetSRV();
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
+
+
+    DirectX::SimpleMath::Vector2 scale;
+
+    void SetScale(const DirectX::SimpleMath::Vector2& s) {
+        scale = s;
+    }
+
+    const DirectX::SimpleMath::Vector2& GetScale() const {
+        return scale;
+    }
 
 private:
 
