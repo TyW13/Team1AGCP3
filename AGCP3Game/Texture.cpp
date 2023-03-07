@@ -2,12 +2,13 @@
 
 // Texture.cpp
 
+#include <DirectXTex/DirectXTex.h>
 using namespace std;
 
 
 #include "Texture.h"
 #include <wincodec.h>
-#include <DirectXTex.h>
+#include <DirectXTex/DirectXTex.h>
 
 #pragma comment(lib, "Windowscodecs.lib")
 
