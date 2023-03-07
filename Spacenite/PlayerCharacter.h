@@ -25,15 +25,37 @@ public:
 	void SetSprite(Sprite _sprite) override;
 	void SetActive(bool _isActive) override;
 
-	RECT GetPlayerCollisionBounds() { return collisionPlayerRect; }
+	RECTF GetPlayerCollisionBounds() { return collisionPlayerRect; }
 
 private:
 	bool isActive;
 	Sprite objSprite;
 
-	void CheckCollision(ResourceManager& rManager);											// temporary collision function, Kieron can swap it for his collision once merged
+	// Collision functions
+	bool PointVsRect(const Vector2& point, const RECTF& rect)											// Return true if point is inside rect
+	{
+		return(point.x >= rect.left &&
+			point.y >= rect.top &&
+			point.x < rect.right&&
+			point.y < rect.bottom);
+	}
+	bool RectVsRect(const RECTF& r1, const RECTF& r2)													// Returns true if any part of rect1 and rect2 intersect
+	{
+		return(r1.left <= r2.right &&
+			r1.top <= r2.bottom &&
+			r1.right > r2.left &&
+			r1.bottom > r2.top);
+	}
 
-	RECT collisionPlayerRect;
+	// See "Arbitary rectangle Collision detection & Resolution - Complete!" - javidx9 on youtube.com
+	bool RayVsRect(const Vector2& rayOrigin, const Vector2& rayDir, const RECTF& targetRect, Vector2& contactPoint, Vector2& contactNormal, float& t_hit_near);
+	bool DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vector2& contactNormal, float& contactTime, float dTime);
+
+	void CheckCollision(ResourceManager& rManager, float dTime);											// temporary collision function, Kieron can swap it for his collision once merged
+	bool newCheckCollision(Tile* tile, ResourceManager& rManager, float dTime);
+
+	RECTF collisionPlayerRect;
+	RECTF oldCollisionPRect;
 
 	Vector2 collisionDimensions;
 
@@ -45,6 +67,11 @@ private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> end_time;
 	std::chrono::time_point<std::chrono::high_resolution_clock> start_time_wall_jump;
 	std::chrono::time_point<std::chrono::high_resolution_clock> end_time_wall_jump;
+
+	Vector2 checkNextVel = checkNextVel.Zero;
+	Vector2 checkNextPos;
+
+	Vector2 oldPos;
 
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
 	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
@@ -80,7 +107,7 @@ private:
 	float spaceClickElapsedTime = 0.f;
 	int currentFrame = 0;
 	std::string animState;
-	RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} };
+	RECTF spriteFrames[5] = { {0,0,6,16},{6,0,12,16},{12,0,18,16},{18,0,24,16},{24,0,30,16} };
 	RECTF flipped_spriteFrames[5] = {
 		{-spriteFrames[0].left, spriteFrames[0].top, -spriteFrames[0].right, spriteFrames[0].bottom},
 		{-spriteFrames[1].left, spriteFrames[1].top, -spriteFrames[1].right, spriteFrames[1].bottom},

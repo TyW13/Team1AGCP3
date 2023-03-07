@@ -1,9 +1,13 @@
+#define NOMINMAX
+
 #include "D3DUtil.h"
 #include "Game.h"
 #include "PlayerCharacter.h"
 #include "Texture.h"
 #include "ResourceManager.h"
 #include "Tile.h"
+
+#include <algorithm>
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -16,76 +20,26 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true);
 	objSprite.SetTex(*objTex, spriteFrames[0]);
 	objSprite.SetScale(scale);
-	objSprite.origin = Vector2(0, objSprite.GetTexData().dim.y);
+	objSprite.origin = Vector2(0,0);
 	isActive = active;
 
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
-	//objSprite.mPos = Vector2(w / 2, h / 2);
 	objSprite.mPos = position;
-
-	// Initialize the players collision rect. This is in Init() and Update() to ensure no random values get put in based on order of function calling 
-	collisionPlayerRect.left = objSprite.mPos.x;
-	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
-	collisionPlayerRect.top = objSprite.mPos.y;
-	collisionPlayerRect.bottom = objSprite.mPos.y + objSprite.GetTexData().dim.y;
 }
 
 void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 {
-	// NOTE STORE POSITION/VELOCITY IN TEMP VARIABLE, CHECK IF POISITION AFTER INPUTS WOULD CAUSE COLLISION:IF YES DONT MOVE, IF NO MOVE
-
-	// Initializes the players collision rect 
-	collisionPlayerRect.left = objSprite.mPos.x;
-	collisionPlayerRect.right = objSprite.mPos.x + objSprite.GetTexData().dim.x;
-	collisionPlayerRect.top = objSprite.mPos.y;
-	collisionPlayerRect.bottom = objSprite.mPos.y + objSprite.GetTexData().dim.y;
-
-	playerPreviousPos = objSprite.mPos;
-	playerPreviousVel = objSprite.mVel;
-
-	//update player core movement
-	objSprite.mVel += currentVel * dTime;
-	objSprite.mPos += currentVel * dTime;
-
-	/*if (currentVel.y > -20)
-	{
-		currentVel.y += 10;
-	}
-	if (currentVel.y >= GRAVITY)
-	{
-		currentVel.y = GRAVITY;
-	}*/
-
 	UpdateInput(dTime);
 
 
-	CheckCollision(rManager);
+	CheckCollision(rManager, dTime);
 
+	objSprite.mPos += currentVel * dTime;
 
 	UpdateAnimation(dTime);
 
 }
-
-//void PlayerCharacter::UpdateInput(float dTime)
-//{
-//	if (Game::sMKIn.IsPressed(VK_D) == true)
-//	{
-//		objSprite.mVel.x += PLAYER_SPEED;
-//	}
-//
-//	if (Game::sMKIn.IsPressed(VK_A) == true)
-//	{
-//		objSprite.mVel.x -= PLAYER_SPEED;
-//	}
-//
-//	if (Game::sMKIn.IsPressed(VK_SPACE))
-//	{
-//		objSprite.mVel.y = -JUMP_SPEED;
-//		//isGrounded = false;
-//	}
-//}
-
 
 void PlayerCharacter::UpdateInput(float dTime)
 {
@@ -399,11 +353,98 @@ void PlayerCharacter::UpdateAnimation(float dTime)
 
 
 
-																		// PLAYER COLLISION CHECK FUNCTION
-void PlayerCharacter::CheckCollision(ResourceManager& rManager)
+bool PlayerCharacter::RayVsRect(const Vector2& rayOrigin, const Vector2& rayDir, const RECTF& targetRect, Vector2& contactPoint, Vector2& contactNormal, float& t_hit_near)
 {
-	Vector2 currentPlayerPosition = objSprite.mPos;				// grabs current players position
-	Vector2 playerTexDims = Vector2(objSprite.GetTexData().dim);
+	contactNormal = { 0,0 };
+	contactPoint = { 0,0 };
+
+	Vector2 invdir;
+	invdir.x = 1.0f / rayDir.x;
+	invdir.y = 1.0f / rayDir.y;
+
+	float t_nearX = (targetRect.left - rayOrigin.x) * invdir.x;										// Getting near and far points on x and y where line intercects object rect (both sides)
+	float t_nearY = (targetRect.top - rayOrigin.y) * invdir.y;
+	Vector2 t_near = { t_nearX, t_nearY };
+
+	float t_farX = ((targetRect.left + 48) - rayOrigin.x) * invdir.x;
+	float t_farY = ((targetRect.top + 48) - rayOrigin.y) * invdir.y;
+	Vector2 t_far = { t_farX, t_farY };
+
+	if (std::isnan(t_far.y) || std::isnan(t_far.x)) return false;
+	if (std::isnan(t_near.y) || std::isnan(t_near.x)) return false;
+
+	if (t_near.x > t_far.x) { std::swap(t_near.x, t_far.x); }
+	if (t_near.y > t_far.y) { std::swap(t_near.y, t_far.y); }
+
+	if (t_near.x > t_far.y || t_near.y > t_far.x) { return false; }										// Will be false if the ray is not intersecting with object rect
+
+	t_hit_near = std::max(t_near.x, t_near.y);															// Calculate "times" from origin point to near and far collisions
+	float t_hit_far = std::max(t_far.x, t_far.y);
+	if (t_hit_far < 0) { return false; }													// Return false for intersections in the opposite direction of ray and after max distance of ray
+
+	contactPoint = rayOrigin + t_hit_near * rayDir;														// Location of contact point
+
+
+	// Obtaining contact normal
+	if (t_near.x > t_near.y)																			// If ray hits object rect from side
+	{
+		if (invdir.x < 0)																				// if ray is coming from right
+		{
+			contactNormal = { 1,0 };
+		}
+		else																							// If ray is coming from left
+		{
+			contactNormal = { -1, 0 };
+		}
+	}
+	else if (t_near.x < t_near.y)																		// If ray hits object rect from top/bottom
+	{
+		if (invdir.y < 0)																				// If ray is coming from bottom
+		{
+			contactNormal = { 0,1 };
+		}
+		else
+		{
+			contactNormal = { 0,-1 };																	// If ray is coming from top
+		}
+	}
+
+	return true;
+}
+
+bool PlayerCharacter::DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vector2& contactNormal, float& contactTime, float dTime)
+{
+	if (currentVel.x == .0f && currentVel.y == .0f)
+	{
+		return false;
+	}
+
+	RECTF expandedTargetRect;
+	expandedTargetRect.left = obj2->GetCollisionBounds().left - 48;
+	expandedTargetRect.right = obj2->GetCollisionBounds().right + 48;
+	expandedTargetRect.top = obj2->GetCollisionBounds().top - 48;
+	expandedTargetRect.bottom = obj2->GetCollisionBounds().bottom + 48;
+
+	if (RayVsRect({ collisionPlayerRect.left + 48, collisionPlayerRect.top + 48 },
+		currentVel * dTime, expandedTargetRect, contactPoint, contactNormal, contactTime))
+	{
+		if (contactTime <= 1.0f)
+		{
+			contactPoint;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// PLAYER COLLISION CHECK FUNCTION
+void PlayerCharacter::CheckCollision(ResourceManager& rManager, float dTime)
+{
+	collisionPlayerRect.left = objSprite.mPos.x;
+	collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+	collisionPlayerRect.top = objSprite.mPos.y;
+	collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
 
 	for (Tile* tile : rManager.GetTiles())					    // loops through all tiles. Ideally only loops through tiles that have collision bounds set in TILED editors
 	{
@@ -412,49 +453,79 @@ void PlayerCharacter::CheckCollision(ResourceManager& rManager)
 			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
 			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
 		{
-			//objSprite.mPos = playerPreviousPos;
-			//objSprite.mPos.x = playerPreviousPos.x;
-			//objSprite.mPos.y = playerPreviousPos.y - 1;
-			objSprite.mPos.y = (tile->GetCollisionBounds().top + playerTexDims.y / 2) - 1;
+			RECTF ww = collisionPlayerRect;
+			RECTF pp = tile->GetCollisionBounds();
 
-			//if (collisionPlayerRect.left < tile->GetCollisionBounds().right)											// Hitting right of tile
-			//{
-			//	objSprite.mPos.x = tile->GetCollisionBounds().right + playerTexDims.x / 2;
-			//}
-			//if (collisionPlayerRect.right > tile->GetCollisionBounds().left)											// Hitting left of tile
-			//{
-			//	objSprite.mPos.x = tile->GetCollisionBounds().left - playerTexDims.x / 2;									
-			//}
-			//if (collisionPlayerRect.top < tile->GetCollisionBounds().bottom)											// Hitting bottom of tile
-			//{
-			//	objSprite.mPos.y = tile->GetCollisionBounds().bottom + playerTexDims.y / 2;
-			//}
-			//if (collisionPlayerRect.bottom > tile->GetCollisionBounds().top)											// Hitting top of tile
-			//{
-			//	objSprite.mPos.y = tile->GetCollisionBounds().top - playerTexDims.y / 2;
-			//	//objSprite.mPos = Vector2(objSprite.mPos.x, tile->GetCollisionBounds().top - playerTexDims.y / 2);
 
-			//	//objSprite.mPos.y -= currentVel.y * 0.001;
-			//}
+			float topDist = fabs(collisionPlayerRect.top - tile->GetCollisionBounds().bottom);									// Distance from tile rect top
+			float botDist = fabs(collisionPlayerRect.bottom - tile->GetCollisionBounds().top);
+
+			if (topDist < botDist)																						// If player is closer to top of tile
+			{
+				objSprite.mPos.y += topDist;
+				//collisionsY -= topDist;
+				//currentVel.y = 0;
+			}
+			else if (botDist < topDist)																					// If player is closer to bottom of tile
+			{
+				objSprite.mPos.y -= botDist;
+				//collisionsY += botDist;
+				//currentVel.y = 0;
+			}
+
+			collisionPlayerRect.left = objSprite.mPos.x;
+			collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+			collisionPlayerRect.top = objSprite.mPos.y;
+			collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
 		}
 
-		//if (this->GetPlayerCollisionBounds().left < tile->GetCollisionBounds().right)				// AABB collision checks between the player and tile rects
-		//{																							// if colliding, sets players position to just before, not allowing them to go through the wall/tile
-		//	objSprite.mPos.x = currentPlayerPosition.x;
-		//}
-		//if (this->GetPlayerCollisionBounds().right < tile->GetCollisionBounds().left)
-		//{
-		//	objSprite.mPos.x = currentPlayerPosition.x;
-		//}
-		//if (this->GetPlayerCollisionBounds().top > tile->GetCollisionBounds().bottom)
-		//{
-		//	objSprite.mPos.y = currentPlayerPosition.y;
-		//}
-		//if (this->GetPlayerCollisionBounds().bottom < tile->GetCollisionBounds().top)
-		//{
-		//	objSprite.mPos.y = currentPlayerPosition.y;
-		//}
+		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
+			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
+			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
+			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
+		{
+			float leftDist = fabs(collisionPlayerRect.left - tile->GetCollisionBounds().right);
+			float rightDist = fabs(collisionPlayerRect.right - tile->GetCollisionBounds().left);
+
+			if (leftDist < rightDist)
+			{
+				objSprite.mPos.x += leftDist;
+				//collisionsX -= leftDist;
+				//currentVel.x = 0;
+			}
+			else if (rightDist < leftDist)
+			{
+				objSprite.mPos.x -= rightDist;
+				//collisionsX += rightDist;
+				//currentVel.x = 0;
+			}
+		}
+
+		collisionPlayerRect.left = objSprite.mPos.x;
+		collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+		collisionPlayerRect.top = objSprite.mPos.y;
+		collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
 	}
+}
+
+bool PlayerCharacter::newCheckCollision(Tile* tile, ResourceManager& rManager, float dTime)
+{
+	collisionPlayerRect.left = checkNextPos.x;
+	collisionPlayerRect.right = checkNextPos.x + (objSprite.GetTexRect().right * objSprite.GetScale().x);
+	collisionPlayerRect.top = checkNextPos.y;
+	collisionPlayerRect.bottom = checkNextPos.y + (objSprite.GetTexRect().bottom * objSprite.GetScale().y);
+
+	Vector2 contactPoint{ 0,0 };
+	Vector2 contactNormal{ 0, 0};
+	float contactTime = 0.f;
+
+	if (DynamicRectVsRect(tile, contactPoint, contactNormal, contactTime, dTime))
+	{
+		currentVel += contactNormal * Vector2(fabs(currentVel.x), fabs(currentVel.y) * 1 - contactTime);
+		return true;
+	}
+
+	return false;
 }
 
 Sprite PlayerCharacter::GetSprite()

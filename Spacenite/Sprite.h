@@ -113,6 +113,7 @@ public:
 		assert(mpTexData);
 		return *mpTexData;
 	}
+	RECTF GetTexRect() { return mTexRect; }
 	ID3D11ShaderResourceView& GetTex() {
 		assert(mpTex);
 		return *mpTex;

@@ -17,12 +17,12 @@ public:
 	void SetSprite(Sprite _sprite) override;
 	void SetActive(bool _isActive) override;
 
-	RECT GetCollisionBounds() { return collision_Bounds; }
+	RECTF GetCollisionBounds() { return collision_Bounds; }
 
 private:
 	Sprite objSprite;
 	bool isActive;
-	RECT collision_Bounds;
+	RECTF collision_Bounds;
 
 	Vector2 collisionDimensions;
 };
