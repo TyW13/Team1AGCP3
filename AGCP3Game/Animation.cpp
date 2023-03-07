@@ -1,11 +1,13 @@
 #include "Animation.h"
 #include "D3D.h"
+#include "SimpleMath.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 
 using namespace rapidjson;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+
 Animation::Animation()
 {
 }

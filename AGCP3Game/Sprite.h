@@ -5,7 +5,7 @@
 #include <memory>
 #include "Renderer.h"
 
-#include "DirectXTex.h"
+
 
 #include <string>
 

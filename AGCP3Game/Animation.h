@@ -1,5 +1,6 @@
 #pragma once
 #include "Sprite.h"
+#include "SimpleMath.h"
 
 constexpr int bufferMemory = 8192;
 class Animation
@@ -23,8 +24,10 @@ private:
 	float elapsedTime = Zero;
 	int currentFrame = Zero;
 	const std::string InitState = "Stand";
-	RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
-	RECTF spriteSheet[4];
+
+	// was RECTF
+	RECT spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
+	RECT spriteSheet[4];
 	const int PlayerFrames = 5;
 };
 
