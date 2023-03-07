@@ -572,9 +572,21 @@ void Player::CheckCollision()
 	}
 }
 
-//double get_current_time() {
-//	auto now = std::chrono::high_resolution_clock::now();
-//	return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / 1000.0;
-//}
+void WallPad::Init(MyD3D& d3d)
+{
+	ID3D11ShaderResourceView* p = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "wallpad.dds", "wallpad", true);
 
+	wallpadSpr.SetTex(*p);
+	wallpadSpr.SetScale(Vector2(0.5f, 0.5f));
+	wallpadSpr.origin = Vector2(wallpadSpr.GetTexData().dim.x / 2, wallpadSpr.GetTexData().dim.y / 2);
+	wallpadSpr.mPos = Vector2(WinUtil::Get().GetClientWidth() - 150, WinUtil::Get().GetClientHeight() - 100);
+}
 
+void WallPad::Update(float dTime)
+{
+}
+
+void WallPad::Render(DirectX::SpriteBatch& batch)
+{
+	wallpadSpr.Draw(batch);
+}

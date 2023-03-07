@@ -144,12 +144,13 @@ void PlayMode::RenderAsteroids(SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), wallPad(d3d)
 {
 	//bGround.Init(d3d);
 	Player.Init(d3d);
 	//mMissile.Init(d3d);
 	//InitAsteroids();
+	wallPad.Init(d3d);
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);
@@ -175,6 +176,7 @@ void PlayMode::UpdateMissile(float dTime)
 void PlayMode::Update(float dTime, bool& _endGame)
 {
 	//bGround.Update(dTime);
+	
 
 	if (Player.character.GetActive())
 	{
@@ -194,6 +196,7 @@ void PlayMode::Render(float dTime, int& pScore, DirectX::SpriteBatch& batch)
 	//bGround.Render(batch);
 	if (Player.character.GetActive())
 	{
+		wallPad.Render(batch);
 		Player.Render(batch);
 		//mMissile.Render(batch);
 

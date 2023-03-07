@@ -161,3 +161,19 @@ private:
 	bool deactivate_D = false;							//deactivate D key input while wall jumping
 	bool hasWallJumped = false;							//detect if wall jumped
 };
+
+class WallPad
+{
+public:
+	WallPad(MyD3D& d3d)
+		:wallpadSpr(d3d)
+	{}
+
+	void Init(MyD3D& d3d);
+	void Update(float dTime);
+	void Render(DirectX::SpriteBatch& batch);
+
+private:
+	Sprite wallpadSpr;
+
+};
