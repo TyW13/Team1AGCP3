@@ -1,7 +1,7 @@
 #include "Sprite.h"
 
 #include <DirectXHelpers.h>
-#include "DirectXTex.h"
+#include <DirectXTex/DirectXTex.h>
 
 #include "Renderer.h"
 #include "d3dx12.h"
