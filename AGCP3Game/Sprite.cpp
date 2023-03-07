@@ -170,6 +170,10 @@ void Sprite::Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap
     commandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
 
 }
+void Sprite::SetTexRect(const RECT& texRect)
+{
+    mTexRect = texRect;
+}
 // test
 
 void Sprite::CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)

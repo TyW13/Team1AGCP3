@@ -37,7 +37,13 @@ public:
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
 
 
+    // Animation Getters - added 07/03/2023
+
+    RECT mTexRect;
+
     DirectX::SimpleMath::Vector2 scale;
+
+    void SetTexRect(const RECT& texRect);
 
     void SetScale(const DirectX::SimpleMath::Vector2& s) {
         scale = s;
