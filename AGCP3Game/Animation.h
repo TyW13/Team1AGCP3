@@ -26,8 +26,8 @@ private:
 	const std::string InitState = "Stand";
 
 	// was RECTF
-	RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
-	RECTF spriteSheet[4];
+	D3D12_RECT spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
+	D3D12_RECT spriteSheet[4];
 
 	
 	const int PlayerFrames = 5;

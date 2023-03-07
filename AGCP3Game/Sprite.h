@@ -36,15 +36,21 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE GetSRV();
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
 
-    struct RECTF
+   /* struct RECTF
     {
         float left, top, right, bottom;
-        operator RECT()
-        {
-            return RECT{ (int)left, (int)top, (int)right , (int)bottom };
-        }
-    };
 
+        return left, top, right, bottom;
+    };*/
+
+    typedef struct D3D12_RECT
+    {
+        float left;
+        float top;
+        float right;
+        float bottom;
+
+    } D3D12_RECT;
 
     // Animation Getters - added 07/03/2023
 
