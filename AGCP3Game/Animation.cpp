@@ -23,6 +23,8 @@ void Animation::Init(std::string jsonPath, Sprite& Sprite)
 	LoadAnimation(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
 }
+
+
 void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 {
 	//calculate elapsed time
@@ -70,6 +72,7 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 	}
 }
 
+
 void Animation::LoadAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
@@ -93,12 +96,13 @@ void Animation::LoadAnimation(std::string jsonPath)
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			spriteSheet[i] = TempRect;
 			++i;
 		}
 	}
 }
+
 
 void Animation::CheckState(std::string jsonPath)
 {

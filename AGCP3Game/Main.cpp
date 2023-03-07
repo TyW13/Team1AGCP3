@@ -5,7 +5,7 @@
 
 #include "pch.h"
 #include "Game.h"
-
+#include "DeviceResources.h"
 
 using namespace DirectX;
 
