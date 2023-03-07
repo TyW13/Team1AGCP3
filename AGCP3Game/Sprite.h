@@ -60,6 +60,7 @@ public:
         return scale;
     }
 
+    
 private:
     void CreateVertexBuffer(ID3D12Device* device);
     void CreateIndexBuffer(ID3D12Device* device);
