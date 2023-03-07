@@ -118,13 +118,13 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DeviceResources.h" />
+    <ClInclude Include="DXSampleHelper.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="DXSample.h" />
-    <ClInclude Include="DXSampleHelper.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

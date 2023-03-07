@@ -5,9 +5,11 @@
 #include "Renderer.h"
 #include "d3dx12.h"
 #include "pch.h"
+
 #include <DescriptorHeap.h>
 #include "DeviceResources.h"
-#include "DXSampleHelper.h"
+
+#include "DXSample.h"
 
 
 
@@ -189,7 +191,7 @@ void Sprite::CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList*
 
     // Create the vertex buffer
     const UINT vertexBufferSize = static_cast<UINT>(vertices.size() * sizeof(SpriteVertex));
-    ThrowIfFailed(device->CreateCommittedResource(
+    DX::ThrowIfFailed(device->CreateCommittedResource(
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
         D3D12_HEAP_FLAG_NONE,
         &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
@@ -200,7 +202,7 @@ void Sprite::CreateVertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList*
     // Copy the vertex data to the vertex buffer
     UINT8* pVertexDataBegin;
     CD3DX12_RANGE readRange(0, 0);
-    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    DX::ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
     memcpy(pVertexDataBegin, vertices.data(), vertexBufferSize);
     m_vertexBuffer->Unmap(0, nullptr);
 
