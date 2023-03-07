@@ -313,12 +313,15 @@ void ResourceManager::SavePlayerData()
 
 void ResourceManager::LoadPlayerData()			
 {
-	playerDataFile.open("data/playerData.txt", std::fstream::out | std::fstream::app);			// Opens playerData text file 
-	
-	std::string zoneNum;
-	std::string mapNum;
+	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
 
-	// FIGURE OUT SOME CODE TO GRAB MAP+ZONE NUMS FROM TEXT FILE AND ASSIGN TO VARIABLES 
+	std::string line;
+
+	std::getline(playerDataFile, line);															// Grabs first number from text file which relates to the map number
+	SetCurrentMap(stoi(line));																	// Converts map number from string to int and sets it 
+
+	std::getline(playerDataFile, line);															// Grabs second number from text file which relates to the zone number
+	GetCurrentMap()->SetCurrentZoneNum(stoi(line));												// Converts zone number from string to int and sets it 
 
 	playerDataFile.close();																		// Close playerData text file 
 }
