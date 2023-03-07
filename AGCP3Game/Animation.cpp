@@ -1,8 +1,13 @@
 #include "Animation.h"
 #include "D3D.h"
 #include "SimpleMath.h"
-#include "rapidjson/document.h"
+
+
+
 #include "rapidjson/filereadstream.h"
+#include "rapidjson/document.h"
+
+
 
 using namespace rapidjson;
 using namespace DirectX;

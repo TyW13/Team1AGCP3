@@ -77,7 +77,8 @@
       <TreatOutputAsContent>true</TreatOutputAsContent>
     </CustomBuild>
     <FxCompile>
-      <EntryPointName>main</EntryPointName>
+      <EntryPointName>
+      </EntryPointName>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
@@ -123,6 +124,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Win32Application.h" />
     <ClInclude Include="DXSample.h" />
     <ClInclude Include="stdafx.h" />
@@ -134,6 +136,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Win32Application.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
