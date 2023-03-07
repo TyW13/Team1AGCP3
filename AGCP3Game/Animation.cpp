@@ -1,7 +1,7 @@
 #include "Animation.h"
 #include "D3D.h"
 #include "SimpleMath.h"
-
+#include "Sprite.h"
 
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/document.h"

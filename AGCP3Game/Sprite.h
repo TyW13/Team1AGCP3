@@ -16,6 +16,15 @@
 #include <string>
 #include <wrl/client.h>
 
+typedef struct RECTF
+{
+    float left;
+    float top;
+    float right;
+    float bottom;
+
+} RECTF;
+
 class Sprite
 {
 public:
@@ -43,22 +52,15 @@ public:
         return left, top, right, bottom;
     };*/
 
-    typedef struct D3D12_RECT
-    {
-        float left;
-        float top;
-        float right;
-        float bottom;
-
-    } D3D12_RECT;
+ 
 
     // Animation Getters - added 07/03/2023
 
-    RECT mTexRect;
+    RECTF mTexRect;
 
     DirectX::SimpleMath::Vector2 scale;
 
-    void SetTexRect(const RECT& texRect);
+    void SetTexRect(const RECTF& texRect);
 
     void SetScale(const DirectX::SimpleMath::Vector2& s) {
         scale = s;
