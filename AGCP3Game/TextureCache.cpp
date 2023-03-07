@@ -3,6 +3,7 @@
 #include <DDSTextureLoader.h>
 #include <filesystem>
 #include "string"
+#include "Util.h"
 
 
 using namespace std;
@@ -45,7 +46,7 @@ ID3D12Resource* TexCache::LoadTexture(ID3D12Device* pDevice, const std::string& 
 	ID3D12Resource* pT;
 	if (CreateDDSTextureFromFile(pDevice, ws.c_str(), nullptr, &pT, 0, &alpha) != S_OK)
 	{
-		DBOUT("Cannot load " << *pPath << "\n");
+		WDBOUT("Cannot load " << *pPath << "\n");
 		assert(false);
 	}
 	//save it
