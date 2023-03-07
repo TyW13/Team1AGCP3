@@ -4,6 +4,7 @@
 #include <string>
 #include <WICTextureLoader.h>
 #include "DirectXTex.h"
+
 #include  "Renderer.h"
 #include "d3dx12.h"
 #include "DDSTextureLoader.h"

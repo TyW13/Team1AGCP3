@@ -1,7 +1,7 @@
 //
 // Game.cpp
 //
-#include "stdafx.h"
+
 
 #include "pch.h"
 #include "Game.h"
