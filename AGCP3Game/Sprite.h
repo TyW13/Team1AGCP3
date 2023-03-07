@@ -85,8 +85,6 @@ private:
     ID3D12Resource* m_indexBuffer;
     ID3D12Resource* m_constantBuffer;
 
-   
-
     ID3D12Resource* m_srvIndex;
     ID3D12Resource* m_srvHeap;
     ID3D12Resource* m_textureIndex;
