@@ -35,6 +35,7 @@ Game::~Game()
     }
 }
 
+
 // Initialize the Direct3D resources required to run.
 void Game::Initialize(HWND window, int width, int height)
 {
@@ -89,6 +90,7 @@ void Game::Render()
     {
         return;
     }
+
 
     // Prepare the command list to render a new frame.
     m_deviceResources->Prepare();

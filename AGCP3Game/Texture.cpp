@@ -8,7 +8,6 @@ using namespace std;
 
 #include "Texture.h"
 #include <wincodec.h>
-#include <DirectXTex/DirectXTex.h>
 
 #pragma comment(lib, "Windowscodecs.lib")
 
