@@ -92,7 +92,7 @@ public:
 	Sprite character;		//											//PLAYER EXCLUSIVE
 	void Init(MyD3D& d3d); //THIS IS CALLED
 	//This needs to follow where its called "mMissile.Init(mD3D);"
-	void Update(float dTime);											//PLAYER EXCLUSIVE
+	void Update(float dTime, Sprite& _wallpad);											//PLAYER EXCLUSIVE
 	void Render(DirectX::SpriteBatch& batch);
 
 private:
@@ -172,6 +172,8 @@ public:
 	void Init(MyD3D& d3d);
 	void Update(float dTime);
 	void Render(DirectX::SpriteBatch& batch);
+
+	Sprite GetSprite() { return wallpadSpr; };
 
 private:
 	Sprite wallpadSpr;

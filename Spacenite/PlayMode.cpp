@@ -181,7 +181,8 @@ void PlayMode::Update(float dTime, bool& _endGame)
 	if (Player.character.GetActive())
 	{
 		//UpdateMissile(dTime);
-		Player.Update(dTime);
+		wallPad.Update(dTime);
+		Player.Update(dTime, wallPad.GetSprite());
 	}
 	else
 	{

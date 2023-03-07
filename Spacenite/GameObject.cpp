@@ -194,7 +194,7 @@ void Player::Init(MyD3D& mD3D)
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());
 }
 
-void Player::Update(float dTime)
+void Player::Update(float dTime, Sprite& _wallpad)
 {
 	//update player core movement
 	character.mVel += currentVel * dTime;
@@ -212,6 +212,13 @@ void Player::Update(float dTime)
 	UpdateInput(dTime);
 	CheckCollision();
 	UpdateAnimation(dTime);
+
+
+	if (character.mPos.x > _wallpad.mPos.x)
+	{
+		character.mPos.x = _wallpad.mPos.x;
+		currentVel.x = -7*currentVel.x;
+	}
 }
 
 void Player::Render(DirectX::SpriteBatch& batch)
@@ -579,11 +586,12 @@ void WallPad::Init(MyD3D& d3d)
 	wallpadSpr.SetTex(*p);
 	wallpadSpr.SetScale(Vector2(0.5f, 0.5f));
 	wallpadSpr.origin = Vector2(wallpadSpr.GetTexData().dim.x / 2, wallpadSpr.GetTexData().dim.y / 2);
-	wallpadSpr.mPos = Vector2(WinUtil::Get().GetClientWidth() - 150, WinUtil::Get().GetClientHeight() - 100);
+	wallpadSpr.mPos = Vector2(WinUtil::Get().GetClientWidth() - 350, WinUtil::Get().GetClientHeight() - 100);
 }
 
 void WallPad::Update(float dTime)
-{
+{   
+	
 }
 
 void WallPad::Render(DirectX::SpriteBatch& batch)
