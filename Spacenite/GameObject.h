@@ -109,6 +109,7 @@ private:
 
 	const float MAX_JUMP_VEL	= 400;
 	const float MIN_JUMP_VEL	= MAX_JUMP_VEL / 2;
+	const float WALL_JUMP_VEL_Y = 1500;
 	const float CLIMB_VEL		= 170;					//player climbing velocity
 	const float SLIDE_DOWN_VEL	= 80;					//sliding down velocity
 	const float GRAVITY			= 300;

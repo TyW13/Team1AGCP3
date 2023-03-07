@@ -373,8 +373,8 @@ void Player::UpdateInput(float dTime)
 		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE) && !hasWallJumped)
 		{
 			//start_time_wall_jump = std::chrono::high_resolution_clock::now();
-			currentVel.y = -3*MAX_JUMP_VEL;
-			currentVel.x = -3*currentVel.x;
+			currentVel.y = -WALL_JUMP_VEL_Y;
+			currentVel.x = -3 * currentVel.x;
 			elapsedtime = 0;
 			hasWallJumped = true;
 			isWallSliding = false;
