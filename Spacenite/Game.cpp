@@ -8,8 +8,9 @@
 #include <thread>
 #include <iomanip>
 #include <algorithm>
-#include <fstream>
 #include <iostream>
+#include <fstream>
+
 
 using namespace std;
 using namespace DirectX;
@@ -115,7 +116,6 @@ void Game::Update(MyD3D& d3d, float dTime)
 			UpdateEnd();
 			break;
 		}
-
 	}
 }
 //called over and over, use it to render things

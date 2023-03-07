@@ -4,14 +4,19 @@
 #include "Tile.h"
 #include "Game.h"
 
+#include <iomanip>
+#include <algorithm>
+#include <iostream>
+#include <fstream>
 
 using namespace DirectX;
-
 
 void ResourceManager::Init(MyD3D& d3d)
 {
 	LoadTexturesFromFile();
 	LoadLevelsFromFile();
+
+	LoadPlayerData();
 
 	ReloadMap(d3d, 0);
 	RECTF pRect;
@@ -297,6 +302,27 @@ void ResourceManager::LoadPreviousZone(MyD3D& d3d)
 	}
 }
 
+void ResourceManager::SavePlayerData()	
+{
+	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
+	playerDataFile << GetCurrentMapNum();														// Writes players current map number to file
+	playerDataFile << "\n";
+	playerDataFile << GetCurrentMap()->GetCurrentZoneNum();										// Writes players current zone number to file
+	playerDataFile.close();																		// Closes playerData text file 
+}
+
+void ResourceManager::LoadPlayerData()			
+{
+	playerDataFile.open("data/playerData.txt", std::fstream::out | std::fstream::app);			// Opens playerData text file 
+	
+	std::string zoneNum;
+	std::string mapNum;
+
+	// FIGURE OUT SOME CODE TO GRAB MAP+ZONE NUMS FROM TEXT FILE AND ASSIGN TO VARIABLES 
+
+	playerDataFile.close();																		// Close playerData text file 
+}
+
 void ResourceManager::UnloadZone()
 {
 	if (m_Tiles.size() > 0)
@@ -325,9 +351,6 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 	GetCurrentMap()->SetCurrentZoneNum(zoneNum);
 
 	std::vector<int> data = GetCurrentMap()->GetCurrentZone().GetData();						// Initializing new vector<int> with current zones datavector (storing tile data)
-
-	int collisionWidth = 0;
-	int collisionHeight = 0;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{

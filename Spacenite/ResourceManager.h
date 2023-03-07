@@ -2,6 +2,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fstream>
+#include <iostream>
 #include "Texture.h"
 #include "newGameObject.h"
 
@@ -134,6 +136,7 @@ public:
 	void LoadNextMap(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousMap(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void ReloadMap(MyD3D& d3d, int mapNum);											// Load specific map by providing map num in vector
+	int GetCurrentMapNum() { return currentMapNum; }								// Returns the current currentMapNum
 
 	void UnloadZone();																// Deletes all tile objects in vector to make room for the new zones tiles
 	void LoadZoneInfo(MyD3D& d3d, int zoneNum);										// Load specific map by providing map num in vector
@@ -141,6 +144,10 @@ public:
 	void LoadPreviousZone(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 	std::vector<Tile*> GetTiles() { return m_Tiles; }
+
+	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
+	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
+
 
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
@@ -151,4 +158,6 @@ private:
 
 	int collisionWidth;
 	int collisionHeight;
+
+	std::fstream playerDataFile;													// Will store Map and Zone num to enable them to save/load progress
 };

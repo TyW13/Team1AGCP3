@@ -6,12 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include "PlayerCharacter.h"
-//#include "Map.h"			// CAN REMOVE THIS WHEN FIND BETTER PLACE TO PUT IT 
-
-//#include "rapidjson/document.h"
-//#include "rapidjson/filereadstream.h"
-//
-//using namespace rapidjson;
 
 using namespace std;
 using namespace DirectX;
@@ -123,7 +117,7 @@ void PlayMode::InitAsteroids()
 
 void PlayMode::UpdateAsteroids(float dTime)
 {
-	PlayMode pMode = *this;
+	//PlayMode pMode = *this;
 	assert(!mAsteroids.empty());
 	for (auto& asteroid : mAsteroids)
 	{
@@ -160,26 +154,8 @@ PlayMode::PlayMode(MyD3D& d3d)
 
 	bGround.Init(d3d);
 	Player.Init(d3d);
-	//mMissile.Init(d3d);
-	//InitAsteroids();
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
-
-	assert(mpFont);
-
-	// JSON TESTING. DONT KEEP HERE. MOVE WHEN FIND A SUITABLE PLACE FOR IT 
-	//FILE* f = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
-
-	//if (!f)
-	//{
-	//	printf("didnt work");
-	//}
-
-	//char readBuffer[10000];
-	//rapidjson::FileReadStream is(f, readBuffer, sizeof(readBuffer));
-
-	//Document tilesetDoc;
-	//tilesetDoc.ParseStream(is);			// parses json file 
 	assert(mpFont);	
 }
 
@@ -187,8 +163,6 @@ void PlayMode::Release()
 {
 	delete mpFont;
 	mpFont = nullptr;
-	//delete rManager;
-	//rManager = nullptr;
 }
 
 void PlayMode::UpdateMissile(float dTime)
@@ -206,20 +180,6 @@ void PlayMode::Update(MyD3D& d3d, float dTime, bool& _endGame)
 {
 	bGround.Update(dTime, IsTop, IsBottom);
 	rManager.Update(d3d, dTime);
-	//if (Player.character.GetActive())
-	//{
-	//	//UpdateMissile(dTime);
-	//	Player.Update(dTime);
-	//	IsTop = Player.IsTop();
-	//	IsBottom = Player.IsBottom();
-
-	//}
-	//else
-	//{
-	//	_endGame = true;
-	//}
-
-	//UpdateAsteroids(dTime);
 }
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
