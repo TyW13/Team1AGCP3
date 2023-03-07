@@ -67,7 +67,7 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 		if (animState == "Left")
 		{
 			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(-spriteSheet[currentFrame]);
+			Player.SetTexRect(spriteSheet[currentFrame]);
 		}
 		else
 		{
