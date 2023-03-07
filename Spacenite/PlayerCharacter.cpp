@@ -30,10 +30,49 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 
 void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 {
+	collisionPlayerRect.left = objSprite.mPos.x;
+	collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+	collisionPlayerRect.top = objSprite.mPos.y;
+	collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
+
 	UpdateInput(dTime);
 
+	checkNextPos = objSprite.mPos;
 
-	CheckCollision(rManager, dTime);
+
+	//if (!newerCheckCollision(rManager, dTime))
+	//{
+	//	objSprite.mPos += currentVel * dTime;
+	//}
+
+		// Sort collisions in order of distance
+	Vector2 cp, cn;
+	float t = 0, min_t = INFINITY;
+	std::vector<std::pair<Tile*, float>> z;
+
+	// Work out collision point, add it to vector along with rect ID
+	for (Tile* tile: rManager.GetTiles())
+	{
+		if (DynamicRectVsRect(tile, cp, cn, t, dTime))
+		{
+			z.push_back({ tile, t });
+		}
+	}
+
+	// Do the sort
+	std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
+		{
+			return a.second < b.second;
+		});
+
+	// Now resolve the collision in correct order 
+	for (auto j : z)
+	{
+		ResolveDynamicRectVsRect(dTime, j.first);
+		//cn;
+	}
+
+
 
 	objSprite.mPos += currentVel * dTime;
 
@@ -366,8 +405,8 @@ bool PlayerCharacter::RayVsRect(const Vector2& rayOrigin, const Vector2& rayDir,
 	float t_nearY = (targetRect.top - rayOrigin.y) * invdir.y;
 	Vector2 t_near = { t_nearX, t_nearY };
 
-	float t_farX = ((targetRect.left + 48) - rayOrigin.x) * invdir.x;
-	float t_farY = ((targetRect.top + 48) - rayOrigin.y) * invdir.y;
+	float t_farX = ((targetRect.left + 36) - rayOrigin.x) * invdir.x;
+	float t_farY = ((targetRect.top + 96) - rayOrigin.y) * invdir.y;
 	Vector2 t_far = { t_farX, t_farY };
 
 	if (std::isnan(t_far.y) || std::isnan(t_far.x)) return false;
@@ -420,12 +459,12 @@ bool PlayerCharacter::DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vecto
 	}
 
 	RECTF expandedTargetRect;
-	expandedTargetRect.left = obj2->GetCollisionBounds().left - 48;
-	expandedTargetRect.right = obj2->GetCollisionBounds().right + 48;
+	expandedTargetRect.left = obj2->GetCollisionBounds().left - 18;
+	expandedTargetRect.right = obj2->GetCollisionBounds().right + 18;
 	expandedTargetRect.top = obj2->GetCollisionBounds().top - 48;
 	expandedTargetRect.bottom = obj2->GetCollisionBounds().bottom + 48;
 
-	if (RayVsRect({ collisionPlayerRect.left + 48, collisionPlayerRect.top + 48 },
+	if (RayVsRect({ collisionPlayerRect.left + 18, collisionPlayerRect.top + 48 },
 		currentVel * dTime, expandedTargetRect, contactPoint, contactNormal, contactTime))
 	{
 		if (contactTime <= 1.0f)
@@ -433,6 +472,28 @@ bool PlayerCharacter::DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vecto
 			contactPoint;
 			return true;
 		}
+	}
+
+	return false;
+}
+
+bool PlayerCharacter::ResolveDynamicRectVsRect(const float dTime, Tile* tile)
+{
+	Vector2 contact_point, contact_normal;
+	float contact_time = 0.0f;
+	if (DynamicRectVsRect(tile, contact_point, contact_normal, contact_time, dTime))
+	{
+		//if (contact_normal.y > 0) r_dynamic->contact[0] = r_static; else nullptr;
+		//if (contact_normal.x < 0) r_dynamic->contact[1] = r_static; else nullptr;
+		//if (contact_normal.y < 0) r_dynamic->contact[2] = r_static; else nullptr;
+		//if (contact_normal.x > 0) r_dynamic->contact[3] = r_static; else nullptr;
+		Vector2 aaa = contact_normal * Vector2(fabs(currentVel.x), fabs(currentVel.y));
+		float bbb = (1 - contact_time);
+		Vector2 ccc = aaa * bbb;
+
+
+		currentVel += contact_normal * Vector2(fabs(currentVel.x), fabs(currentVel.y)) * (1 - contact_time);
+		return true;
 	}
 
 	return false;
@@ -522,6 +583,64 @@ bool PlayerCharacter::newCheckCollision(Tile* tile, ResourceManager& rManager, f
 	if (DynamicRectVsRect(tile, contactPoint, contactNormal, contactTime, dTime))
 	{
 		currentVel += contactNormal * Vector2(fabs(currentVel.x), fabs(currentVel.y) * 1 - contactTime);
+		return true;
+	}
+
+	return false;
+}
+
+bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime)
+{
+	collisionPlayerRect.left = checkNextPos.x;
+	collisionPlayerRect.right = checkNextPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+	collisionPlayerRect.top = checkNextPos.y;
+	collisionPlayerRect.bottom = checkNextPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
+
+	bool collided = false;
+	std::vector<Tile*> collidingTiles;
+	Vector2 collectiveVel{ 0,0 };
+
+	for (Tile* tile : rManager.GetTiles())					    // loops through all tiles. Ideally only loops through tiles that have collision bounds set in TILED editors
+	{
+		Vector2 dir{ 0,0 };
+
+		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
+			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
+			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
+			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
+		{
+			collidingTiles.emplace_back(tile);
+			collided = true;
+		}
+	}
+
+	for (Tile* tile : collidingTiles)
+	{
+		float topDist = fabs(collisionPlayerRect.top - tile->GetCollisionBounds().bottom);
+		float botDist = fabs(collisionPlayerRect.bottom - tile->GetCollisionBounds().top);
+		float leftDist = fabs(collisionPlayerRect.left - tile->GetCollisionBounds().right);
+		float rightDist = fabs(collisionPlayerRect.right - tile->GetCollisionBounds().left);
+
+		if (botDist < topDist)
+		{
+			collectiveVel.y -= botDist + 1;
+		}
+		else if (topDist < botDist)
+		{
+			collectiveVel.y += topDist + 1;
+		}
+		if (leftDist < rightDist)
+		{
+			collectiveVel.x += leftDist + 1;
+		}
+		else if (rightDist < leftDist)
+		{
+			collectiveVel.x -= rightDist + 1;
+		}
+	}
+	if (collided)
+	{
+		objSprite.mPos += collectiveVel;
 		return true;
 	}
 

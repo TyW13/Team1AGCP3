@@ -50,9 +50,11 @@ private:
 	// See "Arbitary rectangle Collision detection & Resolution - Complete!" - javidx9 on youtube.com
 	bool RayVsRect(const Vector2& rayOrigin, const Vector2& rayDir, const RECTF& targetRect, Vector2& contactPoint, Vector2& contactNormal, float& t_hit_near);
 	bool DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vector2& contactNormal, float& contactTime, float dTime);
+	bool ResolveDynamicRectVsRect(const float dTime, Tile* tile);
 
 	void CheckCollision(ResourceManager& rManager, float dTime);											// temporary collision function, Kieron can swap it for his collision once merged
 	bool newCheckCollision(Tile* tile, ResourceManager& rManager, float dTime);
+	bool newerCheckCollision(ResourceManager& rManager, float dTime);
 
 	RECTF collisionPlayerRect;
 	RECTF oldCollisionPRect;
