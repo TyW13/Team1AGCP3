@@ -3,7 +3,6 @@
 #include "SimpleMath.h"
 
 
-
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/document.h"
 
@@ -89,7 +88,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 	AnimationDoc.ParseStream(is);
 	int i = 0;
 	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
-	GenericArray fullArray = AnimationDoc["frames"].GetArray()
+	GenericArray fullArray = AnimationDoc["frames"].GetArray();
 	for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
 	{
 		auto obj = itr->GetObj();
@@ -101,7 +100,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			spriteSheet[i] = TempRect;
 			++i;
 		}

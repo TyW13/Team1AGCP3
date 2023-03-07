@@ -36,6 +36,15 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE GetSRV();
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* descriptorHeap);
 
+    struct RECTF
+    {
+        float left, top, right, bottom;
+        operator RECT()
+        {
+            return RECT{ (int)left, (int)top, (int)right , (int)bottom };
+        }
+    };
+
 
     // Animation Getters - added 07/03/2023
 
@@ -117,7 +126,7 @@ private:
     float m_positionY;
 
     float m_scaleX;
-    float m_ccaleY;
+    float m_ScaleY;
 
     float m_rotation;
 

@@ -2,10 +2,9 @@
 // Main.cpp
 //
 
-
+#include "stdafx.h"
 #include "pch.h"
 #include "Game.h"
-#include "DeviceResources.h"
 
 using namespace DirectX;
 
