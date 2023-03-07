@@ -367,7 +367,7 @@ void Player::UpdateInput(float dTime)
 
 		}
 
-		//--wall sliding/climbing
+		//--wall sliding
 		//
 		//wall jump
 		if (isWallSliding && Game::sMKIn.IsPressed(VK_SPACE) && !hasWallJumped)
@@ -399,18 +399,7 @@ void Player::UpdateInput(float dTime)
 		}
 		else
 		{
-			//climb upwards
-			if (isWallSliding && Game::sMKIn.IsPressed(VK_W) && !Game::sMKIn.IsPressed(VK_SPACE))
-			{
-				currentVel.y = -CLIMB_VEL;
-			}
-			//climb downwards
-			else if (isWallSliding && Game::sMKIn.IsPressed(VK_S) && !Game::sMKIn.IsPressed(VK_SPACE))
-			{
-				currentVel.y = CLIMB_VEL;
-			}
-			//slide down if none of above
-			else if (isWallSliding && !Game::sMKIn.IsPressed(VK_W))
+			if (isWallSliding && !Game::sMKIn.IsPressed(VK_W))
 			{
 				currentVel.y = SLIDE_DOWN_VEL;
 			}
