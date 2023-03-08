@@ -3,10 +3,18 @@
 #include <algorithm>
 #include <DirectXColors.h>
 #include <memory>
+#include <DirectXTex/DirectXTex.h>
 
+#include "d3dx12.h"
 #include "DDSTextureLoader.h"
+#include "pch.h"
 
-MyGame::MyGame()
+
+
+
+MyGame::MyGame(HWND hwnd)
+	:
+    m_render(m_device, m_commandList, m_rootSignature, m_pipelineState, m_rtvDescriptorHeap)
 {
 
 }
@@ -117,31 +125,87 @@ void MyGame::Update(float deltaTime)
    /* UpdateEnemies(deltaTime);*/
 }
 
-void MyGame::LoadTextures()
+void LoadImageDataFromFile(std::unique_ptr<uint8_t[]>& imageData, int& width, int& height, const wchar_t* fileName)
 {
-    // Load textures using DirectX Tool Kit (example)
-    HRESULT hr;
+    ////////////// DDS ////////////////////////////////////////////////////
 
-    // Create a texture loader
-    std::unique_ptr<DirectX::ResourceUploadBatch> uploadBatch = std::make_unique<DirectX::ResourceUploadBatch>(m_device.Get());
-    uploadBatch->Begin();
-
-    // Load a texture from a file
-    std::unique_ptr<DirectX::Texture2D> texture = std::make_unique<DirectX::Texture2D>();
-    hr = DirectX::CreateDDSTextureFromFile(m_device.Get(), uploadBatch.get(), L"texture.dds", texture->GetAddressOf());
+	// Load image file
+    std::unique_ptr<uint8_t[]> decodedData;
+    DirectX::TexMetadata metadata;
+    DirectX::ScratchImage scratchImage;
+    HRESULT hr = DirectX::LoadFromDDSFile(fileName, DirectX::DDS_FLAGS_NONE, &metadata, scratchImage);
     if (FAILED(hr))
     {
-        // Handle the error
+        // Handle error
+        return;
     }
 
-    // Upload the texture to the GPU
-    uploadBatch->End(m_commandQueue.Get());
-    m_commandQueue->Signal(m_fence.Get(), ++m_fenceValue);
-    m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent.Get());
-    WaitForSingleObject(m_fenceEvent.Get(), INFINITE);
+    // Get texture information
+    const DirectX::Image* pImage = scratchImage.GetImage(0, 0, 0);
+    width = static_cast<int>(pImage->width);
+    height = static_cast<int>(pImage->height);
+    size_t rowPitch = pImage->rowPitch;
+    size_t imageSize = pImage->slicePitch;
 
-    // Store the texture in a member variable
-    m_texture = std::move(texture);
+    // Copy texture data to output buffer
+    imageData = std::make_unique<uint8_t[]>(imageSize);
+    memcpy(imageData.get(), pImage->pixels, imageSize);
+
+
+
+}
+void MyGame::LoadTextures()
+{
+    // Load texture from file
+    std::wstring texturePath = L"my_texture.png";
+    std::unique_ptr<uint8_t[]> textureData;
+    int textureWidth = 0, textureHeight = 0;
+    LoadImageDataFromFile(textureData, textureWidth, textureHeight, texturePath.c_str());
+
+    // Create texture resource
+    CD3DX12_RESOURCE_DESC textureDesc(
+        D3D12_RESOURCE_DIMENSION_TEXTURE2D,
+        0,
+        textureWidth,
+        textureHeight,
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        1,
+        0,
+        D3D12_TEXTURE_LAYOUT_UNKNOWN,
+        D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
+
+    DX::ThrowIfFailed(m_device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &textureDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&m_textureResource)));
+
+    // Upload texture data to the GPU
+    UINT64 textureUploadBufferSize;
+    m_device->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr, nullptr, nullptr, &textureUploadBufferSize);
+
+    CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC textureUploadDesc = CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize);
+
+    DX::ThrowIfFailed(m_device->CreateCommittedResource(
+        &uploadHeapProperties,
+        D3D12_HEAP_FLAG_NONE,
+        &textureUploadDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_textureUploadHeap)));
+
+    D3D12_SUBRESOURCE_DATA textureDataUpload = {};
+    textureDataUpload.pData = textureData.get();
+    textureDataUpload.RowPitch = textureWidth * 4;
+    textureDataUpload.SlicePitch = textureDataUpload.RowPitch * textureHeight;
+
+    UpdateSubresources(m_commandList.Get(), m_textureResource.Get(), m_textureUploadHeap.Get(), 0, 0, 1, &textureDataUpload);
+    m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 }
 
 void MyGame::ClearViews()
@@ -155,7 +219,7 @@ void MyGame::ClearViews()
 void MyGame::RenderObjects()
 {
     // Render game objects using a custom renderer (example)
-    m_renderer->Begin(m_commandList.Get(), m_viewMatrix, m_projMatrix);
+    m_renderer->Begin(m_commandList.Get(), m_viewMatrix, m_projectionMatrix);
 
     // Draw the player mesh
     m_renderer->DrawMesh(m_mesh.get(), m_playerPosition, m_playerRotation, m_playerScale);
