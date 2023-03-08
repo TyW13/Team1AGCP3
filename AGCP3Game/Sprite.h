@@ -39,7 +39,7 @@ struct ConstantBuffer
 class Sprite
 {
 public:
-    Sprite(ID3D12Device* device, const wchar_t* textureFileName);
+    Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName);
     void Render(ID3D12GraphicsCommandList* commandList);
     void UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color);
 

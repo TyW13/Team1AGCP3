@@ -1,7 +1,8 @@
 #include "Sprite.h"
 
-#include <DirectXHelpers.h>
 #include <DirectXTex/DirectXTex.h>
+
+
 
 #include "Renderer.h"
 #include "d3dx12.h"
@@ -10,11 +11,12 @@
 #include <filesystem>
 #include <wincodec.h>
 #include <rapidjson/rapidjson.h>
+
 #include "DXSample.h"
 
 #include "Game.h"
 
-Sprite::Sprite(ID3D12Device* device, const wchar_t* textureFileName)
+Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName)
 {
     // Create vertex buffer
     CreateVertexBuffer(device);
@@ -23,7 +25,7 @@ Sprite::Sprite(ID3D12Device* device, const wchar_t* textureFileName)
     CreateIndexBuffer(device);
 
     // Create texture
-    CreateTexture(device, textureFileName);
+    CreateTexture(device, commandList, textureFileName );
 
     // Create constant buffer
     const UINT constantBufferSize = sizeof(ConstantBuffer);
@@ -34,7 +36,10 @@ Sprite::Sprite(ID3D12Device* device, const wchar_t* textureFileName)
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(m_constantBuffer.GetAddressOf())));
+
+
     DX::ThrowIfFailed(m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
+
     ZeroMemory(m_mappedConstantBuffer, constantBufferSize);
     m_mappedConstantBuffer->Model = XMMatrixIdentity();
     m_mappedConstantBuffer->Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);

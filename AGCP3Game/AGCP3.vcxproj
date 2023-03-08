@@ -47,6 +47,7 @@
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(WC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(SolutionDir)DirectXTK12\Bin\Desktop_2022\Win32\Debug;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
