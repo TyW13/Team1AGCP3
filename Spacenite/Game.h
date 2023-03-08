@@ -10,6 +10,8 @@
 #include "Background.h"
 #include "GameObject.h"
 #include "PlayMode.h"
+#include "UI.h"
+
 //#include "..\..\sqlite\sqlite3.h"
 
 //class ResourceManager;
@@ -56,7 +58,10 @@ private:
 	std::fstream playerScoresFile;
 	std::stringstream scoresSS;
 	std::wstring pName;
-	int pScore = 0;
+	int pScore = 1000;
+	int Seconds = 0;
+	int Minutes = 0;
+	float GameTimer = 0.0f;
 	std::vector<std::string> topPlayers;
 	std::vector<std::string> newTopPlayers;
 	std::vector<int> highScores;

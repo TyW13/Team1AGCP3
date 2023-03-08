@@ -146,14 +146,13 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 }
 //------------------------------------------------------------------------------- Asteroid Functions end
 
-
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d), UserInterface(d3d), bGround(d3d)
 {
 	rManager.Init(d3d);
-
 	bGround.Init(d3d);
 	Player.Init(d3d);
+	UserInterface.Init(d3d);
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 	assert(mpFont);	
@@ -175,32 +174,35 @@ void PlayMode::UpdateMissile(float dTime)
 	mMissile.Update(dTime);
 }
 
-
-void PlayMode::Update(MyD3D& d3d, float dTime, bool& _endGame)
+void PlayMode::Update(float dTime, bool& _endGame, int& pScore, MyD3D& d3d)
 {
-	bGround.Update(dTime, IsTop, IsBottom);
-	rManager.Update(d3d, dTime);
+	if (UserInterface.EndScreen == false)
+	{
+		rManager.Update(d3d, dTime);
+		UserInterface.Update(pScore, dTime);
+		if (UserInterface.Paused == false)
+		{
+			bGround.Update(dTime, Player.GetPos());
+		}
+	}
+
+	else
+	{
+		if (Game::sMKIn.IsPressed(VK_SPACE) == true)
+		{
+			_endGame = true;
+		}
+	}
 }
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
-	bGround.Render(batch);
-	//if (Player.character.GetActive())
-	//{
-	//	Player.Render(batch);
-	//	//mMissile.Render(batch);
-
-	//}
-	rManager.Render(batch);
-
-	//RenderAsteroids(batch);
-
-
-	// Increase score over time
-	pScore = (int)GetClock() * 10 + additionalScore;
-	stringstream ss;
-	//ss << std::setfill('0') << std::setw(3) << pScore;
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
-	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.86f, h * 0.85f), Vector4(1, 1, 1, 1));
+
+	bGround.Render(batch);
+	rManager.Render(batch);
+	UserInterface.Render(dTime, batch);
+
+	pScore = (int)GetClock() * 10 + additionalScore;
 }
