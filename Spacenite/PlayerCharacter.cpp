@@ -37,44 +37,71 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 
 	UpdateInput(dTime);
 
-	checkNextPos = objSprite.mPos;
+	objSprite.mPos += currentVel * dTime;
+
+	//checkNextPos = objSprite.mPos;
 
 
+	////newerCheckCollision(rManager, dTime);
+	////objSprite.mPos += currentVel * dTime;
+	//
 	//if (!newerCheckCollision(rManager, dTime))
 	//{
 	//	objSprite.mPos += currentVel * dTime;
 	//}
 
-		// Sort collisions in order of distance
+
+	// JAVIDX9 CODE
+	// Sort collisions in order of distance
 	Vector2 cp, cn;
 	float t = 0, min_t = INFINITY;
 	std::vector<std::pair<Tile*, float>> z;
-
+	std::vector<Vector2> collisionNormals;
+	bool movedX = false;
+	bool movedY = false;
 	// Work out collision point, add it to vector along with rect ID
 	for (Tile* tile: rManager.GetTiles())
 	{
 		if (DynamicRectVsRect(tile, cp, cn, t, dTime))
 		{
 			z.push_back({ tile, t });
+			collisionNormals.push_back(cn);
 		}
 	}
-
 	// Do the sort
 	std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
 		{
 			return a.second < b.second;
 		});
-
 	// Now resolve the collision in correct order 
 	for (auto j : z)
 	{
-		ResolveDynamicRectVsRect(dTime, j.first);
-		//cn;
+		for (int i = 0; i < collisionNormals.size(); i++)
+		{
+			if (collisionNormals[i] == Vector2(0, -1) && !movedY)
+			{
+				objSprite.mPos.y = j.first->GetCollisionBounds().top - 96 - 1;
+				movedY = true;
+			}
+			else if (collisionNormals[i] == Vector2(0, 1) && !movedY)
+			{
+				objSprite.mPos.y = j.first->GetCollisionBounds().bottom + 96 + 1;
+				movedY = true;
+			}
+			else if (collisionNormals[i] == Vector2(-1, 0) && !movedX)
+			{
+				objSprite.mPos.y = j.first->GetCollisionBounds().left - 36 - 1;
+				movedX = true;
+
+			}
+			else if (collisionNormals[i] == Vector2(0, 1) && movedX)
+			{
+				objSprite.mPos.y = j.first->GetCollisionBounds().left + 36 + 1;
+				movedX = true;
+			}
+		}
+		//ResolveDynamicRectVsRect(dTime, j.first);
 	}
-
-
-
-	objSprite.mPos += currentVel * dTime;
 
 	UpdateAnimation(dTime);
 
@@ -483,7 +510,7 @@ bool PlayerCharacter::ResolveDynamicRectVsRect(const float dTime, Tile* tile)
 	float contact_time = 0.0f;
 	if (DynamicRectVsRect(tile, contact_point, contact_normal, contact_time, dTime))
 	{
-		//if (contact_normal.y > 0) r_dynamic->contact[0] = r_static; else nullptr;
+		//if (contact_normal.y > 0) r_dynamic->contact[0] = r_static; else nullptr;					// Couldnt figure out what contact was
 		//if (contact_normal.x < 0) r_dynamic->contact[1] = r_static; else nullptr;
 		//if (contact_normal.y < 0) r_dynamic->contact[2] = r_static; else nullptr;
 		//if (contact_normal.x > 0) r_dynamic->contact[3] = r_static; else nullptr;
@@ -604,45 +631,77 @@ bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime
 	{
 		Vector2 dir{ 0,0 };
 
-		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
-			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
-			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
-			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
-		{
-			collidingTiles.emplace_back(tile);
-			collided = true;
-		}
-	}
-
-	for (Tile* tile : collidingTiles)
-	{
 		float topDist = fabs(collisionPlayerRect.top - tile->GetCollisionBounds().bottom);
 		float botDist = fabs(collisionPlayerRect.bottom - tile->GetCollisionBounds().top);
 		float leftDist = fabs(collisionPlayerRect.left - tile->GetCollisionBounds().right);
 		float rightDist = fabs(collisionPlayerRect.right - tile->GetCollisionBounds().left);
 
-		if (botDist < topDist)
+		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
+			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
+			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
+			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
 		{
-			collectiveVel.y -= botDist + 1;
-		}
-		else if (topDist < botDist)
-		{
-			collectiveVel.y += topDist + 1;
-		}
-		if (leftDist < rightDist)
-		{
-			collectiveVel.x += leftDist + 1;
-		}
-		else if (rightDist < leftDist)
-		{
-			collectiveVel.x -= rightDist + 1;
+			if (botDist < topDist)
+			{
+				//collectiveVel.y -= botDist + 1;
+				objSprite.mPos.y -= botDist + 1;
+			}
+			else if (topDist < botDist)
+			{
+				//collectiveVel.y += topDist + 1;
+				objSprite.mPos.y += topDist + 1;
+			}
+			if (leftDist < rightDist)
+			{
+				//collectiveVel.x += leftDist + 1;
+				objSprite.mPos.x += leftDist + 1;
+
+			}
+			else if (rightDist < leftDist)
+			{
+				//collectiveVel.x -= rightDist + 1;
+				objSprite.mPos.x -= rightDist + 1;
+			}
+			return true;
+			//collidingTiles.emplace_back(tile);
+			//collided = true;
 		}
 	}
-	if (collided)
-	{
-		objSprite.mPos += collectiveVel;
-		return true;
-	}
+
+	//for (Tile* tile : collidingTiles)
+	//{
+	//	float topDist = fabs(collisionPlayerRect.top - tile->GetCollisionBounds().bottom);
+	//	float botDist = fabs(collisionPlayerRect.bottom - tile->GetCollisionBounds().top);
+	//	float leftDist = fabs(collisionPlayerRect.left - tile->GetCollisionBounds().right);
+	//	float rightDist = fabs(collisionPlayerRect.right - tile->GetCollisionBounds().left);
+
+	//	if (botDist < topDist)
+	//	{
+	//		//collectiveVel.y -= botDist + 1;
+	//		currentVel.y -= currentVel.y + 1;
+	//	}
+	//	else if (topDist < botDist)
+	//	{
+	//		//collectiveVel.y += topDist + 1;
+	//		currentVel.y += currentVel.y + 1;
+	//	}
+	//	if (leftDist < rightDist)
+	//	{
+	//		//collectiveVel.x += leftDist + 1;
+	//		currentVel.x += currentVel.x + 1;
+
+	//	}
+	//	else if (rightDist < leftDist)
+	//	{
+	//		//collectiveVel.x -= rightDist + 1;
+	//		currentVel.x -=  currentVel.x + 1;
+	//	}
+	//}
+	//if (collided)
+	//{
+	//	objSprite.mPos += collectiveVel;
+	//	return true;
+	//}
 
 	return false;
 }
