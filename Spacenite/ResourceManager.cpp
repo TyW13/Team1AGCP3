@@ -315,7 +315,7 @@ void ResourceManager::LoadPlayerData()
 {
 	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
 
-	std::string line;
+	std::string line;																			// String to temporarily store data being pulled from text file
 
 	std::getline(playerDataFile, line);															// Grabs first number from text file which relates to the map number
 	SetCurrentMap(stoi(line));																	// Converts map number from string to int and sets it 
