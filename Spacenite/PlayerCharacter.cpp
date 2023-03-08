@@ -37,7 +37,7 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 
 	UpdateInput(dTime);
 
-	objSprite.mPos += currentVel * dTime;
+	//objSprite.mPos += currentVel * dTime;
 
 	//checkNextPos = objSprite.mPos;
 
@@ -53,55 +53,59 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 
 	// JAVIDX9 CODE
 	// Sort collisions in order of distance
-	Vector2 cp, cn;
-	float t = 0, min_t = INFINITY;
-	std::vector<std::pair<Tile*, float>> z;
-	std::vector<Vector2> collisionNormals;
-	bool movedX = false;
-	bool movedY = false;
-	// Work out collision point, add it to vector along with rect ID
-	for (Tile* tile: rManager.GetTiles())
-	{
-		if (DynamicRectVsRect(tile, cp, cn, t, dTime))
-		{
-			z.push_back({ tile, t });
-			collisionNormals.push_back(cn);
-		}
-	}
-	// Do the sort
-	std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
-		{
-			return a.second < b.second;
-		});
-	// Now resolve the collision in correct order 
-	for (auto j : z)
-	{
-		for (int i = 0; i < collisionNormals.size(); i++)
-		{
-			if (collisionNormals[i] == Vector2(0, -1) && !movedY)
-			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().top - 96;
-				movedY = true;
-			}
-			else if (collisionNormals[i] == Vector2(0, 1) && !movedY)
-			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().bottom + 96;
-				movedY = true;
-			}
-			else if (collisionNormals[i] == Vector2(-1, 0) && !movedX)
-			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().left - 36;
-				movedX = true;
+	//Vector2 cp, cn;
+	//float t = 0, min_t = INFINITY;
+	//std::vector<std::pair<Tile*, float>> z;
+	//std::vector<Vector2> collisionNormals;
+	//bool movedX = false;
+	//bool movedY = false;
+	//// Work out collision point, add it to vector along with rect ID
+	//for (Tile* tile: rManager.GetTiles())
+	//{
+	//	if (DynamicRectVsRect(tile, cp, cn, t, dTime))
+	//	{
+	//		z.push_back({ tile, t });
+	//		collisionNormals.push_back(cn);
+	//	}
+	//}
+	//// Do the sort
+	//std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
+	//	{
+	//		return a.second < b.second;
+	//	});
+	//// Now resolve the collision in correct order 
+	//for (auto j : z)
+	//{
+	//	for (int i = 0; i < collisionNormals.size(); i++)
+	//	{
+	//		if (collisionNormals[i] == Vector2(0, -1) && !movedY)
+	//		{
+	//			objSprite.mPos.y = j.first->GetCollisionBounds().top - 96;
+	//			movedY = true;
+	//		}
+	//		else if (collisionNormals[i] == Vector2(0, 1) && !movedY)
+	//		{
+	//			objSprite.mPos.y = j.first->GetCollisionBounds().bottom + 96;
+	//			movedY = true;
+	//		}
+	//		else if (collisionNormals[i] == Vector2(-1, 0) && !movedX)
+	//		{
+	//			objSprite.mPos.y = j.first->GetCollisionBounds().left - 36;
+	//			movedX = true;
 
-			}
-			else if (collisionNormals[i] == Vector2(0, 1) && movedX)
-			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().left + 36;
-				movedX = true;
-			}
-		}
-		//ResolveDynamicRectVsRect(dTime, j.first);
-	}
+	//		}
+	//		else if (collisionNormals[i] == Vector2(0, 1) && movedX)
+	//		{
+	//			objSprite.mPos.y = j.first->GetCollisionBounds().left + 36;
+	//			movedX = true;
+	//		}
+	//	}
+	//	//ResolveDynamicRectVsRect(dTime, j.first);
+	//}
+
+	//newestCheckCollision(rManager, dTime);
+
+	thisisNewestCheckCollision(rManager, dTime);
 
 	UpdateAnimation(dTime);
 
@@ -706,14 +710,95 @@ bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime
 	return false;
 }
 
-bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime)
+void PlayerCharacter::newestCheckCollision(ResourceManager& rManager, float dTime)
 {
 	currentVel *= dTime;
 	for (Tile* tile : rManager.GetTiles())
 	{
 		Vector2 diff = Vector2(objSprite.mPos.x + currentVel.x - tile->GetCollisionBounds().left, objSprite.mPos.y + currentVel.y - tile->GetCollisionBounds().top);
 
+		if((diff.x < -36 || diff.x > 48) && 
+			(diff.y < -96 || diff.y > 48))
+		{
+			return;
+		}
+
+		if (diff.x < 0)
+		{
+			currentVel.x -= 36 + diff.x;
+		}
+		else if (diff.x >= 0)
+		{
+			currentVel.x += 48 - diff.x;
+		}
+		if (diff.y < 0)
+		{
+			currentVel.y -= 96 + diff.y;
+		}
+		else if (diff.y >= 0)
+		{
+			currentVel.y += 48 - diff.y;
+		}
+
+		objSprite.mPos += currentVel * dTime;
 	}
+}
+
+void PlayerCharacter::thisisNewestCheckCollision(ResourceManager& rManager, float dTime)
+{
+	objSprite.mPos.x += currentVel.x * dTime;
+
+	for (Tile* tile : rManager.GetTiles())					    // loops through all tiles. Ideally only loops through tiles that have collision bounds set in TILED editors
+	{
+		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
+			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
+			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
+			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
+		{
+			float leftDist = fabs(collisionPlayerRect.left - tile->GetCollisionBounds().right);
+			float rightDist = fabs(collisionPlayerRect.right - tile->GetCollisionBounds().left);
+
+			if (leftDist < rightDist)								// Moving to the left
+			{
+				objSprite.mPos.x += leftDist;
+			}
+			else if (rightDist < leftDist)
+			{
+				objSprite.mPos.x -= rightDist;
+			}
+			break;
+		}
+	}
+
+	collisionPlayerRect.left = objSprite.mPos.x;
+	collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;
+
+	objSprite.mPos.y += currentVel.y * dTime;
+
+	for (Tile* tile : rManager.GetTiles())
+	{
+		if (collisionPlayerRect.left < tile->GetCollisionBounds().right &&
+			collisionPlayerRect.right > tile->GetCollisionBounds().left &&
+			collisionPlayerRect.top < tile->GetCollisionBounds().bottom &&
+			collisionPlayerRect.bottom > tile->GetCollisionBounds().top)
+		{
+			float topDist = fabs(collisionPlayerRect.top - tile->GetCollisionBounds().bottom);
+			float botDist = fabs(collisionPlayerRect.bottom - tile->GetCollisionBounds().top);
+
+			if (botDist < topDist)
+			{
+				objSprite.mPos.y -= botDist;
+			}
+			else if (topDist < botDist)
+			{
+				objSprite.mPos.y += topDist;
+			}
+			break;
+		}
+	}
+
+	collisionPlayerRect.top = checkNextPos.y;
+	collisionPlayerRect.bottom = checkNextPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
 }
 
 Sprite PlayerCharacter::GetSprite()

@@ -165,21 +165,6 @@ PlayMode::PlayMode(MyD3D& d3d)
 
 	mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 
-	assert(mpFont);
-
-	// JSON TESTING. DONT KEEP HERE. MOVE WHEN FIND A SUITABLE PLACE FOR IT 
-	//FILE* f = fopen("data/TSTestingLevel0.json", "rb");		// opens json file 
-
-	//if (!f)
-	//{
-	//	printf("didnt work");
-	//}
-
-	//char readBuffer[10000];
-	//rapidjson::FileReadStream is(f, readBuffer, sizeof(readBuffer));
-
-	//Document tilesetDoc;
-	//tilesetDoc.ParseStream(is);			// parses json file 
 	assert(mpFont);	
 }
 

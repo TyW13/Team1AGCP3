@@ -55,7 +55,8 @@ private:
 	void CheckCollision(ResourceManager& rManager, float dTime);											// temporary collision function, Kieron can swap it for his collision once merged
 	bool newCheckCollision(Tile* tile, ResourceManager& rManager, float dTime);
 	bool newerCheckCollision(ResourceManager& rManager, float dTime);
-	bool newerCheckCollision(ResourceManager& rManager, float dTime);
+	void newestCheckCollision(ResourceManager& rManager, float dTime);
+	void thisisNewestCheckCollision(ResourceManager& rManager, float dTime);
 	RECTF collisionPlayerRect;
 	RECTF oldCollisionPRect;
 
