@@ -271,12 +271,14 @@ void Player::UpdateInput(float dTime)
 	
 	if (Game::sMKIn.IsPressed(VK_SPACE) == true && isGrounded)
 	{
+		animState = "Jump";
 		character.mVel.y = -JUMP_SPEED;
 		gravity = 0;
 		isGrounded = false;
 	}
 	if (Game::sMKIn.IsPressed(VK_SPACE) == false && character.mVel.y < 0)
 	{
+		animState = "Jump";
 		isGrounded = false;
 	}
 }
@@ -316,7 +318,7 @@ void Player::CheckCollision()
 	}
 
 	//if the player is on the bottom line (let's say it's the ground for now)
-	if (character.mPos.y == WinUtil::Get().GetClientHeight())
+	if (character.mPos.y == WinUtil::Get().GetClientHeight() + 20)
 	{
 		isGrounded = true;
 	}

@@ -26,7 +26,7 @@
 			"frame": {
 				"x": 131,
 				"y": 1,
-				"w": 128,
+				"w": 256,
 				"h": 128
 			},
 			"rotated": false,
@@ -48,7 +48,7 @@
 				"x": 1,
 				"y": 131,
 				"w": 128,
-				"h": 128
+				"h": 256
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -68,8 +68,8 @@
 			"frame": {
 				"x": 131,
 				"y": 131,
-				"w": 128,
-				"h": 128
+				"w": 256,
+				"h": 256
 			},
 			"rotated": false,
 			"trimmed": false,

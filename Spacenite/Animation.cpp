@@ -16,9 +16,9 @@ Animation::~Animation()
 
 void Animation::Init(std::string jsonPath, Sprite& Sprite, MyD3D& d3d)
 {
-	//p[0] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "TestSheet.dds");
-	//p[1] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "idle.dds");
-	//p[2] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "jump.dds");
+	p = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "test_chara_walk.dds");
+	p2 = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "idle.dds");
+	p3 = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "jump.dds");
 	jsonPath = "data/" + jsonPath;
 	CheckState(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
@@ -27,13 +27,21 @@ void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 {
 	//calculate elapsed time
 	float deltaTime = dTime;
+	int Frames = 0;
 	elapsedTime += deltaTime;
-
+	if (animState == "Left" || "Right")
+	{
+		Frames = PlayerFrames;
+	}
+	if (animState == "Stand")
+	{
+		Frames = IdleFrames;
+	}
 	//advance to the next frame if enough time has passed
 		if (elapsedTime >= frameDuration)
 		{
 			currentFrame++;
-			if (currentFrame >= PlayerFrames)
+			if (currentFrame >= Frames)
 			{
 				currentFrame = Zero;
 			}
@@ -50,27 +58,31 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 	case State::PLAYER:
 		if (animState == "Stand")
 		{
-			//Player.SetTex(*p[1]);
-			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(walkspriteSheet[Zero]);
+			Player.origin = Vector2(0, Player.GetTexData().dim.y);
+			Player.SetTex(*p2);
+			Player.SetScale(Vector2(0.5,0.5));//Temporary magic numbers for temporary sprite CHANGE
+			Player.SetTexRect(idlespriteSheet[currentFrame]);
 		}
 		if (animState == "Right")
 		{
-			//Player.SetTex(*p[0]);
-			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
+			Player.origin = Vector2(0, Player.GetTexData().dim.y);
+			Player.SetTex(*p);
+			Player.SetScale(Vector2(kSizeUp, kSizeUp));
 			Player.SetTexRect(walkspriteSheet[currentFrame]);
 		}
 		if (animState == "Left")
 		{
-			//Player.SetTex(*p[0]);
-			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
+			Player.origin = Vector2(0, Player.GetTexData().dim.y);
+			Player.SetTex(*p);
+			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
 			Player.SetTexRect(-walkspriteSheet[currentFrame]);
 		}
 		if (animState == "Jump")
 		{
-			//Player.SetTex(*p[2]);
-			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(-walkspriteSheet[currentFrame]);
+			Player.origin = Vector2(0, Player.GetTexData().dim.y);
+			Player.SetTex(*p3);
+			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
+			Player.SetTexRect(-walkspriteSheet[Zero]);
 		}
 		else
 		{
