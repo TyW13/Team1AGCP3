@@ -18,7 +18,7 @@ void ResourceManager::Init(MyD3D& d3d)
 
 	LoadPlayerData();
 
-	ReloadMap(d3d, 0);
+	ReloadMap(d3d, GetCurrentMapNum());
 	RECTF pRect;
 	pRect.left = 0.0f;
 	pRect.top = 0.0f;
@@ -46,6 +46,7 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 	if (Game::sMKIn.IsPressed(VK_P) == true)
 	{
 		LoadNextMap(d3d);
+		SavePlayerData();
 	}
 	if (Game::sMKIn.IsPressed(VK_O) == true)
 	{
