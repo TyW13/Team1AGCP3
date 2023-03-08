@@ -80,23 +80,23 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 		{
 			if (collisionNormals[i] == Vector2(0, -1) && !movedY)
 			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().top - 96 - 1;
+				objSprite.mPos.y = j.first->GetCollisionBounds().top - 96;
 				movedY = true;
 			}
 			else if (collisionNormals[i] == Vector2(0, 1) && !movedY)
 			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().bottom + 96 + 1;
+				objSprite.mPos.y = j.first->GetCollisionBounds().bottom + 96;
 				movedY = true;
 			}
 			else if (collisionNormals[i] == Vector2(-1, 0) && !movedX)
 			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().left - 36 - 1;
+				objSprite.mPos.y = j.first->GetCollisionBounds().left - 36;
 				movedX = true;
 
 			}
 			else if (collisionNormals[i] == Vector2(0, 1) && movedX)
 			{
-				objSprite.mPos.y = j.first->GetCollisionBounds().left + 36 + 1;
+				objSprite.mPos.y = j.first->GetCollisionBounds().left + 36;
 				movedX = true;
 			}
 		}
@@ -704,6 +704,16 @@ bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime
 	//}
 
 	return false;
+}
+
+bool PlayerCharacter::newerCheckCollision(ResourceManager& rManager, float dTime)
+{
+	currentVel *= dTime;
+	for (Tile* tile : rManager.GetTiles())
+	{
+		Vector2 diff = Vector2(objSprite.mPos.x + currentVel.x - tile->GetCollisionBounds().left, objSprite.mPos.y + currentVel.y - tile->GetCollisionBounds().top);
+
+	}
 }
 
 Sprite PlayerCharacter::GetSprite()
