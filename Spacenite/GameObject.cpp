@@ -186,9 +186,9 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "TestSheet.dds");
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
 	character.SetTex(*p);
-	PlayerAnim.Init("TestSheet.json", character);
+	PlayerAnim.Init("TestSheet.json", character, mD3D);
 	character.SetScale(Vector2(6.f, 6.f));
 	character.origin = Vector2(0, character.GetTexData().dim.y);
 	character.mPos = Vector2(WinUtil::Get().GetClientWidth()/2, WinUtil::Get().GetClientHeight());

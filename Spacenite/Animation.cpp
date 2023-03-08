@@ -14,11 +14,13 @@ Animation::~Animation()
 {
 }
 
-void Animation::Init(std::string jsonPath, Sprite& Sprite)
+void Animation::Init(std::string jsonPath, Sprite& Sprite, MyD3D& d3d)
 {
+	//p[0] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "TestSheet.dds");
+	//p[1] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "idle.dds");
+	//p[2] = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "jump.dds");
 	jsonPath = "data/" + jsonPath;
 	CheckState(jsonPath);
-	LoadAnimation(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
 }
 void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
@@ -48,18 +50,27 @@ void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animStat
 	case State::PLAYER:
 		if (animState == "Stand")
 		{
+			//Player.SetTex(*p[1]);
 			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(spriteSheet[Zero]);
+			Player.SetTexRect(walkspriteSheet[Zero]);
 		}
 		if (animState == "Right")
 		{
+			//Player.SetTex(*p[0]);
 			Player.SetScale(Vector2(kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(spriteSheet[currentFrame]);
+			Player.SetTexRect(walkspriteSheet[currentFrame]);
 		}
 		if (animState == "Left")
 		{
+			//Player.SetTex(*p[0]);
 			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
-			Player.SetTexRect(-spriteSheet[currentFrame]);
+			Player.SetTexRect(-walkspriteSheet[currentFrame]);
+		}
+		if (animState == "Jump")
+		{
+			//Player.SetTex(*p[2]);
+			Player.SetScale(Vector2(-kSizeUp, Player.GetScale().y));
+			Player.SetTexRect(-walkspriteSheet[currentFrame]);
 		}
 		else
 		{
@@ -92,7 +103,36 @@ void Animation::LoadAnimation(std::string jsonPath)
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
 			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
-			spriteSheet[i] = TempRect;
+ 			walkspriteSheet[i] = TempRect;
+			++i;
+		}
+	}
+}
+void Animation::LoadIdleAnimation(std::string jsonPath)
+{
+	//From Joshua Moxon project 2
+	//Need rapidjson to test
+	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	char readBuffer[bufferMemory];
+	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
+	Document AnimationDoc;
+	AnimationDoc.ParseStream(is);
+	int i = 0;
+https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
+	GenericArray fullArray = AnimationDoc["frames"].GetArray();
+	for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
+	{
+		auto obj = itr->GetObj();
+		if (obj.HasMember("frame"))
+		{
+			auto oneFrame = obj.FindMember("frame");
+			auto const& FrameData = oneFrame->value;
+			float FrameWidth = FrameData["x"].GetInt();
+			float FrameHeight = FrameData["y"].GetInt();
+			float FrameOffsetW = FrameData["w"].GetInt();
+			float FrameOffsetH = FrameData["h"].GetInt();
+			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			idlespriteSheet[i] = TempRect;
 			++i;
 		}
 	}
@@ -100,9 +140,12 @@ void Animation::LoadAnimation(std::string jsonPath)
 
 void Animation::CheckState(std::string jsonPath)
 {
-	if (jsonPath == "data/test_chara_walk.json")
+	if (jsonPath == "data/TestSheet.json")
 	{
 		animType = State::PLAYER;
+		LoadAnimation(jsonPath);
+		//LoadAnimation("data/jump.json");
+		LoadIdleAnimation("data/idle.json");
 	}
 	else
 	{

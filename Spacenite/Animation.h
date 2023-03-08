@@ -7,14 +7,16 @@ class Animation
 public:
 	Animation();
 	~Animation();
-	void Init(std::string, Sprite&);
+	void Init(std::string, Sprite&, MyD3D& d3d);
 	void Update(float, Sprite&, std::string);
 
 private:
 	void SwitchTex(Sprite&, int, std::string);
 	void LoadAnimation(std::string);
+	void LoadIdleAnimation(std::string);
 	void CheckState(std::string jsonPath);
 
+	ID3D11ShaderResourceView* p[3];
 	enum class State {PLAYER};
 	State animType = State::PLAYER;
 	const int Zero = 0;
@@ -23,8 +25,8 @@ private:
 	float elapsedTime = Zero;
 	int currentFrame = Zero;
 	const std::string InitState = "Stand";
-	RECTF spriteFrames[5] = { {0,0,16,16},{16,0,32,16},{32,0,48,16},{48,0,64,16},{64,0,80,16} }; //TEMPORARILY MAGIC NUMBERS UNTIL JSON IS INCLUDED ERASE ERASE ERASE
-	RECTF spriteSheet[4];
+	RECTF walkspriteSheet[5];
+	RECTF idlespriteSheet[5];
 	const int PlayerFrames = 5;
 };
 

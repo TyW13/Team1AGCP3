@@ -3,52 +3,52 @@
 		{
 			"filename": "RunRight01.png",
 			"frame": {
-				"x": 0,
-				"y": 0,
-				"w": 16,
-				"h": 16
+				"x": 1,
+				"y": 1,
+				"w": 128,
+				"h": 128
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			},
 			"sourceSize": {
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			}
 		},
 		{
 			"filename": "RunRight02.png",
 			"frame": {
-				"x": 16,
-				"y": 0,
-				"w": 16,
-				"h": 16
+				"x": 131,
+				"y": 1,
+				"w": 128,
+				"h": 128
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			},
 			"sourceSize": {
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			}
 		},
 		{
 			"filename": "RunRight03.png",
 			"frame": {
-				"x": 32,
-				"y": 0,
-				"w": 16,
-				"h": 16
+				"x": 1,
+				"y": 131,
+				"w": 128,
+				"h": 128
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -66,43 +66,22 @@
 		{
 			"filename": "RunRight04.png",
 			"frame": {
-				"x": 48,
-				"y": 0,
-				"w": 16,
-				"h": 16
+				"x": 131,
+				"y": 131,
+				"w": 128,
+				"h": 128
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			},
 			"sourceSize": {
-				"w": 16,
-				"h": 16
-			}
-		},
-		{
-			"filename": "RunRight04.png",
-			"frame": {
-				"x": 64,
-				"y": 0,
-				"w": 16,
-				"h": 16
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 16,
-				"h": 16
-			},
-			"sourceSize": {
-				"w": 16,
-				"h": 16
+				"w": 128,
+				"h": 128
 			}
 		}
 	],
