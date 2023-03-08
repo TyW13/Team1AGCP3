@@ -126,6 +126,7 @@
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureCache.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureCache.cpp" />
     <ClCompile Include="Win32Application.cpp" />
