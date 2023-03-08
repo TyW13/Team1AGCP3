@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include "UI.h"
 #include "Input.h"
 #include "D3D.h"
 #include "SpriteBatch.h"
@@ -20,8 +19,7 @@ class PlayMode
 public:
 	PlayMode(MyD3D& d3d);
 	void Release();
-
-	void Update(float dTime, bool& _endGame, int& pScore, MyD3D & d3d);
+	void Update(MyD3D& d3d, float dTime, bool& _endGame);
 	void Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch);
 
 
@@ -41,14 +39,13 @@ private:
 	int asteroidID = 0;//PMODE Exclusive
 	/*bool shipActive = true;*/
 	int additionalScore = 0;							//PMODE Exclusive
+
 	Bullet mMissile;	//weapon, only one at once		//PMODE Exclusive
 	Background bGround;	//paralax scrolling background	//PMODE Exclusive
 	Player Player;
-	UserI UserInterface;
 
 	bool IsTop = false;
 	bool IsBottom = false;
-
 
 	//make it move, reset it once it leaves the screen, only one at once
 	void UpdateMissile(float dTime);

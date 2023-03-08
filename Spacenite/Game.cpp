@@ -49,22 +49,7 @@ void Game::Update(MyD3D& d3d, float dTime)
 		}
 		case State::PLAY:
 		{
-			//mPMode.Update(d3d, dTime, endGame);			FIGURE OUT IF NEEDED 
-			GameTimer += dTime;
-			if (GameTimer >= 1)
-			{
-				++Seconds;
-				GameTimer = 0;
-			}
-
-			if (Seconds >= 60)
-			{
-				++Minutes;
-				Seconds = 0;
-			}
-
-			mPMode.Update(dTime, endGame, pScore);
-
+			mPMode.Update(d3d, dTime, endGame);
 			if (endGame == true)
 			{
 				state = State::GETNAME;
@@ -167,26 +152,21 @@ void Game::Render(float dTime)
 
 void Game::InitIntro(MyD3D& d3d)
 {
+	ID3D11ShaderResourceView* ppp = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "BasicIntroScreen.dds", "IntroScreen", true);
+	introSpr.SetTex(*ppp);
 }
 void Game::UpdateIntro()
 {
 	ResetClock();
 	if (sMKIn.IsPressed(VK_SPACE))
 	{
-
 		this_thread::sleep_for(chrono::milliseconds(80)); // delay to stop missile from spawning
 		state = State::PLAY;
 	}
 }
 void Game::RenderIntro(DirectX::DX11::SpriteBatch& batch)
 {
-	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
-
-	string Title = "Temp Title";
-	string SubTitle = "Press Space to Continue";
-	mpSF->DrawString(&batch, Title.c_str(), Vector2(w * 0.35f, h * 0.5f), Vector4(1, 1, 1, 1),0.0f,Vector2(0.0f,0.0f),Vector2(3.0f,3.0f));
-	mpSF->DrawString(&batch, SubTitle.c_str(), Vector2(w * 0.4f, h * 0.8f), Vector4(1, 1, 1, 1), 0.0f, Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f));
+	introSpr.Draw(batch);
 }
 
 void Game::RenderName(DirectX::DX11::SpriteBatch& batch)
@@ -197,10 +177,6 @@ void Game::RenderName(DirectX::DX11::SpriteBatch& batch)
 	stringstream playersScoreSS;
 	playersScoreSS << "Score: " << pScore;
 	mpSF->DrawString(&batch, playersScoreSS.str().c_str(), Vector2(w * 0.4f, h * 0.1f), Vector4(1, 1, 1, 1));
-
-	stringstream EndTime;
-	EndTime << "Final Time: " << Minutes << ":" << Seconds;
-	mpSF->DrawString(&batch, EndTime.str().c_str(), Vector2(w * 0.6f, h * 0.1f), Vector4(1, 1, 1, 1));
 
 	stringstream nameSS;
 	nameSS << pName.c_str();

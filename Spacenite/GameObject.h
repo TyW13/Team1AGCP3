@@ -95,7 +95,8 @@ public:
 	//This needs to follow where its called "mMissile.Init(mD3D);"
 	void Update(float dTime);											//PLAYER EXCLUSIVE
 	void Render(DirectX::SpriteBatch& batch);
-	DirectX::SimpleMath::Vector2& GetPos();
+	bool IsTop();
+	bool IsBottom();
 private:
 	const float JUMP_SPEED = 1200;
 	const float GRAVITY = 400;
@@ -105,6 +106,8 @@ private:
 	const float DRAG = 0.985;										//for deceleration
 
 	bool isGrounded = false;													//Player
+	bool isTop = false;
+	bool isBottom = false;
 
 	void UpdateInput(float dTime);									//PLAYER EXCLUSIVE
 	void shipRender(DirectX::SpriteBatch& batch);
