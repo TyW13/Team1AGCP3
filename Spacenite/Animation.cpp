@@ -48,7 +48,6 @@ void Animation::Update(float dTime, Sprite &Sprite, std::string animState)
 			elapsedTime -= frameDuration;
 		}
 	SwitchTex(Sprite, currentFrame, animState);
-
 }
 
 void Animation::SwitchTex(Sprite &Player, int currentFrame, std::string animState)
@@ -120,6 +119,17 @@ void Animation::LoadAnimation(std::string jsonPath)
 		}
 	}
 }
+void Animation::LoadAnimationData(std::string jsonPath)
+{
+	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
+	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	char readBuffer[bufferMemory];
+	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
+	Document AnimationDoc;
+	AnimationDoc.ParseStream(is);
+	frameDuration = AnimationDoc["Duration"].GetFloat();
+	Frames = AnimationDoc["FrameCount"].GetInt();
+}
 void Animation::LoadIdleAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
@@ -158,7 +168,14 @@ void Animation::CheckState(std::string jsonPath)
 		LoadAnimation(jsonPath);
 		//LoadAnimation("data/jump.json");
 		LoadIdleAnimation("data/idle.json");
+		//LoadAnimationData("data/PlayerData.json);
 	}
+	/*
+	* if (jsonPath == "data/Shotgun.json")
+	*	animType = State::Shotgun;
+		LoadAnimation(jsonPath);
+		LoadAnimationData(data/ShotgunData.json);
+	*/
 	else
 	{
 		assert("Animation does not exist");

@@ -13,6 +13,7 @@ public:
 private:
 	void SwitchTex(Sprite&, int, std::string);
 	void LoadAnimation(std::string);
+	void LoadAnimationData(std::string);
 	void LoadIdleAnimation(std::string);
 	void CheckState(std::string jsonPath);
 
@@ -23,7 +24,7 @@ private:
 	State animType = State::PLAYER;
 	const int Zero = 0;
 	const int kSizeUp = 6;
-	const float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
+	float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	int currentFrame = Zero;
 	const std::string InitState = "Stand";
@@ -31,5 +32,6 @@ private:
 	RECTF idlespriteSheet[5];
 	const int PlayerFrames = 5;
 	const int IdleFrames = 4;
+	int Frames;
 };
 
