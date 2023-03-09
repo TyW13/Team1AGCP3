@@ -47,22 +47,10 @@ private:
 			r1.bottom > r2.top);
 	}
 
-	// See "Arbitary rectangle Collision detection & Resolution - Complete!" - javidx9 on youtube.com
-	bool RayVsRect(const Vector2& rayOrigin, const Vector2& rayDir, const RECTF& targetRect, Vector2& contactPoint, Vector2& contactNormal, float& t_hit_near);
-	bool DynamicRectVsRect(Tile* obj2, Vector2& contactPoint, Vector2& contactNormal, float& contactTime, float dTime);
-	bool ResolveDynamicRectVsRect(const float dTime, Tile* tile);
-
-	void CheckCollision(ResourceManager& rManager, float dTime);											// temporary collision function, Kieron can swap it for his collision once merged
-	bool newCheckCollision(Tile* tile, ResourceManager& rManager, float dTime);
-	bool newerCheckCollision(ResourceManager& rManager, float dTime);
-	void newestCheckCollision(ResourceManager& rManager, float dTime);
-	void thisisNewestCheckCollision(ResourceManager& rManager, float dTime);
+	void checkCollision(ResourceManager& rManager, float dTime);
 	RECTF collisionPlayerRect;
-	RECTF oldCollisionPRect;
 
 	Vector2 collisionDimensions;
-
-
 
 	// KACPER STUFF
 	//------ movement variables
@@ -70,11 +58,6 @@ private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> end_time;
 	std::chrono::time_point<std::chrono::high_resolution_clock> start_time_wall_jump;
 	std::chrono::time_point<std::chrono::high_resolution_clock> end_time_wall_jump;
-
-	Vector2 checkNextVel = checkNextVel.Zero;
-	Vector2 checkNextPos;
-
-	Vector2 oldPos;
 
 	DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
 	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
