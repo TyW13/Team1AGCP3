@@ -48,6 +48,10 @@ private:
 	}
 
 	void checkCollision(ResourceManager& rManager, float dTime);
+	bool collidedTop = false;
+	bool collidedBottom = false;
+	bool collidedLeft = false;
+	bool collidedRight = false;
 	RECTF collisionPlayerRect;
 
 	Vector2 collisionDimensions;
@@ -81,6 +85,7 @@ private:
 
 	std::string jumpType;
 
+	bool fired = false;
 	bool grounded = false;				//
 	bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
 	bool recordJumpTime = false;				//start/stop recording jump time

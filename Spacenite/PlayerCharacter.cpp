@@ -35,18 +35,22 @@ void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 	collisionPlayerRect.top = objSprite.mPos.y;																							// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
 	collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
 
+	if (!collidedTop)
+	{
+		grounded = false;
+	}
+
 	UpdateInput(dTime);
 
 	checkCollision(rManager, dTime);
 
 	UpdateAnimation(dTime);
-
 }
 
 void PlayerCharacter::UpdateInput(float dTime)
 {
 	//--------- mouse
-	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && detectMouseClick)
+	if (Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && detectMouseClick && !fired)
 	{
 		mousePos = Game::sMKIn.GetMousePos(true);
 		//playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
@@ -63,6 +67,7 @@ void PlayerCharacter::UpdateInput(float dTime)
 		//apply a jump force to the player character
 		currentVel = (direction * 1500);
 
+		fired = true;
 		detectMouseClick = false;
 	}
 	if (!Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && !detectMouseClick)
@@ -357,7 +362,15 @@ void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
 {
 	Vector2 nextPos = objSprite.mPos + currentVel * dTime;
 
-	DBOUT(std::to_string(objSprite.GetTexRect().right * objSprite.GetScale().x) + " " + std::to_string(objSprite.GetTexRect().bottom * objSprite.GetScale().y))
+	int maxSpeed = 48;
+	float xDist = currentVel.x * dTime;
+	float yDist = currentVel.y * dTime;
+	if (fabs(xDist) >= maxSpeed || fabs(yDist) >= maxSpeed)		// Testing speed
+	{
+		printf("too fast");
+	}
+
+	DBOUT(std::to_string(xDist) + " " + std::to_string(yDist));
 
 	RECTF nextPosRect = RECTF{
 		nextPos.x,
@@ -379,11 +392,6 @@ void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
 	}
 
 	int velMinMax = 30;												// Absolute Min or max velocity value after potential collision
-	bool collidedTop = false;
-	bool collidedBottom = false;
-	bool collidedLeft = false;
-	bool collidedRight = false;
-
 	for (Tile* tile : collidedTiles)
 	{
 		if (collisionPlayerRect.right < tile->GetCollisionBounds().left && nextPosRect.right >= tile->GetCollisionBounds().left && !collidedLeft)			// Collided from left, moving right
@@ -391,7 +399,7 @@ void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
 			currentVel.x = -velMinMax;
 			collidedLeft = true;
 		}
-		else if (collisionPlayerRect.left >= tile->GetCollisionBounds().right && nextPosRect.left < tile->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+		else if (collisionPlayerRect.left > tile->GetCollisionBounds().right && nextPosRect.left <= tile->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
 		{
 			currentVel.x = velMinMax;
 			collidedRight = true;
@@ -401,13 +409,20 @@ void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
 		{
 			currentVel.y = -velMinMax;
 			collidedTop = true;
+			grounded = true;
+			fired = false;
 		}
-		else if (collisionPlayerRect.top >= tile->GetCollisionBounds().bottom && nextPosRect.top < tile->GetCollisionBounds().bottom && !collidedBottom)		// Collided from bottom, moving up
+		else if (collisionPlayerRect.top > tile->GetCollisionBounds().bottom && nextPosRect.top <= tile->GetCollisionBounds().bottom && !collidedBottom)		// Collided from bottom, moving up
 		{
 			currentVel.y = velMinMax;
 			collidedBottom = true;
 		}
 	}
+
+	collidedTop = false;
+	collidedBottom = false;
+	collidedLeft = false;
+	collidedRight = false;
 
 	objSprite.mPos += currentVel * dTime;
 	//DBOUT("Velocity: " + std::to_string(currentVel.x * dTime) + " " + std::to_string(currentVel.y * dTime));
