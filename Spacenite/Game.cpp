@@ -49,7 +49,18 @@ void Game::Update(MyD3D& d3d, float dTime)
 		}
 		case State::PLAY:
 		{
-			mPMode.Update(d3d, dTime, endGame);
+			GameTimer += dTime;
+			if (GameTimer >= 1)
+			{
+				++Seconds;
+				GameTimer = 0;
+			}
+			if (Seconds >= 60)
+			{
+				++Minutes;
+				Seconds = 0;
+			}
+			mPMode.Update(d3d, dTime, endGame, pScore);
 			if (endGame == true)
 			{
 				state = State::GETNAME;

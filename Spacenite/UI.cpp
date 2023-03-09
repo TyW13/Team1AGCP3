@@ -1,6 +1,6 @@
 #include "UI.h"
-
 #include "Game.h"
+
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -38,7 +38,7 @@ void UserI::Update(int& pScore, float dTime)
 	}
 
 	//On key presses the game either ends or pauses
-	if (Game::sMKIn.IsPressed(VK_P) == true)
+	if (Game::sMKIn.IsPressed(VK_B) == true)
 	{
 		Paused = !Paused;
 	}
@@ -47,11 +47,13 @@ void UserI::Update(int& pScore, float dTime)
 		EndScreen = true;
 	}
 }
+
 void UserI::Render(float dTime, DirectX::SpriteBatch& batch)
 {
 	int w, h;
-	w = 540;
-	h = 270;
+	w = 1920;
+	h = 1080;
+
 	//if the game is paused displays the appropriate background and text
 	if (Paused == true)
 	{
@@ -61,6 +63,7 @@ void UserI::Render(float dTime, DirectX::SpriteBatch& batch)
 		PauseSpr.Draw(batch);
 		mpFont->DrawString(&batch, pause.c_str(), Vector2(w * 0.5f, h * 0.5f), Vector4(1, 1, 1, 1));
 	}
+
 	//if the game has ended displays the appropriate background and text
 	if (EndScreen == true)
 	{

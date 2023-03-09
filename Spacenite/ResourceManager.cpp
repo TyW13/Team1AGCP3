@@ -46,7 +46,6 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 	if (Game::sMKIn.IsPressed(VK_P) == true)
 	{
 		LoadNextMap(d3d);
-		SavePlayerData();
 	}
 	if (Game::sMKIn.IsPressed(VK_O) == true)
 	{
@@ -59,6 +58,10 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 	if (Game::sMKIn.IsPressed(VK_J) == true)
 	{
 		LoadPreviousZone(d3d);
+	}
+	if (Game::sMKIn.IsPressed(VK_T) == true)			// TEMP BUTTON TO TEST PLAYER PROGRESS SAVING 
+	{
+		SavePlayerData();
 	}
 }
 

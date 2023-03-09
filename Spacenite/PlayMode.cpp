@@ -148,10 +148,10 @@ void PlayMode::RenderAsteroids(DirectX::DX11::SpriteBatch& batch)
 
 
 PlayMode::PlayMode(MyD3D& d3d)
-	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d)
+	:mD3D(d3d), Player(d3d), mMissile(d3d), rManager(d3d), UserInterface(d3d)
 {
 	rManager.Init(d3d);
-
+	UserInterface.Init(d3d);
 	bGround.Init(d3d);
 	Player.Init(d3d);
 
@@ -176,30 +176,33 @@ void PlayMode::UpdateMissile(float dTime)
 }
 
 
-void PlayMode::Update(MyD3D& d3d, float dTime, bool& _endGame)
+void PlayMode::Update(MyD3D& d3d, float dTime, bool& _endGame, int& pScore)
 {
-	bGround.Update(dTime, IsTop, IsBottom);
-	rManager.Update(d3d, dTime);
+	if (UserInterface.EndScreen == false)
+	{
+		UserInterface.Update(pScore, dTime);
+		bGround.Update(dTime, IsTop, IsBottom);
+		rManager.Update(d3d, dTime);
+	}
+
+	else
+	{
+		if (Game::sMKIn.IsPressed(VK_SPACE) == true)
+		{
+			_endGame = true;
+		}
+	}
 }
 
 void PlayMode::Render(float dTime, int& pScore, DirectX::DX11::SpriteBatch& batch)
 {
 	bGround.Render(batch);
-	//if (Player.character.GetActive())
-	//{
-	//	Player.Render(batch);
-	//	//mMissile.Render(batch);
-
-	//}
+	UserInterface.Render(dTime, batch);
 	rManager.Render(batch);
 
-	//RenderAsteroids(batch);
-
-
-	// Increase score over time
+	// Increase score over time - UNSURE IF NEEDED 
 	pScore = (int)GetClock() * 10 + additionalScore;
 	stringstream ss;
-	//ss << std::setfill('0') << std::setw(3) << pScore;
 	int w, h;
 	WinUtil::Get().GetClientExtents(w, h);
 	mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w * 0.86f, h * 0.85f), Vector4(1, 1, 1, 1));

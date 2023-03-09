@@ -26,7 +26,6 @@ public:
 	State state = State::INTRO;
 	Game(MyD3D& d3d);
 
-
 	void Release();
 	void Update(MyD3D& d3d, float dTime);
 	void Render(float dTime);
@@ -43,6 +42,7 @@ public:
 	void ReadScoreFile(char encryptKey);
 	void WriteScoreFile(char encryptKey);
 	void CreateEndScreenString();
+
 private:
 	MyD3D& mD3D;
 	//sqlite3* db;
@@ -57,6 +57,9 @@ private:
 	std::stringstream scoresSS;
 	std::wstring pName;
 	int pScore = 0;
+	int Seconds = 0;
+	int Minutes = 0;
+	float GameTimer = 0.0f;
 	std::vector<std::string> topPlayers;
 	std::vector<std::string> newTopPlayers;
 	std::vector<int> highScores;
