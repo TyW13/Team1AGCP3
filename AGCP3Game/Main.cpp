@@ -1,313 +1,301 @@
-#include <d3d12.h>
-#include <DirectXHelpers.h>
-#include <dxgi1_4.h>
-#include <windows.h>
+// Include necessary headers
+#include <Windows.h>
 
-#include "d3dx12.h"
+#include "pch.h"
 
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
+// Define window class name
+const wchar_t CLASS_NAME[] = L"DirectX12WindowClass";
 
-// Window dimensions
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
+// Declare global variables
+HWND g_hWnd;
+bool g_bQuit = false;
+
+// Declare functions
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
+void InitD3D();
+void PopulateCommandList();
+void MainLoop();
+void Cleanup();
+
 
 // Global variables
-IDXGISwapChain3* g_pSwapChain = nullptr;
-ID3D12Device* g_pDevice = nullptr;
-ID3D12CommandQueue* g_pCommandQueue = nullptr;
-ID3D12DescriptorHeap* g_pRTVDescriptorHeap = nullptr;
-ID3D12Resource* g_pRenderTarget[2] = { nullptr, nullptr };
-UINT g_nRTVDescriptorSize = 0;
-int g_nBackBufferIndex = 0;
+Microsoft::WRL::ComPtr<ID3D12Device> g_Device;
+UINT FrameCount;
+HANDLE g_fenceEvent;
+UINT64 g_fenceValue;
 
+Microsoft::WRL::ComPtr<ID3D12CommandAllocator> g_commandAllocators[FrameCount];
+UINT g_frameIndex;
+Microsoft::WRL::ComPtr<ID3D12Resource> g_renderTargets[FrameCount];
 
+UINT g_rtvDescriptorSize;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_rtvDescriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12CommandList> g_CommandList;
+Microsoft::WRL::ComPtr<ID3D12CommandList> g_pd3dCommandList;
 
-// Window procedure
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch (msg)
-    {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-    return 0;
-}
+Microsoft::WRL::ComPtr<ID3D12Device> g_pd3dDevice;
 
-// Entry point
+Microsoft::WRL::ComPtr<ID3D12CommandAllocator> g_pd3dCommandAllocator;
+
+Microsoft::WRL::ComPtr<ID3D12Resource> g_BackBuffers[FrameCount];
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_RTVHeap;
+
+Microsoft::WRL::ComPtr<IDXGISwapChain3> g_SwapChain;
+
+Microsoft::WRL::ComPtr<ID3D12CommandQueue> g_CommandQueue;
+
+// Function declaration
+Microsoft::WRL::ComPtr<IDXGIAdapter1> GetHardwareAdapter(IDXGIFactory1* pFactory);
+
+// Entry point for Windows applications
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     // Register window class
-    const wchar_t CLASS_NAME[] = L"HACKY2D";
-    WNDCLASS wc = { };
-    wc.lpfnWndProc = WndProc;
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = CLASS_NAME;
     RegisterClass(&wc);
 
     // Create window
-    HWND hwnd = CreateWindowEx(
-        0,                          // Optional window styles.
-        CLASS_NAME,                 // Window class
-        L"DirectX12 Window",        // Window text
-        WS_OVERLAPPEDWINDOW,        // Window style
-        CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT,  // Position and size
-        nullptr,                    // Parent window
-        nullptr,                    // Menu
-        hInstance,                  // Instance handle
-        nullptr                     // Additional application data
-    );
+    CreateWindowHandle(hInstance, nCmdShow);
 
-    if (hwnd == NULL)
-    {
-        return 0;
-    }
+    // Initialize Direct3D 12
+    InitD3D();
 
-    // Create device and swap chain
-    CreateDevice();
-    CreateCommandQueue();
-    CreateSwapChain(hwnd);
-    CreateDescriptorHeap();
-    CreateRenderTarget();
+    // Main loop
+    MainLoop();
 
-    // Show window
-    ShowWindow(hwnd, nCmdShow);
-
-    // Message loop
-    MSG msg = { };
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-
-        // Render frame
-        PopulateCommandList();
-        WaitForPreviousFrame();
-    }
+    // Cleanup
+    Cleanup();
 
     return 0;
 }
 
-
-// Create device
-void CreateDevice()
+// Window message handler
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // Create device
-    D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&g_pDevice));
+    switch (uMsg)
+    {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    default:
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
 }
 
-// Create command queue
-void CreateCommandQueue()
+// Creates the window
+void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow)
 {
-    // Create command queue
-    D3D12_COMMAND_QUEUE_DESC desc = {};
-    desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-    desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    g_pDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(&g_pCommandQueue));
-}
-
-// Create swap chain
-void CreateSwapChain(HWND hwnd)
-{
-    // Get DXGI factory
-    IDXGIFactory4* pFactory = nullptr;
-    CreateDXGIFactory1(IID_PPV_ARGS(&pFactory));
-
-    // Create swap chain
-    DXGI_SWAP_CHAIN_DESC1 desc = {};
-    desc.BufferCount = 2;
-    desc.Width = WINDOW_WIDTH;
-    desc.Height = WINDOW_HEIGHT;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    desc.SampleDesc.Count = 1;
-
-    IDXGISwapChain1* pSwapChain = nullptr;
-    pFactory->CreateSwapChainForHwnd(
-        g_pCommandQueue,
-        hwnd,
-        &desc,
-        nullptr,
-        nullptr,
-        &pSwapChain
+    // Create window
+    g_hWnd = CreateWindowEx(
+        0,                              // Optional window styles.
+        CLASS_NAME,                     // Window class
+        L"DirectX 12 Window",           // Window text
+        WS_OVERLAPPEDWINDOW,            // Window style
+        CW_USEDEFAULT, CW_USEDEFAULT,   // Position
+        CW_USEDEFAULT, CW_USEDEFAULT,   // Size
+        NULL,                           // Parent window    
+        NULL,                           // Menu
+        hInstance,                      // Instance handle
+        NULL                            // Additional application data
     );
 
-    // Upgrade swap chain to IDXGISwapChain3
-    pSwapChain->QueryInterface(IID_PPV_ARGS(&g_pSwapChain));
-    pSwapChain->Release();
-
-    // Release factory
-    pFactory->Release();
-
-}
-
-// Create descriptor heap
-void CreateDescriptorHeap()
-{
-    // Get descriptor heap size
-    g_nRTVDescriptorSize = g_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-
-    // Create descriptor heap
-    D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-    desc.NumDescriptors = 2;
-    desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    g_pDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&g_pRTVDescriptorHeap));
-
-
-}
-
-// Create render target
-void CreateRenderTarget()
-{
-    // Get current back buffer index
-    g_nBackBufferIndex = g_pSwapChain->GetCurrentBackBufferIndex();
-
-    // Create render target for each back buffer
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_pRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-    for (UINT i = 0; i < 2; i++)
+    // If window creation failed, exit the application
+    if (g_hWnd == NULL)
     {
-        g_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&g_pRenderTarget[i]));
-        g_pDevice->CreateRenderTargetView(g_pRenderTarget[i], nullptr, rtvHandle);
-        rtvHandle.Offset(1, g_nRTVDescriptorSize);
+        MessageBox(NULL, L"Window creation failed!", L"Error", MB_OK | MB_ICONERROR);
+        exit(EXIT_FAILURE);
     }
 
+    // Show window
+    ShowWindow(g_hWnd, nCmdShow);
 }
 
-// Populate command list
-void PopulateCommandList()
-{
-    // Reset command allocator and command list
-    ID3D12CommandAllocator* pCommandAllocator = nullptr;
-    ID3D12GraphicsCommandList* pCommandList = nullptr;
-    g_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocator));
-    g_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, pCommandAllocator, nullptr, IID_PPV_ARGS(&pCommandList));
-    pCommandAllocator->Reset();
-    pCommandList->Reset(pCommandAllocator, nullptr);
-
-    // Set render target
-    D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(g_pRenderTarget[g_nBackBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    pCommandList->ResourceBarrier(1, &barrier);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_pRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_nBackBufferIndex, g_nRTVDescriptorSize);
-    pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-
-    // Clear render target
-    const float clearColor[] = { 0.0f, 0.0f,0.0f };
-    
-	// Render to back buffer
-    pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    pCommandList->DrawInstanced(3, 1, 0, 0);
-
-    // Set back buffer to present state
-    barrier = CD3DX12_RESOURCE_BARRIER::Transition(g_pRenderTarget[g_nBackBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-    pCommandList->ResourceBarrier(1, &barrier);
-
-    // Close command list
-    pCommandList->Close();
-
-    // Execute command list
-    ID3D12CommandList* ppCommandLists[] = { pCommandList };
-    g_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-    // Present frame
-    g_pSwapChain->Present(1, 0);
-
-    // Wait for command queue to finish
-    WaitForPreviousFrame();
-
-    // Release command allocator and command list
-    pCommandAllocator->Release();
-    pCommandList->Release();
-
-
-}
-
-
+// Initializes Direct3D 12
 void InitD3D()
 {
-    // Create the device
-    CreateDevice();
+    // TODO: Implement
 
-    // Create the command queue
-    CreateCommandQueue();
+    // 1. Create the device and swap chain
 
-    // Create the swap chain
-    CreateSwapChain();
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+    swapChainDesc.BufferCount = 2;
+    swapChainDesc.Width = g_WindowWidth;
+    swapChainDesc.Height = g_WindowHeight;
+    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    swapChainDesc.SampleDesc.Count = 1;
 
-    // Create the render target 
-    CreateRenderTarget();
+    Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
+    DX::ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&dxgiFactory)));
 
-    // Create the command allocator
-    CreateCommandAllocator();
+    Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+    GetHardwareAdapter(dxgiFactory.Get(), &adapter);
 
-    // Create the command list
-    CreateCommandList();
+    D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
+    DX::ThrowIfFailed(D3D12CreateDevice(adapter.Get(), featureLevel, IID_PPV_ARGS(&g_Device)));
 
-    // Create the fence and event handle
-    CreateFenceAndEvent();
+    D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
+    commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-    // Wait for the fence to be signaled
-    WaitForPreviousFrame();
+    DX::ThrowIfFailed(g_Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&g_CommandQueue)));
+
+    DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc = {};
+    fullScreenDesc.RefreshRate.Numerator = 60;
+    fullScreenDesc.RefreshRate.Denominator = 1;
+    fullScreenDesc.Windowed = TRUE;
+
+    DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
+        g_CommandQueue.Get(),
+        g_hWnd,
+        &swapChainDesc,
+        &fullScreenDesc,
+        nullptr,
+        &g_SwapChain
+    ));
+
+    // 2. Create a RTV descriptor heap
+    D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+    rtvHeapDesc.NumDescriptors = FrameCount;
+    rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+    DX::ThrowIfFailed(g_pd3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&g_rtvDescriptorHeap)));
+
+
+
+    // 3. Create the render target views
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_RTVHeap->GetCPUDescriptorHandleForHeapStart());
+    for (UINT i = 0; i < 2; i++)
+    {
+	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(i, IID_PPV_ARGS(&g_BackBuffers[i])));
+        g_Device->CreateRenderTargetView(g_BackBuffers[i].Get(), nullptr, rtvHandle);
+        rtvHandle.Offset(1, g_RTVDescriptorSize);
+    }
+
+
+    // 4. Create the command allocator and command list
+
+    DX::ThrowIfFailed(g_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_CommandAllocator)));
+    DX::ThrowIfFailed(g_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_CommandAllocator.Get(), nullptr, IID_PPV_ARGS(&g_CommandList)));
+
+    // 5. Create the fence and event handle
+
+    DX::ThrowIfFailed(g_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&g_Fence)));
+    g_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (g_FenceEvent == nullptr)
+    {
+	    DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+    }
+
+
+    // 6. Create the command list
+    HRESULT hr = g_pd3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_pd3dCommandAllocator, nullptr, IID_PPV_ARGS(&g_pd3dCommandList));
+    if (FAILED(hr))
+    {
+        Cleanup();
+        return false;
+    }
+
+    // Command lists are created in the recording state. Since there is nothing to
+    // record right now and the main loop expects it to be closed, we close it now.
+    hr = g_pd3dCommandList->Close();
+    if (FAILED(hr))
+    {
+        Cleanup();
+        return false;
+    }
+
+    // 7. Create frame resources.
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
+    // Create a RTV for each frame.
+    for (UINT n = 0; n < FrameCount; n++)
+    {
+	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(n, IID_PPV_ARGS(&g_BackBuffers[n])));
+        g_pd3dDevice->CreateRenderTargetView(g_BackBuffers[n], nullptr, rtvHandle);
+        rtvHandle.Offset(1, g_rtvDescriptorSize);
+
+        DX::ThrowIfFailed(g_pd3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_commandAllocators[n])));
+    }
+
+
+    // 8. Create a RTV for each frame
+    // We need to create a RTV for each frame in the swap chain
+
+    for (UINT n = 0; n < FrameCount; n++)
+    {
+	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(n, IID_PPV_ARGS(&g_renderTargets[n])));
+        g_Device->CreateRenderTargetView(g_renderTargets[n].Get(), nullptr, rtvHandle);
+        rtvHandle.Offset(1, g_rtvDescriptorSize);
+    }
+
+
+    // 9. Create a Command Allocator for each frame.
+    // We need to create a command allocator for each frame to manage the memory that is used for
+    // command lists.
+
+    for (UINT n = 0; n < FrameCount; n++)
+    {
+	    DX::ThrowIfFailed(g_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_commandAllocators[n])));
+    }
+
+    // 10. Create the Command List and close it.
+    // We need to create a command list and close it. The command list is used to store the
+    // commands that will be executed by the GPU.
+
+    DX::ThrowIfFailed(g_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_commandAllocators[g_frameIndex].Get(), nullptr, IID_PPV_ARGS(&g_commandList)));
+    DX::ThrowIfFailed(g_CommandList->Close());
+
+    // 11. Create a Fence and event Handle
+    // We need to create a fence to synchronize the CPU & GPU. The Fence is used to signal when the GPU has completed executing
+    // a command list. We also need to create an event handle to wait for the fence to be signaled.
+
+    DX::ThrowIfFailed(g_Device->CreateFence(g_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&g_fence)));
+    g_fenceValue++;
+    g_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (g_fenceEvent == nullptr)
+    {
+	    DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+    }
+
+
 }
 
+// Populates the command list
+void PopulateCommandList()
+{
+    // TODO: Implement
+}
 
-bool g_bQuit = false;
-
-// Main loop
+// Main game loop
 void MainLoop()
 {
+    // Enter the message loop
+    MSG msg = {};
     while (!g_bQuit)
     {
-        MSG msg;
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        else
-        {
-            PopulateCommandList();
-        }
+
+        // Render the frame
+        PopulateCommandList();
+
+        // TODO: Implement rendering
     }
 }
 
-// Cleanup
+// Cleans up Direct3D 12 resources
 void Cleanup()
 {
-    // Wait for command queue to finish
-    WaitForPreviousFrame();
-
-    // Release resources
-    g_pRenderTarget[0]->Release();
-    g_pRenderTarget[1]->Release();
-    g_pRTVDescriptorHeap->Release();
-    g_pSwapChain->Release();
-    g_pCommandQueue->Release();
-    g_pDevice->Release();
-
+    // TODO: Implement
 }
-
-
-//// WinMain entry point
-//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-//{
-//    // Create window
-//    CreateWindowHandle(hInstance, nShowCmd);
-//
-//    // Initialize Direct3D 12
-//    InitD3D();
-//
-//    // Main loop
-//    MainLoop();
-//
-//    // Cleanup
-//    Cleanup();
-//
-//    return 0;
-//
-//}

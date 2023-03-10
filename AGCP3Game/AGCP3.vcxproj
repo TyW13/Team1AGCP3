@@ -117,8 +117,6 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DXSampleHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Util.h" />
