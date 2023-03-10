@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+#include <windows.graphics.h>
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -23,26 +25,20 @@ void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool a
 	objSprite.origin = Vector2(0,0);
 	isActive = active;
 
-	int w, h;
-	WinUtil::Get().GetClientExtents(w, h);
 	objSprite.mPos = position;
+	playerSize = { 6, 16 };
 }
 
 void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
 {
-	collisionPlayerRect.left = objSprite.mPos.x;
-	collisionPlayerRect.right = objSprite.mPos.x + /*(objSprite.GetTexRect().right * objSprite.GetScale().x)*/36;						// Issue with player rect (right) being equal to current anim frames
-	collisionPlayerRect.top = objSprite.mPos.y;																							// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
-	collisionPlayerRect.bottom = objSprite.mPos.y + /*(objSprite.GetTexRect().bottom * objSprite.GetScale().y)*/96;
-
-	if (!collidedTop)
-	{
-		grounded = false;
-	}
+	collisionPlayerRect.left = objSprite.mPos.x;																			// Setting values of rect for player current position
+	collisionPlayerRect.right = objSprite.mPos.x + playerSize.x * abs(objSprite.GetScale().x);								//
+	collisionPlayerRect.top = objSprite.mPos.y;																				//
+	collisionPlayerRect.bottom = objSprite.mPos.y + playerSize.y * abs(objSprite.GetScale().y);								//
 
 	UpdateInput(dTime);
 
-	checkCollision(rManager, dTime);
+	CheckCollision(rManager, dTime);
 
 	UpdateAnimation(dTime);
 }
@@ -68,6 +64,7 @@ void PlayerCharacter::UpdateInput(float dTime)
 		currentVel = (direction * 1500);
 
 		fired = true;
+		grounded = false;
 		detectMouseClick = false;
 	}
 	if (!Game::sMKIn.GetMouseButton(MouseAndKeys::LBUTTON) && !detectMouseClick)
@@ -105,11 +102,14 @@ void PlayerCharacter::UpdateInput(float dTime)
 
 	//--------- y-axis
 	//up
-
 	if (grounded)
 	{
+		if (Game::sMKIn.IsPressed(VK_SPACE)) 
+		{
+			detectSpaceKey = true;
+		}
 		//set initial velocity, start timer, record button pressed down during only the first frame
-		if (Game::sMKIn.IsPressed(VK_SPACE) && detectSpaceKey)
+		if (detectSpaceKey)
 		{
 			start_time = std::chrono::high_resolution_clock::now();
 			currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
@@ -118,8 +118,6 @@ void PlayerCharacter::UpdateInput(float dTime)
 			recordJumpTime = true;
 			grounded = false;
 		}
-
-
 	}
 	if (!grounded)
 	{
@@ -358,64 +356,84 @@ void PlayerCharacter::UpdateAnimation(float dTime)
 	}
 }
 
-void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
+void PlayerCharacter::CheckCollision(ResourceManager& rManager, float dTime)
 {
-	Vector2 nextPos = objSprite.mPos + currentVel * dTime;
-
-	int maxSpeed = 48;
-	float xDist = currentVel.x * dTime;
-	float yDist = currentVel.y * dTime;
-	if (fabs(xDist) >= maxSpeed || fabs(yDist) >= maxSpeed)		// Testing speed
+	float maxVel = 1.8f;																// 
+	if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
 	{
-		printf("too fast");
+		currentVel.x = maxVel / dTime;
+	}
+	else if (currentVel.x * dTime <= -maxVel)
+	{
+		currentVel.x = -maxVel / dTime;
+	}
+	if (currentVel.y * dTime >= maxVel)
+	{
+		currentVel.y = maxVel / dTime;
+	}
+	else if (currentVel.y * dTime <= -maxVel)
+	{
+		currentVel.y = -maxVel / dTime;
 	}
 
-	DBOUT(std::to_string(xDist) + " " + std::to_string(yDist));
+	Vector2 nextPos = objSprite.mPos + currentVel * dTime;															// Player future position after forces applied
 
-	RECTF nextPosRect = RECTF{
+	RECTF nextPosRect = RECTF{																						// Rect for players future position
 		nextPos.x,
 		nextPos.y,
-		nextPos.x + /*objSprite.GetTexRect().right * objSprite.GetScale().x*/ 36,														// Issue with player rect (right) being equal to current anim frames
-		nextPos.y + /*objSprite.GetTexRect().bottom * objSprite.GetScale().y*/ 96 };													// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
+		nextPos.x + playerSize.x * abs(objSprite.GetScale().x),														// Issue with player rect (right) being equal to current anim frames
+		nextPos.y + playerSize.y * abs(objSprite.GetScale().y) };													// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
 
+	bool collided = false;
 	std::vector<Tile*> collidedTiles;
 
 	for (Tile* tile : rManager.GetTiles())
 	{
 		if (nextPosRect.left <= tile->GetCollisionBounds().right &&
-			nextPosRect.right > tile->GetCollisionBounds().left &&
+			nextPosRect.right >= tile->GetCollisionBounds().left &&
 			nextPosRect.top <= tile->GetCollisionBounds().bottom &&
-			nextPosRect.bottom > tile->GetCollisionBounds().top)
+			nextPosRect.bottom >= tile->GetCollisionBounds().top)
 		{
 			collidedTiles.emplace_back(tile);
 		}
 	}
 
-	int velMinMax = 30;												// Absolute Min or max velocity value after potential collision
+	float collisionPosOffset = 1;																															// Value to offset player by when they collide with an object
 	for (Tile* tile : collidedTiles)
 	{
-		if (collisionPlayerRect.right < tile->GetCollisionBounds().left && nextPosRect.right >= tile->GetCollisionBounds().left && !collidedLeft)			// Collided from left, moving right
-		{
-			currentVel.x = -velMinMax;
-			collidedLeft = true;
-		}
-		else if (collisionPlayerRect.left > tile->GetCollisionBounds().right && nextPosRect.left <= tile->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
-		{
-			currentVel.x = velMinMax;
-			collidedRight = true;
-		}
-
 		if (collisionPlayerRect.bottom < tile->GetCollisionBounds().top && nextPosRect.bottom >= tile->GetCollisionBounds().top && !collidedTop)			// Collided from top, moving down
 		{
-			currentVel.y = -velMinMax;
+			objSprite.mPos.y = tile->GetCollisionBounds().top - (playerSize.y * abs(objSprite.GetScale().y) + collisionPosOffset);							// Setting position to just outside tile
+			objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+
+			collided = true;
 			collidedTop = true;
 			grounded = true;
 			fired = false;
 		}
-		else if (collisionPlayerRect.top > tile->GetCollisionBounds().bottom && nextPosRect.top <= tile->GetCollisionBounds().bottom && !collidedBottom)		// Collided from bottom, moving up
+		else if (collisionPlayerRect.top > tile->GetCollisionBounds().bottom && nextPosRect.top <= tile->GetCollisionBounds().bottom && !collidedBottom)	// Collided from bottom, moving up
 		{
-			currentVel.y = velMinMax;
+			objSprite.mPos.y = tile->GetCollisionBounds().bottom + collisionPosOffset;																		// Setting position to just outside tile
+			objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+
+			collided = true;
 			collidedBottom = true;
+		}
+		if (collisionPlayerRect.right < tile->GetCollisionBounds().left && nextPosRect.right >= tile->GetCollisionBounds().left && !collidedLeft)			// Collided from left, moving right
+		{
+			objSprite.mPos.x = tile->GetCollisionBounds().left - (playerSize.x * abs(objSprite.GetScale().x) + collisionPosOffset);							// Setting position to just outside tile
+			objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+
+			collided = true;
+			collidedLeft = true;
+		}
+		else if (collisionPlayerRect.left > tile->GetCollisionBounds().right && nextPosRect.left <= tile->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+		{
+			objSprite.mPos.x = tile->GetCollisionBounds().right + collisionPosOffset;																		// Setting position to just outside tile
+			objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+
+			collided = true;
+			collidedRight = true;
 		}
 	}
 
@@ -424,8 +442,10 @@ void PlayerCharacter::checkCollision(ResourceManager& rManager, float dTime)
 	collidedLeft = false;
 	collidedRight = false;
 
-	objSprite.mPos += currentVel * dTime;
-	//DBOUT("Velocity: " + std::to_string(currentVel.x * dTime) + " " + std::to_string(currentVel.y * dTime));
+	if (!collided)																																			// If player didnt collide with anything
+	{
+		objSprite.mPos += currentVel * dTime;
+	}
 }
 
 Sprite PlayerCharacter::GetSprite()

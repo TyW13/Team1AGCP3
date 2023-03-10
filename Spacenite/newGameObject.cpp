@@ -10,16 +10,15 @@ void GameObject::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, Direc
 	std::vector<RECTF>* tempTileRect = new std::vector<RECTF>;
 	tempTileRect->push_back(tileRect);
 
-	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), "test_sheet2.dds", "test_sheet2" + tileRectsString, true, tempTileRect); // TILE DISPLAY SOMETHING TO DO WITH &tempTileRect
-	objSprite.SetTex(*objTex);																																			// OR GET ANIM FUNCTION BELOW FIRST 2 VALUES
-	
+	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true); 
+	objSprite.SetTex(*objTex, { 0,0,6,16 });
 	objSprite.SetScale(scale);
-	objSprite.origin = Vector2(0, 8);
+	objSprite.origin = Vector2(0, 0);
 	isActive = active;
 
-	objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
+	//objSprite.GetAnim().Init(0, 0, 0, true);				 // <----	
 
-	objSprite.mPos = Vector2(position);
+	objSprite.mPos = position;
 
 	collisionDimensions.x = collisionBounds.x;
 	collisionDimensions.y = collisionBounds.y;
@@ -36,6 +35,7 @@ void GameObject::Update(float dTime, ResourceManager& rManager)
 	collision_Bounds.top = objSprite.mPos.y;
 	collision_Bounds.right = objSprite.mPos.x + collisionDimensions.x;
 	collision_Bounds.bottom = objSprite.mPos.y + collisionDimensions.y;
+	DBOUT(std::to_string(objSprite.mPos.x) + " " + std::to_string(objSprite.mPos.y));
 }
 
 Sprite GameObject::GetSprite()

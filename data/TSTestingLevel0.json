@@ -1,5 +1,5 @@
 { "columns":5,
- "image":"..\/..\/data\/test_sheet2.png",
+ "image":"test_sheet2.png",
  "imageheight":24,
  "imagewidth":40,
  "margin":0,
@@ -14,11 +14,10 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -33,18 +32,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":1,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -59,18 +63,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":2,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -85,18 +94,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":3,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -111,18 +125,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":4,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -137,18 +156,54 @@
              "visible":true,
              "x":0,
              "y":0
-            }
-        },
-	{
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":5,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "class":"Tile",
+                     "height":8,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "visible":true,
+                     "width":8,
+                     "x":0,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
          "id":6,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -163,18 +218,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":7,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -189,18 +249,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":8,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -215,18 +280,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":9,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -241,18 +311,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":10,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -267,18 +342,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":11,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -293,18 +373,23 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":12,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Tile",
                      "height":8,
                      "id":1,
                      "name":"",
@@ -319,25 +404,30 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }, 
         {
          "id":13,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "class":"",
+                     "class":"Damageable",
                      "height":5,
                      "id":1,
                      "name":"",
                      "rotation":0,
                      "visible":true,
                      "width":8,
-                     "x":0.0217969165337586,
+                     "x":0,
                      "y":3
                     }],
              "opacity":1,
@@ -345,7 +435,44 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":14,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "class":"Spawner",
+                     "height":8,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "visible":true,
+                     "width":8,
+                     "x":0,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":false
+                }]
         }],
  "tilewidth":8,
  "transparentcolor":"#ff00ff",

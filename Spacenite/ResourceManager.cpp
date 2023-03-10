@@ -21,6 +21,7 @@ void ResourceManager::Init(MyD3D& d3d)
 	pRect.bottom = 0.0f;
 
 	PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(200, 200), Vector2(6, 6), true, pRect, Vector2(0, 0), 0);				// Creating and pushing tile objects ti m_Tiles vector
+
 	m_gObjects.emplace_back(player);
 }
 
@@ -314,7 +315,6 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 {
 	UnloadZone();
 
-	//GetCurrentMap()->getSource
 	FILE* fp = fopen("data/TSTestingLevel0.json", "rb");		// opening
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));

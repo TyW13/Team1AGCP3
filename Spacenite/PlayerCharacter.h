@@ -47,13 +47,14 @@ private:
 			r1.bottom > r2.top);
 	}
 
-	void checkCollision(ResourceManager& rManager, float dTime);
+	void CheckCollision(ResourceManager& rManager, float dTime);
 	bool collidedTop = false;
 	bool collidedBottom = false;
 	bool collidedLeft = false;
 	bool collidedRight = false;
 	RECTF collisionPlayerRect;
 
+	Vector2 playerSize;
 	Vector2 collisionDimensions;
 
 	// KACPER STUFF

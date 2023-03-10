@@ -140,6 +140,7 @@ public:
 	void LoadNextZone(MyD3D& d3d);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
+	GameObject* GetGameObject(int objNum) { return m_gObjects[objNum]; }
 	std::vector<Tile*> GetTiles() { return m_Tiles; }
 
 private:
