@@ -1,106 +1,269 @@
-//
-// Main.cpp
-//
+#include <d3d12.h>
+#include <DirectXHelpers.h>
+#include <dxgi1_4.h>
+#include <windows.h>
 
-#include "stdafx.h"
-#include "pch.h"
-#include "Game.h"
+#include "d3dx12.h"
 
-using namespace DirectX;
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
 
-#ifdef __clang__
-#pragma clang diagnostic ignored "-Wcovered-switch-default"
-#pragma clang diagnostic ignored "-Wswitch-enum"
-#endif
+// Window dimensions
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 600;
 
-#pragma warning(disable : 4061)
+// Global variables
+IDXGISwapChain3* g_pSwapChain = nullptr;
+ID3D12Device* g_pDevice = nullptr;
+ID3D12CommandQueue* g_pCommandQueue = nullptr;
+ID3D12DescriptorHeap* g_pRTVDescriptorHeap = nullptr;
+ID3D12Resource* g_pRenderTarget[2] = { nullptr, nullptr };
+UINT g_nRTVDescriptorSize = 0;
+int g_nBackBufferIndex = 0;
 
-#ifdef USING_D3D12_AGILITY_SDK
-extern "C"
+
+
+// Window procedure
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    // Used to enable the "Agility SDK" components
-    __declspec(dllexport) extern const UINT D3D12SDKVersion = D3D12_SDK_VERSION;
-    __declspec(dllexport) extern const char* D3D12SDKPath = u8".\\D3D12\\";
+    switch (msg)
+    {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+    default:
+        return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+    return 0;
 }
-#endif
-
-namespace
-{
-    std::unique_ptr<Game> g_game;
-}
-
-LPCWSTR g_szAppName = L"Y3PROJECT3Team1";
-
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void ExitGame() noexcept;
 
 // Entry point
-int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+    // Register window class
+    const wchar_t CLASS_NAME[] = L"HACKY2D";
+    WNDCLASS wc = { };
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+    RegisterClass(&wc);
 
-    if (!XMVerifyCPUSupport())
-        return 1;
+    // Create window
+    HWND hwnd = CreateWindowEx(
+        0,                          // Optional window styles.
+        CLASS_NAME,                 // Window class
+        L"DirectX12 Window",        // Window text
+        WS_OVERLAPPEDWINDOW,        // Window style
+        CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT,  // Position and size
+        nullptr,                    // Parent window
+        nullptr,                    // Menu
+        hInstance,                  // Instance handle
+        nullptr                     // Additional application data
+    );
 
-#ifdef __MINGW32__
-    if (FAILED(CoInitializeEx(nullptr, COINITBASE_MULTITHREADED)))
-        return 1;
-#else
-    Microsoft::WRL::Wrappers::RoInitializeWrapper initialize(RO_INIT_MULTITHREADED);
-    if (FAILED(initialize))
-        return 1;
-#endif
-
-    g_game = std::make_unique<Game>();
-
-    // Register class and create window
+    if (hwnd == NULL)
     {
-        // Register class
-        WNDCLASSEXW wcex = {};
-        wcex.cbSize = sizeof(WNDCLASSEXW);
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc = WndProc;
-        wcex.hInstance = hInstance;
-        wcex.hIcon = LoadIconW(hInstance, L"IDI_ICON");
-        wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-        wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        wcex.lpszClassName = L"Y3PROJECT3Team1WindowClass";
-        wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
-        if (!RegisterClassExW(&wcex))
-            return 1;
-
-        // Create window
-        int w, h;
-        g_game->GetDefaultSize(w, h);
-
-        RECT rc = { 0, 0, static_cast<LONG>(w), static_cast<LONG>(h) };
-
-        AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-
-        HWND hwnd = CreateWindowExW(0, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
-            nullptr);
-        // TODO: Change to CreateWindowExW(WS_EX_TOPMOST, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_POPUP,
-        // to default to fullscreen.
-
-        if (!hwnd)
-            return 1;
-
-        ShowWindow(hwnd, nCmdShow);
-        // TODO: Change nCmdShow to SW_SHOWMAXIMIZED to default to fullscreen.
-
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(g_game.get()));
-
-        GetClientRect(hwnd, &rc);
-
-        g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
+        return 0;
     }
 
-    // Main message loop
-    MSG msg = {};
-    while (WM_QUIT != msg.message)
+    // Create device and swap chain
+    CreateDevice();
+    CreateCommandQueue();
+    CreateSwapChain(hwnd);
+    CreateDescriptorHeap();
+    CreateRenderTarget();
+
+    // Show window
+    ShowWindow(hwnd, nCmdShow);
+
+    // Message loop
+    MSG msg = { };
+    while (GetMessage(&msg, nullptr, 0, 0))
     {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+
+        // Render frame
+        PopulateCommandList();
+        WaitForPreviousFrame();
+    }
+
+    return 0;
+}
+
+
+// Create device
+void CreateDevice()
+{
+    // Create device
+    D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&g_pDevice));
+}
+
+// Create command queue
+void CreateCommandQueue()
+{
+    // Create command queue
+    D3D12_COMMAND_QUEUE_DESC desc = {};
+    desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    g_pDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(&g_pCommandQueue));
+}
+
+// Create swap chain
+void CreateSwapChain(HWND hwnd)
+{
+    // Get DXGI factory
+    IDXGIFactory4* pFactory = nullptr;
+    CreateDXGIFactory1(IID_PPV_ARGS(&pFactory));
+
+    // Create swap chain
+    DXGI_SWAP_CHAIN_DESC1 desc = {};
+    desc.BufferCount = 2;
+    desc.Width = WINDOW_WIDTH;
+    desc.Height = WINDOW_HEIGHT;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    desc.SampleDesc.Count = 1;
+
+    IDXGISwapChain1* pSwapChain = nullptr;
+    pFactory->CreateSwapChainForHwnd(
+        g_pCommandQueue,
+        hwnd,
+        &desc,
+        nullptr,
+        nullptr,
+        &pSwapChain
+    );
+
+    // Upgrade swap chain to IDXGISwapChain3
+    pSwapChain->QueryInterface(IID_PPV_ARGS(&g_pSwapChain));
+    pSwapChain->Release();
+
+    // Release factory
+    pFactory->Release();
+
+}
+
+// Create descriptor heap
+void CreateDescriptorHeap()
+{
+    // Get descriptor heap size
+    g_nRTVDescriptorSize = g_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+
+    // Create descriptor heap
+    D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+    desc.NumDescriptors = 2;
+    desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    g_pDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&g_pRTVDescriptorHeap));
+
+
+}
+
+// Create render target
+void CreateRenderTarget()
+{
+    // Get current back buffer index
+    g_nBackBufferIndex = g_pSwapChain->GetCurrentBackBufferIndex();
+
+    // Create render target for each back buffer
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_pRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+    for (UINT i = 0; i < 2; i++)
+    {
+        g_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&g_pRenderTarget[i]));
+        g_pDevice->CreateRenderTargetView(g_pRenderTarget[i], nullptr, rtvHandle);
+        rtvHandle.Offset(1, g_nRTVDescriptorSize);
+    }
+
+}
+
+// Populate command list
+void PopulateCommandList()
+{
+    // Reset command allocator and command list
+    ID3D12CommandAllocator* pCommandAllocator = nullptr;
+    ID3D12GraphicsCommandList* pCommandList = nullptr;
+    g_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocator));
+    g_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, pCommandAllocator, nullptr, IID_PPV_ARGS(&pCommandList));
+    pCommandAllocator->Reset();
+    pCommandList->Reset(pCommandAllocator, nullptr);
+
+    // Set render target
+    D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(g_pRenderTarget[g_nBackBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    pCommandList->ResourceBarrier(1, &barrier);
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_pRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_nBackBufferIndex, g_nRTVDescriptorSize);
+    pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+    // Clear render target
+    const float clearColor[] = { 0.0f, 0.0f,0.0f };
+    
+	// Render to back buffer
+    pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+    pCommandList->DrawInstanced(3, 1, 0, 0);
+
+    // Set back buffer to present state
+    barrier = CD3DX12_RESOURCE_BARRIER::Transition(g_pRenderTarget[g_nBackBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    pCommandList->ResourceBarrier(1, &barrier);
+
+    // Close command list
+    pCommandList->Close();
+
+    // Execute command list
+    ID3D12CommandList* ppCommandLists[] = { pCommandList };
+    g_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+    // Present frame
+    g_pSwapChain->Present(1, 0);
+
+    // Wait for command queue to finish
+    WaitForPreviousFrame();
+
+    // Release command allocator and command list
+    pCommandAllocator->Release();
+    pCommandList->Release();
+
+
+}
+
+
+void InitD3D()
+{
+    // Create the device
+    CreateDevice();
+
+    // Create the command queue
+    CreateCommandQueue();
+
+    // Create the swap chain
+    CreateSwapChain();
+
+    // Create the render target 
+    CreateRenderTarget();
+
+    // Create the command allocator
+    CreateCommandAllocator();
+
+    // Create the command list
+    CreateCommandList();
+
+    // Create the fence and event handle
+    CreateFenceAndEvent();
+
+    // Wait for the fence to be signaled
+    WaitForPreviousFrame();
+}
+
+
+bool g_bQuit = false;
+
+// Main loop
+void MainLoop()
+{
+    while (!g_bQuit)
+    {
+        MSG msg;
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
@@ -108,184 +271,43 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         }
         else
         {
-            g_game->Tick();
+            PopulateCommandList();
         }
     }
-
-    g_game.reset();
-
-    return static_cast<int>(msg.wParam);
 }
 
-// Windows procedure
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+// Cleanup
+void Cleanup()
 {
-    static bool s_in_sizemove = false;
-    static bool s_in_suspend = false;
-    static bool s_minimized = false;
-    static bool s_fullscreen = false;
-    // TODO: Set s_fullscreen to true if defaulting to fullscreen.
+    // Wait for command queue to finish
+    WaitForPreviousFrame();
 
-    auto game = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    // Release resources
+    g_pRenderTarget[0]->Release();
+    g_pRenderTarget[1]->Release();
+    g_pRTVDescriptorHeap->Release();
+    g_pSwapChain->Release();
+    g_pCommandQueue->Release();
+    g_pDevice->Release();
 
-    switch (message)
-    {
-    case WM_PAINT:
-        if (s_in_sizemove && game)
-        {
-            game->Tick();
-        }
-        else
-        {
-            PAINTSTRUCT ps;
-            std::ignore = BeginPaint(hWnd, &ps);
-            EndPaint(hWnd, &ps);
-        }
-        break;
-
-    case WM_DISPLAYCHANGE:
-        if (game)
-        {
-            game->OnDisplayChange();
-        }
-        break;
-
-    case WM_MOVE:
-        if (game)
-        {
-            game->OnWindowMoved();
-        }
-        break;
-
-    case WM_SIZE:
-        if (wParam == SIZE_MINIMIZED)
-        {
-            if (!s_minimized)
-            {
-                s_minimized = true;
-                if (!s_in_suspend && game)
-                    game->OnSuspending();
-                s_in_suspend = true;
-            }
-        }
-        else if (s_minimized)
-        {
-            s_minimized = false;
-            if (s_in_suspend && game)
-                game->OnResuming();
-            s_in_suspend = false;
-        }
-        else if (!s_in_sizemove && game)
-        {
-            game->OnWindowSizeChanged(LOWORD(lParam), HIWORD(lParam));
-        }
-        break;
-
-    case WM_ENTERSIZEMOVE:
-        s_in_sizemove = true;
-        break;
-
-    case WM_EXITSIZEMOVE:
-        s_in_sizemove = false;
-        if (game)
-        {
-            RECT rc;
-            GetClientRect(hWnd, &rc);
-
-            game->OnWindowSizeChanged(rc.right - rc.left, rc.bottom - rc.top);
-        }
-        break;
-
-    case WM_GETMINMAXINFO:
-        if (lParam)
-        {
-            auto info = reinterpret_cast<MINMAXINFO*>(lParam);
-            info->ptMinTrackSize.x = 320;
-            info->ptMinTrackSize.y = 200;
-        }
-        break;
-
-    case WM_ACTIVATEAPP:
-        if (game)
-        {
-            if (wParam)
-            {
-                game->OnActivated();
-            }
-            else
-            {
-                game->OnDeactivated();
-            }
-        }
-        break;
-
-    case WM_POWERBROADCAST:
-        switch (wParam)
-        {
-        case PBT_APMQUERYSUSPEND:
-            if (!s_in_suspend && game)
-                game->OnSuspending();
-            s_in_suspend = true;
-            return TRUE;
-
-        case PBT_APMRESUMESUSPEND:
-            if (!s_minimized)
-            {
-                if (s_in_suspend && game)
-                    game->OnResuming();
-                s_in_suspend = false;
-            }
-            return TRUE;
-        }
-        break;
-
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-
-    case WM_SYSKEYDOWN:
-        if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
-        {
-            // Implements the classic ALT+ENTER fullscreen toggle
-            if (s_fullscreen)
-            {
-                SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-                SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
-
-                int width = 800;
-                int height = 600;
-                if (game)
-                    game->GetDefaultSize(width, height);
-
-                ShowWindow(hWnd, SW_SHOWNORMAL);
-
-                SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
-            }
-            else
-            {
-                SetWindowLongPtr(hWnd, GWL_STYLE, WS_POPUP);
-                SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-
-                SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-                ShowWindow(hWnd, SW_SHOWMAXIMIZED);
-            }
-
-            s_fullscreen = !s_fullscreen;
-        }
-        break;
-
-    case WM_MENUCHAR:
-        // A menu is active and the user presses a key that does not correspond
-        // to any mnemonic or accelerator key. Ignore so we don't produce an error beep.
-        return MAKELRESULT(0, MNC_CLOSE);
-    }
-
-    return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-// Exit helper
-void ExitGame() noexcept
-{
-    PostQuitMessage(0);
-}
+
+//// WinMain entry point
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+//{
+//    // Create window
+//    CreateWindowHandle(hInstance, nShowCmd);
+//
+//    // Initialize Direct3D 12
+//    InitD3D();
+//
+//    // Main loop
+//    MainLoop();
+//
+//    // Cleanup
+//    Cleanup();
+//
+//    return 0;
+//
+//}

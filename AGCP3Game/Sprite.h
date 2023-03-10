@@ -44,7 +44,7 @@ public:
     void UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color);
 
 
-        // Animation Getters - added 07/03/2023
+	// Animation Getters - added 07/03/2023
 
     RECTF mTexRect;
 
