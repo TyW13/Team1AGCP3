@@ -6,10 +6,10 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgi1_2.h>
-
+#include <iostream>
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
-
+using Microsoft::WRL::ComPtr;
 
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = nullptr; } }
@@ -52,40 +52,44 @@ Microsoft::WRL::ComPtr<IDXGIAdapter1> GetHardwareAdapter(IDXGIFactory1* pFactory
 
 // Global variables
 
-UINT FrameCount;
+const int FrameCount = 3;
 
 
 
+// Device resources
+ComPtr<ID3D12Device>             m_device;
+UINT                             FrameCount;
+HANDLE                           m_fenceEvent;
+UINT64                           m_fenceValue;
+ComPtr<ID3D12CommandAllocator>   m_commandAllocators[FrameCount];
+UINT                             m_frameIndex;
+ComPtr<ID3D12Resource>           m_renderTargets[FrameCount];
+UINT                             m_rtvDescriptorSize;
+ComPtr<ID3D12DescriptorHeap>     m_rtvDescriptorHeap;
+ComPtr<ID3D12GraphicsCommandList> m_pd3dCommandList;
+ComPtr<ID3D12Device>             m_pd3dDevice;
+ComPtr<ID3D12CommandAllocator>   m_pd3dCommandAllocator;
+ComPtr<ID3D12CommandQueue>       m_pd3dCommandQueue;
+ComPtr<ID3D12Fence>              m_fence;
+ComPtr<IDXGISwapChain3>          m_swapChain;
+ComPtr<ID3D12DescriptorHeap>     m_rtvHeap;
+CD3DX12_CPU_DESCRIPTOR_HANDLE    m_rtvHandle;
 
-IDXGISwapChain3*            m_swapChain;
-ID3D12GraphicsCommandList*  m_commandList;
-ID3D12CommandQueue*         m_commandQueue;
-ID3D12DescriptorHeap*       m_rtvHeap;
-ID3D12Resource*             m_backBuffers[FrameCount];
-UINT                        m_frameIndex;
-UINT                        m_rtvDescriptorSize;
-ID3D12DescriptorHeap*       m_rtvDescriptorHeap;
-ID3D12Fence*                m_fence;
-UINT64                      m_fenceValue;
-HANDLE                      m_fenceEvent;
-ID3D12CommandAllocator*     m_commandAllocator;
-ID3D12CommandAllocator*     m_commandAllocators[FrameCount];
-ID3D12Resource*             m_renderTargets[FrameCount];
-ID3D12PipelineState*        m_pipelineState;
-ID3D12RootSignature*        m_rootSignature;
-D3D12_VIEWPORT              m_viewport;
-D3D12_RECT                  m_scissorRect;
-UINT                        m_cbvSrvDescriptorSize;
-ID3D12DescriptorHeap*       m_pd3dSrvDescHeap;
-ID3D12DescriptorHeap*       m_pd3dCbvDescHeap;
-ID3D12Resource*             m_texture;
-UINT8*                      m_pCbvDataBegin;
-HANDLE                      m_hSwapChainWaitableObject;
-ComPtr<IDXGIAdapter1>*      m_pAdapter;
-ID3D12Device*               m_device;
+// Window resources
+int                              m_ClientWidth;
+int                              m_ClientHeight;
+HWND                             m_hwnd;
 
+// DirectX 12 objects
+ComPtr<IDXGIFactory4>            m_dxgiFactory;
+ComPtr<IDXGIAdapter1>            m_adapter;
 
+ComPtr<ID3D12CommandAllocator>   m_commandAllocator;
+ComPtr<ID3D12CommandQueue>       m_commandQueue;
+ComPtr<ID3D12RootSignature>      m_rootSignature;
 
+ComPtr<ID3D12PipelineState>      m_pipelineState;
+ComPtr<ID3D12GraphicsCommandList> m_commandList;
 
 
 
