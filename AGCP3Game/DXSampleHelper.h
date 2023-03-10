@@ -73,14 +73,14 @@
 //    CREATEFILE2_EXTENDED_PARAMETERS extendedParams = {};
 //    extendedParams.dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS);
 //    extendedParams.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
-//    extendedParams.dwFileFlags = FILE_FLAG_SEQUENTIAL_SCAN;
+//    extendedParams.dwFileFlags = FILE_FLAm_SEQUENTIAL_SCAN;
 //    extendedParams.dwSecurityQosFlags = SECURITY_ANONYMOUS;
 //    extendedParams.lpSecurityAttributes = nullptr;
 //    extendedParams.hTemplateFile = nullptr;
 //
 //    Wrappers::FileHandle file(CreateFile2(filename, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, &extendedParams));
 //#else
-//    Wrappers::FileHandle file(CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN | SECURITY_SQOS_PRESENT | SECURITY_ANONYMOUS, nullptr));
+//    Wrappers::FileHandle file(CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAm_SEQUENTIAL_SCAN | SECURITY_SQOS_PRESENT | SECURITY_ANONYMOUS, nullptr));
 //#endif
 //    if (file.Get() == INVALID_HANDLE_VALUE)
 //    {

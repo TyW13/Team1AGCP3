@@ -60,7 +60,7 @@
 
 #include <wrl/client.h>
 
-#ifdef USING_DIRECTX_HEADERS
+#ifdef USINm_DIRECTX_HEADERS
 #include <directx/dxgiformat.h>
 #include <directx/d3d12.h>
 #include <directx/d3dx12.h>

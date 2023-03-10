@@ -3,12 +3,24 @@
 
 #include "pch.h"
 
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <dxgi1_2.h>
+
+#include <wrl/client.h>
+using namespace Microsoft::WRL;
+
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = nullptr; } }
+#endif
+
 // Define window class name
 const wchar_t CLASS_NAME[] = L"DirectX12WindowClass";
 
 // Declare global variables
-HWND g_hWnd;
-bool g_bQuit = false;
+HWND m_hWnd;
+bool m_bQuit = false;
 
 // Declare functions
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -19,35 +31,63 @@ void MainLoop();
 void Cleanup();
 
 
-// Global variables
-Microsoft::WRL::ComPtr<ID3D12Device> g_Device;
-UINT FrameCount;
-HANDLE g_fenceEvent;
-UINT64 g_fenceValue;
-
-Microsoft::WRL::ComPtr<ID3D12CommandAllocator> g_commandAllocators[FrameCount];
-UINT g_frameIndex;
-Microsoft::WRL::ComPtr<ID3D12Resource> g_renderTargets[FrameCount];
-
-UINT g_rtvDescriptorSize;
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_rtvDescriptorHeap;
-Microsoft::WRL::ComPtr<ID3D12CommandList> g_CommandList;
-Microsoft::WRL::ComPtr<ID3D12CommandList> g_pd3dCommandList;
-
-Microsoft::WRL::ComPtr<ID3D12Device> g_pd3dDevice;
-
-Microsoft::WRL::ComPtr<ID3D12CommandAllocator> g_pd3dCommandAllocator;
-
-Microsoft::WRL::ComPtr<ID3D12Resource> g_BackBuffers[FrameCount];
-
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_RTVHeap;
-
-Microsoft::WRL::ComPtr<IDXGISwapChain3> g_SwapChain;
-
-Microsoft::WRL::ComPtr<ID3D12CommandQueue> g_CommandQueue;
-
 // Function declaration
 Microsoft::WRL::ComPtr<IDXGIAdapter1> GetHardwareAdapter(IDXGIFactory1* pFactory);
+
+//m_pd3dDevice:  a pointer to the Direct3D device
+//m_pd3dCommandList : a pointer to the Direct3D command list
+//m_pd3dCommandAllocator : an array of command allocator objects for each frame in flight
+//m_CommandQueue : a pointer to the Direct3D command queue
+//m_BackBuffers : an array of pointers to the back buffers
+//m_RTVHeap : a pointer to the render target view(RTV) heap
+//m_SwapChain : a pointer to the Direct3D swap chain
+//m_rtvDescriptorHeap : a pointer to the RTV descriptor heap
+//m_rtvDescriptorSize : the size of an RTV descriptor in bytes
+//m_renderTargets : an array of RTV objects for each frame in flight
+//m_frameIndex : the index of the current frame in flight
+//m_commandAllocators : an array of command allocator objects for each frame in flight
+//m_fenceValue : the current value of the fence
+//m_fenceEvent : a handle to the fence event
+//FrameCount : the number of frames in flight
+
+// Global variables
+
+UINT FrameCount;
+
+
+
+
+IDXGISwapChain3*            m_swapChain;
+ID3D12GraphicsCommandList*  m_commandList;
+ID3D12CommandQueue*         m_commandQueue;
+ID3D12DescriptorHeap*       m_rtvHeap;
+ID3D12Resource*             m_backBuffers[FrameCount];
+UINT                        m_frameIndex;
+UINT                        m_rtvDescriptorSize;
+ID3D12DescriptorHeap*       m_rtvDescriptorHeap;
+ID3D12Fence*                m_fence;
+UINT64                      m_fenceValue;
+HANDLE                      m_fenceEvent;
+ID3D12CommandAllocator*     m_commandAllocator;
+ID3D12CommandAllocator*     m_commandAllocators[FrameCount];
+ID3D12Resource*             m_renderTargets[FrameCount];
+ID3D12PipelineState*        m_pipelineState;
+ID3D12RootSignature*        m_rootSignature;
+D3D12_VIEWPORT              m_viewport;
+D3D12_RECT                  m_scissorRect;
+UINT                        m_cbvSrvDescriptorSize;
+ID3D12DescriptorHeap*       m_pd3dSrvDescHeap;
+ID3D12DescriptorHeap*       m_pd3dCbvDescHeap;
+ID3D12Resource*             m_texture;
+UINT8*                      m_pCbvDataBegin;
+HANDLE                      m_hSwapChainWaitableObject;
+ComPtr<IDXGIAdapter1>*      m_pAdapter;
+ID3D12Device*               m_device;
+
+
+
+
+
 
 // Entry point for Windows applications
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
@@ -91,7 +131,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow)
 {
     // Create window
-    g_hWnd = CreateWindowEx(
+    m_hWnd = CreateWindowEx(
         0,                              // Optional window styles.
         CLASS_NAME,                     // Window class
         L"DirectX 12 Window",           // Window text
@@ -105,15 +145,17 @@ void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow)
     );
 
     // If window creation failed, exit the application
-    if (g_hWnd == NULL)
+    if (m_hWnd == NULL)
     {
         MessageBox(NULL, L"Window creation failed!", L"Error", MB_OK | MB_ICONERROR);
         exit(EXIT_FAILURE);
     }
 
     // Show window
-    ShowWindow(g_hWnd, nCmdShow);
+    ShowWindow(m_hWnd, nCmdShow);
 }
+
+void GetHardwareAdapter(ComPtr<IDXGIFactory4>::InterfaceType* get, const Details::ComPtrRef<ComPtr<IDXGIAdapter1>>& adapter);
 
 // Initializes Direct3D 12
 void InitD3D()
@@ -124,8 +166,8 @@ void InitD3D()
 
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = 2;
-    swapChainDesc.Width = g_WindowWidth;
-    swapChainDesc.Height = g_WindowHeight;
+    swapChainDesc.Width = 800;
+    swapChainDesc.Height =600;
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -138,12 +180,12 @@ void InitD3D()
     GetHardwareAdapter(dxgiFactory.Get(), &adapter);
 
     D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-    DX::ThrowIfFailed(D3D12CreateDevice(adapter.Get(), featureLevel, IID_PPV_ARGS(&g_Device)));
+    DX::ThrowIfFailed(D3D12CreateDevice(adapter.Get(), featureLevel, IID_PPV_ARGS(&m_device)));
 
     D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
     commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-    DX::ThrowIfFailed(g_Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&g_CommandQueue)));
+    DX::ThrowIfFailed(m_device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&m_commandQueue)));
 
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc = {};
     fullScreenDesc.RefreshRate.Numerator = 60;
@@ -151,12 +193,12 @@ void InitD3D()
     fullScreenDesc.Windowed = TRUE;
 
     DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
-        g_CommandQueue.Get(),
-        g_hWnd,
+        m_commandQueue.Get(),
+        m_hWnd,
         &swapChainDesc,
         &fullScreenDesc,
         nullptr,
-        &g_SwapChain
+        &m_swapChain
     ));
 
     // 2. Create a RTV descriptor heap
@@ -165,38 +207,38 @@ void InitD3D()
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-    DX::ThrowIfFailed(g_pd3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&g_rtvDescriptorHeap)));
+    DX::ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvDescriptorHeap)));
 
 
 
     // 3. Create the render target views
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_RTVHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
     for (UINT i = 0; i < 2; i++)
     {
-	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(i, IID_PPV_ARGS(&g_BackBuffers[i])));
-        g_Device->CreateRenderTargetView(g_BackBuffers[i].Get(), nullptr, rtvHandle);
-        rtvHandle.Offset(1, g_RTVDescriptorSize);
+	    DX::ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_backBuffers[i])));
+        m_device->CreateRenderTargetView(m_backBuffers[i].Get(), nullptr, rtvHandle);
+        rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
 
 
     // 4. Create the command allocator and command list
 
-    DX::ThrowIfFailed(g_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_CommandAllocator)));
-    DX::ThrowIfFailed(g_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_CommandAllocator.Get(), nullptr, IID_PPV_ARGS(&g_CommandList)));
+    DX::ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
+    DX::ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator->Get(), nullptr, IID_PPV_ARGS(&m_CommandList)));
 
     // 5. Create the fence and event handle
 
-    DX::ThrowIfFailed(g_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&g_Fence)));
-    g_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    if (g_FenceEvent == nullptr)
+    DX::ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_fenceEvent == nullptr)
     {
 	    DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
 
 
     // 6. Create the command list
-    HRESULT hr = g_pd3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_pd3dCommandAllocator, nullptr, IID_PPV_ARGS(&g_pd3dCommandList));
+    HRESULT hr = m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocators, nullptr, IID_PPV_ARGS(&m_pd3dCommandList));
     if (FAILED(hr))
     {
         Cleanup();
@@ -205,7 +247,7 @@ void InitD3D()
 
     // Command lists are created in the recording state. Since there is nothing to
     // record right now and the main loop expects it to be closed, we close it now.
-    hr = g_pd3dCommandList->Close();
+    hr = m_commandList->Close();
     if (FAILED(hr))
     {
         Cleanup();
@@ -213,16 +255,16 @@ void InitD3D()
     }
 
     // 7. Create frame resources.
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
     // Create a RTV for each frame.
     for (UINT n = 0; n < FrameCount; n++)
     {
-	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(n, IID_PPV_ARGS(&g_BackBuffers[n])));
-        g_pd3dDevice->CreateRenderTargetView(g_BackBuffers[n], nullptr, rtvHandle);
-        rtvHandle.Offset(1, g_rtvDescriptorSize);
+	    DX::ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_backBuffers[n])));
+        m_device->CreateRenderTargetView(m_backBuffers[n], nullptr, rtvHandle);
+        rtvHandle.Offset(1, m_rtvDescriptorSize);
 
-        DX::ThrowIfFailed(g_pd3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_commandAllocators[n])));
+        DX::ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n])));
     }
 
 
@@ -231,9 +273,9 @@ void InitD3D()
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-	    DX::ThrowIfFailed(g_SwapChain->GetBuffer(n, IID_PPV_ARGS(&g_renderTargets[n])));
-        g_Device->CreateRenderTargetView(g_renderTargets[n].Get(), nullptr, rtvHandle);
-        rtvHandle.Offset(1, g_rtvDescriptorSize);
+	    DX::ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+        m_device->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvHandle);
+        rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
 
 
@@ -243,24 +285,24 @@ void InitD3D()
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-	    DX::ThrowIfFailed(g_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_commandAllocators[n])));
+	    DX::ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n])));
     }
 
     // 10. Create the Command List and close it.
     // We need to create a command list and close it. The command list is used to store the
     // commands that will be executed by the GPU.
 
-    DX::ThrowIfFailed(g_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, g_commandAllocators[g_frameIndex].Get(), nullptr, IID_PPV_ARGS(&g_commandList)));
-    DX::ThrowIfFailed(g_CommandList->Close());
+    DX::ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocators[m_frameIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList)));
+    DX::ThrowIfFailed(m_commandList->Close());
 
     // 11. Create a Fence and event Handle
     // We need to create a fence to synchronize the CPU & GPU. The Fence is used to signal when the GPU has completed executing
     // a command list. We also need to create an event handle to wait for the fence to be signaled.
 
-    DX::ThrowIfFailed(g_Device->CreateFence(g_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&g_fence)));
-    g_fenceValue++;
-    g_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    if (g_fenceEvent == nullptr)
+    DX::ThrowIfFailed(m_device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+    m_fenceValue++;
+    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_fenceEvent == nullptr)
     {
 	    DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
@@ -279,7 +321,7 @@ void MainLoop()
 {
     // Enter the message loop
     MSG msg = {};
-    while (!g_bQuit)
+    while (!m_bQuit)
     {
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
@@ -292,6 +334,45 @@ void MainLoop()
 
         // TODO: Implement rendering
     }
+}
+
+
+void WaitForPreviousFrame()
+{
+    // Wait for the fence value for the current frame to be signaled
+    const UINT64 fence = m_fenceValue[m_frameIndex];
+    if (m_fence->GetCompletedValue() < fence)
+    {
+        m_fence->SetEventOnCompletion(fence, m_fenceEvent);
+        WaitForSingleObject(m_fenceEvent, INFINITE);
+    }
+
+    // Increment the fence value for the current frame
+    m_fenceValue[m_frameIndex]++;
+}
+
+void Close()
+{
+    // Wait for the GPU to complete all previous operations
+    WaitForPreviousFrame();
+
+    // Close the fence event
+    CloseHandle(m_fenceEvent);
+
+    // Release the resources used by Direct3D
+    for (int i = 0; i < FrameCount; i++)
+    {
+        SAFE_RELEASE(m_renderTargets[i]);
+        SAFE_RELEASE(m_backBuffers[i]);
+        SAFE_RELEASE(m_commandAllocators[i]);
+    }
+
+    SAFE_RELEASE(m_rtvDescriptorHeap);
+    SAFE_RELEASE(m_commandList);
+    SAFE_RELEASE(m_commandAllocator);
+    SAFE_RELEASE(m_commandQueue);
+    SAFE_RELEASE(m_device);
+    SAFE_RELEASE(m_swapChain);
 }
 
 // Cleans up Direct3D 12 resources
