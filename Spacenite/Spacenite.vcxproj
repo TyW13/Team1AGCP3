@@ -119,6 +119,7 @@
     <ClCompile Include="PlayMode.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Respawner.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TexCache.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="PlayMode.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Respawner.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TexCache.h" />
     <ClInclude Include="Texture.h" />

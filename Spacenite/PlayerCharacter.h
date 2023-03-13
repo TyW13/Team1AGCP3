@@ -10,52 +10,42 @@ class ResourceManager;
 class PlayerCharacter : public GameObject
 {
 public:
-	PlayerCharacter(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)	// Default constructor
-		: GameObject(d3d, objTex, position, scale, active, tileRect, collisionBounds, objnum), objSprite(d3d)
+	PlayerCharacter(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, Vector2 objSize, std::string objType, bool isCollidable, RECTF objRect = { .0f,.0f ,.0f ,.0f })	// Default constructor
+		: GameObject(d3d, objTex, position, scale, active, objSize, objType, isCollidable, objRect), objSprite(d3d)
 	{
-		Init(objTex, position, scale, active, tileRect, collisionBounds, objnum);
+		Init(objTex, position, scale, active, objSize, objType, isCollidable, objRect);
 	}
 
-	void Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum) override;
-	void Update(float dTime, ResourceManager& rManager) override;
+	void Init(Texture* _tex, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, Vector2 _objSize, std::string _objType, bool _isCollidable, RECTF _objRect = { .0f,.0f ,.0f ,.0f }) override;
+	void Update(MyD3D& d3d, float dTime, ResourceManager& rManager) override;
 	void Terminate();
 
-	Sprite GetSprite() override;
-	bool GetActive() override;
-	void SetSprite(Sprite _sprite) override;
-	void SetActive(bool _isActive) override;
+	void RespawnPlayer(Vector2 spawnPos);
 
+	Sprite GetSprite() override;
+	bool GetActive();
+	Vector2 GetObjectSize() override { return objSize; }
+	bool GetIsCollidable() override { return isCollidable; }
 	RECTF GetPlayerCollisionBounds() { return collisionPlayerRect; }
 
+
+	void SetSprite(Sprite _sprite) override;
+	void SetActive(bool _isActive) override;
+	void SetObjectSize(Vector2 _objSize) override;
+	void SetIsCollidable(bool _isCollidable) override;
 private:
-	bool isActive;
 	Sprite objSprite;
+	bool isActive;
+	Vector2 objSize;
+	std::string objType;
+	bool isCollidable;
 
-	// Collision functions
-	bool PointVsRect(const Vector2& point, const RECTF& rect)											// Return true if point is inside rect
-	{
-		return(point.x >= rect.left &&
-			point.y >= rect.top &&
-			point.x < rect.right&&
-			point.y < rect.bottom);
-	}
-	bool RectVsRect(const RECTF& r1, const RECTF& r2)													// Returns true if any part of rect1 and rect2 intersect
-	{
-		return(r1.left <= r2.right &&
-			r1.top <= r2.bottom &&
-			r1.right > r2.left &&
-			r1.bottom > r2.top);
-	}
-
-	void CheckCollision(ResourceManager& rManager, float dTime);
+	void CheckCollision(MyD3D& d3d, ResourceManager& rManager, float dTime);
 	bool collidedTop = false;
 	bool collidedBottom = false;
 	bool collidedLeft = false;
 	bool collidedRight = false;
 	RECTF collisionPlayerRect;
-
-	Vector2 playerSize;
-	Vector2 collisionDimensions;
 
 	// KACPER STUFF
 	//------ movement variables

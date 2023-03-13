@@ -4,6 +4,7 @@
 #include <string>
 #include "Texture.h"
 #include "newGameObject.h"
+#include "Respawner.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
@@ -20,7 +21,7 @@ class Layer
 public:
 	Layer() {}
 	Layer(Value& value);
-	~Layer() {}
+	~Layer(){}
 
 	std::vector<int> GetData() { return data; }
 	std::string GetName() { return name; }
@@ -33,6 +34,7 @@ public:
 	bool IsVisible() { return visible; }
 	int GetX() { return x; }
 	int GetY() { return y; }
+
 private:
 	std::vector<int> data;
 	std::string name;
@@ -125,6 +127,7 @@ public:
 	Texture* GetTexture(const std::string& tName);									// Getter for pointer to texture object in m_Textures vector
 	std::string SetTexName(std::string path);										// Used to remove unneeded parts of texture path to get the images file name
 
+	int GetCurrentMapNum() { return currentMapNum; }
 	Map* GetCurrentMap()															// Getter for map object using currentMapNum set elsewhere
 	{ 
 		return m_Levels[currentMapNum]; 
@@ -141,14 +144,17 @@ public:
 	void LoadPreviousZone(MyD3D& d3d);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 	GameObject* GetGameObject(int objNum) { return m_gObjects[objNum]; }
+	std::vector<GameObject*> GetObjects() { return m_gObjects; }
 	std::vector<Tile*> GetTiles() { return m_Tiles; }
+	Respawner* GetCurrentSpawner() { return currentSpawner; }
 
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::map<std::string, Texture*> m_Textures;										// Map to store Texture object and its respective texture name string
 	std::vector<GameObject*> m_gObjects;											// Vector which will store collidable objects, reducing the collisions needing to check
 	std::vector<Tile*> m_Tiles;														// Vector to store current zone tiles
-	int currentMapNum;																
+	int currentMapNum;					
+	Respawner* currentSpawner;
 
 	int collisionWidth;
 	int collisionHeight;

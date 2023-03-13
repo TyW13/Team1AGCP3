@@ -451,7 +451,7 @@
              "name":"",
              "objects":[
                     {
-                     "class":"Spawner",
+                     "class":"Respawner",
                      "height":8,
                      "id":1,
                      "name":"",

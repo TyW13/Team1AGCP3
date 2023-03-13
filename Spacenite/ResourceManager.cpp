@@ -14,15 +14,6 @@ void ResourceManager::Init(MyD3D& d3d)
 	LoadLevelsFromFile();
 
 	ReloadMap(d3d, 0);
-	RECTF pRect;
-	pRect.left = 0.0f;
-	pRect.top = 0.0f;
-	pRect.right = 0.0f;
-	pRect.bottom = 0.0f;
-
-	PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(200, 200), Vector2(6, 6), true, pRect, Vector2(0, 0), 0);				// Creating and pushing tile objects ti m_Tiles vector
-
-	m_gObjects.emplace_back(player);
 }
 
 void ResourceManager::Update(MyD3D& d3d, float dTime)
@@ -33,7 +24,7 @@ void ResourceManager::Update(MyD3D& d3d, float dTime)
 		{
 			if (currentObj->GetActive())
 			{
-				currentObj->Update(dTime, *this);
+				currentObj->Update(d3d, dTime, *this);
 			}
 		}
 	}
@@ -300,13 +291,13 @@ void ResourceManager::LoadPreviousZone(MyD3D& d3d)
 
 void ResourceManager::UnloadZone()
 {
-	if (m_Tiles.size() > 0)
+	if (m_gObjects.size() > 0)
 	{
-		for (int i = m_Tiles.size() - 1; i >= 0; i--)
+		for (int i = m_gObjects.size() - 1; i >= 0; i--)
 		{
-			delete m_Tiles[i];
-			m_Tiles[i] = nullptr;
-			m_Tiles.pop_back();
+			delete m_gObjects[i];
+			m_gObjects[i] = nullptr;
+			m_gObjects.pop_back();
 		}
 	}
 }
@@ -328,6 +319,8 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 
 	int collisionWidth = 0;
 	int collisionHeight = 0;
+	std::string objType;
+	bool isCollidable;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -356,11 +349,29 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			tileRect.top = y1;
 			tileRect.bottom = y2;
 
-			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Line to get collision bounds width and height from tileset json
+			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
+			objType = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["class"].GetString();
+			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
 
-			Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, tileRect, Vector2(collisionWidth, collisionHeight), i);				// Creating and pushing tile objects ti m_Tiles vector
-			m_Tiles.emplace_back(newTile);
+			if (objType == "Tile")
+			{   	
+				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_gObjects.emplace_back(newTile);
+			}
+			else if (objType == "Damageable")
+			{
+				Tile* newDamageable = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_gObjects.emplace_back(newDamageable);
+			}
+			else if (objType == "Respawner")
+			{
+				currentSpawner = new Respawner(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_gObjects.emplace_back(currentSpawner);
+
+				PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(tileXPos, tileYPos - (16 * 6 + 1)), Vector2(6, 6), true, Vector2(6, 16), "Player", true);
+				m_gObjects.emplace(m_gObjects.end(), player);
+			}
 		}
 	}
 }

@@ -1,10 +1,10 @@
 #pragma once
 #include "newGameObject.h"
 
-class Tile : public GameObject
+class Respawner : public GameObject
 {
 public:
-	Tile(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, Vector2 objSize, std::string objType, bool isCollidable, RECTF objRect = { .0f,.0f ,.0f ,.0f })
+	Respawner(MyD3D& d3d, Texture* objTex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, Vector2 objSize, std::string objType, bool isCollidable, RECTF objRect = { .0f,.0f ,.0f ,.0f })
 		: GameObject(d3d, objTex, position, scale, active, objSize, objType, isCollidable, objRect), objSprite(d3d)
 	{
 		Init(objTex, position, scale, active, objSize, objType, isCollidable, objRect);
@@ -15,7 +15,6 @@ public:
 	Sprite GetSprite() override;
 	bool GetActive();
 	Vector2 GetObjectSize() override { return objSize; }
-	virtual std::string GetObjectType() { return objType; }
 	bool GetIsCollidable() override { return isCollidable; }
 	RECTF GetCollisionBounds() { return collisionBounds; }
 

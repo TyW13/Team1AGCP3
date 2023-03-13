@@ -17,28 +17,35 @@ using namespace DirectX::SimpleMath;
 //MouseAndKeys Game::sMKIn;
 //Gamepads Game::sGamepads;
 
-void PlayerCharacter::Init(Texture* tex, Vector2 position, Vector2 scale, bool active, RECTF tileRect, Vector2 collisionBounds, int objnum)
+void PlayerCharacter::Init(Texture* _tex, Vector2 _position, Vector2 _scale, bool _active, Vector2 _objSize, std::string _objType, bool _isCollidable, RECTF _objRect)
 {
-	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), tex->GetPath(), tex->GetName(), true);
+	ID3D11ShaderResourceView* objTex = objSprite.GetD3D().GetCache().LoadTexture(&objSprite.GetD3D().GetDevice(), _tex->GetPath(), _tex->GetName(), true);
 	objSprite.SetTex(*objTex, spriteFrames[0]);
-	objSprite.SetScale(scale);
+	objSprite.SetScale(_scale);
 	objSprite.origin = Vector2(0,0);
-	isActive = active;
+	isActive = _active;
 
-	objSprite.mPos = position;
-	playerSize = { 6, 16 };
+	objSprite.mPos = _position;
+	objSize = _objSize;
+	objType = _objType;
+	isCollidable = _isCollidable;
 }
 
-void PlayerCharacter::Update(float dTime, ResourceManager& rManager)
+void PlayerCharacter::Update(MyD3D& d3d, float dTime, ResourceManager& rManager)
 {
 	collisionPlayerRect.left = objSprite.mPos.x;																			// Setting values of rect for player current position
-	collisionPlayerRect.right = objSprite.mPos.x + playerSize.x * abs(objSprite.GetScale().x);								//
+	collisionPlayerRect.right = objSprite.mPos.x + objSize.x * abs(objSprite.GetScale().x);								//
 	collisionPlayerRect.top = objSprite.mPos.y;																				//
-	collisionPlayerRect.bottom = objSprite.mPos.y + playerSize.y * abs(objSprite.GetScale().y);								//
+	collisionPlayerRect.bottom = objSprite.mPos.y + objSize.y * abs(objSprite.GetScale().y);								//
+
+	if (!collidedTop)
+	{
+		grounded = false;
+	}
 
 	UpdateInput(dTime);
 
-	CheckCollision(rManager, dTime);
+	CheckCollision(d3d, rManager, dTime);
 
 	UpdateAnimation(dTime);
 }
@@ -356,9 +363,14 @@ void PlayerCharacter::UpdateAnimation(float dTime)
 	}
 }
 
-void PlayerCharacter::CheckCollision(ResourceManager& rManager, float dTime)
+void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, float dTime)
 {
-	float maxVel = 1.8f;																// 
+	collidedTop = false;
+	collidedBottom = false;
+	collidedLeft = false;
+	collidedRight = false;
+
+	float maxVel = 1.5f;																// 
 	if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
 	{
 		currentVel.x = maxVel / dTime;
@@ -381,71 +393,82 @@ void PlayerCharacter::CheckCollision(ResourceManager& rManager, float dTime)
 	RECTF nextPosRect = RECTF{																						// Rect for players future position
 		nextPos.x,
 		nextPos.y,
-		nextPos.x + playerSize.x * abs(objSprite.GetScale().x),														// Issue with player rect (right) being equal to current anim frames
-		nextPos.y + playerSize.y * abs(objSprite.GetScale().y) };													// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
+		nextPos.x + objSize.x * abs(objSprite.GetScale().x),														// Issue with player rect (right) being equal to current anim frames
+		nextPos.y + objSize.y * abs(objSprite.GetScale().y) };													// right value (6, 12, 18, 24, 30), prob fixed with josh animation code
 
 	bool collided = false;
-	std::vector<Tile*> collidedTiles;
+	std::vector<GameObject*> gObjects;
 
-	for (Tile* tile : rManager.GetTiles())
+	for (GameObject* gObject : rManager.GetObjects())
 	{
-		if (nextPosRect.left <= tile->GetCollisionBounds().right &&
-			nextPosRect.right >= tile->GetCollisionBounds().left &&
-			nextPosRect.top <= tile->GetCollisionBounds().bottom &&
-			nextPosRect.bottom >= tile->GetCollisionBounds().top)
+		if (nextPosRect.left <= gObject->GetCollisionBounds().right &&
+			nextPosRect.right >= gObject->GetCollisionBounds().left &&
+			nextPosRect.top <= gObject->GetCollisionBounds().bottom &&
+			nextPosRect.bottom >= gObject->GetCollisionBounds().top)
 		{
-			collidedTiles.emplace_back(tile);
+			gObjects.emplace_back(gObject);
 		}
 	}
 
 	float collisionPosOffset = 1;																															// Value to offset player by when they collide with an object
-	for (Tile* tile : collidedTiles)
+	for (GameObject* obj : gObjects)
 	{
-		if (collisionPlayerRect.bottom < tile->GetCollisionBounds().top && nextPosRect.bottom >= tile->GetCollisionBounds().top && !collidedTop)			// Collided from top, moving down
+		if (obj->GetObjectType() == "Tile")
 		{
-			objSprite.mPos.y = tile->GetCollisionBounds().top - (playerSize.y * abs(objSprite.GetScale().y) + collisionPosOffset);							// Setting position to just outside tile
-			objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+			if (collisionPlayerRect.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)			// Collided from top, moving down
+			{
+				objSprite.mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(objSprite.GetScale().y) + collisionPosOffset);							// Setting position to just outside obj
+				objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
 
-			collided = true;
-			collidedTop = true;
-			grounded = true;
-			fired = false;
+				collided = true;
+				collidedTop = true;
+				grounded = true;
+				fired = false;
+			}
+			else if (collisionPlayerRect.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	// Collided from bottom, moving up
+			{
+				objSprite.mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		// Setting position to just outside obj
+				objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+
+				collided = true;
+				collidedBottom = true;
+			}
+			if (collisionPlayerRect.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			// Collided from left, moving right
+			{
+				objSprite.mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(objSprite.GetScale().x) + collisionPosOffset);							// Setting position to just outside obj
+				objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+
+				collided = true;
+				collidedLeft = true;
+			}
+			else if (collisionPlayerRect.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+			{
+				objSprite.mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		// Setting position to just outside tile
+				objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+
+				collided = true;
+				collidedRight = true;
+			}
 		}
-		else if (collisionPlayerRect.top > tile->GetCollisionBounds().bottom && nextPosRect.top <= tile->GetCollisionBounds().bottom && !collidedBottom)	// Collided from bottom, moving up
-		{
-			objSprite.mPos.y = tile->GetCollisionBounds().bottom + collisionPosOffset;																		// Setting position to just outside tile
-			objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
 
-			collided = true;
-			collidedBottom = true;
-		}
-		if (collisionPlayerRect.right < tile->GetCollisionBounds().left && nextPosRect.right >= tile->GetCollisionBounds().left && !collidedLeft)			// Collided from left, moving right
+		else if (obj->GetObjectType() == "Damageable")
 		{
-			objSprite.mPos.x = tile->GetCollisionBounds().left - (playerSize.x * abs(objSprite.GetScale().x) + collisionPosOffset);							// Setting position to just outside tile
-			objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
-
-			collided = true;
-			collidedLeft = true;
-		}
-		else if (collisionPlayerRect.left > tile->GetCollisionBounds().right && nextPosRect.left <= tile->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
-		{
-			objSprite.mPos.x = tile->GetCollisionBounds().right + collisionPosOffset;																		// Setting position to just outside tile
-			objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
-
-			collided = true;
-			collidedRight = true;
+			//Vector2 currentSpawnerPos = rManager.GetCurrentSpawner()->GetSprite().mPos;											// Gets position of current spawn point in zone
+			//RespawnPlayer({ currentSpawnerPos.x, currentSpawnerPos.y - (objSize.y + collisionPosOffset) });
+			rManager.ReloadMap(d3d, rManager.GetCurrentMapNum());
 		}
 	}
-
-	collidedTop = false;
-	collidedBottom = false;
-	collidedLeft = false;
-	collidedRight = false;
 
 	if (!collided)																																			// If player didnt collide with anything
 	{
 		objSprite.mPos += currentVel * dTime;
 	}
+}
+
+void PlayerCharacter::RespawnPlayer(Vector2 spawnPos)
+{
+	currentVel = { 0,0 };
+	objSprite.mPos = spawnPos;
 }
 
 Sprite PlayerCharacter::GetSprite()
@@ -466,4 +489,14 @@ void PlayerCharacter::SetSprite(Sprite _sprite)
 void PlayerCharacter::SetActive(bool _isActive)
 {
 	isActive = _isActive;
+}
+
+void PlayerCharacter::SetObjectSize(Vector2 _objSize)
+{
+	objSize = _objSize;
+}
+
+void PlayerCharacter::SetIsCollidable(bool _isCollidable)
+{
+	isCollidable = _isCollidable;
 }

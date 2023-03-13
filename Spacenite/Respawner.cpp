@@ -1,6 +1,6 @@
-#include "Tile.h"
+#include "Respawner.h"
 
-void Tile::Init(Texture* _tex, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, Vector2 _objSize, std::string _objType, bool _isCollidable, RECTF _objRect)
+void Respawner::Init(Texture* _tex, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, Vector2 _objSize, std::string _objType, bool _isCollidable, RECTF _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
@@ -27,32 +27,32 @@ void Tile::Init(Texture* _tex, DirectX::SimpleMath::Vector2 _position, DirectX::
 	collisionBounds.bottom = objSprite.mPos.y + objSize.y * _scale.y;
 }
 
-Sprite Tile::GetSprite()
+Sprite Respawner::GetSprite()
 {
 	return objSprite;
 }
 
-bool Tile::GetActive()
+bool Respawner::GetActive()
 {
 	return isActive;
 }
 
-void Tile::SetSprite(Sprite _sprite)
+void Respawner::SetSprite(Sprite _sprite)
 {
 	objSprite = _sprite;
 }
 
-void Tile::SetActive(bool _isActive)
+void Respawner::SetActive(bool _isActive)
 {
 	isActive = _isActive;
 }
 
-void Tile::SetObjectSize(Vector2 _objSize)
+void Respawner::SetObjectSize(Vector2 _objSize)
 {
 	objSize = _objSize;
 }
 
-void Tile::SetIsCollidable(bool _isCollidable)
+void Respawner::SetIsCollidable(bool _isCollidable)
 {
 	isCollidable = _isCollidable;
 }
