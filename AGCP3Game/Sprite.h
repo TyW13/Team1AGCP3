@@ -84,6 +84,10 @@ private:
     UINT m_indexBufferSize;
     ID3D12GraphicsCommandList* m_commandList;
 
+    // Descriptor heap for the SRV
+    ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
+    UINT m_descriptorSize;
+
     ComPtr<ID3D12Resource> m_texture;
     ComPtr<ID3D12Resource> m_textureUploadHeap;
     ComPtr<ID3D12DescriptorHeap> m_srvHeap;

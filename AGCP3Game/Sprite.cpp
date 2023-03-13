@@ -279,54 +279,73 @@ void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* comm
 
 ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstring& filePath)
 {
-    ComPtr<ID3D12Resource> textureResource;
-    DirectX::TexMetadata textureMetadata;
-    DirectX::ScratchImage textureData;
-    HRESULT hr;
+    // Load texture from file
+    ComPtr<ID3D12Resource> texture = nullptr;
+    ComPtr<ID3D12Resource> textureUploadHeap = nullptr;
+    DirectX::TexMetadata metadata;
+    DirectX::ScratchImage scratchImage;
 
-    hr = DirectX::LoadFromDDSFile(filePath.c_str(), DirectX::DDS_FLAGS_NONE, &textureMetadata, textureData);
+    HRESULT hr = DirectX::LoadFromWICFile(filePath.c_str(), DirectX::WIC_FLAGS_NONE, &metadata, scratchImage);
     if (FAILED(hr))
     {
-        throw std::runtime_error("Failed to load texture from file " + std::string(filePath.begin(), filePath.end()));
+        throw std::runtime_error("Failed to load texture from file.");
     }
 
-    // Create the texture resource
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
-    CD3DX12_RESOURCE_DESC textureDesc = CD3DX12_RESOURCE_DESC::Tex2D(textureMetadata.format, textureMetadata.width, textureMetadata.height, 1, textureMetadata.mipLevels);
-    textureDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+    const DirectX::Image* image = scratchImage.GetImage(0, 0, 0);
 
-    hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &textureDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&textureResource));
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to create texture resource for " + std::string(filePath.begin(), filePath.end()));
-    }
+    // Create texture
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_RESOURCE_DESC textureDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+        metadata.format,
+        metadata.width,
+        metadata.height,
+        1, // Array size
+        static_cast<UINT16>(metadata.mipLevels),
+        1, // Sample count
+        0, // Sample quality
+        D3D12_RESOURCE_FLAG_NONE,
+        D3D12_TEXTURE_LAYOUT_UNKNOWN,
+        0 // Alignment
+    );
 
-    // Create the texture upload heap
-    ComPtr<ID3D12Resource> textureUploadHeap;
-    CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC uploadBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(textureData.GetPixelsSize());
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &heapProperties,
+        D3D12_HEAP_FLAG_NONE,
+        &textureDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&texture)));
 
-    hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &uploadBufferDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&textureUploadHeap));
-    if (FAILED(hr))
-    {
-        throw std::runtime_error("Failed to create texture upload heap for " + std::string(filePath.begin(), filePath.end()));
-    }
+    // Create texture upload heap
+    const UINT subresourceCount = textureDesc.DepthOrArraySize * textureDesc.MipLevels;
+    const UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture.Get(), 0, subresourceCount);
 
-    // Copy the texture data to the upload heap
-    D3D12_SUBRESOURCE_DATA textureSubresourceData = {};
-    textureSubresourceData.pData = textureData.GetPixels();
-    textureSubresourceData.RowPitch = textureData.GetPitch();
-    textureSubresourceData.SlicePitch = textureSubresourceData.RowPitch * textureMetadata.height;
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&textureUploadHeap)));
 
-    UpdateSubresources(m_commandList(), textureResource.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureSubresourceData);
+    // Copy texture data to upload heap
+    D3D12_SUBRESOURCE_DATA textureData = {};
+    textureData.pData = image->pixels;
+    textureData.RowPitch = metadata.width * GetBytesPerPixel(metadata.format);
+    textureData.SlicePitch = textureData.RowPitch * metadata.height;
 
-    // Transition the texture resource to the shader resource state
-    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-    m_commandList->ResourceBarrier(1, &transition);
+    UpdateSubresources(nullptr, texture.Get(), textureUploadHeap.Get(), 0, 0, subresourceCount, &textureData);
 
-    return textureResource;
+    // Transition texture to shader resource state
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        texture.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+    // Create shader resource view (SRV)
+    CreateSRV(device);
+
+    return texture;
 
     // Now we can load a texture by passing its file patch to the 'LoadTexture' method
     // ComPtr<ID3D12Resource> textureResource = LoadTexture(device, L"cat.dds");
@@ -334,7 +353,27 @@ ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstr
 
 void Sprite::CreateSRV(ID3D12Device* device)
 {
-  
+    // Get descriptor heap from device
+    ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+    D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+    heapDesc.NumDescriptors = 1;
+    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    DX::ThrowIfFailed(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&descriptorHeap)));
+
+    // Create shader resource view (SRV)
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = m_texture->GetDesc().Format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = m_texture->GetDesc().MipLevels;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.PlaneSlice = 0;
+    srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+    device->CreateShaderResourceView(m_texture.Get(), &srvDesc, descriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
+    // Store descriptor heap and descriptor size
+    m_descriptorHeap = descriptorHeap;
+    m_descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void Sprite::SetTexRect(const RECTF& texRect)

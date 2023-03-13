@@ -57,6 +57,8 @@ private:
 	// The command queue used for submitting rendering commands to the GPU
 	ID3D12CommandQueue* m_commandQueue;
 
+
+
 	// The render target view RTV heap used for storing render targets
 
 	ID3D12DescriptorHeap* m_rtvDescriptorHeap;
