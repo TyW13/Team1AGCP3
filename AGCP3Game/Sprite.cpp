@@ -15,34 +15,47 @@
 
 #include "Game.h"
 
-
 Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName)
 {
-    // Create vertex buffer
+    // Initialize the vertex buffer and index buffer
     CreateVertexBuffer(device);
-
-    // Create index buffer
     CreateIndexBuffer(device);
 
-    // Create texture
-    CreateTexture(device, commandList, textureFileName );
+    // Create texture resource and descriptor heap
+    CreateTexture(device, commandList, textureFileName);
+    CreateSRV(device);
 
     // Create constant buffer
-    const UINT constantBufferSize = sizeof(ConstantBuffer);
+    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(ConstantBuffer));
     DX::ThrowIfFailed(device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize),
+        &resourceDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(m_constantBuffer.GetAddressOf())));
+        IID_PPV_ARGS(&m_constantBuffer)
+    ));
 
-
+    // Map the constant buffer
     DX::ThrowIfFailed(m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
 
-    ZeroMemory(m_mappedConstantBuffer, constantBufferSize);
-    m_mappedConstantBuffer->Model = XMMatrixIdentity();
+    // Initialize the constant buffer with default values
+    XMFLOAT4X4 identity;
+    XMStoreFloat4x4(&identity, XMMatrixIdentity());
+
+    m_mappedConstantBuffer->Model = identity;
+    m_mappedConstantBuffer->ViewProjection = identity;
     m_mappedConstantBuffer->Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+}
+
+Sprite::~Sprite()
+{
+    if (m_constantBuffer)
+    {
+        m_constantBuffer->Unmap(0, nullptr);
+    }
 }
 
 // Responsible for setting the vertex buffer, index buffer, primitive topology,
