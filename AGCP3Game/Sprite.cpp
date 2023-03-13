@@ -2,8 +2,6 @@
 
 #include <DirectXTex/DirectXTex.h>
 
-
-
 #include "Renderer.h"
 #include "d3dx12.h"
 #include "pch.h"
@@ -12,9 +10,11 @@
 #include <wincodec.h>
 #include <rapidjson/rapidjson.h>
 
+
 #include "DXSample.h"
 
 #include "Game.h"
+
 
 Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName)
 {
@@ -79,13 +79,17 @@ void Sprite::Render(ID3D12GraphicsCommandList* commandList)
     commandList->DrawIndexedInstanced(m_indexBufferSize / sizeof(UINT), 1, 0, 0, 0);
 }
 
-// 
+// Update the constant buffer with the given view-projection matrix, position, size, and color
+
 void Sprite::UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color)
 {
-    // Calculate the Sprite's world matrix
-    XMMATRIX worldMatrix = XMMatrixScaling(size.x, size.y, 1.0f) * XMMatrixTranslation(position.x, position.y, 0.0f);
 
-    // Multiply the world Matrix with the view projection matrix to get the final transform
+    XMMATRIX model = XMMatrixTranslation(position.x, position.y, 0.0f) * XMMatrixScaling(size.x, size.y, 1.0f);
+
+    XMStoreFloat4x4(&m_mappedConstantBuffer->Model, XMMatrixTranspose(model));
+    XMStoreFloat4x4(&m_mappedConstantBuffer->ViewProjection, XMMatrixTranspose(XMLoadFloat4x4(&viewProjectionMatrix)));
+    m_mappedConstantBuffer->Color = color;
+
 }
 
 
@@ -93,26 +97,205 @@ void Sprite::UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const 
 void Sprite::CreateVertexBuffer(ID3D12Device* device)
 {
 
+    // Define the vertex data for the sprite
+    struct Vertex
+    {
+        XMFLOAT3 position;
+        XMFLOAT2 texCoord;
+    };
+
+    // Define the vertex buffer data layout.
+    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, position), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, textureCoordinate), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA },
+    };
+
+    Vertex vertices[] =
+    {
+        { XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(-0.5f,  0.5f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(0.5f, -0.5f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(0.5f,  0.5f, 0.0f), XMFLOAT2(1.0f, 0.0f) }
+    };
+
+    const UINT vertexBufferSize = sizeof(vertices);
+
+    // Create the vertex buffer
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&m_vertexBuffer)));
+
+    // Create the upload heap for the vertex buffer
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_vertexBufferUploadHeap)));
+
+    // Copy the vertex data to the upload heap
+    D3D12_SUBRESOURCE_DATA vertexData = {};
+    vertexData.pData = reinterpret_cast<BYTE*>(vertices);
+    vertexData.RowPitch = vertexBufferSize;
+    vertexData.SlicePitch = vertexBufferSize;
+
+    UpdateSubresources(m_commandList, m_vertexBuffer.Get(), m_vertexBufferUploadHeap.Get(), 0, 0, 1, &vertexData);
+
+    // Describe and create a vertex buffer view
+    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+    m_vertexBufferView.SizeInBytes = vertexBufferSize;
 }
 
 void Sprite::CreateIndexBuffer(ID3D12Device* device)
 {
+    // Define the indices for a square (two triangles)
+    unsigned int indices[] =
+    {
+        // Triangle 1
+        0, 1, 2,
+        // Triangle 2
+        0, 2, 3
+    };
 
+    m_indexBufferSize = sizeof(indices);
+
+    // Create the index buffer
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(m_indexBufferSize),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&m_indexBuffer)));
+
+    // Create the upload heap for the index buffer
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(m_indexBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_indexBufferUploadHeap)));
+
+    // Describe the data we want to copy to the index buffer
+    D3D12_SUBRESOURCE_DATA indexData = {};
+    indexData.pData = reinterpret_cast<BYTE*>(indices);
+    indexData.RowPitch = m_indexBufferSize;
+    indexData.SlicePitch = m_indexBufferSize;
+
+    // Copy the data to the upload heap
+    UpdateSubresources(m_commandList.Get(), m_indexBuffer.Get(), m_indexBufferUploadHeap.Get(), 0, 0, 1, &indexData);
+
+    // Transition the index buffer to the vertex buffer state
+    m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER));
+
+    // Initialize the index buffer view
+    m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
+    m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+    m_indexBufferView.SizeInBytes = m_indexBufferSize;
 }
 
 void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName)
 {
+    // Load texture from file
+    std::wstring spritePath(fileName);
+    m_texture = LoadTexture(device, spritePath);
+
+    // Create texture upload heap
+    const UINT subresourceCount = m_texture->GetDesc().MipLevels;
+    const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, subresourceCount);
+
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_textureUploadHeap)));
+
+    // Copy texture data to upload heap
+    D3D12_SUBRESOURCE_DATA textureData = {};
+    textureData.pData = m_texture->GetBufferPointer();
+    textureData.RowPitch = m_texture->GetDesc().Width * m_texture->GetDesc().Format->BytesPerPixel;
+    textureData.SlicePitch = textureData.RowPitch * m_texture->GetDesc().Height;
+    UpdateSubresources(commandList, m_texture.Get(), m_textureUploadHeap.Get(), 0, 0, subresourceCount, &textureData);
+
+    // Transition texture to shader resource state
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        m_texture.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+    commandList->ResourceBarrier(1, &barrier);
+
+    // Create shader resource view (SRV)
+    CreateSRV(device);
    
 }
 
-void Sprite::LoadTexture(ID3D12Device* device, const std::wstring& spritePath)
+ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstring& filePath)
 {
-  
+    ComPtr<ID3D12Resource> textureResource;
+    DirectX::TexMetadata textureMetadata;
+    DirectX::ScratchImage textureData;
+    HRESULT hr;
+
+    hr = DirectX::LoadFromDDSFile(filePath.c_str(), DirectX::DDS_FLAGS_NONE, &textureMetadata, textureData);
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to load texture from file " + std::string(filePath.begin(), filePath.end()));
+    }
+
+    // Create the texture resource
+    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    CD3DX12_RESOURCE_DESC textureDesc = CD3DX12_RESOURCE_DESC::Tex2D(textureMetadata.format, textureMetadata.width, textureMetadata.height, 1, textureMetadata.mipLevels);
+    textureDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+    hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &textureDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&textureResource));
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to create texture resource for " + std::string(filePath.begin(), filePath.end()));
+    }
+
+    // Create the texture upload heap
+    ComPtr<ID3D12Resource> textureUploadHeap;
+    CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC uploadBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(textureData.GetPixelsSize());
+
+    hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &uploadBufferDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&textureUploadHeap));
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to create texture upload heap for " + std::string(filePath.begin(), filePath.end()));
+    }
+
+    // Copy the texture data to the upload heap
+    D3D12_SUBRESOURCE_DATA textureSubresourceData = {};
+    textureSubresourceData.pData = textureData.GetPixels();
+    textureSubresourceData.RowPitch = textureData.GetPitch();
+    textureSubresourceData.SlicePitch = textureSubresourceData.RowPitch * textureMetadata.height;
+
+    UpdateSubresources(m_commandList.Get(), textureResource.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureSubresourceData);
+
+    // Transition the texture resource to the shader resource state
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    m_commandList->ResourceBarrier(1, &transition);
+
+    return textureResource;
+
 }
 
 void Sprite::CreateSRV(ID3D12Device* device)
 {
-
+  
 }
 
 void Sprite::SetTexRect(const RECTF& texRect)

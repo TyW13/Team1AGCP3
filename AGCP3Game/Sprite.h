@@ -44,7 +44,7 @@ public:
     void UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color);
 
 
-        // Animation Getters - added 07/03/2023
+	// Animation Getters - added 07/03/2023
 
     RECTF mTexRect;
 
@@ -65,7 +65,7 @@ private:
     void CreateVertexBuffer(ID3D12Device* device);
     void CreateIndexBuffer(ID3D12Device* device);
     void CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName);
-    void LoadTexture(ID3D12Device* device, const std::wstring& spritePath);
+    ComPtr<ID3D12Resource> LoadTexture(ID3D12Device* device, const std::wstring& filePath);
     void CreateSRV(ID3D12Device* device);
 
 private:
@@ -80,7 +80,7 @@ private:
     ComPtr<ID3D12Resource> m_indexBufferUploadHeap;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     UINT m_indexBufferSize;
-
+    ID3D12GraphicsCommandList* m_commandList;
 
     ComPtr<ID3D12Resource> m_texture;
     ComPtr<ID3D12Resource> m_textureUploadHeap;
