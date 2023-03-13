@@ -65,6 +65,7 @@ public:
 private:
     void CreateVertexBuffer(ID3D12Device* device);
     void CreateIndexBuffer(ID3D12Device* device);
+    UINT GetBytesPerPixel(DXGI_FORMAT format);
     void CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName);
     ComPtr<ID3D12Resource> LoadTexture(ID3D12Device* device, const std::wstring& filePath);
     void CreateSRV(ID3D12Device* device);

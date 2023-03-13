@@ -215,6 +215,28 @@ void Sprite::CreateIndexBuffer(ID3D12Device* device)
     m_indexBufferView.SizeInBytes = m_indexBufferSize;
 }
 
+UINT Sprite::GetBytesPerPixel(DXGI_FORMAT format)
+{
+    switch (format)
+    {
+    case DXGI_FORMAT_R8G8B8A8_UNORM:
+        return 4;
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+        return 4;
+    case DXGI_FORMAT_B8G8R8A8_UNORM:
+        return 4;
+    case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+        return 4;
+    case DXGI_FORMAT_R32G32B32A32_FLOAT:
+        return 16;
+    case DXGI_FORMAT_R16G16B16A16_FLOAT:
+        return 8;
+    default:
+        throw std::exception("Unsupported format");
+
+    }
+}
+
 void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName)
 {
     // Load texture from file
@@ -233,17 +255,14 @@ void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* comm
         nullptr,
         IID_PPV_ARGS(&m_textureUploadHeap)));
 
-    // Map the texture upload heap to get a CPU pointer to the texture data
-    CD3DX12_RANGE readRange(0, 0);
-    void* textureDataBegin = nullptr;
-    DX::ThrowIfFailed(m_textureUploadHeap->Map(0, &readRange, &textureDataBegin));
-
     // Copy texture data to upload heap
-    memcpy(textureDataBegin, m_texture->GetPixels(), uploadBufferSize);
-
-    // Unmap the texture upload heap
-    CD3DX12_RANGE writeRange(0, uploadBufferSize);
-    m_textureUploadHeap->Unmap(0, &writeRange);
+    D3D12_SUBRESOURCE_DATA textureData = {};
+    textureData.RowPitch = m_texture->GetDesc().Width * GetBytesPerPixel(m_texture->GetDesc().Format);
+    textureData.SlicePitch = textureData.RowPitch * m_texture->GetDesc().Height;
+    UINT8* textureDataBegin = nullptr;
+    DX::ThrowIfFailed(m_textureUploadHeap->Map(0, nullptr, reinterpret_cast<void**>(&textureDataBegin)));
+    UpdateSubresources(commandList, m_texture.Get(), m_textureUploadHeap.Get(), 0, 0, subresourceCount, &textureData);
+    m_textureUploadHeap->Unmap(0, nullptr);
 
     // Transition texture to shader resource state
     CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -252,11 +271,11 @@ void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* comm
         D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
     commandList->ResourceBarrier(1, &barrier);
 
-    // Create shader resource view (SRV)
-    CreateSRV(device);
-
+  
 
 }
+
+
 
 ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstring& filePath)
 {
