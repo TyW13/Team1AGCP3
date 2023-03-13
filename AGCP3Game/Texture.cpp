@@ -71,6 +71,7 @@ Texture::Texture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, c
 
 Texture::~Texture()
 {
+
 }
 
 

@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <wrl/client.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -35,6 +36,10 @@ private:
 
 	const int m_bufferCount = 2;
 	int m_currentFrameIndex;
+
+
+	DXGI_FORMAT m_depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_depthStencilBuffer; // This is the depth stencil buffer resource.
 
 	// The handle to the window that the renderer will render to
 	HWND m_hwnd;

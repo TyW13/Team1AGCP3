@@ -45,6 +45,10 @@ Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, con
     m_mappedConstantBuffer->Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+// Responsible for setting the vertex buffer, index buffer, primitive topology,
+// Descriptor heap, root signature, pipline state, shader resource view and constant buffer,
+// Calls "DrawindexedInstanced" to render the sprite on screen
+
 void Sprite::Render(ID3D12GraphicsCommandList* commandList)
 {
     // Set the vertex buffer
@@ -75,17 +79,25 @@ void Sprite::Render(ID3D12GraphicsCommandList* commandList)
     commandList->DrawIndexedInstanced(m_indexBufferSize / sizeof(UINT), 1, 0, 0, 0);
 }
 
+// 
 void Sprite::UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color)
 {
+    // Calculate the Sprite's world matrix
+    XMMATRIX worldMatrix = XMMatrixScaling(size.x, size.y, 1.0f) * XMMatrixTranslation(position.x, position.y, 0.0f);
 
+    // Multiply the world Matrix with the view projection matrix to get the final transform
 }
+
+
 
 void Sprite::CreateVertexBuffer(ID3D12Device* device)
 {
+
 }
 
 void Sprite::CreateIndexBuffer(ID3D12Device* device)
 {
+
 }
 
 void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* fileName)
@@ -100,6 +112,7 @@ void Sprite::LoadTexture(ID3D12Device* device, const std::wstring& spritePath)
 
 void Sprite::CreateSRV(ID3D12Device* device)
 {
+
 }
 
 void Sprite::SetTexRect(const RECTF& texRect)
