@@ -3,7 +3,7 @@
 #include "d3dx12.h"
 #include "pch.h"
 #include "DXSampleHelper.h"
-#include "DirectXTex.h"
+#include "DirectXTex/DirectXTex.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
 {
@@ -24,7 +24,7 @@ void Renderer::CreateDevice()
 
 void Renderer::CreateFence()
 {
-    ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+	DX::ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
 
    
 }
