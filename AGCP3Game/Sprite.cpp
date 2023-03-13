@@ -235,22 +235,47 @@ void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* comm
 
     // Copy texture data to upload heap
     D3D12_SUBRESOURCE_DATA textureData = {};
-    textureData.pData = m_texture->GetBufferPointer();
-    textureData.RowPitch = m_texture->GetDesc().Width * m_texture->GetDesc().Format->BytesPerPixel;
-    textureData.SlicePitch = textureData.RowPitch * m_texture->GetDesc().Height;
-    UpdateSubresources(commandList, m_texture.Get(), m_textureUploadHeap.Get(), 0, 0, subresourceCount, &textureData);
+    Microsoft::WRL::ComPtr<ID3D12Resource> textureUploadHeapBuffer;
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC textureDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+    DX::ThrowIfFailed(device->CreateCommittedResource(
+        &heapProp,
+        D3D12_HEAP_FLAG_NONE,
+        &textureDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&textureUploadHeapBuffer)
+    ));
+    textureUploadHeapBuffer->SetName(L"Texture Upload Heap");
 
-    // Transition texture to shader resource state
+    UINT8* textureDataBegin = nullptr;
+    CD3DX12_RANGE readRange(0, 0);
+    DX::ThrowIfFailed(textureUploadHeapBuffer->Map(0, &readRange, reinterpret_cast<void**>(&textureDataBegin)));
+    memcpy(textureDataBegin, m_texture->GetBufferPointer(), uploadBufferSize);
+    textureUploadHeapBuffer->Unmap(0, nullptr);
+
+    // Copy texture data from upload heap to texture
     CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         m_texture.Get(),
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+        D3D12_RESOURCE_STATE_COPY_DEST
+    );
+    commandList->ResourceBarrier(1, &barrier);
 
+    UpdateSubresources(commandList, m_texture.Get(), textureUploadHeapBuffer.Get(), 0, 0, subresourceCount, &textureData);
+
+    // Transition texture to shader resource state
+    barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        m_texture.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+    );
     commandList->ResourceBarrier(1, &barrier);
 
     // Create shader resource view (SRV)
     CreateSRV(device);
-   
+
+
 }
 
 ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstring& filePath)
@@ -296,7 +321,7 @@ ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstr
     textureSubresourceData.RowPitch = textureData.GetPitch();
     textureSubresourceData.SlicePitch = textureSubresourceData.RowPitch * textureMetadata.height;
 
-    UpdateSubresources(m_commandList.Get(), textureResource.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureSubresourceData);
+    UpdateSubresources(m_commandList(), textureResource.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureSubresourceData);
 
     // Transition the texture resource to the shader resource state
     CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
