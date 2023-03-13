@@ -16,6 +16,7 @@
 #include "Game.h"
 
 Sprite::Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName)
+    : m_commandList(commandList), mTexRect{}, scale{}, m_vertexBufferView{}, m_indexBufferView{}, m_indexBufferSize{}, m_mappedConstantBuffer{}
 {
     // Initialize the vertex buffer and index buffer
     CreateVertexBuffer(device);
@@ -121,7 +122,7 @@ void Sprite::CreateVertexBuffer(ID3D12Device* device)
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, position), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, textureCoordinate), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, texCoord), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA },
     };
 
     Vertex vertices[] =
@@ -204,8 +205,7 @@ void Sprite::CreateIndexBuffer(ID3D12Device* device)
     indexData.SlicePitch = m_indexBufferSize;
 
     // Copy the data to the upload heap
-    UpdateSubresources(m_commandList.Get(), m_indexBuffer.Get(), m_indexBufferUploadHeap.Get(), 0, 0, 1, &indexData);
-
+    UpdateSubresources(m_commandList, m_indexBuffer.Get(), m_indexBufferUploadHeap.Get(), 0, 0, 1, &indexData);
     // Transition the index buffer to the vertex buffer state
     m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER));
 
@@ -304,6 +304,8 @@ ComPtr<ID3D12Resource> Sprite::LoadTexture(ID3D12Device* device, const std::wstr
 
     return textureResource;
 
+    // Now we can load a texture by passing its file patch to the 'LoadTexture' method
+    // ComPtr<ID3D12Resource> textureResource = LoadTexture(device, L"cat.dds");
 }
 
 void Sprite::CreateSRV(ID3D12Device* device)
