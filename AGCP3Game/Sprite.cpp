@@ -233,43 +233,23 @@ void Sprite::CreateTexture(ID3D12Device* device, ID3D12GraphicsCommandList* comm
         nullptr,
         IID_PPV_ARGS(&m_textureUploadHeap)));
 
-    // Copy texture data to upload heap
-    D3D12_SUBRESOURCE_DATA textureData = {};
-    Microsoft::WRL::ComPtr<ID3D12Resource> textureUploadHeapBuffer;
-    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC textureDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-    DX::ThrowIfFailed(device->CreateCommittedResource(
-        &heapProp,
-        D3D12_HEAP_FLAG_NONE,
-        &textureDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&textureUploadHeapBuffer)
-    ));
-    textureUploadHeapBuffer->SetName(L"Texture Upload Heap");
-
-    UINT8* textureDataBegin = nullptr;
+    // Map the texture upload heap to get a CPU pointer to the texture data
     CD3DX12_RANGE readRange(0, 0);
-    DX::ThrowIfFailed(textureUploadHeapBuffer->Map(0, &readRange, reinterpret_cast<void**>(&textureDataBegin)));
-    memcpy(textureDataBegin, m_texture->GetBufferPointer(), uploadBufferSize);
-    textureUploadHeapBuffer->Unmap(0, nullptr);
+    void* textureDataBegin = nullptr;
+    DX::ThrowIfFailed(m_textureUploadHeap->Map(0, &readRange, &textureDataBegin));
 
-    // Copy texture data from upload heap to texture
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        m_texture.Get(),
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        D3D12_RESOURCE_STATE_COPY_DEST
-    );
-    commandList->ResourceBarrier(1, &barrier);
+    // Copy texture data to upload heap
+    memcpy(textureDataBegin, m_texture->GetPixels(), uploadBufferSize);
 
-    UpdateSubresources(commandList, m_texture.Get(), textureUploadHeapBuffer.Get(), 0, 0, subresourceCount, &textureData);
+    // Unmap the texture upload heap
+    CD3DX12_RANGE writeRange(0, uploadBufferSize);
+    m_textureUploadHeap->Unmap(0, &writeRange);
 
     // Transition texture to shader resource state
-    barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         m_texture.Get(),
         D3D12_RESOURCE_STATE_COPY_DEST,
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-    );
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
     commandList->ResourceBarrier(1, &barrier);
 
     // Create shader resource view (SRV)
