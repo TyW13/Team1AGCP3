@@ -5,7 +5,11 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <dxgi1_6.h>
+#include <memory>
 #include <wrl/client.h>
+#include "GraphicsMemory.h"
+#include "DeviceResources.h"
+#include "StepTimer.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -25,7 +29,13 @@ public:
 	Renderer(HWND hwnd, int width, int height);
 	~Renderer();
 
-	void RenderFrame();
+
+	void Initialize();
+	void Render();
+	void Tick();
+	void CreateDeviceDependentResources();
+	void Update(DX::StepTimer const& timer);
+	void Clear();
 
 private:
 	void CreateDevice();
@@ -69,6 +79,13 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
 	ConstantBuffer* m_mappedConstantBuffer;
+
+	// Old Game.h
+
+	// Device resources.
+	std::unique_ptr<DX::DeviceResources>        m_deviceResources;
+	std::unique_ptr<DirectX::GraphicsMemory>	m_graphicsMemory;
+	DX::StepTimer                               m_timer;
 
 
 	

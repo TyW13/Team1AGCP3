@@ -4,7 +4,9 @@
 #include "pch.h"
 #include "DXSampleHelper.h"
 //#include "Sprite.h"
+#include "DeviceResources.h"
 #include "DirectXTex/DirectXTex.h"
+#include "DeviceResources.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
 	: m_hwnd(hwnd), m_width(width), m_height(height), m_device(nullptr), m_swapChain(nullptr), 
@@ -23,11 +25,132 @@ Renderer::Renderer(HWND hwnd, int width, int height)
 	CreateRenderTargetView();
 	CreateDepthStencilBuffer();
 	CreateCommandAllocator();
+
+
+   
+}
+
+void Renderer::Initialize()
+{
+    // Game stuff
+
+    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
+    //   Add DX::DeviceResources::c_AllowTearing to opt-in to variable rate displays.
+    //   Add DX::DeviceResources::c_EnableHDR for HDR10 display.
+    m_deviceResources->RegisterDeviceNotify(this);
+
+    m_deviceResources->SetWindow(hwnd, width, height);
+
+    m_deviceResources->CreateDeviceResources();
+    CreateDeviceDependentResources();
+
+    m_deviceResources->CreateWindowSizeDependentResources();
+    CreateWindowSizeDependentResources();
+
 }
 
 Renderer::~Renderer()
 {
+    if (m_deviceResources)
+    {
+        m_deviceResources->WaitForGpu();
+    }
 }
+
+void Renderer::CreateDeviceDependentResources()
+{
+    auto device = m_deviceResources->GetD3DDevice();
+
+
+
+    // Check Shader Model 6 support
+    D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
+    if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)))
+        || (shaderModel.HighestShaderModel < D3D_SHADER_MODEL_6_0))
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("ERROR: Shader Model 6.0 is not supported!\n");
+#endif
+        throw std::runtime_error("Shader Model 6.0 is not supported!");
+    }
+
+    // If using the DirectX Tool Kit for DX12, uncomment this line:
+    m_graphicsMemory = std::make_unique<DirectX::GraphicsMemory>(device);
+
+
+    //m_graphicsMemory:
+
+
+
+	// Tiling a Sprite
+    m_states = std::make_unique<DirectX::CommonStates>(device);
+
+    m_resourceDescriptors = std::make_unique<DirectX::DescriptorHeap>(device,
+    Descriptors::Count);
+
+    DirectX::ResourceUploadBatch resourceUpload(device);
+
+    resourceUpload.Begin();
+
+
+    // WIC
+
+    //DX::ThrowIfFailed(
+    //    CreateWICTextureFromFile(device, resourceUpload, L"cat.png",
+    //        m_texture.ReleaseAndGetAddressOf()));
+
+    // DDS
+
+    // CAT
+
+    DX::ThrowIfFailed(
+	    DirectX::CreateDDSTextureFromFile(device, resourceUpload, L"cat.dds",
+	    m_texture.ReleaseAndGetAddressOf()));
+
+
+    DirectX::CreateShaderResourceView(device, m_texture.Get(),
+    m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
+
+    DX::ThrowIfFailed(
+	    DirectX::CreateWICTextureFromFile(device, resourceUpload, L"sunset.jpg",
+	    m_background.ReleaseAndGetAddressOf()));
+
+    // BACKGROUND
+
+    DirectX::CreateShaderResourceView(device, m_background.Get(),
+    m_resourceDescriptors->GetCpuHandle(Descriptors::Background));
+
+    DirectX::RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(),
+    m_deviceResources->GetDepthBufferFormat());
+
+    //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
+    //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
+
+    auto sampler = m_states->LinearWrap();
+    DirectX::SpriteBatchPipelineStateDescription pd(
+        rtState, nullptr, nullptr, nullptr, &sampler);
+    m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(device, resourceUpload, pd);
+
+    DirectX::XMUINT2 catSize = DirectX::GetTextureSize(m_texture.Get());
+
+    m_origin.x = float(catSize.x / 2);
+    m_origin.y = float(catSize.y / 2);
+
+    //m_origin.x = float(catSize.x * 2);
+    //m_origin.y = float(catSize.y * 2);
+
+    m_tileRect.left = catSize.x * 2;
+    m_tileRect.right = catSize.x * 6;
+    m_tileRect.top = catSize.y * 2;
+    m_tileRect.bottom = catSize.y * 6;
+
+    auto uploadResourcesFinished = resourceUpload.End(
+        m_deviceResources->GetCommandQueue());
+
+    uploadResourcesFinished.wait();
+}
+
 
 
 
@@ -210,7 +333,30 @@ void Renderer::PopulateCommandList()
     DX::ThrowIfFailed(m_commandList->Close());
 }
 
-void Renderer::RenderFrame()
+void Renderer::Tick()
+{
+    m_timer.Tick([&]()
+        {
+            Update(m_timer);
+        });
+
+    Render();
+}
+
+void Renderer::Update(DX::StepTimer const& timer)
+{
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
+
+    float elapsedTime = float(timer.GetElapsedSeconds());
+
+    // TODO: Add your game logic here.
+    elapsedTime;
+
+    PIXEndEvent();
+}
+
+
+void Renderer::Render()
 {
     PopulateCommandList();
 
@@ -223,6 +369,113 @@ void Renderer::RenderFrame()
     WaitForPreviousFrame();
 
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+
+
+
+    // Don't try to render anything before the first Update.
+    if (m_timer.GetFrameCount() == 0)
+    {
+        return;
+    }
+
+
+    // Prepare the command list to render a new frame.
+    m_deviceResources->Prepare();
+
+    auto commandList = m_deviceResources->GetCommandList();
+
+    Clear();
+
+    // Add rendering code here.
+
+    float time = float(m_timer.GetTotalSeconds());
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //// Default
+    //ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap() };
+    //commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
+
+    //m_spriteBatch->Begin(commandList);
+
+    //// Default
+    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+    //    GetTextureSize(m_texture.Get()),
+    //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    // To spin sprite for no reason
+   /* m_screenPos, nullptr, Colors::White, cosf(time) * 4.f, m_origin);*/
+
+    // To scale Sprite - using cosf to give us a time-varying value between -1 and 1
+    //m_screenPos, nullptr, Colors::White, 0.f, m_origin, cosf(time) + 2.f);
+
+    // Tinting a Sprite
+  /*  m_screenPos, nullptr, Colors::Green, 0.f, m_origin);*/
+
+    // Tile the Sprite
+
+   //ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
+   // commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
+
+   // m_spriteBatch->Begin(commandList);
+
+   // //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+   // //    GetTextureSize(m_texture.Get()),
+   // //    m_screenPos, &m_tileRect, Colors::White, 0.f, m_origin);
+
+   // // Stretch the Sprite
+
+
+   // m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+   //     GetTextureSize(m_texture.Get()),
+   //     m_stretchRect, nullptr, Colors::White);
+
+
+    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
+    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
+
+    m_spriteBatch->Begin(commandList);
+
+    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Background),
+    //    GetTextureSize(m_background.Get()),
+    //    m_fullscreenRect);
+
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+                        DirectX::GetTextureSize(m_texture.Get()),
+        m_screenPos, nullptr, DirectX::Colors::White, 0.f, m_origin);
+
+    m_spriteBatch->End();
+
+
+
+    // Show the new frame.
+    m_deviceResources->Present();
+    m_graphicsMemory->Commit(m_deviceResources->GetCommandQueue());
+}
+
+// Helper method to clear the back buffers.
+void Renderer::Clear()
+{
+    auto commandList = m_deviceResources->GetCommandList();
+    PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
+
+    // Clear the views.
+    auto const rtvDescriptor = m_deviceResources->GetRenderTargetView();
+    auto const dsvDescriptor = m_deviceResources->GetDepthStencilView();
+
+    commandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
+    commandList->ClearRenderTargetView(rtvDescriptor, DirectX::Colors::CornflowerBlue, 0, nullptr);
+    commandList->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // Set the viewport and scissor rect.
+    auto const viewport = m_deviceResources->GetScreenViewport();
+    auto const scissorRect = m_deviceResources->GetScissorRect();
+    commandList->RSSetViewports(1, &viewport);
+    commandList->RSSetScissorRects(1, &scissorRect);
+
+    PIXEndEvent(commandList);
 }
 
 void Renderer::WaitForPreviousFrame()
@@ -349,3 +602,35 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Renderer::LoadTexture(const wchar_t* file
 //        nulltptr
 //    )
 //}
+
+
+
+
+
+
+
+
+
+
+void Renderer::Initialise(HWND window, int width, int height)
+{
+    m_deviceResources->SetWindow(window, width, height);
+    m_deviceResources->CreateDeviceResources();
+
+    CreateDeviceDependentResources();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -70,6 +70,8 @@ void Game::Tick()
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
+
+
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
     float elapsedTime = float(timer.GetElapsedSeconds());
@@ -85,6 +87,10 @@ void Game::Update(DX::StepTimer const& timer)
 // Draws the scene.
 void Game::Render()
 {
+
+    
+
+
     // Don't try to render anything before the first Update.
     if (m_timer.GetFrameCount() == 0)
     {

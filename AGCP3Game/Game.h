@@ -9,6 +9,8 @@
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
 
+
+
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class Game final : public DX::IDeviceNotify
@@ -54,6 +56,8 @@ private:
     void Render();
 
     void Clear();
+
+
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
