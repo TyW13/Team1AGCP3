@@ -163,15 +163,16 @@ void Renderer::CreateCommandAllocator()
 
 void Renderer::CreateCommandList()
 {
+    DX::ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, nullptr, IID_PPV_ARGS(&m_commandList)));
     m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, nullptr, IID_PPV_ARGS(&m_commandList));
     m_commandList->Close();
-    DX::ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, nullptr, IID_PPV_ARGS(&m_commandList)));
-    DX::ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
+   
+   
 }
 
 void Renderer::PopulateCommandList()
 {
-    float clearColor[] = { 0, 0,255, 0 };
+  /*  float clearColor[] = { 0, 0,255, 0 };
     D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_commandList->ResourceBarrier(1, &barrier);
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
@@ -179,15 +180,41 @@ void Renderer::PopulateCommandList()
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     m_commandList->ResourceBarrier(1, &barrier);
-    m_commandList->Close();
+    m_commandList->Close();*/
+
+    // Reset the command list
+    DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocator, nullptr));
+
+    // Transition the render target to the correct state
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_currentFrameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    // Set the render target and depth stencil views
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_currentFrameIndex, m_rtvDescriptorSize);
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+    m_commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // Set the viewport and scissor rect
+    D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(m_width), static_cast<float>(m_height), 0.0f, 1.0f };
+    D3D12_RECT scissorRect = { 0, 0, m_width, m_height };
+    m_commandList->RSSetViewports(1, &viewport);
+    m_commandList->RSSetScissorRects(1, &scissorRect);
+
+    // Indicate that the back buffer will be used as a render target
+    m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_currentFrameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+    // Close the command list
+    DX::ThrowIfFailed(m_commandList->Close());
 }
 
 void Renderer::RenderFrame()
 {
     PopulateCommandList();
 
-    ID3D12CommandList* ppCommandLists[] = { m_commandList };
-    m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+    ID3D12CommandList* commandList[] = { m_commandList };
+    m_commandQueue->ExecuteCommandLists(_countof(commandList), commandList);
 
     m_swapChain->Present(1, 0);
     DX::ThrowIfFailed(m_swapChain->Present(1, 0));
@@ -199,15 +226,32 @@ void Renderer::RenderFrame()
 
 void Renderer::WaitForPreviousFrame()
 {
+    //// Signal and increment the fence value.
+    //const UINT64 fence = m_fenceValue;
+    //m_commandQueue->Signal(m_fence, fence);
+    //m_fenceValue++;
+
+    ////
+    //if (m_fence->GetCompletedValue() < fence)
+    //{
+    //    m_fence->SetEventOnCompletion(fence, m_fenceEvent);
+    //    WaitForSingleObject(m_fenceEvent, INFINITE);
+    //}
+
+    // Signal and increment the fence value.
     const UINT64 fence = m_fenceValue;
-    m_commandQueue->Signal(m_fence, fence);
+    DX::ThrowIfFailed(m_commandQueue->Signal(m_fence(), fence));
     m_fenceValue++;
 
+    // Wait until the previous frame is finished.
     if (m_fence->GetCompletedValue() < fence)
     {
-        m_fence->SetEventOnCompletion(fence, m_fenceEvent);
+        DX::ThrowIfFailed(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
         WaitForSingleObject(m_fenceEvent, INFINITE);
     }
+
+    // Update the frame index.
+    m_currentFrameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
 
