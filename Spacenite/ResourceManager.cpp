@@ -355,7 +355,7 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
 
 			if (objType == "Tile")
-			{   	
+			{ 
 				Tile* newTile = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_gObjects.emplace_back(newTile);
 			}
@@ -369,8 +369,20 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 				currentSpawner = new Respawner(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
 				m_gObjects.emplace_back(currentSpawner);
 
-				PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(tileXPos, tileYPos - (16 * 6 + 1)), Vector2(6, 6), true, Vector2(6, 16), "Player", true);
-				m_gObjects.emplace(m_gObjects.end(), player);
+				Vector2 playerSize{ 6,16 };
+				Vector2 playerScale{ 6,6 };
+				float collisionOffset = 1.0f;
+				PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(tileXPos, tileYPos - (playerSize.y * playerScale.y + collisionOffset)), Vector2(6, 6), true, Vector2(6, 16), "Player", true);
+				m_gObjects.emplace(m_gObjects.begin(), player);
+				//if (m_gObjects[0]->GetObjectType() != "Player")
+				//{
+				//	PlayerCharacter* player = new PlayerCharacter(d3d, GetTexture("newtest_chara_walk"), Vector2(tileXPos, tileYPos - (playerSize.y * playerScale.y + collisionOffset)), Vector2(6, 6), true, Vector2(6, 16), "Player", true);
+				//	m_gObjects.emplace(m_gObjects.begin(), player);
+				//}
+				//else if (m_gObjects[0]->GetObjectType() == "Player")
+				//{
+				//	m_gObjects[0]->GetSprite().SetPosition(Vector2(tileXPos, tileYPos - (playerSize.y * playerScale.y + collisionOffset)));
+				//}
 			}
 		}
 	}

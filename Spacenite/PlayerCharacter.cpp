@@ -68,7 +68,8 @@ void PlayerCharacter::UpdateInput(float dTime)
 		direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
 
 		//apply a jump force to the player character
-		currentVel = (direction * 1500);
+		currentVel.x = (direction.x * SHOTGUN_JUMP_VEL_X);
+		currentVel.y = (direction.y * SHOTGUN_JUMP_VEL_Y);
 
 		fired = true;
 		grounded = false;
@@ -370,7 +371,7 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 	collidedLeft = false;
 	collidedRight = false;
 
-	float maxVel = 1.5f;																// 
+	float maxVel = 30.f;																// 
 	if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
 	{
 		currentVel.x = maxVel / dTime;
@@ -415,10 +416,12 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 	{
 		if (obj->GetObjectType() == "Tile")
 		{
+			DBOUT(objType);
 			if (collisionPlayerRect.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)			// Collided from top, moving down
 			{
-				objSprite.mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(objSprite.GetScale().y) + collisionPosOffset);							// Setting position to just outside obj
+ 				objSprite.mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(objSprite.GetScale().y) + collisionPosOffset);							// Setting position to just outside obj
 				objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+				currentVel.y = 0;
 
 				collided = true;
 				collidedTop = true;
@@ -429,6 +432,7 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 			{
 				objSprite.mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		// Setting position to just outside obj
 				objSprite.mPos.x += currentVel.x * dTime;																										// Only adding velocity on non colliding axis
+				currentVel.y = 0;
 
 				collided = true;
 				collidedBottom = true;
@@ -437,6 +441,7 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 			{
 				objSprite.mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(objSprite.GetScale().x) + collisionPosOffset);							// Setting position to just outside obj
 				objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+				currentVel.x = 0;
 
 				collided = true;
 				collidedLeft = true;
@@ -445,6 +450,7 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 			{
 				objSprite.mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		// Setting position to just outside tile
 				objSprite.mPos.y += currentVel.y * dTime;																										// Only adding velocity on non colliding axis
+				currentVel.x = 0;
 
 				collided = true;
 				collidedRight = true;

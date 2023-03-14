@@ -118,13 +118,16 @@ public:
 		assert(mpTex);
 		return *mpTex;
 	}
+	void SetPosition(const DirectX::SimpleMath::Vector2 p) {
+		mPos = p;
+	}
 	void SetScale(const DirectX::SimpleMath::Vector2& s) {
 		scale = s;
 	}
 	const DirectX::SimpleMath::Vector2& GetScale() const {
 		return scale;
 	}
-	DirectX::SimpleMath::Vector2 GetScreenSize() const {
+	DirectX::SimpleMath::Vector2& GetScreenSize() const {
 		assert(mpTexData);
 		return scale * mpTexData->dim;
 	}

@@ -58,12 +58,14 @@ private:
 	DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
 	DirectX::SimpleMath::Vector2 direction = direction.Zero;
 
-	const float MAX_JUMP_VEL = 400;
+	const float SHOTGUN_JUMP_VEL_X = 2000;
+	const float SHOTGUN_JUMP_VEL_Y = 2000;
+	const float MAX_JUMP_VEL = 700;
 	const float MIN_JUMP_VEL = MAX_JUMP_VEL / 2;
 	const float CLIMB_VEL = 170;
 	const float SLIDE_DOWN_VEL = 80;
-	const float GRAVITY = 300;
-	const float PLAYER_SPEED = 350;
+	const float GRAVITY = 650;
+	const float PLAYER_SPEED = 450;
 	const float DRAG_X = 0.985;				//for deceleration in x-axis on the ground
 	const float DRAG_X_IN_AIR = 0.994;				//for deceleration in x-axis in air
 	const float	DRAG_Y = 0.990;				//for deceleration in y-axis
