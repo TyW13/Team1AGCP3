@@ -92,7 +92,7 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     PIXEndEvent();
 }
 #pragma endregion
-
+/////
 #pragma region Frame Render
 // Draws the scene.
 void GameRenderer::Render()
