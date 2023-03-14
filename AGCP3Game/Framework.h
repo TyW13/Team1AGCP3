@@ -15,6 +15,8 @@ public:
 	void Initizialise();
 	void Update(float elapsedTime);
 
+	void Terminate();
+
 
 
 private:

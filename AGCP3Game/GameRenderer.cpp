@@ -264,7 +264,7 @@ void GameRenderer::CreateDeviceDependentResources()
     // CAT
 
     DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, resourceUpload, L"cat.dds",
+        CreateDDSTextureFromFile(device, resourceUpload, L"Data/cat.dds",
             m_texture.ReleaseAndGetAddressOf()));
 
 
@@ -272,7 +272,7 @@ void GameRenderer::CreateDeviceDependentResources()
         m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
 
     DX::ThrowIfFailed(
-        CreateWICTextureFromFile(device, resourceUpload, L"sunset.jpg",
+        CreateWICTextureFromFile(device, resourceUpload, L"Data/sunset.jpg",
             m_background.ReleaseAndGetAddressOf()));
 
     // BACKGROUND

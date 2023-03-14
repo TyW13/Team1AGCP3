@@ -10,6 +10,7 @@ void Framework::Update(float elapsedTime)
 
 }
 
-// todo
-
-//
+void Framework::Terminate()
+{
+	
+}
