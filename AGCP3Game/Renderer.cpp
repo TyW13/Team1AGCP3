@@ -6,8 +6,21 @@
 #include "DirectXTex/DirectXTex.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
+    : m_hwnd(hwnd), m_width(width), m_height(height), m_device(nullptr), m_swapChain(nullptr),
+    m_commandQueue(nullptr), m_rtvDescriptorHeap(nullptr), m_dsvDescriptorHeap(nullptr),
+    m_commandAllocator(nullptr), m_commandList(nullptr), m_frameIndex(0), m_fenceEvent(nullptr),
+    m_fence(nullptr), m_fenceValue(0), m_backBufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
+    m_backBufferCount(2), m_rtvDescriptorSize(0), m_currentFrameIndex(0)
 {
-
+    CreateDevice();
+    CreateFence();
+    CreateCommandQueue();
+    CreateCommandList();
+    CreateSwapChain();
+    CreateDescriptorHeaps();
+    CreateRenderTargetView();
+    CreateDepthStencilBuffer();
+    CreateCommandAllocator();
 }
 
 Renderer::~Renderer()

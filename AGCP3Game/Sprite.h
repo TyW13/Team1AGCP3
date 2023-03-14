@@ -40,7 +40,7 @@ class Sprite
 {
 public:
     Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName);
- /*   ~Sprite();*/
+    ~Sprite();
     void Render(ID3D12GraphicsCommandList* commandList);
     void UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color);
 
@@ -60,15 +60,7 @@ public:
     const DirectX::SimpleMath::Vector2& GetScale() const {
         return scale;
     }
-    void CheckConstantBuffer()
-    {
-        if (m_constantBuffer)
-    {
-        m_constantBuffer->Unmap(0, nullptr);
-    }
-    }
-    ////////////////////////////
-    
+ 
 private:
     void CreateVertexBuffer(ID3D12Device* device);
     void CreateIndexBuffer(ID3D12Device* device);

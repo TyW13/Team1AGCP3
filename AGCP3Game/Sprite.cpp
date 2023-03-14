@@ -3,9 +3,9 @@
 #include <DirectXTex/DirectXTex.h>
 
 #include "Renderer.h"
-#include "d3dx12.h"
+//#include "d3dx12.h"
 #include "pch.h"
-#include "d3d12.h"
+//#include "d3d12.h"
 #include <filesystem>
 #include <wincodec.h>
 #include <rapidjson/rapidjson.h>
