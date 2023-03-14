@@ -40,7 +40,7 @@ class Sprite
 {
 public:
     Sprite(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const wchar_t* textureFileName);
-    ~Sprite();
+ /*   ~Sprite();*/
     void Render(ID3D12GraphicsCommandList* commandList);
     void UpdateConstantBuffer(const XMFLOAT4X4& viewProjectionMatrix, const XMFLOAT2& position, const XMFLOAT2& size, const XMFLOAT4& color);
 
@@ -60,7 +60,14 @@ public:
     const DirectX::SimpleMath::Vector2& GetScale() const {
         return scale;
     }
-
+    void CheckConstantBuffer()
+    {
+        if (m_constantBuffer)
+    {
+        m_constantBuffer->Unmap(0, nullptr);
+    }
+    }
+    ////////////////////////////
     
 private:
     void CreateVertexBuffer(ID3D12Device* device);
@@ -82,17 +89,20 @@ private:
     ComPtr<ID3D12Resource> m_indexBufferUploadHeap;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     UINT m_indexBufferSize;
-    ID3D12GraphicsCommandList* m_commandList;
 
     // Descriptor heap for the SRV
     ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     UINT m_descriptorSize;
+
+    // The Command List used for recording rendering commands
+    ID3D12GraphicsCommandList* m_commandList;
 
     ComPtr<ID3D12Resource> m_texture;
     ComPtr<ID3D12Resource> m_textureUploadHeap;
     ComPtr<ID3D12DescriptorHeap> m_srvHeap;
 
     ComPtr<ID3D12Resource> m_constantBuffer;
+
     ConstantBuffer* m_mappedConstantBuffer;
 };
 
