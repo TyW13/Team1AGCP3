@@ -4,8 +4,7 @@
 
 #include "stdafx.h"
 #include "pch.h"
-#include "Game.h"
-
+#include "GameRenderer.h"
 using namespace DirectX;
 
 #ifdef __clang__
@@ -26,7 +25,7 @@ extern "C"
 
 namespace
 {
-    std::unique_ptr<Game> g_game;
+    std::unique_ptr<GameRenderer> g_game;
 }
 
 LPCWSTR g_szAppName = L"Y3PROJECT3Team1";
@@ -52,7 +51,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 1;
 #endif
 
-    g_game = std::make_unique<Game>();
+    g_game = std::make_unique<GameRenderer>();
 
     // Register class and create window
     {
@@ -126,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static bool s_fullscreen = false;
     // TODO: Set s_fullscreen to true if defaulting to fullscreen.
 
-    auto game = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    auto game = reinterpret_cast<GameRenderer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
     switch (message)
     {

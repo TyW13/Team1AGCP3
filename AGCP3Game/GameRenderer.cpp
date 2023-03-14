@@ -4,13 +4,13 @@
 #include "stdafx.h"
 
 #include "pch.h"
-#include "Game.h"
+#include "GameRenderer.h"
 #include "GraphicsMemory.h"
 #include "SpriteBatch.h"
 #include "ResourceUploadBatch.h"
 //#include "DDSTextureLoader.h"
 #include "DDSTextureLoader.h"
-#include "SpriteRenderer.h"
+
 
 extern void ExitGame() noexcept;
 
@@ -19,7 +19,7 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-Game::Game() noexcept(false)
+GameRenderer::GameRenderer() noexcept(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
@@ -28,7 +28,7 @@ Game::Game() noexcept(false)
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
-Game::~Game()
+GameRenderer::~GameRenderer()
 {
     if (m_deviceResources)
     {
@@ -37,7 +37,7 @@ Game::~Game()
 }
 
 // Initialize the Direct3D resources required to run.
-void Game::Initialize(HWND window, int width, int height)
+void GameRenderer::Initialize(HWND window, int width, int height)
 {
     m_deviceResources->SetWindow(window, width, height);
 
@@ -57,7 +57,7 @@ void Game::Initialize(HWND window, int width, int height)
 
 #pragma region Frame Update
 // Executes the basic game loop.
-void Game::Tick()
+void GameRenderer::Tick()
 {
     m_timer.Tick([&]()
         {
@@ -68,7 +68,7 @@ void Game::Tick()
 }
 
 // Updates the world.
-void Game::Update(DX::StepTimer const& timer)
+void GameRenderer::Update(DX::StepTimer const& timer)
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
@@ -83,7 +83,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 #pragma region Frame Render
 // Draws the scene.
-void Game::Render()
+void GameRenderer::Render()
 {
     // Don't try to render anything before the first Update.
     if (m_timer.GetFrameCount() == 0)
@@ -126,7 +126,7 @@ void Game::Render()
 }
 
 // Helper method to clear the back buffers.
-void Game::Clear()
+void GameRenderer::Clear()
 {
     auto commandList = m_deviceResources->GetCommandList();
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
@@ -151,40 +151,40 @@ void Game::Clear()
 
 #pragma region Message Handlers
 // Message handlers
-void Game::OnActivated()
+void GameRenderer::OnActivated()
 {
     // TODO: Game is becoming active window.
 }
 
-void Game::OnDeactivated()
+void GameRenderer::OnDeactivated()
 {
     // TODO: Game is becoming background window.
 }
 
-void Game::OnSuspending()
+void GameRenderer::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
 }
 
-void Game::OnResuming()
+void GameRenderer::OnResuming()
 {
     m_timer.ResetElapsedTime();
 
     // TODO: Game is being power-resumed (or returning from minimize).
 }
 
-void Game::OnWindowMoved()
+void GameRenderer::OnWindowMoved()
 {
     auto const r = m_deviceResources->GetOutputSize();
     m_deviceResources->WindowSizeChanged(r.right, r.bottom);
 }
 
-void Game::OnDisplayChange()
+void GameRenderer::OnDisplayChange()
 {
     m_deviceResources->UpdateColorSpace();
 }
 
-void Game::OnWindowSizeChanged(int width, int height)
+void GameRenderer::OnWindowSizeChanged(int width, int height)
 {
     if (!m_deviceResources->WindowSizeChanged(width, height))
         return;
@@ -195,7 +195,7 @@ void Game::OnWindowSizeChanged(int width, int height)
 }
 
 // Properties
-void Game::GetDefaultSize(int& width, int& height) const noexcept
+void GameRenderer::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
     width = 800;
@@ -205,7 +205,7 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
-void Game::CreateDeviceDependentResources()
+void GameRenderer::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
@@ -299,7 +299,7 @@ void Game::CreateDeviceDependentResources()
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
-void Game::CreateWindowSizeDependentResources()
+void GameRenderer::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
 
@@ -319,7 +319,7 @@ void Game::CreateWindowSizeDependentResources()
     m_stretchRect.bottom = m_stretchRect.top + size.bottom / 2;
 }
 
-void Game::OnDeviceLost()
+void GameRenderer::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
 
@@ -332,7 +332,7 @@ void Game::OnDeviceLost()
     m_background.Reset();
 }
 
-void Game::OnDeviceRestored()
+void GameRenderer::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
 

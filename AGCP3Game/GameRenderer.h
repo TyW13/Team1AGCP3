@@ -11,18 +11,18 @@
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
-class Game final : public DX::IDeviceNotify
+class GameRenderer final : public DX::IDeviceNotify
 {
 public:
 
-    Game() noexcept(false);
-    ~Game();
+    GameRenderer() noexcept(false);
+    ~GameRenderer();
 
-    Game(Game&&) = default;
-    Game& operator= (Game&&) = default;
+    GameRenderer(GameRenderer&&) = default;
+    GameRenderer& operator= (GameRenderer&&) = default;
 
-    Game(Game const&) = delete;
-    Game& operator= (Game const&) = delete;
+    GameRenderer(GameRenderer const&) = delete;
+    GameRenderer& operator= (GameRenderer const&) = delete;
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
