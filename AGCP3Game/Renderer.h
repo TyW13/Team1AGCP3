@@ -3,11 +3,20 @@
 
 #include <Windows.h>
 #include <d3d12.h>
+#include <DirectXMath.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+
+struct ConstantBuffer
+{
+	DirectX::XMFLOAT4X4 Model;
+	DirectX::XMFLOAT4X4 ViewProjection;
+	DirectX::XMFLOAT4 Color;
+};
+
 
 
 class Renderer
@@ -34,6 +43,35 @@ private:
 	void PopulateCommandList();
 	void WaitForPreviousFrame();
 
+	// Render Sprite
+	void RenderSprite(const wchar_t* filename, const DirectX::XMFLOAT2& position, const DirectX::XMFLOAT2& scale);
+	Microsoft::WRL::ComPtr<ID3D12Resource> LoadTexture(const wchar_t* filename);
+
+	// Sprite related Resources
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBufferUploadHeap;
+	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+
+	Microsoft::WRL::ComPtr <ID3D12RootSignature> g_rootSignature;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_srvHeap;
+
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBufferUploadHeap;
+	D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+	UINT m_indexBufferSize;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_textureUploadHeap;
+	
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
+	ConstantBuffer* m_mappedConstantBuffer;
+
+
+	
 	const int m_bufferCount = 2;
 	int m_currentFrameIndex;
 

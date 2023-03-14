@@ -28,12 +28,12 @@ typedef struct RECTF
 } RECTF;
 
 
-struct ConstantBuffer
-{
-    XMFLOAT4X4 Model;
-    XMFLOAT4X4 ViewProjection;
-    XMFLOAT4 Color;
-};
+//struct ConstantBuffer
+//{
+//    XMFLOAT4X4 Model;
+//    XMFLOAT4X4 ViewProjection;
+//    XMFLOAT4 Color;
+//};
 
 
 class Sprite

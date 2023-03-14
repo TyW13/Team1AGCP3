@@ -3,6 +3,7 @@
 #include "d3dx12.h"
 #include "pch.h"
 #include "DXSampleHelper.h"
+//#include "Sprite.h"
 #include "DirectXTex/DirectXTex.h"
 
 Renderer::Renderer(HWND hwnd, int width, int height)
@@ -255,6 +256,89 @@ void Renderer::WaitForPreviousFrame()
 }
 
 
+
+void Renderer::RenderSprite(const wchar_t* filename, const DirectX::XMFLOAT2 & position, const DirectX::XMFLOAT2 & scale)
+{
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = m_commandList();
+
+    // Load the texture
+    Microsoft::WRL::ComPtr<ID3D12Resource> texture = LoadTexture(filename);
+
+    // Set the pipeline state object
+    commandList->SetPipelineState(m_pipelineState.Get());
+
+    // Set the vertex buffer and index buffer
+    commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+    commandList->IASetIndexBuffer(&m_indexBufferView);
+
+    // Set the texture
+    commandList->SetGraphicsRootDescriptorTable(0, m_srvHeap->GetGPUDescriptorHandleForHeapStart());
+
+    // Set the constant buffer
+    ConstantBuffer constantBufferData{};
+    /*constantBufferData.Model = 
+        DirectX::XMMatrixScaling(scale.x, scale.y, 1.0f) *
+        DirectX::XMMatrixRotationRollPitchYaw(0,0,0)    *
+        DirectX::XMMatrixTranslation(position.x, position.y, 0.0f);*/
+
+    //#TODO - Figure out how to store the XMMatrix -> XMFloat4x4
+    //XMStoreFloat4x4
+
+    //constantBufferData.ViewProjection = DirectX::XMMatrixTranspose(m_view);
+
+    //constantBufferData.Color    = DirectX::XMMatrixTranspose(m_view);
+    commandList->SetGraphicsRoot32BitConstants(1, sizeof(ConstantBuffer) / 4, &constantBufferData, 0);
+
+    // Draw the sprite
+    commandList->DrawIndexedInstanced(m_indexBufferSize / sizeof (UINT), 1, 0, 0, 0);
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> Renderer::LoadTexture(const wchar_t* filename)
+{
+    Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
+
+    // Load the texture using DirectXTex
+    DirectX::TexMetadata metadata;
+    DirectX::ScratchImage scratchImage;
+    HRESULT hr = DirectX::LoadFromWICFile(filename, DirectX::WIC_FLAGS_NONE, &metadata, scratchImage);
+    if (SUCCEEDED(hr))
+    {
+        // Create the texture resource
+        hr = m_device->CreateCommittedResource(
+            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+            D3D12_HEAP_FLAG_NONE,
+            &CD3DX12_RESOURCE_DESC::Tex2D(metadata.format, metadata.width, metadata.height, 1, 1, 1, 0, D3D12_RESOURCE_FLAG_NONE),
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_PPV_ARGS(&textureResource)
+        );
+        if (SUCCEEDED(hr))
+        {
+            // Upload the texture data to the GPU
+            Microsoft::WRL::ComPtr<ID3D12Resource> uploadResource;
+            hr = m_device->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+                D3D12_HEAP_FLAG_NONE,
+                &CD3DX12_RESOURCE_DESC::Buffer(scratchImage.GetPixelsSize()),
+                D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&uploadResource)
+            );
+            if (SUCCEEDED(hr))
+            {
+                D3D12_SUBRESOURCE_DATA textureData = {};
+                textureData.pData = scratchImage.GetPixels();
+                textureData.RowPitch = scratchImage.GetImages()->rowPitch;
+                textureData.SlicePitch = scratchImage.GetImages()->slicePitch;
+
+                UpdateSubresources(m_commandList(), textureResource.Get(), uploadResource.Get(), 0, 0, 1, &textureData);
+                m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(textureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+            }
+        }
+    }
+
+    return textureResource;
+}
 
 // Create DepthStencilBuffer
 // Create descriptor to mip level 0 of entire resource using the 
