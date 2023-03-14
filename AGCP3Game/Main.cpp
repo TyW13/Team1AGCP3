@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "pch.h"
+#include "Framework.h"
 #include "GameRenderer.h"
 using namespace DirectX;
 
@@ -126,6 +127,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // TODO: Set s_fullscreen to true if defaulting to fullscreen.
 
     auto game = reinterpret_cast<GameRenderer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
+
+
 
     switch (message)
     {

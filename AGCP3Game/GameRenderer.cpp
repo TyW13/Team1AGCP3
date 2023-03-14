@@ -8,9 +8,8 @@
 #include "GraphicsMemory.h"
 #include "SpriteBatch.h"
 #include "ResourceUploadBatch.h"
-//#include "DDSTextureLoader.h"
 #include "DDSTextureLoader.h"
-
+#include "Framework.h"
 
 extern void ExitGame() noexcept;
 
@@ -30,6 +29,8 @@ GameRenderer::GameRenderer() noexcept(false)
 
 GameRenderer::~GameRenderer()
 {
+    delete m_pFramework;
+
     if (m_deviceResources)
     {
         m_deviceResources->WaitForGpu();
@@ -39,6 +40,9 @@ GameRenderer::~GameRenderer()
 // Initialize the Direct3D resources required to run.
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
+    m_pFramework = new Framework;
+    m_pFramework->Initizialise();
+
     m_deviceResources->SetWindow(window, width, height);
 
     m_deviceResources->CreateDeviceResources();
@@ -74,8 +78,16 @@ void GameRenderer::Update(DX::StepTimer const& timer)
 
     float elapsedTime = float(timer.GetElapsedSeconds());
 
-    // TODO: Add your game logic here.
-    elapsedTime;
+    /// /////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////
+    /// This is our game logic all here!
+    /// /////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////
+    m_pFramework->Update(elapsedTime);
+    /// /////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////
+
 
     PIXEndEvent();
 }

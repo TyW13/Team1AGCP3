@@ -9,6 +9,7 @@
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
 
+class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class GameRenderer final : public DX::IDeviceNotify
@@ -47,6 +48,9 @@ public:
     void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
+    Framework* m_pFramework;
+
+
     DirectX::SpriteBatch* mpSB = nullptr;
     DirectX::SpriteFont* mpSF = nullptr;
 
