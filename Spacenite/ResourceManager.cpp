@@ -364,6 +364,11 @@ void ResourceManager::LoadZoneInfo(MyD3D& d3d, int zoneNum)
 				Tile* newDamageable = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_gObjects.emplace_back(newDamageable);
 			}
+			else if (objType == "ReloadGem")	// NOT SET UP COMPLETELY YET 
+			{
+				Tile* newReloadGem = new Tile(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_gObjects.emplace_back(newReloadGem);
+			}
 			else if (objType == "Respawner")
 			{
 				currentSpawner = new Respawner(d3d, GetTexture("test_sheet2"), Vector2(tileXPos, tileYPos), Vector2(6, 6), true, Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);

@@ -118,6 +118,7 @@
     <ClCompile Include="PlayerCharacter.cpp" />
     <ClCompile Include="PlayMode.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ReloadGem.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Respawner.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="newGameObject.h" />
     <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="PlayMode.h" />
+    <ClInclude Include="ReloadGem.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Respawner.h" />
     <ClInclude Include="Sprite.h" />

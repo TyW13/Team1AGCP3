@@ -1,6 +1,6 @@
 #include "ReloadGem.h"
 
-void ReloadGem::Init(Texture* tex, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, Vector2 objSize, std::string _objType, bool isCollidable, RECTF objRect)
+void ReloadGem::Init(Texture* _tex, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, Vector2 _objSize, std::string _objType, bool _isCollidable, RECTF _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
