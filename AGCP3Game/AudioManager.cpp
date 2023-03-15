@@ -25,9 +25,9 @@ void AudioManager::Init()
 	m_audEngine = std::make_unique<AudioEngine>(eflags);
 
 	m_explode = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/media_Explo1.wav");
+		L"Data/angry cat meow.wav");
 	m_ambient = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/media_NightAmbienceSimple_02.wav");
+		L"Data/la chanson du chat.wav");
 
 	std::random_device rd;
 	m_random = std::make_unique<std::mt19937>(rd());
@@ -46,9 +46,9 @@ void AudioManager::Update(float timer)
 	float elapsedTime = float(timer);
 
 	nightVolume += elapsedTime * nightSlide;
-	if (nightVolume < 0.f)
+	if (nightVolume < 0.2f)
 	{
-		nightVolume = 0.f;
+		nightVolume = 0.2f;
 		nightSlide = -nightSlide;
 	}
 	else if (nightVolume > 1.f)
