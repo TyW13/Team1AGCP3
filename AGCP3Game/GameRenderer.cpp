@@ -130,8 +130,6 @@ void GameRenderer::Render()
 
     m_spriteBatch->End();
 
-  
-
     // Show the new frame.
     m_deviceResources->Present();
     m_graphicsMemory->Commit(m_deviceResources->GetCommandQueue());
