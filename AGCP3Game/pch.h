@@ -28,6 +28,8 @@
 #include "VertexTypes.h"
 #include "WICTextureLoader.h"
 #include <winsdkver.h>
+#include <Audio.h>
+#include <random>
 
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0A00

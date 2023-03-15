@@ -51,6 +51,8 @@ void GameRenderer::Initialize(HWND window, int width, int height)
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
+    audio.Init();
+
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
 
@@ -77,6 +79,8 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
     float elapsedTime = float(timer.GetElapsedSeconds());
+
+    audio.Update(elapsedTime);
 
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
@@ -175,12 +179,16 @@ void GameRenderer::OnDeactivated()
 
 void GameRenderer::OnSuspending()
 {
+    audio.OnSuspending();
+
     // TODO: Game is being power-suspended (or minimized).
 }
 
 void GameRenderer::OnResuming()
 {
     m_timer.ResetElapsedTime();
+
+    audio.OnResuming();
 
     // TODO: Game is being power-resumed (or returning from minimize).
 }

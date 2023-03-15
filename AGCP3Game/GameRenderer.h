@@ -8,6 +8,7 @@
 #include "StepTimer.h"
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
+#include "AudioManager.h"
 
 class Framework;
 // A basic game implementation that creates a D3D12 device and
@@ -90,6 +91,8 @@ private:
 
     RECT m_fullscreenRect;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
+
+    AudioManager audio;
 
     enum Descriptors
     {
