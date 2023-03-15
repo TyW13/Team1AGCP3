@@ -109,6 +109,34 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     //update player core movement
     m_screenPos += currentVel * elapsedTime;
 
+    //--------- mouse
+    if (GetAsyncKeyState(VK_LBUTTON) && detectMouseClick)
+    {
+        POINT cursorPos;
+        GetCursorPos(&cursorPos);
+        mousePos.x = cursorPos.x;
+        mousePos.y = cursorPos.y;
+        
+        //playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
+
+        //calculate the direction vector from the player to the mouse click
+        direction = mousePos - m_screenPos;
+
+        //reverse the direction vector
+        direction *= -1;
+
+        //normalize the direction vector
+        direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
+
+        //apply a jump force to the player character
+        currentVel = (direction * 1500);
+
+        detectMouseClick = false;
+    }
+    if (!mouse.leftButton && !detectMouseClick)
+    {
+        detectMouseClick = true;
+    }
 
     //--------- x-axis
     //right
