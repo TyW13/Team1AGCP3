@@ -1,6 +1,6 @@
-#include "TexCache.h"
 #include <DDSTextureLoader.h>
 #include <filesystem>
+#include "TexCache.h"
 
 using namespace std;
 using namespace DirectX;
@@ -13,7 +13,7 @@ void TexCache::Release()
 	//mCache.clear();
 }
 
-ID3D11ShaderResourceView* TexCache::LoadTexture(ID3D12Device* pDevice, const std::string& fileName, const std::string& texName,
+Microsoft::WRL::ComPtr<ID3D12Resource> TexCache::LoadTexture(ID3D12Device* pDevice, const std::string& fileName, const std::string& texName,
 	bool appendPath, const vector<RECT>* frames)
 {
 	string name = texName;
@@ -39,8 +39,8 @@ ID3D11ShaderResourceView* TexCache::LoadTexture(ID3D12Device* pDevice, const std
 	std::wstring ws(pPath->begin(), pPath->end());
 	//load it
 	DDS_ALPHA_MODE alpha;
-	ID3D11ShaderResourceView* pT;
-	if (CreateDDSTextureFromFile(pDevice, ws.c_str(), nullptr, &pT, 0, &alpha) != S_OK)
+	Microsoft::WRL::ComPtr<ID3D12Resource> pT;
+	if (CreateDDSTextureFromFile(pDevice, ws.c_str(), nullptr, &pT, 0) != S_OK)
 	{
 		//DBOUT("Cannot load " << *pPath << "\n");
 		assert(false);
@@ -54,7 +54,7 @@ ID3D11ShaderResourceView* TexCache::LoadTexture(ID3D12Device* pDevice, const std
 
 //slowly find a texture by handle
 
-const TexCache::Data& TexCache::Get(ID3D11ShaderResourceView* pTex) {
+const TexCache::Data& TexCache::Get(Microsoft::WRL::ComPtr<ID3D12Resource> pTex) {
 
 	MyMap::iterator it = mCache.begin();
 	Data* p = nullptr;
@@ -68,14 +68,14 @@ const TexCache::Data& TexCache::Get(ID3D11ShaderResourceView* pTex) {
 	return *p;
 }
 
-Vector2 TexCache::GetDimensions(ID3D11ShaderResourceView* pTex)
+Vector2 TexCache::GetDimensions(Microsoft::WRL::ComPtr<ID3D12Resource> pTex)
 {
 	assert(pTex);
 	Microsoft::WRL::ComPtr<ID3D12Resource> res = nullptr;
-	pTex->GetResource(&res);
-	assert(res);
-	ID3D11Texture2D* texture2d = nullptr;
-	HRESULT hr = res->QueryInterface(&texture2d);
+	//pTex.Get(). ->GetResource(&res);
+	//assert(res);
+	ID3D12Texture2D* texture2d = nullptr;
+	HRESULT hr = pTex.Get()->QueryInterface() (&texture2d);
 	Vector2 dim(0, 0);
 	if (SUCCEEDED(hr))
 	{
