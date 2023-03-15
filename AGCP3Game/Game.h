@@ -8,6 +8,7 @@
 #include "StepTimer.h"
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
+#include "AudioManager.h"       //for audio
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
@@ -86,6 +87,8 @@ private:
 
     RECT m_fullscreenRect;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
+
+    AudioManager audio;
 
     enum Descriptors
     {
