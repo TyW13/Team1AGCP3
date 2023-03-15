@@ -6,6 +6,9 @@
 #include "pch.h"
 #include "Framework.h"
 #include "GameRenderer.h"
+#include <Windows.h>
+#include <Keyboard.h>
+#include <Mouse.h>
 //audio
 #include "AudioManager.h"
 #include <Dbt.h>
@@ -234,6 +237,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 game->OnDeactivated();
             }
         }
+        Keyboard::ProcessMessage(message, wParam, lParam);
+        Mouse::ProcessMessage(message, wParam, lParam);
         break;
 
     case WM_POWERBROADCAST:
@@ -258,6 +263,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         PostQuitMessage(0);
+        break;
+
+    case WM_SYSKEYUP:
+        Keyboard::ProcessMessage(message, wParam, lParam);
         break;
 
     case WM_SYSKEYDOWN:
@@ -290,6 +299,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             s_fullscreen = !s_fullscreen;
         }
+        Keyboard::ProcessMessage(message, wParam, lParam);
+        break;
+
+    case WM_MOUSEHOVER:
+        Mouse::ProcessMessage(message, wParam, lParam);
         break;
 
     case WM_MENUCHAR:

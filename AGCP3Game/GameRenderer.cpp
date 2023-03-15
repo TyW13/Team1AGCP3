@@ -10,6 +10,7 @@
 #include "ResourceUploadBatch.h"
 #include "DDSTextureLoader.h"
 #include "Framework.h"
+#include "Input.h"
 
 extern void ExitGame() noexcept;
 
@@ -53,6 +54,11 @@ void GameRenderer::Initialize(HWND window, int width, int height)
 
     audio.Init();
 
+    //game logic, will move later
+    m_keyboard = std::make_unique<Keyboard>();
+    m_mouse = std::make_unique<Mouse>();
+    m_mouse->SetWindow(window);
+
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
 
@@ -91,7 +97,28 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
+    
+    //game logic, will move later
+    
+    float time = float(timer.GetTotalSeconds());
 
+    //get keyboard stated
+    auto kb = m_keyboard->GetState();
+    auto mouse = m_mouse->GetState();
+
+    //update player core movement
+    m_screenPos += currentVel * time;
+
+    // Check if D button is down
+    if (kb.IsKeyDown(Keyboard::D))
+    {
+        currentVel.x = 200;
+    }
+
+    if (kb.D)
+    {
+        currentVel.x = 200;
+    }
 
     PIXEndEvent();
 }

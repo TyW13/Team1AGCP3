@@ -9,8 +9,12 @@
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
 #include "AudioManager.h"
+#include <Windows.h>
+#include <Keyboard.h>
+#include <Mouse.h>
 
 class Framework;
+class Input;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class GameRenderer final : public DX::IDeviceNotify
@@ -50,7 +54,6 @@ public:
 
 private:
     Framework* m_pFramework;
-
 
     DirectX::SpriteBatch* mpSB = nullptr;
     DirectX::SpriteFont* mpSF = nullptr;
@@ -93,6 +96,11 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
     AudioManager audio;
+
+    //game logic, will move later
+    std::unique_ptr<DirectX::Keyboard> m_keyboard;
+    std::unique_ptr<DirectX::Mouse> m_mouse;
+    DirectX::SimpleMath::Vector2 currentVel = currentVel.Zero;
 
     enum Descriptors
     {
