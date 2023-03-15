@@ -41,7 +41,7 @@ GameRenderer::~GameRenderer()
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
     m_pFramework = new Framework;
-    m_pFramework->Initizialise();
+    m_pFramework->Initialise();
 
     m_deviceResources->SetWindow(window, width, height);
 

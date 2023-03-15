@@ -12,7 +12,7 @@ class Framework
 
 
 public:
-	void Initizialise();
+	void Initialise();
 	void Update(float elapsedTime);
 
 	void Terminate();
