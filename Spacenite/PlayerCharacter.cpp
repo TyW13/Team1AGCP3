@@ -463,6 +463,11 @@ void PlayerCharacter::CheckCollision(MyD3D& d3d, ResourceManager& rManager, floa
 			//RespawnPlayer({ currentSpawnerPos.x, currentSpawnerPos.y - (objSize.y + collisionPosOffset) });
 			rManager.ReloadMap(d3d, rManager.GetCurrentMapNum());
 		}
+
+		else if (obj->GetObjectType() == "ReloadGem")				// THIS HASN'T BEEN MADE YET 
+		{
+			fired = false;		// When user collides with a reload gem in the air, it resets their shot, allowing them to fire again
+		}
 	}
 
 	if (!collided)																																			// If player didnt collide with anything
