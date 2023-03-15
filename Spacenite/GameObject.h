@@ -112,7 +112,7 @@ private:
 	const float WALL_JUMP_VEL_Y = 1500;
 	const float CLIMB_VEL		= 170;					//player climbing velocity
 	const float SLIDE_DOWN_VEL	= 80;					//sliding down velocity
-	const float GRAVITY			= 300;
+	const float GRAVITY			= 500;
 	const float PLAYER_SPEED	= 350;
 	const float DRAG_X			= 0.985;				//for deceleration in x-axis on the ground
 	const float DRAG_X_IN_AIR	= 0.994;				//for deceleration in x-axis in air
@@ -121,6 +121,7 @@ private:
 	const float LOW_JUMP_TIME	= HIGH_JUMP_TIME / 2;	//how much time it takes to do a lower jump
 
 	double elapsed_time			= 0;					//measure how much time has elapsed between starting and ending time counting
+	double elapsed_t_bouncepad	= 0;
 
 	std::string jumpType;
 	

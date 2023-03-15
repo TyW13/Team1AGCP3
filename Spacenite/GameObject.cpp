@@ -187,7 +187,7 @@ Player::Player(MyD3D& d3d)
 void Player::Init(MyD3D& mD3D)
 {
 	//load a orientate the player
-	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "test_chara_walk.dds");
+	ID3D11ShaderResourceView* p = mD3D.GetCache().LoadTexture(&mD3D.GetDevice(), "c_walk.dds");
 	character.SetTex(*p, spriteFrames[0]);
 	character.SetScale(Vector2(6.f, 6.f));
 	character.origin = Vector2(0, character.GetTexData().dim.y);
@@ -200,24 +200,33 @@ void Player::Update(float dTime, Sprite& _wallpad)
 	character.mVel += currentVel * dTime;
 	character.mPos += currentVel * dTime;
 
-	/*if (currentVel.y > -20)
-	{
-		currentVel.y += 10;
-	}
-	if (currentVel.y >= GRAVITY)
-	{
-		currentVel.y = GRAVITY;
-	}*/
 
 	UpdateInput(dTime);
 	CheckCollision();
 	UpdateAnimation(dTime);
 
-
 	if (character.mPos.x > _wallpad.mPos.x)
 	{
+		elapsed_t_bouncepad = 0;
 		character.mPos.x = _wallpad.mPos.x;
 		currentVel.x = -7*currentVel.x;
+
+		elapsed_t_bouncepad = +dTime;
+	}
+	if (elapsed_t_bouncepad > 0)
+	{
+		elapsed_t_bouncepad = +dTime;
+
+		/*if (elapsed_t_bouncepad < 0.2)
+		{
+			deactivate_A = true;
+			deactivate_D = true;
+		}
+		else
+		{
+			deactivate_A = false;
+			deactivate_D = false;
+		}*/
 	}
 }
 
@@ -433,7 +442,7 @@ void Player::UpdateAnimation(float dTime)
 		if (elapsedTime >= frameDuration)
 		{
 			currentFrame++;
-			if (currentFrame >= 5)
+			if (currentFrame >= 4)
 			{
 				currentFrame = 0;
 			}
@@ -457,9 +466,9 @@ void Player::UpdateAnimation(float dTime)
 		case 3:
 			character.SetTexRect(spriteFrames[3]);
 			break;
-		case 4:
+		/*case 4:
 			character.SetTexRect(spriteFrames[4]);
-			break;
+			break;*/
 		default:
 			character.SetTexRect(spriteFrames[0]);
 			break;
@@ -475,7 +484,7 @@ void Player::UpdateAnimation(float dTime)
 		if (elapsedTime >= frameDuration)
 		{
 			currentFrame++;
-			if (currentFrame >= 5)
+			if (currentFrame >= 4)
 			{
 				currentFrame = 0;
 			}
@@ -591,7 +600,6 @@ void WallPad::Init(MyD3D& d3d)
 
 void WallPad::Update(float dTime)
 {   
-	
 }
 
 void WallPad::Render(DirectX::SpriteBatch& batch)
