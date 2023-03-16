@@ -22,7 +22,4 @@ void d3d::OnDeviceLost()
 
 void d3d::OnDeviceRestored()
 {
-    CreateDeviceDependentResources();
-
-    CreateWindowSizeDependentResources();
 }

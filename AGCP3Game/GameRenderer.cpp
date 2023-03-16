@@ -18,7 +18,7 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-GameRenderer::GameRenderer(d3d& _mD3D) noexcept(false)
+GameRenderer::GameRenderer(NewD3D& _mD3D) noexcept(false)
     : mD3D(_mD3D)
 {
     //m_deviceResources = std::make_unique<DX::DeviceResources>();

@@ -122,6 +122,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameRenderer.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="MyD3D.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="MyD3D.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ResourceManager.cpp" />

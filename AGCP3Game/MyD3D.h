@@ -4,25 +4,26 @@
 
 #pragma once
 
-#include "MyD3D.h"
+#include "DeviceResources.h"
 #include "StepTimer.h"
+#include "SpriteBatch.h"
 #include <SpriteFont.h>
-#include "AudioManager.h"
 
-class Framework;
+
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
-class GameRenderer final : public DX::IDeviceNotify
+class NewD3D final : public DX::IDeviceNotify
 {
 public:
-    GameRenderer(NewD3D& _mD3D) noexcept(false);
-    ~GameRenderer();
 
-    GameRenderer(GameRenderer&&) = default;
-    GameRenderer& operator= (GameRenderer&&) = default;
+    NewD3D() noexcept(false);
+    ~NewD3D();
 
-    GameRenderer(GameRenderer const&) = delete;
-    GameRenderer& operator= (GameRenderer const&) = delete;
+    NewD3D(NewD3D&&) = default;
+    NewD3D& operator= (NewD3D&&) = default;
+
+    NewD3D(NewD3D const&) = delete;
+    NewD3D& operator= (NewD3D const&) = delete;
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -45,14 +46,14 @@ public:
 
     // Properties
     void GetDefaultSize(int& width, int& height) const noexcept;
-
-    //DX::DeviceResources* GetDeviceResources() { return m_deviceResources.get(); }
-    //ID3D12Device* GetDevice() { return device; }
-    //ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
-    
+    DX::DeviceResources* GetDeviceResources() { return deviceResources.get(); }
+    ID3D12Device* GetDevice() { return device; }
+    DirectX::ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
 private:
-    Framework* m_pFramework;
-
+    std::unique_ptr<DX::DeviceResources> deviceResources;
+    ID3D12Device* device;
+    std::unique_ptr<DirectX::ResourceUploadBatch> resourceUpload;
+    std::unique_ptr<DirectX::DescriptorHeap> resourceDescriptors;
 
     DirectX::SpriteBatch* mpSB = nullptr;
     DirectX::SpriteFont* mpSF = nullptr;
@@ -66,11 +67,6 @@ private:
     void CreateWindowSizeDependentResources();
 
     // Device resources.
-    NewD3D& mD3D;
-
-    //std::unique_ptr<DX::DeviceResources> m_deviceResources;
-    //ID3D12Device* device;
-    //std::unique_ptr <ResourceUploadBatch> resourceUpload;
 
     // Rendering loop timer.
     DX::StepTimer                               m_timer;
@@ -83,7 +79,6 @@ private:
     std::unique_ptr<DirectX::BasicEffect> m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
 
-    std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
@@ -98,12 +93,9 @@ private:
     RECT m_fullscreenRect;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
-    AudioManager audio;
-
     enum Descriptors
     {
         Cat,
-        Tile,
         Background,
         Count
     };

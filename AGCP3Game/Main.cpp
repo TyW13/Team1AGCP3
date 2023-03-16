@@ -6,6 +6,7 @@
 #include "pch.h"
 #include "Framework.h"
 #include "GameRenderer.h"
+#include "MyD3D.h"
 //audio
 #include "AudioManager.h"
 #include <Dbt.h>
@@ -56,7 +57,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(initialize))
         return 1;
 #endif
-    d3d mD3D;
+    //d3d mD3D;
+
+    NewD3D newD3D;
     g_game = std::make_unique<GameRenderer>(mD3D);
     HDEVNOTIFY hNewAudio = nullptr;     //audio
 
