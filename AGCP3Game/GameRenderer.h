@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include "DeviceResources.h"
+#include "d3d.h"
 #include "StepTimer.h"
-#include "SpriteBatch.h"
 #include <SpriteFont.h>
 #include "AudioManager.h"
 
@@ -16,8 +15,7 @@ class Framework;
 class GameRenderer final : public DX::IDeviceNotify
 {
 public:
-
-    GameRenderer() noexcept(false);
+    GameRenderer(d3d& _mD3D) noexcept(false);
     ~GameRenderer();
 
     GameRenderer(GameRenderer&&) = default;
@@ -48,6 +46,10 @@ public:
     // Properties
     void GetDefaultSize(int& width, int& height) const noexcept;
 
+    //DX::DeviceResources* GetDeviceResources() { return m_deviceResources.get(); }
+    //ID3D12Device* GetDevice() { return device; }
+    //ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
+    
 private:
     Framework* m_pFramework;
 
@@ -64,7 +66,11 @@ private:
     void CreateWindowSizeDependentResources();
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>        m_deviceResources;
+    d3d& mD3D;
+
+    //std::unique_ptr<DX::DeviceResources> m_deviceResources;
+    //ID3D12Device* device;
+    //std::unique_ptr <ResourceUploadBatch> resourceUpload;
 
     // Rendering loop timer.
     DX::StepTimer                               m_timer;
@@ -97,6 +103,7 @@ private:
     enum Descriptors
     {
         Cat,
+        Tile,
         Background,
         Count
     };

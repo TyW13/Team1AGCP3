@@ -18,22 +18,23 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-GameRenderer::GameRenderer() noexcept(false)
+GameRenderer::GameRenderer(d3d& _mD3D) noexcept(false)
+    : mD3D(_mD3D)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    //m_deviceResources = std::make_unique<DX::DeviceResources>();
     // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
     //   Add DX::DeviceResources::c_AllowTearing to opt-in to variable rate displays.
     //   Add DX::DeviceResources::c_EnableHDR for HDR10 display.
-    m_deviceResources->RegisterDeviceNotify(this);
+    //mD3D.GetDeviceResources()->RegisterDeviceNotify(this);
 }
 
 GameRenderer::~GameRenderer()
 {
     delete m_pFramework;
 
-    if (m_deviceResources)
+    if (mD3D.GetDeviceResources())
     {
-        m_deviceResources->WaitForGpu();
+        mD3D.GetDeviceResources()->WaitForGpu();
     }
 }
 
@@ -43,12 +44,12 @@ void GameRenderer::Initialize(HWND window, int width, int height)
     m_pFramework = new Framework;
     m_pFramework->Initialise();
 
-    m_deviceResources->SetWindow(window, width, height);
+    mD3D.GetDeviceResources()->SetWindow(window, width, height);
 
-    m_deviceResources->CreateDeviceResources();
+    //mD3D.GetDeviceResources()->CreateDeviceResources();
     CreateDeviceDependentResources();
 
-    m_deviceResources->CreateWindowSizeDependentResources();
+    mD3D.GetDeviceResources()->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
     audio.Init();
@@ -108,9 +109,9 @@ void GameRenderer::Render()
     }
 
     // Prepare the command list to render a new frame.
-    m_deviceResources->Prepare();
+    mD3D.GetDeviceResources()->Prepare();
 
-    auto commandList = m_deviceResources->GetCommandList();
+    auto commandList = mD3D.GetDeviceResources()->GetCommandList();
 
     Clear();
 
@@ -128,7 +129,11 @@ void GameRenderer::Render()
         GetTextureSize(m_background.Get()),
         m_fullscreenRect);
 
-    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
+    //    GetTextureSize(m_texture.Get()),
+    //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
+
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Tile),
         GetTextureSize(m_texture.Get()),
         m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
@@ -137,27 +142,27 @@ void GameRenderer::Render()
   
 
     // Show the new frame.
-    m_deviceResources->Present();
-    m_graphicsMemory->Commit(m_deviceResources->GetCommandQueue());
+    mD3D.GetDeviceResources()->Present();
+    m_graphicsMemory->Commit(mD3D.GetDeviceResources()->GetCommandQueue());
 }
 
 // Helper method to clear the back buffers.
 void GameRenderer::Clear()
 {
-    auto commandList = m_deviceResources->GetCommandList();
+    auto commandList = mD3D.GetDeviceResources()->GetCommandList();
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
 
     // Clear the views.
-    auto const rtvDescriptor = m_deviceResources->GetRenderTargetView();
-    auto const dsvDescriptor = m_deviceResources->GetDepthStencilView();
+    auto const rtvDescriptor = mD3D.GetDeviceResources()->GetRenderTargetView();
+    auto const dsvDescriptor = mD3D.GetDeviceResources()->GetDepthStencilView();
 
     commandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
     commandList->ClearRenderTargetView(rtvDescriptor, Colors::CornflowerBlue, 0, nullptr);
     commandList->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     // Set the viewport and scissor rect.
-    auto const viewport = m_deviceResources->GetScreenViewport();
-    auto const scissorRect = m_deviceResources->GetScissorRect();
+    auto const viewport = mD3D.GetDeviceResources()->GetScreenViewport();
+    auto const scissorRect = mD3D.GetDeviceResources()->GetScissorRect();
     commandList->RSSetViewports(1, &viewport);
     commandList->RSSetScissorRects(1, &scissorRect);
 
@@ -195,18 +200,18 @@ void GameRenderer::OnResuming()
 
 void GameRenderer::OnWindowMoved()
 {
-    auto const r = m_deviceResources->GetOutputSize();
-    m_deviceResources->WindowSizeChanged(r.right, r.bottom);
+    auto const r = mD3D.GetDeviceResources()->GetOutputSize();
+    mD3D.GetDeviceResources()->WindowSizeChanged(r.right, r.bottom);
 }
 
 void GameRenderer::OnDisplayChange()
 {
-    m_deviceResources->UpdateColorSpace();
+    mD3D.GetDeviceResources()->UpdateColorSpace();
 }
 
 void GameRenderer::OnWindowSizeChanged(int width, int height)
 {
-    if (!m_deviceResources->WindowSizeChanged(width, height))
+    if (!mD3D.GetDeviceResources()->WindowSizeChanged(width, height))
         return;
 
     CreateWindowSizeDependentResources();
@@ -227,13 +232,14 @@ void GameRenderer::GetDefaultSize(int& width, int& height) const noexcept
 // These are the resources that depend on the device.
 void GameRenderer::CreateDeviceDependentResources()
 {
-    auto device = m_deviceResources->GetD3DDevice();
-
+    //auto device = m_deviceResources->GetD3DDevice();
+    //device = std::make_unique<ID3D12Device>();
+    //device = m_deviceResources->GetD3DDevice();
 
 
     // Check Shader Model 6 support
     D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
-    if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)))
+    if (FAILED(mD3D.GetDevice()->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)))
         || (shaderModel.HighestShaderModel < D3D_SHADER_MODEL_6_0))
     {
 #ifdef _DEBUG
@@ -243,7 +249,7 @@ void GameRenderer::CreateDeviceDependentResources()
     }
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
-    m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
+    m_graphicsMemory = std::make_unique<GraphicsMemory>(mD3D.GetDevice());
 
 
 //m_graphicsMemory:
@@ -251,14 +257,15 @@ void GameRenderer::CreateDeviceDependentResources()
 
 
     // Tiling a Sprite
-    m_states = std::make_unique<CommonStates>(device);
+    m_states = std::make_unique<CommonStates>(mD3D.GetDevice());
 
-    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
+    m_resourceDescriptors = std::make_unique<DescriptorHeap>(mD3D.GetDevice(),
         Descriptors::Count);
 
-    ResourceUploadBatch resourceUpload(device);
-
-    resourceUpload.Begin();
+    //resourceUpload = std::make_unique<ResourceUploadBatch>(mD3D.GetDevice());
+    //ResourceUploadBatch rUpload(device);
+    
+    mD3D.GetResourceUpload()->Begin();
 
 
     // WIC
@@ -271,25 +278,34 @@ void GameRenderer::CreateDeviceDependentResources()
 
     // CAT
 
+    //DX::ThrowIfFailed(
+    //    CreateDDSTextureFromFile(device, resourceUpload, L"Data/cat.dds",
+    //        m_texture.ReleaseAndGetAddressOf()));
+
+
+    //CreateShaderResourceView(device, m_texture.Get(),
+    //    m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
+
+    // Tile
     DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, resourceUpload, L"Data/cat.dds",
+        CreateDDSTextureFromFile(mD3D.GetDevice(), *mD3D.GetResourceUpload(), L"Data/test_sheet2.dds",
             m_texture.ReleaseAndGetAddressOf()));
 
-
-    CreateShaderResourceView(device, m_texture.Get(),
-        m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
-
-    DX::ThrowIfFailed(
-        CreateWICTextureFromFile(device, resourceUpload, L"Data/sunset.jpg",
-            m_background.ReleaseAndGetAddressOf()));
+    DirectX::CreateShaderResourceView(mD3D.GetDevice(), m_texture.Get(),
+        m_resourceDescriptors->GetCpuHandle(Descriptors::Tile));
 
     // BACKGROUND
 
-    CreateShaderResourceView(device, m_background.Get(),
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(mD3D.GetDevice(), *mD3D.GetResourceUpload(), L"Data/sunset.jpg",
+            m_background.ReleaseAndGetAddressOf()));
+
+
+    DirectX::CreateShaderResourceView(mD3D.GetDevice(), m_background.Get(),
         m_resourceDescriptors->GetCpuHandle(Descriptors::Background));
 
-    RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(),
-        m_deviceResources->GetDepthBufferFormat());
+    RenderTargetState rtState(mD3D.GetDeviceResources()->GetBackBufferFormat(),
+        mD3D.GetDeviceResources()->GetDepthBufferFormat());
 
     //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
     //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
@@ -297,7 +313,7 @@ void GameRenderer::CreateDeviceDependentResources()
     auto sampler = m_states->LinearWrap();
     SpriteBatchPipelineStateDescription pd(
         rtState, nullptr, nullptr, nullptr, &sampler);
-    m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
+    m_spriteBatch = std::make_unique<SpriteBatch>(mD3D.GetDevice(), *mD3D.GetResourceUpload(), pd);
 
     XMUINT2 catSize = GetTextureSize(m_texture.Get());
 
@@ -312,8 +328,8 @@ void GameRenderer::CreateDeviceDependentResources()
     m_tileRect.top = catSize.y * 2;
     m_tileRect.bottom = catSize.y * 6;
 
-    auto uploadResourcesFinished = resourceUpload.End(
-        m_deviceResources->GetCommandQueue());
+    auto uploadResourcesFinished = mD3D.GetResourceUpload()->End(
+        mD3D.GetDeviceResources()->GetCommandQueue());
 
     uploadResourcesFinished.wait();
 }
@@ -323,12 +339,12 @@ void GameRenderer::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
 
-    m_fullscreenRect = m_deviceResources->GetOutputSize();
+    m_fullscreenRect = mD3D.GetDeviceResources()->GetOutputSize();
 
-    auto viewport = m_deviceResources->GetScreenViewport();
+    auto viewport = mD3D.GetDeviceResources()->GetScreenViewport();
     m_spriteBatch->SetViewport(viewport);
 
-    auto size = m_deviceResources->GetOutputSize();
+    auto size = mD3D.GetDeviceResources()->GetOutputSize();
     m_screenPos.x = float(size.right) / 2.f;
     m_screenPos.y = float(size.bottom) / 2.f;
 
