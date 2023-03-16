@@ -60,7 +60,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     //d3d mD3D;
 
     NewD3D newD3D;
-    g_game = std::make_unique<GameRenderer>(mD3D);
+    g_game = std::make_unique<GameRenderer>(newD3D);
     HDEVNOTIFY hNewAudio = nullptr;     //audio
 
     // Register class and create window
@@ -103,7 +103,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         GetClientRect(hwnd, &rc);
 
-        mD3D.Init();
+        newD3D.Init(hwnd, rc.right - rc.left, rc.bottom - rc.top);
         g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
     }
 

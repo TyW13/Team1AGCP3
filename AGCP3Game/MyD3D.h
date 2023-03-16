@@ -9,6 +9,7 @@
 #include "SpriteBatch.h"
 #include <SpriteFont.h>
 
+enum Descriptors;
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
@@ -26,45 +27,59 @@ public:
     NewD3D& operator= (NewD3D const&) = delete;
 
     // Initialization and management
-    void Initialize(HWND window, int width, int height);
-
-    // Basic game loop
-    void Tick();
+    void Init(HWND window, int width, int height);
 
     // IDeviceNotify
     void OnDeviceLost() override;
     void OnDeviceRestored() override;
 
-    // Messages
-    void OnActivated();
-    void OnDeactivated();
-    void OnSuspending();
-    void OnResuming();
-    void OnWindowMoved();
-    void OnDisplayChange();
-    void OnWindowSizeChanged(int width, int height);
+    void BeginRender();
+    void EndRender();
+
+    void CreateDeviceDependentResources();
+    void CreateWindowSizeDependentResources();
+
+    enum Descriptors
+    {
+        Cat,
+        Tile,
+        Background,
+        Count
+    };
 
     // Properties
-    void GetDefaultSize(int& width, int& height) const noexcept;
-    DX::DeviceResources* GetDeviceResources() { return deviceResources.get(); }
-    ID3D12Device* GetDevice() { return device; }
-    DirectX::ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
+    DX::DeviceResources* GetDeviceResources() { 
+        assert(deviceResources);
+        return deviceResources.get(); }
+    ID3D12Device* GetDevice() { 
+        assert(device);
+        return device; }
+    DirectX::ResourceUploadBatch* GetResourceUpload() { 
+        assert(resourceUpload);
+        return resourceUpload.get(); }
+    ID3D12GraphicsCommandList* GetCommandList() { 
+        assert(commandList);
+        return commandList; }
+    D3D12_GPU_DESCRIPTOR_HANDLE* GetSampler() { 
+        assert(sampler);
+        return sampler; }
+    DirectX::DescriptorHeap* GetResourceDescriptors() { 
+        assert(resourceDescriptors);
+        return resourceDescriptors.get(); }
+    Descriptors GetDescriptors() { 
+        assert(mDescriptors);
+        return mDescriptors; }
+
+    //enum  Descriptors GetDescriptors() { return Descriptors; }
 private:
     std::unique_ptr<DX::DeviceResources> deviceResources;
     ID3D12Device* device;
     std::unique_ptr<DirectX::ResourceUploadBatch> resourceUpload;
     std::unique_ptr<DirectX::DescriptorHeap> resourceDescriptors;
-
-    DirectX::SpriteBatch* mpSB = nullptr;
-    DirectX::SpriteFont* mpSF = nullptr;
-
-    void Update(DX::StepTimer const& timer);
-    void Render();
+    ID3D12GraphicsCommandList* commandList;
+    D3D12_GPU_DESCRIPTOR_HANDLE* sampler;
 
     void Clear();
-
-    void CreateDeviceDependentResources();
-    void CreateWindowSizeDependentResources();
 
     // Device resources.
 
@@ -79,24 +94,15 @@ private:
     std::unique_ptr<DirectX::BasicEffect> m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
 
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
-
-    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     DirectX::SimpleMath::Vector2 m_screenPos;
     DirectX::SimpleMath::Vector2 m_origin;
 
-    RECT m_tileRect;
     std::unique_ptr<DirectX::CommonStates> m_states;
 
     RECT m_stretchRect;
 
     RECT m_fullscreenRect;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
-    enum Descriptors
-    {
-        Cat,
-        Background,
-        Count
-    };
+
+    Descriptors mDescriptors;
 };

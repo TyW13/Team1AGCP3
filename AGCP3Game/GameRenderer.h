@@ -12,7 +12,7 @@
 class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
-class GameRenderer final : public DX::IDeviceNotify
+class GameRenderer final
 {
 public:
     GameRenderer(NewD3D& _mD3D) noexcept(false);
@@ -29,10 +29,6 @@ public:
 
     // Basic game loop
     void Tick();
-
-    // IDeviceNotify
-    void OnDeviceLost() override;
-    void OnDeviceRestored() override;
 
     // Messages
     void OnActivated();
@@ -51,10 +47,6 @@ public:
     //ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
     
 private:
-    Framework* m_pFramework;
-
-
-    DirectX::SpriteBatch* mpSB = nullptr;
     DirectX::SpriteFont* mpSF = nullptr;
 
     void Update(DX::StepTimer const& timer);
@@ -63,7 +55,6 @@ private:
     void Clear();
 
     void CreateDeviceDependentResources();
-    void CreateWindowSizeDependentResources();
 
     // Device resources.
     NewD3D& mD3D;
@@ -73,17 +64,12 @@ private:
     //std::unique_ptr <ResourceUploadBatch> resourceUpload;
 
     // Rendering loop timer.
-    DX::StepTimer                               m_timer;
+    DX::StepTimer m_timer;
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
-    std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
     using VertexType = DirectX::VertexPositionColor;
 
-    std::unique_ptr<DirectX::BasicEffect> m_effect;
-    std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
-
-    std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
@@ -91,11 +77,9 @@ private:
     DirectX::SimpleMath::Vector2 m_origin;
 
     RECT m_tileRect;
-    std::unique_ptr<DirectX::CommonStates> m_states;
-
     RECT m_stretchRect;
-
     RECT m_fullscreenRect;
+
     Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
     AudioManager audio;

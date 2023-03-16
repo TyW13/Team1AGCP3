@@ -6,7 +6,6 @@
 #include "pch.h"
 #include "MyD3D.h"
 #include "GraphicsMemory.h"
-#include "SpriteBatch.h"
 #include "ResourceUploadBatch.h"
 #include "Framework.h"
 
@@ -35,7 +34,7 @@ NewD3D::~NewD3D()
 }
 
 // Initialize the Direct3D resources required to run.
-void NewD3D::Initialize(HWND window, int width, int height)
+void NewD3D::Init(HWND window, int width, int height)
 {
     deviceResources->SetWindow(window, width, height);
 
@@ -45,6 +44,7 @@ void NewD3D::Initialize(HWND window, int width, int height)
     deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
+    assert(deviceResources);
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
 
@@ -53,85 +53,13 @@ void NewD3D::Initialize(HWND window, int width, int height)
 
 }
 
-#pragma region Frame Update
-// Executes the basic game loop.
-void NewD3D::Tick()
-{
-    m_timer.Tick([&]()
-        {
-            Update(m_timer);
-        });
-
-    Render();
-}
-
-// Updates the world.
-void NewD3D::Update(DX::StepTimer const& timer)
-{
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
-
-    float elapsedTime = float(timer.GetElapsedSeconds());
-
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// This is our game logic all here!
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-
-
-    PIXEndEvent();
-}
-#pragma endregion
 /////
 #pragma region Frame Render
-// Draws the scene.
-void NewD3D::Render()
-{
-    // Don't try to render anything before the first Update.
-    if (m_timer.GetFrameCount() == 0)
-    {
-        return;
-    }
-
-    // Prepare the command list to render a new frame.
-    deviceResources->Prepare();
-
-    auto commandList = deviceResources->GetCommandList();
-
-    Clear();
-
-    // Add rendering code here.
-
-    float time = float(m_timer.GetTotalSeconds());
-
-   
-    ID3D12DescriptorHeap* heaps[] = { resourceDescriptors->Heap(), m_states->Heap() };
-    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
-
-    m_spriteBatch->Begin(commandList);
-
-    m_spriteBatch->Draw(resourceDescriptors->GetGpuHandle(Descriptors::Background),
-        GetTextureSize(m_background.Get()),
-        m_fullscreenRect);
-
-    m_spriteBatch->Draw(resourceDescriptors->GetGpuHandle(Descriptors::Cat),
-        GetTextureSize(m_texture.Get()),
-        m_screenPos, nullptr, Colors::White, 0.f, m_origin);
-
-    m_spriteBatch->End();
-
-    // Show the new frame.
-    deviceResources->Present();
-    m_graphicsMemory->Commit(deviceResources->GetCommandQueue());
-}
 
 // Helper method to clear the back buffers.
 void NewD3D::Clear()
 {
-    auto commandList = deviceResources->GetCommandList();
+    commandList = deviceResources->GetCommandList();
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
 
     // Clear the views.
@@ -152,67 +80,11 @@ void NewD3D::Clear()
 }
 #pragma endregion
 
-#pragma region Message Handlers
-// Message handlers
-void NewD3D::OnActivated()
-{
-    // TODO: Game is becoming active window.
-}
-
-void NewD3D::OnDeactivated()
-{
-    // TODO: Game is becoming background window.
-}
-
-void NewD3D::OnSuspending()
-{
-    // TODO: Game is being power-suspended (or minimized).
-}
-
-void NewD3D::OnResuming()
-{
-    m_timer.ResetElapsedTime();
-
-    // TODO: Game is being power-resumed (or returning from minimize).
-}
-
-void NewD3D::OnWindowMoved()
-{
-    auto const r = deviceResources->GetOutputSize();
-    deviceResources->WindowSizeChanged(r.right, r.bottom);
-}
-
-void NewD3D::OnDisplayChange()
-{
-    deviceResources->UpdateColorSpace();
-}
-
-void NewD3D::OnWindowSizeChanged(int width, int height)
-{
-    if (!deviceResources->WindowSizeChanged(width, height))
-        return;
-
-    CreateWindowSizeDependentResources();
-
-    // TODO: Game window is being resized.
-}
-
-// Properties
-void NewD3D::GetDefaultSize(int& width, int& height) const noexcept
-{
-    // TODO: Change to desired default window size (note minimum size is 320x200).
-    width = 800;
-    height = 600;
-}
-#pragma endregion
-
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
 void NewD3D::CreateDeviceDependentResources()
 {
     device = deviceResources->GetD3DDevice();
-
-
 
     // Check Shader Model 6 support
     D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
@@ -239,12 +111,11 @@ void NewD3D::CreateDeviceDependentResources()
 
     resourceUpload = std::make_unique<DirectX::ResourceUploadBatch>(device);
 
-    resourceUpload.get()->Begin();
+    sampler = &m_states->LinearWrap();
+    //auto uploadResourcesFinished = resourceUpload.get()->End(
+    //    deviceResources->GetCommandQueue());
 
-    auto uploadResourcesFinished = resourceUpload.get()->End(
-        deviceResources->GetCommandQueue());
-
-    uploadResourcesFinished.wait();
+    //uploadResourcesFinished.wait();
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -273,10 +144,8 @@ void NewD3D::OnDeviceLost()
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
     m_graphicsMemory.reset();
-    m_texture.Reset();
     resourceDescriptors.reset();
     m_states.reset();
-    m_background.Reset();
 }
 
 void NewD3D::OnDeviceRestored()
@@ -284,5 +153,33 @@ void NewD3D::OnDeviceRestored()
     CreateDeviceDependentResources();
 
     CreateWindowSizeDependentResources();
+}
+void NewD3D::BeginRender()
+{
+    // Don't try to render anything before the first Update.
+    //if (m_timer.GetFrameCount() == 0)
+    //{
+    //    return;
+    //}
+
+    // Prepare the command list to render a new frame.
+    deviceResources->Prepare();
+
+    commandList = deviceResources->GetCommandList();
+
+    Clear();
+
+    // Add rendering code here.
+
+    float time = float(m_timer.GetTotalSeconds());
+
+
+    ID3D12DescriptorHeap* heaps[] = { resourceDescriptors->Heap(), m_states->Heap() };
+    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
+}
+void NewD3D::EndRender()
+{
+    deviceResources->Present();
+    m_graphicsMemory->Commit(deviceResources->GetCommandQueue());
 }
 #pragma endregion

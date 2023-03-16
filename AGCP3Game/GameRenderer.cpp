@@ -21,17 +21,11 @@ using Microsoft::WRL::ComPtr;
 GameRenderer::GameRenderer(NewD3D& _mD3D) noexcept(false)
     : mD3D(_mD3D)
 {
-    //m_deviceResources = std::make_unique<DX::DeviceResources>();
-    // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
-    //   Add DX::DeviceResources::c_AllowTearing to opt-in to variable rate displays.
-    //   Add DX::DeviceResources::c_EnableHDR for HDR10 display.
-    //mD3D.GetDeviceResources()->RegisterDeviceNotify(this);
+
 }
 
 GameRenderer::~GameRenderer()
 {
-    delete m_pFramework;
-
     if (mD3D.GetDeviceResources())
     {
         mD3D.GetDeviceResources()->WaitForGpu();
@@ -41,25 +35,7 @@ GameRenderer::~GameRenderer()
 // Initialize the Direct3D resources required to run.
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
-    m_pFramework = new Framework;
-    m_pFramework->Initialise();
-
-    mD3D.GetDeviceResources()->SetWindow(window, width, height);
-
-    //mD3D.GetDeviceResources()->CreateDeviceResources();
-    CreateDeviceDependentResources();
-
-    mD3D.GetDeviceResources()->CreateWindowSizeDependentResources();
-    CreateWindowSizeDependentResources();
-
     audio.Init();
-
-    // TODO: Change the timer settings if you want something other than the default variable timestep mode.
-    // e.g. for 60 FPS fixed timestep update logic, call:
-
- /*   m_timer.SetFixedTimeStep(true);
-    m_timer.SetTargetElapsedSeconds(1.0 / 60);*/
-
 }
 
 #pragma region Frame Update
@@ -88,7 +64,6 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     /// This is our game logic all here!
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
-    m_pFramework->Update(elapsedTime);
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
@@ -102,30 +77,11 @@ void GameRenderer::Update(DX::StepTimer const& timer)
 // Draws the scene.
 void GameRenderer::Render()
 {
-    // Don't try to render anything before the first Update.
-    if (m_timer.GetFrameCount() == 0)
-    {
-        return;
-    }
+    mD3D.BeginRender();
 
-    // Prepare the command list to render a new frame.
-    mD3D.GetDeviceResources()->Prepare();
+    m_spriteBatch->Begin(mD3D.GetCommandList());
 
-    auto commandList = mD3D.GetDeviceResources()->GetCommandList();
-
-    Clear();
-
-    // Add rendering code here.
-
-    float time = float(m_timer.GetTotalSeconds());
-
-   
-    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
-    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
-
-    m_spriteBatch->Begin(commandList);
-
-    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Background),
+    m_spriteBatch->Draw(mD3D.GetResourceDescriptors()->GetGpuHandle(2),
         GetTextureSize(m_background.Get()),
         m_fullscreenRect);
 
@@ -133,40 +89,13 @@ void GameRenderer::Render()
     //    GetTextureSize(m_texture.Get()),
     //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
-    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Tile),
+    m_spriteBatch->Draw(mD3D.GetResourceDescriptors()->GetGpuHandle(0),
         GetTextureSize(m_texture.Get()),
         m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
     m_spriteBatch->End();
 
-  
-
-    // Show the new frame.
-    mD3D.GetDeviceResources()->Present();
-    m_graphicsMemory->Commit(mD3D.GetDeviceResources()->GetCommandQueue());
-}
-
-// Helper method to clear the back buffers.
-void GameRenderer::Clear()
-{
-    auto commandList = mD3D.GetDeviceResources()->GetCommandList();
-    PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
-
-    // Clear the views.
-    auto const rtvDescriptor = mD3D.GetDeviceResources()->GetRenderTargetView();
-    auto const dsvDescriptor = mD3D.GetDeviceResources()->GetDepthStencilView();
-
-    commandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
-    commandList->ClearRenderTargetView(rtvDescriptor, Colors::CornflowerBlue, 0, nullptr);
-    commandList->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-    // Set the viewport and scissor rect.
-    auto const viewport = mD3D.GetDeviceResources()->GetScreenViewport();
-    auto const scissorRect = mD3D.GetDeviceResources()->GetScissorRect();
-    commandList->RSSetViewports(1, &viewport);
-    commandList->RSSetScissorRects(1, &scissorRect);
-
-    PIXEndEvent(commandList);
+    mD3D.EndRender();
 }
 #pragma endregion
 
@@ -214,7 +143,7 @@ void GameRenderer::OnWindowSizeChanged(int width, int height)
     if (!mD3D.GetDeviceResources()->WindowSizeChanged(width, height))
         return;
 
-    CreateWindowSizeDependentResources();
+    mD3D.CreateWindowSizeDependentResources();
 
     // TODO: Game window is being resized.
 }
@@ -236,6 +165,7 @@ void GameRenderer::CreateDeviceDependentResources()
     //device = std::make_unique<ID3D12Device>();
     //device = m_deviceResources->GetD3DDevice();
 
+    mD3D.CreateDeviceDependentResources();
 
     // Check Shader Model 6 support
     D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
@@ -249,18 +179,10 @@ void GameRenderer::CreateDeviceDependentResources()
     }
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
-    m_graphicsMemory = std::make_unique<GraphicsMemory>(mD3D.GetDevice());
 
 
 //m_graphicsMemory:
 
-
-
-    // Tiling a Sprite
-    m_states = std::make_unique<CommonStates>(mD3D.GetDevice());
-
-    m_resourceDescriptors = std::make_unique<DescriptorHeap>(mD3D.GetDevice(),
-        Descriptors::Count);
 
     //resourceUpload = std::make_unique<ResourceUploadBatch>(mD3D.GetDevice());
     //ResourceUploadBatch rUpload(device);
@@ -292,7 +214,7 @@ void GameRenderer::CreateDeviceDependentResources()
             m_texture.ReleaseAndGetAddressOf()));
 
     DirectX::CreateShaderResourceView(mD3D.GetDevice(), m_texture.Get(),
-        m_resourceDescriptors->GetCpuHandle(Descriptors::Tile));
+        mD3D.GetResourceDescriptors()->GetCpuHandle(Descriptors::Tile));
 
     // BACKGROUND
 
@@ -302,7 +224,7 @@ void GameRenderer::CreateDeviceDependentResources()
 
 
     DirectX::CreateShaderResourceView(mD3D.GetDevice(), m_background.Get(),
-        m_resourceDescriptors->GetCpuHandle(Descriptors::Background));
+        mD3D.GetResourceDescriptors()->GetCpuHandle(Descriptors::Background));
 
     RenderTargetState rtState(mD3D.GetDeviceResources()->GetBackBufferFormat(),
         mD3D.GetDeviceResources()->GetDepthBufferFormat());
@@ -310,9 +232,8 @@ void GameRenderer::CreateDeviceDependentResources()
     //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
     //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
 
-    auto sampler = m_states->LinearWrap();
     SpriteBatchPipelineStateDescription pd(
-        rtState, nullptr, nullptr, nullptr, &sampler);
+        rtState, nullptr, nullptr, nullptr, mD3D.GetSampler());
     m_spriteBatch = std::make_unique<SpriteBatch>(mD3D.GetDevice(), *mD3D.GetResourceUpload(), pd);
 
     XMUINT2 catSize = GetTextureSize(m_texture.Get());
@@ -332,46 +253,5 @@ void GameRenderer::CreateDeviceDependentResources()
         mD3D.GetDeviceResources()->GetCommandQueue());
 
     uploadResourcesFinished.wait();
-}
-
-// Allocate all memory resources that change on a window SizeChanged event.
-void GameRenderer::CreateWindowSizeDependentResources()
-{
-    // TODO: Initialize windows-size dependent objects here.
-
-    m_fullscreenRect = mD3D.GetDeviceResources()->GetOutputSize();
-
-    auto viewport = mD3D.GetDeviceResources()->GetScreenViewport();
-    m_spriteBatch->SetViewport(viewport);
-
-    auto size = mD3D.GetDeviceResources()->GetOutputSize();
-    m_screenPos.x = float(size.right) / 2.f;
-    m_screenPos.y = float(size.bottom) / 2.f;
-
-    // Stretch Sprite
-    m_stretchRect.left = size.right / 4;
-    m_stretchRect.top = size.bottom / 4;
-    m_stretchRect.right = m_stretchRect.left + size.right / 2;
-    m_stretchRect.bottom = m_stretchRect.top + size.bottom / 2;
-}
-
-void GameRenderer::OnDeviceLost()
-{
-    // TODO: Add Direct3D resource cleanup here.
-
-    // If using the DirectX Tool Kit for DX12, uncomment this line:
-    m_graphicsMemory.reset();
-    m_texture.Reset();
-    m_resourceDescriptors.reset();
-    m_spriteBatch.reset();
-    m_states.reset();
-    m_background.Reset();
-}
-
-void GameRenderer::OnDeviceRestored()
-{
-    CreateDeviceDependentResources();
-
-    CreateWindowSizeDependentResources();
 }
 #pragma endregion
