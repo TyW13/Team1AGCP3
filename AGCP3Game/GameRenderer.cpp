@@ -558,7 +558,7 @@ void GameRenderer::CreateDeviceDependentResources()
 
     auto sampler = m_states->LinearWrap();
     SpriteBatchPipelineStateDescription pd(
-        rtState, nullptr, nullptr, nullptr, &sampler);
+        rtState, &CommonStates::NonPremultiplied, nullptr, nullptr, &sampler);
     m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
 
     XMUINT2 catSize = GetTextureSize(m_texture.Get());
