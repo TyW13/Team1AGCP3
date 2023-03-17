@@ -394,6 +394,10 @@ void GameRenderer::Render()
         GetTextureSize(m_texture.Get()),
         m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::CompanionAI),
+        GetTextureSize(m_AItexture.Get()),
+        m_screenPos, nullptr, Colors::White, 0.f, m_AIorigin);
+
     m_spriteBatch->End();
 
   
@@ -534,18 +538,29 @@ void GameRenderer::CreateDeviceDependentResources()
     // CAT
 
     DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, resourceUpload, L"Data/cat.dds",
+        CreateDDSTextureFromFile(device, resourceUpload, L"Data/Cat.dds",
             m_texture.ReleaseAndGetAddressOf()));
 
 
     CreateShaderResourceView(device, m_texture.Get(),
         m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
 
+    // DebugDaves AI mate
+
+    DX::ThrowIfFailed(
+        CreateDDSTextureFromFile(device, resourceUpload, L"Data/DebugDave.dds",
+            m_AItexture.ReleaseAndGetAddressOf()));
+
+    CreateShaderResourceView(device, m_AItexture.Get(),
+        m_resourceDescriptors->GetCpuHandle(Descriptors::CompanionAI));
+
+  
+
+    // BACKGROUND
+
     DX::ThrowIfFailed(
         CreateWICTextureFromFile(device, resourceUpload, L"Data/sunset.jpg",
             m_background.ReleaseAndGetAddressOf()));
-
-    // BACKGROUND
 
     CreateShaderResourceView(device, m_background.Get(),
         m_resourceDescriptors->GetCpuHandle(Descriptors::Background));
@@ -561,6 +576,7 @@ void GameRenderer::CreateDeviceDependentResources()
         rtState, &CommonStates::NonPremultiplied, nullptr, nullptr, &sampler);
     m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
 
+    ///////////////// CAT //////////////////////////
     XMUINT2 catSize = GetTextureSize(m_texture.Get());
 
     m_origin.x = float(catSize.x / 2);
@@ -573,6 +589,21 @@ void GameRenderer::CreateDeviceDependentResources()
     m_tileRect.right = catSize.x * 6;
     m_tileRect.top = catSize.y * 2;
     m_tileRect.bottom = catSize.y * 6;
+
+
+    /////////////// DEBUG DAVE ////////////////////
+    XMUINT2 AISize = GetTextureSize(m_AItexture.Get());
+
+    m_AIorigin.x = float(AISize.x / 2);
+    m_AIorigin.y = float(AISize.y / 2);
+
+    //m_origin.x = float(catSize.x * 2);
+    //m_origin.y = float(catSize.y * 2);
+
+    m_tileRect.left = AISize.x * 2;
+    m_tileRect.right = AISize.x * 6;
+    m_tileRect.top = AISize.y * 2;
+    m_tileRect.bottom = AISize.y * 6;
 
     auto uploadResourcesFinished = resourceUpload.End(
         m_deviceResources->GetCommandQueue());
@@ -608,6 +639,7 @@ void GameRenderer::OnDeviceLost()
     // If using the DirectX Tool Kit for DX12, uncomment this line:
     m_graphicsMemory.reset();
     m_texture.Reset();
+    m_AItexture.Reset();
     m_resourceDescriptors.reset();
     m_spriteBatch.reset();
     m_states.reset();
