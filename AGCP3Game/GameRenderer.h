@@ -70,12 +70,9 @@ private:
 
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-    DirectX::SimpleMath::Vector2 m_screenPos;
-    DirectX::SimpleMath::Vector2 m_origin;
 
     RECT m_tileRect;
     RECT m_stretchRect;
-    RECT m_fullscreenRect;
 
     AudioManager audio;
 

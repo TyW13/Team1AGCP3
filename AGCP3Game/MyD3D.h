@@ -79,7 +79,15 @@ public:
         assert(m_background);
         return m_background.Get();
     }
-
+    DirectX::SimpleMath::Vector2 GetPosition() {
+        return m_screenPos;
+    }
+    DirectX::SimpleMath::Vector2 GetOrigin() {
+        return m_origin;
+    }
+    RECT GetFullScreenRect() {
+        return m_fullscreenRect;
+    }
 
     //enum  Descriptors GetDescriptors() { return Descriptors; }
 private:

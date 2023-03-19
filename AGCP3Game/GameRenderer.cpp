@@ -83,15 +83,15 @@ void GameRenderer::Render()
 
     mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(2),
         GetTextureSize(mD3D->GetBackground()),
-        m_fullscreenRect);
+        mD3D->GetFullScreenRect());
 
     //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
     //    GetTextureSize(m_texture.Get()),
     //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
-    mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(0),
+    mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(1),
         GetTextureSize(mD3D->GetTexture()),
-        m_screenPos, nullptr, Colors::White, 0.f, m_origin);
+        mD3D->GetPosition(), nullptr, Colors::White, 0.f, mD3D->GetOrigin());
 
     mD3D->GetSpriteBatch()->End();
 
