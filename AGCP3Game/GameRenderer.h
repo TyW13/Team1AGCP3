@@ -15,7 +15,7 @@ class Framework;
 class GameRenderer final
 {
 public:
-    GameRenderer(NewD3D& _mD3D) noexcept(false);
+    GameRenderer(NewD3D* _mD3D) noexcept(false);
     ~GameRenderer();
 
     GameRenderer(GameRenderer&&) = default;
@@ -52,12 +52,10 @@ private:
     void Update(DX::StepTimer const& timer);
     void Render();
 
-    void Clear();
-
     void CreateDeviceDependentResources();
 
     // Device resources.
-    NewD3D& mD3D;
+    NewD3D* mD3D;
 
     //std::unique_ptr<DX::DeviceResources> m_deviceResources;
     //ID3D12Device* device;
@@ -70,7 +68,6 @@ private:
 
     using VertexType = DirectX::VertexPositionColor;
 
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     DirectX::SimpleMath::Vector2 m_screenPos;
@@ -79,8 +76,6 @@ private:
     RECT m_tileRect;
     RECT m_stretchRect;
     RECT m_fullscreenRect;
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
     AudioManager audio;
 

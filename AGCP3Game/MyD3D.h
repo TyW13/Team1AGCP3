@@ -60,15 +60,26 @@ public:
     ID3D12GraphicsCommandList* GetCommandList() { 
         assert(commandList);
         return commandList; }
-    D3D12_GPU_DESCRIPTOR_HANDLE* GetSampler() { 
-        assert(sampler);
-        return sampler; }
     DirectX::DescriptorHeap* GetResourceDescriptors() { 
         assert(resourceDescriptors);
         return resourceDescriptors.get(); }
     Descriptors GetDescriptors() { 
         assert(mDescriptors);
         return mDescriptors; }
+    DirectX::SpriteBatch* GetSpriteBatch() {
+        assert(spriteBatch);
+        return spriteBatch.get();
+    }
+
+    ID3D12Resource* GetTexture() {
+        assert(m_texture);
+        return m_texture.Get();
+    }
+    ID3D12Resource* GetBackground() {
+        assert(m_background);
+        return m_background.Get();
+    }
+
 
     //enum  Descriptors GetDescriptors() { return Descriptors; }
 private:
@@ -77,7 +88,9 @@ private:
     std::unique_ptr<DirectX::ResourceUploadBatch> resourceUpload;
     std::unique_ptr<DirectX::DescriptorHeap> resourceDescriptors;
     ID3D12GraphicsCommandList* commandList;
-    D3D12_GPU_DESCRIPTOR_HANDLE* sampler;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
     void Clear();
 
@@ -94,13 +107,14 @@ private:
     std::unique_ptr<DirectX::BasicEffect> m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
 
+    std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
     DirectX::SimpleMath::Vector2 m_screenPos;
     DirectX::SimpleMath::Vector2 m_origin;
 
     std::unique_ptr<DirectX::CommonStates> m_states;
 
+    RECT m_tileRect;
     RECT m_stretchRect;
-
     RECT m_fullscreenRect;
 
 

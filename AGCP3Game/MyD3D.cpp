@@ -84,7 +84,7 @@ void NewD3D::Clear()
 // These are the resources that depend on the device.
 void NewD3D::CreateDeviceDependentResources()
 {
-    device = deviceResources->GetD3DDevice();
+    device = deviceResources.get()->GetD3DDevice();
 
     // Check Shader Model 6 support
     D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
@@ -101,7 +101,9 @@ void NewD3D::CreateDeviceDependentResources()
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
 
-//m_graphicsMemory:
+    //m_graphicsMemory:
+
+
 
     // Tiling a Sprite
     m_states = std::make_unique<CommonStates>(device);
@@ -109,13 +111,67 @@ void NewD3D::CreateDeviceDependentResources()
     resourceDescriptors = std::make_unique<DescriptorHeap>(device,
         Descriptors::Count);
 
-    resourceUpload = std::make_unique<DirectX::ResourceUploadBatch>(device);
+    resourceUpload = std::make_unique<ResourceUploadBatch>(device);
 
-    sampler = &m_states->LinearWrap();
-    //auto uploadResourcesFinished = resourceUpload.get()->End(
-    //    deviceResources->GetCommandQueue());
+    resourceUpload.get()->Begin();
 
-    //uploadResourcesFinished.wait();
+
+    // WIC
+
+    //DX::ThrowIfFailed(
+    //    CreateWICTextureFromFile(device, resourceUpload, L"cat.png",
+    //        m_texture.ReleaseAndGetAddressOf()));
+
+    // DDS
+
+    // CAT
+
+    DX::ThrowIfFailed(
+        CreateDDSTextureFromFile(device, *resourceUpload.get(), L"Data/test_sheet2.dds",
+            m_texture.ReleaseAndGetAddressOf()));
+
+
+    CreateShaderResourceView(device, m_texture.Get(),
+        resourceDescriptors.get()->GetCpuHandle(Descriptors::Tile));
+
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, *resourceUpload.get(), L"Data/sunset.jpg",
+            m_background.ReleaseAndGetAddressOf()));
+
+    // BACKGROUND
+
+    CreateShaderResourceView(device, m_background.Get(),
+        resourceDescriptors.get()->GetCpuHandle(Descriptors::Background));
+
+    RenderTargetState rtState(deviceResources.get()->GetBackBufferFormat(),
+        deviceResources.get()->GetDepthBufferFormat());
+
+    //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
+    //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
+
+    auto sampler = m_states->LinearWrap();
+    SpriteBatchPipelineStateDescription pd(
+        rtState, nullptr, nullptr, nullptr, &sampler);
+    ResourceUploadBatch* rUpload = resourceUpload.get();
+    spriteBatch = std::make_unique<SpriteBatch>(device, *rUpload, pd);
+
+    XMUINT2 catSize = GetTextureSize(m_texture.Get());
+
+    m_origin.x = float(catSize.x / 2);
+    m_origin.y = float(catSize.y / 2);
+
+    //m_origin.x = float(catSize.x * 2);
+    //m_origin.y = float(catSize.y * 2);
+
+    m_tileRect.left = catSize.x * 2;
+    m_tileRect.right = catSize.x * 6;
+    m_tileRect.top = catSize.y * 2;
+    m_tileRect.bottom = catSize.y * 6;
+
+    auto uploadResourcesFinished = resourceUpload.get()->End(
+        deviceResources.get()->GetCommandQueue());
+
+    uploadResourcesFinished.wait();
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -126,6 +182,7 @@ void NewD3D::CreateWindowSizeDependentResources()
     m_fullscreenRect = deviceResources->GetOutputSize();
 
     auto viewport = deviceResources->GetScreenViewport();
+    spriteBatch.get()->SetViewport(viewport);
 
     auto size = deviceResources->GetOutputSize();
     m_screenPos.x = float(size.right) / 2.f;
@@ -143,8 +200,13 @@ void NewD3D::OnDeviceLost()
     // TODO: Add Direct3D resource cleanup here.
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
-    m_graphicsMemory.reset();
+    deviceResources.reset();
+    resourceUpload.reset();
     resourceDescriptors.reset();
+    m_texture.Reset();
+    m_background.Reset();
+    spriteBatch.reset();
+    m_graphicsMemory.reset();
     m_states.reset();
 }
 
