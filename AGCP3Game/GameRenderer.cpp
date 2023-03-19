@@ -597,13 +597,12 @@ void GameRenderer::CreateDeviceDependentResources()
     m_AIorigin.x = float(AISize.x / 2);
     m_AIorigin.y = float(AISize.y / 2);
 
-    //m_origin.x = float(catSize.x * 2);
-    //m_origin.y = float(catSize.y * 2);
+   
 
-    m_tileRect.left = AISize.x * 2;
-    m_tileRect.right = AISize.x * 6;
-    m_tileRect.top = AISize.y * 2;
-    m_tileRect.bottom = AISize.y * 6;
+    m_tileRect.left = AISize.x * 1;
+    m_tileRect.right = AISize.x * 3;
+    m_tileRect.top = AISize.y * 1;
+    m_tileRect.bottom = AISize.y * 3;
 
     auto uploadResourcesFinished = resourceUpload.End(
         m_deviceResources->GetCommandQueue());
