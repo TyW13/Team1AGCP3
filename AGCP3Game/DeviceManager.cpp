@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "pch.h"
-#include "MyD3D.h"
+#include "DeviceManager.h"
 #include "GraphicsMemory.h"
 #include "ResourceUploadBatch.h"
 #include "Framework.h"
@@ -104,7 +104,6 @@ void NewD3D::CreateDeviceDependentResources()
     //m_graphicsMemory:
 
 
-
     // Tiling a Sprite
     m_states = std::make_unique<CommonStates>(device);
 
@@ -126,47 +125,43 @@ void NewD3D::CreateDeviceDependentResources()
 
     // CAT
 
-    DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, *resourceUpload.get(), L"Data/test_sheet2.dds",
-            m_texture.ReleaseAndGetAddressOf()));
+    //DX::ThrowIfFailed(
+    //    CreateDDSTextureFromFile(device, *resourceUpload.get(), L"Data/test_sheet2.dds",
+    //        m_texture.ReleaseAndGetAddressOf()));
 
+    //CreateShaderResourceView(device, m_texture.Get(),
+    //    resourceDescriptors.get()->GetCpuHandle(Descriptors::Tile));
 
-    CreateShaderResourceView(device, m_texture.Get(),
-        resourceDescriptors.get()->GetCpuHandle(Descriptors::Tile));
+    //DX::ThrowIfFailed(
+    //    CreateWICTextureFromFile(device, *resourceUpload.get(), L"Data/sunset.jpg",
+    //        m_background.ReleaseAndGetAddressOf()));
 
-    DX::ThrowIfFailed(
-        CreateWICTextureFromFile(device, *resourceUpload.get(), L"Data/sunset.jpg",
-            m_background.ReleaseAndGetAddressOf()));
+    //// BACKGROUND
 
-    // BACKGROUND
-
-    CreateShaderResourceView(device, m_background.Get(),
-        resourceDescriptors.get()->GetCpuHandle(Descriptors::Background));
+    //CreateShaderResourceView(device, m_background.Get(),
+    //    resourceDescriptors.get()->GetCpuHandle(Descriptors::Background));
 
     RenderTargetState rtState(deviceResources.get()->GetBackBufferFormat(),
         deviceResources.get()->GetDepthBufferFormat());
 
-    //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
-    //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
-
-    auto sampler = m_states->LinearWrap();
+    auto sampler = m_states->PointWrap();
     SpriteBatchPipelineStateDescription pd(
         rtState, nullptr, nullptr, nullptr, &sampler);
     ResourceUploadBatch* rUpload = resourceUpload.get();
     spriteBatch = std::make_unique<SpriteBatch>(device, *rUpload, pd);
 
-    XMUINT2 catSize = GetTextureSize(m_texture.Get());
+    //XMUINT2 catSize = GetTextureSize(m_texture.Get());
 
-    m_origin.x = float(catSize.x / 2);
-    m_origin.y = float(catSize.y / 2);
+    //m_origin.x = float(catSize.x / 2);
+    //m_origin.y = float(catSize.y / 2);
 
-    //m_origin.x = float(catSize.x * 2);
-    //m_origin.y = float(catSize.y * 2);
+    ////m_origin.x = float(catSize.x * 2);
+    ////m_origin.y = float(catSize.y * 2);
 
-    m_tileRect.left = catSize.x * 2;
-    m_tileRect.right = catSize.x * 6;
-    m_tileRect.top = catSize.y * 2;
-    m_tileRect.bottom = catSize.y * 6;
+    //m_tileRect.left = catSize.x * 2;
+    //m_tileRect.right = catSize.x * 6;
+    //m_tileRect.top = catSize.y * 2;
+    //m_tileRect.bottom = catSize.y * 6;
 
     auto uploadResourcesFinished = resourceUpload.get()->End(
         deviceResources.get()->GetCommandQueue());

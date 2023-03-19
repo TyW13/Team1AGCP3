@@ -3,10 +3,8 @@
 //
 
 #include "stdafx.h"
-#include "pch.h"
 #include "Framework.h"
 #include "GameRenderer.h"
-#include "MyD3D.h"
 //audio
 #include "AudioManager.h"
 #include <Dbt.h>
@@ -271,8 +269,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
                 SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
 
-                int width = 800;
-                int height = 600;
+                int width = 1920;
+                int height = 1080;
                 if (game)
                     game->GetDefaultSize(width, height);
 

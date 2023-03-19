@@ -3,12 +3,7 @@
 //
 #include "stdafx.h"
 
-#include "pch.h"
 #include "GameRenderer.h"
-#include "GraphicsMemory.h"
-#include "SpriteBatch.h"
-#include "ResourceUploadBatch.h"
-#include "DDSTextureLoader.h"
 #include "Framework.h"
 
 extern void ExitGame() noexcept;
@@ -21,7 +16,7 @@ using Microsoft::WRL::ComPtr;
 GameRenderer::GameRenderer(NewD3D* _mD3D) noexcept(false)
     : mD3D(_mD3D)
 {
-
+    
 }
 
 GameRenderer::~GameRenderer()
@@ -36,6 +31,8 @@ GameRenderer::~GameRenderer()
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
     audio.Init();
+    Tile* newTile = new Tile(*mD3D, {300, 400}, {6, 6}, true, {6, 16}, "Tile", true);
+    m_Tiles.emplace_back(newTile);
 }
 
 #pragma region Frame Update
@@ -81,17 +78,21 @@ void GameRenderer::Render()
 
     mD3D->GetSpriteBatch()->Begin(mD3D->GetCommandList());
 
-    mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(2),
-        GetTextureSize(mD3D->GetBackground()),
-        mD3D->GetFullScreenRect());
+    //mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(2),
+    //    GetTextureSize(mD3D->GetBackground()),
+    //    mD3D->GetFullScreenRect());
 
+    if (m_Tiles.size() > 0)
+    {
+        m_Tiles[0]->Render(mD3D);
+    }
     //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
     //    GetTextureSize(m_texture.Get()),
     //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
-    mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(1),
-        GetTextureSize(mD3D->GetTexture()),
-        mD3D->GetPosition(), nullptr, Colors::White, 0.f, mD3D->GetOrigin());
+    //mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(1),
+    //    GetTextureSize(mD3D->GetTexture()),
+    //    mD3D->GetPosition(), nullptr, Colors::White, 0.f, mD3D->GetOrigin());
 
     mD3D->GetSpriteBatch()->End();
 
@@ -152,8 +153,8 @@ void GameRenderer::OnWindowSizeChanged(int width, int height)
 void GameRenderer::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
-    width = 800;
-    height = 600;
+    width = 1920;
+    height = 1080;
 }
 #pragma endregion
 

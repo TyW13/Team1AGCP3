@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "MyD3D.h"
 #include "StepTimer.h"
-#include <SpriteFont.h>
 #include "AudioManager.h"
+#include "Tile.h"
 
+//class Tile;
 class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
@@ -45,7 +45,7 @@ public:
     //DX::DeviceResources* GetDeviceResources() { return m_deviceResources.get(); }
     //ID3D12Device* GetDevice() { return device; }
     //ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
-    
+
 private:
     DirectX::SpriteFont* mpSF = nullptr;
 
@@ -75,11 +75,13 @@ private:
     RECT m_stretchRect;
 
     AudioManager audio;
+    std::vector<Tile*> m_Tiles;
+
 
     enum Descriptors
     {
         Cat,
-        Tile,
+        Tiles,
         Background,
         Count
     };

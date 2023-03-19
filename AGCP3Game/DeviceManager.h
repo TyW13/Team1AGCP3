@@ -3,11 +3,9 @@
 //
 
 #pragma once
-
+#include "pch.h"
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include "SpriteBatch.h"
-#include <SpriteFont.h>
 
 enum Descriptors;
 
