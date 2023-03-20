@@ -1,31 +1,94 @@
 #include "CompanionAI.h"
 #include "pch.h"
+#include "DXSampleHelper.h"
+
+using namespace DirectX;
+
+
 
 CompanionAI::CompanionAI(ID3D12Device* device)
-	: m_position(0.0f,0.0f,0.f), m_rotation(0.0f), m_scale(1.0f)
 {
-	// Create the Constant Buffer
+    m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    m_velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    m_rotation = 0.0f;
+    m_scale = 1.0f;
+    m_speechBubbleOffset = XMFLOAT3(0.0f, 40.0f, 0.0f);
 
-	const UINT constantBufferSize = sizeof(ConstantBuffer);
-	DX::ThrowIfFailed(device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // Upload heap
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ, // GPU will read from this buffer
-		nullptr,
-		IID_PPV_ARGS(&m_constantBuffer));
+    // Load companion model from file
+    std::wstring companionTexturePath = L"companion.dds";
+    ThrowIfFailed(CreateDDSTextureFromFile(device, commandList, companionTexturePath.c_str(), m_companionTexture.ReleaseAndGetAddressOf()));
 
-	// Map the Constant Buffer
+    // Load speech bubble model from file
+    std::wstring speechBubbleTexturePath = L"speechBubble.dds";
+    ThrowIfFailed(CreateDDSTextureFromFile(device, commandList, speechBubbleTexturePath.c_str(), m_speechBubbleTexture.ReleaseAndGetAddressOf()));
 
-	DX::ThrowIfFailed(m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-
-
-}	
-
-void CompanionAI::Update(float deltatime, const DirectX::XMFLOAT3& playerPosition)
-{
+    // Load textures for companion and speech bubble
+    // ...
 }
+
+void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
+{
+
+}
+
+void CompanionAI::Update(float deltaTime, const XMFLOAT3& playerPosition)
+{
+    // Update the position, velocity, rotation, etc. of the companion based on the player position and other game logic
+
+    // Calculate the direction to the player
+    XMVECTOR directionToPlayer = XMVectorSubtract(XMLoadFloat3(&playerPosition), XMLoadFloat3(&m_position));
+    XMVECTOR normalizedDirection = XMVector3Normalize(directionToPlayer);
+
+    // Update the velocity
+    XMStoreFloat3(&m_velocity, XMVectorMultiply(normalizedDirection, XMVectorReplicate(m_moveSpeed)));
+
+    // Update the position based on the velocity
+    XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), XMVectorMultiply(XMLoadFloat3(&m_velocity), XMVectorReplicate(deltaTime))));
+
+    // Update the rotation based on the velocity
+    float angle = atan2f(m_velocity.x, m_velocity.z);
+    m_rotation = angle - XM_PIDIV2;
+}
+
 
 void CompanionAI::Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap, UINT cbvOffset)
 {
+    // Set root signature
+    commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+    // Set constant buffer
+    commandList->SetGraphicsRootConstantBufferView(0, m_constantBuffer->GetGPUVirtualAddress());
+
+    // Set vertex buffer
+    commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+
+    // Set index buffer
+    commandList->IASetIndexBuffer(&m_indexBufferView);
+
+    // Set pipeline state
+    commandList->SetPipelineState(m_pipelineState.Get());
+
+    // Set descriptor heap
+    ID3D12DescriptorHeap* heaps[] = { cbvHeap };
+    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
+
+    // Set descriptor table
+    commandList->SetGraphicsRootDescriptorTable(1, cbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+    // Draw the companion
+    commandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
+}
+
+
+void CompanionAI::Speak(const wchar_t* message)
+{
+    // Create the speech bubble object
+    SpeechBubble bubble;
+    bubble.Initialize(m_device, message);
+
+    // Set the speech bubble's position relative to the companion's position
+    bubble.SetPosition(m_position + m_speechBubbleOffset);
+
+    // Add the speech bubble to the list of active speech bubbles
+    m_activeSpeechBubbles.push_back(bubble);
 }
