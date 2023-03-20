@@ -4,18 +4,16 @@
 
 #pragma once
 
-#include "StepTimer.h"
 #include "AudioManager.h"
-#include "Tile.h"
+#include "ResourceManager.h"
 
-//class Tile;
 class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class GameRenderer final
 {
 public:
-    GameRenderer(NewD3D* _mD3D) noexcept(false);
+    GameRenderer(DeviceManager* _mD3D) noexcept(false);
     ~GameRenderer();
 
     GameRenderer(GameRenderer&&) = default;
@@ -55,7 +53,9 @@ private:
     void CreateDeviceDependentResources();
 
     // Device resources.
-    NewD3D* mD3D;
+    DeviceManager* mD3D;
+
+    ResourceManager rManager;
 
     //std::unique_ptr<DX::DeviceResources> m_deviceResources;
     //ID3D12Device* device;

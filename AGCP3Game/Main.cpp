@@ -55,8 +55,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(initialize))
         return 1;
 #endif
-    std::unique_ptr<NewD3D> newD3D = std::make_unique<NewD3D>();
-    g_game = std::make_unique<GameRenderer>(newD3D.get());
+    std::unique_ptr<DeviceManager> dManager = std::make_unique<DeviceManager>();
+    g_game = std::make_unique<GameRenderer>(dManager.get());
     HDEVNOTIFY hNewAudio = nullptr;     //audio
 
     // Register class and create window
@@ -99,7 +99,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         GetClientRect(hwnd, &rc);
 
-        newD3D->Init(hwnd, rc.right - rc.left, rc.bottom - rc.top);
+        dManager->Init(hwnd, rc.right - rc.left, rc.bottom - rc.top);
         g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
     }
 

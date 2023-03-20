@@ -13,7 +13,7 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-GameRenderer::GameRenderer(NewD3D* _mD3D) noexcept(false)
+GameRenderer::GameRenderer(DeviceManager* _mD3D) noexcept(false)
     : mD3D(_mD3D)
 {
     
@@ -31,8 +31,7 @@ GameRenderer::~GameRenderer()
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
     audio.Init();
-    Tile* newTile = new Tile(*mD3D, {300, 400}, {6, 6}, true, {6, 16}, "Tile", true);
-    m_Tiles.emplace_back(newTile);
+    rManager.Init(mD3D);
 }
 
 #pragma region Frame Update
@@ -78,21 +77,9 @@ void GameRenderer::Render()
 
     mD3D->GetSpriteBatch()->Begin(mD3D->GetCommandList());
 
-    //mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(2),
-    //    GetTextureSize(mD3D->GetBackground()),
-    //    mD3D->GetFullScreenRect());
 
-    if (m_Tiles.size() > 0)
-    {
-        m_Tiles[0]->Render(mD3D);
-    }
-    //m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::Cat),
-    //    GetTextureSize(m_texture.Get()),
-    //    m_screenPos, nullptr, Colors::White, 0.f, m_origin);
+    rManager.Render(mD3D);
 
-    //mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(1),
-    //    GetTextureSize(mD3D->GetTexture()),
-    //    mD3D->GetPosition(), nullptr, Colors::White, 0.f, mD3D->GetOrigin());
 
     mD3D->GetSpriteBatch()->End();
 

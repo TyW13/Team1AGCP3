@@ -2,7 +2,7 @@
 
 // Device, resourceUplaod, resourceDecriptor, decriptors can go in "d3d"
 
-void Tile::Init(NewD3D& d3d, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void Tile::Init(DeviceManager* d3d, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
@@ -13,17 +13,17 @@ void Tile::Init(NewD3D& d3d, DirectX::SimpleMath::Vector2 _position, DirectX::Si
 	mPos = _position;
 	mScale = _scale;
 
-	d3d.GetResourceUpload()->Begin();
+	d3d->GetResourceUpload()->Begin();
 
 	DX::ThrowIfFailed(
-		DirectX::CreateDDSTextureFromFile(d3d.GetDevice(), *d3d.GetResourceUpload(), L"Data/test_sheet2.dds",
+		DirectX::CreateDDSTextureFromFile(d3d->GetDevice(), *d3d->GetResourceUpload(), L"Data/test_sheet2.dds",
 			objTex.ReleaseAndGetAddressOf()));
 
-	DirectX::CreateShaderResourceView(d3d.GetDevice(), objTex.Get(),
-		d3d.GetResourceDescriptors()->GetCpuHandle(1));
+	DirectX::CreateShaderResourceView(d3d->GetDevice(), objTex.Get(),
+		d3d->GetResourceDescriptors()->GetCpuHandle(1));
 
-	auto uploadResourcesFinished = d3d.GetResourceUpload()->End(
-		d3d.GetDeviceResources()->GetCommandQueue());
+	auto uploadResourcesFinished = d3d->GetResourceUpload()->End(
+		d3d->GetDeviceResources()->GetCommandQueue());
 
 	uploadResourcesFinished.wait();
 
@@ -47,7 +47,7 @@ void Tile::Init(NewD3D& d3d, DirectX::SimpleMath::Vector2 _position, DirectX::Si
 	//collisionBounds.bottom = objSprite.mPos.y + objSize.y * _scale.y;
 }
 
-void Tile::Render(NewD3D* mD3D)
+void Tile::Render(DeviceManager* mD3D)
 {
 	RECT* sourceRect = &objRect;
 

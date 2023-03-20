@@ -3,10 +3,7 @@
 //
 #include "stdafx.h"
 
-#include "pch.h"
 #include "DeviceManager.h"
-#include "GraphicsMemory.h"
-#include "ResourceUploadBatch.h"
 #include "Framework.h"
 
 extern void ExitGame() noexcept;
@@ -16,7 +13,7 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-NewD3D::NewD3D() noexcept(false)
+DeviceManager::DeviceManager() noexcept(false)
 {
     deviceResources = std::make_unique<DX::DeviceResources>();
     // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
@@ -25,7 +22,7 @@ NewD3D::NewD3D() noexcept(false)
     deviceResources->RegisterDeviceNotify(this);
 }
 
-NewD3D::~NewD3D()
+DeviceManager::~DeviceManager()
 {
     if (deviceResources)
     {
@@ -34,7 +31,7 @@ NewD3D::~NewD3D()
 }
 
 // Initialize the Direct3D resources required to run.
-void NewD3D::Init(HWND window, int width, int height)
+void DeviceManager::Init(HWND window, int width, int height)
 {
     deviceResources->SetWindow(window, width, height);
 
@@ -57,7 +54,7 @@ void NewD3D::Init(HWND window, int width, int height)
 #pragma region Frame Render
 
 // Helper method to clear the back buffers.
-void NewD3D::Clear()
+void DeviceManager::Clear()
 {
     commandList = deviceResources->GetCommandList();
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Clear");
@@ -82,7 +79,7 @@ void NewD3D::Clear()
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
-void NewD3D::CreateDeviceDependentResources()
+void DeviceManager::CreateDeviceDependentResources()
 {
     device = deviceResources.get()->GetD3DDevice();
 
@@ -170,7 +167,7 @@ void NewD3D::CreateDeviceDependentResources()
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
-void NewD3D::CreateWindowSizeDependentResources()
+void DeviceManager::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
 
@@ -190,7 +187,7 @@ void NewD3D::CreateWindowSizeDependentResources()
     m_stretchRect.bottom = m_stretchRect.top + size.bottom / 2;
 }
 
-void NewD3D::OnDeviceLost()
+void DeviceManager::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
 
@@ -205,13 +202,13 @@ void NewD3D::OnDeviceLost()
     m_states.reset();
 }
 
-void NewD3D::OnDeviceRestored()
+void DeviceManager::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
 
     CreateWindowSizeDependentResources();
 }
-void NewD3D::BeginRender()
+void DeviceManager::BeginRender()
 {
     // Don't try to render anything before the first Update.
     //if (m_timer.GetFrameCount() == 0)
@@ -234,7 +231,7 @@ void NewD3D::BeginRender()
     ID3D12DescriptorHeap* heaps[] = { resourceDescriptors->Heap(), m_states->Heap() };
     commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
 }
-void NewD3D::EndRender()
+void DeviceManager::EndRender()
 {
     deviceResources->Present();
     m_graphicsMemory->Commit(deviceResources->GetCommandQueue());

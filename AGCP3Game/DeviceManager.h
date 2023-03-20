@@ -11,18 +11,18 @@ enum Descriptors;
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
-class NewD3D final : public DX::IDeviceNotify
+class DeviceManager final : public DX::IDeviceNotify
 {
 public:
 
-    NewD3D() noexcept(false);
-    ~NewD3D();
+    DeviceManager() noexcept(false);
+    ~DeviceManager();
 
-    NewD3D(NewD3D&&) = default;
-    NewD3D& operator= (NewD3D&&) = default;
+    DeviceManager(DeviceManager&&) = default;
+    DeviceManager& operator= (DeviceManager&&) = default;
 
-    NewD3D(NewD3D const&) = delete;
-    NewD3D& operator= (NewD3D const&) = delete;
+    DeviceManager(DeviceManager const&) = delete;
+    DeviceManager& operator= (DeviceManager const&) = delete;
 
     // Initialization and management
     void Init(HWND window, int width, int height);
