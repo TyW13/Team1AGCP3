@@ -1,22 +1,42 @@
 
 #include "Framework.h"
+#include "SpriteBatch.h"
 
-//using namespace DirectX;
-//using namespace DirectX::SimpleMath;
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
-void Framework::Initialise()
+
+void Framework::Initialise(HWND window, int width, int height)
 {
+    audio.Init();
 
+    //game logic, will move later
+    m_keyboard = std::make_unique<Keyboard>();
+    m_mouse = std::make_unique<Mouse>();
+    m_mouse->SetWindow(window);
 }
 void Framework::Update(float elapsedTime)
 {
-    // Update sprite position
- /*   float time = float(timer.GetTotalSeconds());
-    m_screenPos.x = float(cos(time) * 100.0f + 200.f);
-    m_screenPos.y = float(sin(time) * 100.0f + 150.f);*/
+    audio.Update(elapsedTime);
+
+    //get keyboard stated
+    auto kb = m_keyboard->GetState();
+    auto mouse = m_mouse->GetState();
+
+    player.Update(elapsedTime, kb, mouse);
 }
 
 void Framework::Terminate()
 {
 	
+}
+
+void Framework::OnSuspending()
+{
+    audio.OnSuspending();
+}
+
+void Framework::OnResuming()
+{
+    audio.OnResuming();
 }
