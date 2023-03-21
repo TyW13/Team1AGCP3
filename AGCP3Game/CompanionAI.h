@@ -59,8 +59,13 @@ private:
 	    companionAI,
         Count,
     };
+  
+    DirectX::SimpleMath::Vector2 m_screenPos;
+    DirectX::SimpleMath::Vector2 m_origin;
+
     std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_companiontexture;
 
     std::unique_ptr<DX::DeviceResources>        m_deviceResources;
 

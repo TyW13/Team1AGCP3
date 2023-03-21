@@ -32,8 +32,16 @@ void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* co
     std::wstring companionTexturePath = L"Data/DebugDave.dds";
     ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, companionTexturePath.c_str(), m_companionAITexture.ReleaseAndGetAddressOf()));
 
+    RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(),
+        m_deviceResources->GetDepthBufferFormat());
 
+    SpriteBatchPipelineStateDescription pd(rtState);
+    m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
 
+    XMUINT2 companionAISize = GetTextureSize(m_companiontexture.Get());
+
+    m_origin.x = float(companionAISize.x / 2);
+    m_origin.y = float(companionAISize.y / 2);
     
     auto uploadResourcesFinished = resourceUpload.End(
     m_deviceResources->GetCommandQueue());
