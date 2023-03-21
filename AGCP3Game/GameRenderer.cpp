@@ -53,7 +53,7 @@ void GameRenderer::Update(DX::StepTimer const& timer)
 
     float elapsedTime = float(timer.GetElapsedSeconds());
 
-    rManager.Update(elapsedTime);
+    rManager.Update(dManager, elapsedTime);
     audio.Update(elapsedTime);
 
     /// /////////////////////////////////////////////////////////////////////

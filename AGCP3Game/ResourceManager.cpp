@@ -21,13 +21,13 @@ void ResourceManager::Init(DeviceManager* dManager)
 	ReloadMap(dManager, 0);
 }
 
-void ResourceManager::Update(float dTime)
+void ResourceManager::Update(DeviceManager* dManager, float dTime)
 {
 	if (m_Objects.size() > 0)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Update(dTime);
+			currentObj->Update(dManager, dTime);
 		}
 	}
 }

@@ -32,7 +32,7 @@ void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Si
 	uploadResourcesFinished.wait();
 }
 
-void GameObject::Update(float dTime)
+void GameObject::Update(DeviceManager* dManager, float dTime)
 {
 
 }

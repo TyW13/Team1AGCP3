@@ -112,7 +112,7 @@ public:
 	ResourceManager(){}
 
 	void Init(DeviceManager* dManager);
-	void Update(float dTime);
+	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
 	void Terminate();
 	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
