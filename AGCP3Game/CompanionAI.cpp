@@ -1,11 +1,16 @@
 #include "CompanionAI.h"
 #include "DXSampleHelper.h"
 #include "GameRenderer.h"
-
+#include "pch.h"
+#include "DDSTextureLoader.h"
+#include "SpriteBatch.h"
+#include "GraphicsMemory.h"
 
 
 using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
+using Microsoft::WRL::ComPtr;
 
 
 CompanionAI::CompanionAI(ID3D12Device* device)
@@ -24,26 +29,26 @@ void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* co
     m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
     AIDescriptors::Count);
 
-    ResourceUploadBatch resourceUpload(device);
+    ResourceUploadBatch resourceUpload2(device);
 
-    resourceUpload.Begin();
+    resourceUpload2.Begin();
 
     // Load Debug Dave from file
     std::wstring companionTexturePath = L"Data/DebugDave.dds";
-    ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, companionTexturePath.c_str(), m_companionAITexture.ReleaseAndGetAddressOf()));
+    ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload2, companionTexturePath.c_str(), m_companionAITexture.ReleaseAndGetAddressOf()));
 
     RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(),
         m_deviceResources->GetDepthBufferFormat());
 
     SpriteBatchPipelineStateDescription pd(rtState);
-    m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
+    m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload2, pd);
 
     XMUINT2 companionAISize = GetTextureSize(m_companiontexture.Get());
 
     m_origin.x = float(companionAISize.x / 2);
     m_origin.y = float(companionAISize.y / 2);
     
-    auto uploadResourcesFinished = resourceUpload.End(
+    auto uploadResourcesFinished = resourceUpload2.End(
     m_deviceResources->GetCommandQueue());
 
 
@@ -87,8 +92,11 @@ void CompanionAI::Render(ID3D12GraphicsCommandList* commandList, ID3D12Descripto
     commandList->SetPipelineState(m_pipelineState.Get());
 
     // Set descriptor heap
-    ID3D12DescriptorHeap* heaps[] = { cbvHeap };
-    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
+    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_statesAI->Heap() };
+    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(heaps)), heaps);
+
+    //ID3D12DescriptorHeap* heaps[] = { cbvHeap };
+    //commandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     // Set descriptor table
     commandList->SetGraphicsRootDescriptorTable(1, cbvHeap->GetGPUDescriptorHandleForHeapStart());
@@ -96,10 +104,13 @@ void CompanionAI::Render(ID3D12GraphicsCommandList* commandList, ID3D12Descripto
     // Draw the companion
     commandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
 
+    
     m_spriteBatch->Begin(commandList);
 
 
-    m_spriteBatch->Draw(m_resourceDescriptors->GetGPUHandle(AIDescriptors::companionAI),
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(AIDescriptors::companionAI),
+        GetTextureSize(m_companiontexture.Get()),
+        m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
 
     m_spriteBatch->End();

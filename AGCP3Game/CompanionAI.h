@@ -66,6 +66,7 @@ private:
     std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_companiontexture;
+    std::unique_ptr<DirectX::CommonStates> m_statesAI;
 
     std::unique_ptr<DX::DeviceResources>        m_deviceResources;
 
@@ -80,6 +81,7 @@ private:
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     UINT m_indexCount;
+
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
