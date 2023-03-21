@@ -4,8 +4,10 @@
 #include <d3d12.h>
 #include <wrl.h>
 
+#include "DeviceResources.h"
+#include "pch.h"
 
-
+#include "d2d1.h"
 
 
 
@@ -45,6 +47,16 @@ private:
 	    DirectX::XMFLOAT4 textColor;
     };
 
+    struct companionAIConstantBuffer
+    {
+        DirectX::XMFLOAT4X4 worldMatrix;
+        DirectX::XMFLOAT4 textColor;
+    };
+    std::unique_ptr<DX::DeviceResources>        m_deviceResources;
+
+    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   m_commandList;
+
     Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
     ConstantBuffer* m_mappedConstantBuffer;
 
@@ -57,8 +69,25 @@ private:
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 
+    // Companion Variables
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_companionAIVertexBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_companionAIIndexBuffer;
+    D3D12_VERTEX_BUFFER_VIEW m_companionAIVertexBufferView;
+    D3D12_INDEX_BUFFER_VIEW m_companionAIIndexBufferView;
+    UINT m_companionAIIndexCount;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_companionAIPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_companionAIRootSignature;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_companionAIConstantBuffer;
+    companionAIConstantBuffer* m_mappedcompanionAIConstantBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_companionAITexture;
+
+    // Shared Variables
+
+	
     DirectX::XMFLOAT3 m_position;
     DirectX::XMFLOAT3 m_velocity;
+    float m_moveSpeed = 2;
     float m_rotation;
     float m_scale;
 
@@ -74,8 +103,44 @@ private:
     SpeechBubbleConstantBuffer* m_mappedSpeechBubbleConstantBuffer;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleTexture;
     DirectX::XMFLOAT3 m_speechBubbleOffset;
+  
 };
 
+
+
+//// Define the SpeechBubble class
+//class SpeechBubble
+//{
+//
+//public:
+//
+//    void Initialize(ID3D12Device* device, const wchar_t* message)
+//    {
+//        
+//
+//
+//
+//        // Set the text for the speech bubble
+//        m_message = message;
+//    }
+//
+//    void Render(ID3D12Device* device)
+//    {
+//        // Draw the speech bubble
+//
+//
+//        // Draw the text
+//
+//    }
+//
+//    void SetPosition(D2D1_POINT_2F position)
+//    {
+//        m_position = position;
+//    }
+//
+//
+//
+//};
 
 
 

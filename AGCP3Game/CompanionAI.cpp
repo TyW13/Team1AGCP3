@@ -1,6 +1,8 @@
 #include "CompanionAI.h"
-#include "pch.h"
 #include "DXSampleHelper.h"
+#include "GameRenderer.h"
+
+
 
 using namespace DirectX;
 
@@ -14,20 +16,27 @@ CompanionAI::CompanionAI(ID3D12Device* device)
     m_scale = 1.0f;
     m_speechBubbleOffset = XMFLOAT3(0.0f, 40.0f, 0.0f);
 
-    // Load companion model from file
-    std::wstring companionTexturePath = L"companion.dds";
-    ThrowIfFailed(CreateDDSTextureFromFile(device, commandList, companionTexturePath.c_str(), m_companionTexture.ReleaseAndGetAddressOf()));
-
-    // Load speech bubble model from file
-    std::wstring speechBubbleTexturePath = L"speechBubble.dds";
-    ThrowIfFailed(CreateDDSTextureFromFile(device, commandList, speechBubbleTexturePath.c_str(), m_speechBubbleTexture.ReleaseAndGetAddressOf()));
-
-    // Load textures for companion and speech bubble
-    // ...
+  
 }
 
 void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
+    ResourceUploadBatch resourceUpload(device);
+
+    resourceUpload.Begin();
+
+    // Load companion model from file
+    std::wstring companionTexturePath = L"Data/companion.dds";
+    ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, companionTexturePath.c_str(), m_companionAITexture.ReleaseAndGetAddressOf()));
+
+    // Load speech bubble model from file
+    std::wstring speechBubbleTexturePath = L"Data/speechBubble.dds";
+    ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, speechBubbleTexturePath.c_str(), m_speechBubbleTexture.ReleaseAndGetAddressOf()));
+
+    
+    auto uploadResourcesFinished = resourceUpload.End(
+    m_deviceResources->GetCommandQueue());
+
 
 }
 
@@ -80,15 +89,16 @@ void CompanionAI::Render(ID3D12GraphicsCommandList* commandList, ID3D12Descripto
 }
 
 
-void CompanionAI::Speak(const wchar_t* message)
-{
-    // Create the speech bubble object
-    SpeechBubble bubble;
-    bubble.Initialize(m_device, message);
-
-    // Set the speech bubble's position relative to the companion's position
-    bubble.SetPosition(m_position + m_speechBubbleOffset);
-
-    // Add the speech bubble to the list of active speech bubbles
-    m_activeSpeechBubbles.push_back(bubble);
-}
+//
+//void CompanionAI::Speak(const wchar_t* message)
+//{
+//    // Create the speech bubble object
+//    SpeechBubble bubble;
+//    bubble.Initialize(m_device, message);
+//
+//    // Set the speech bubble's position relative to the companion's position
+//    bubble.SetPosition(m_position + m_speechBubbleOffset);
+//
+//    // Add the speech bubble to the list of active speech bubbles
+//    m_activeSpeechBubbles.push_back(bubble);
+//}
