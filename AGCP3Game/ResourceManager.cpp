@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include "ResourceManager.h"
+#include "Tile.h"
 
 using namespace DirectX;
 
@@ -15,11 +16,11 @@ void ResourceManager::Init(DeviceManager* d3d)
 
 void ResourceManager::Render(DeviceManager* d3d)
 {
-	if (m_Tiles.size() > 0)
+	if (m_Objects.size() > 0)
 	{
-		for (Tile* currentTile : m_Tiles)
+		for (GameObject* currentObj : m_Objects)
 		{
-			currentTile->Render(d3d);
+			currentObj->Render(d3d);
 		}
 	}
 }
@@ -32,12 +33,36 @@ void ResourceManager::Terminate()
 		map = nullptr;
 	}
 	 
-	for (Tile* tile : m_Tiles)
+	for (GameObject* obj : m_Objects)
 	{
-		delete tile;
-		tile = nullptr;
+		delete obj;
+		obj = nullptr;
 	}
 }
+
+//void ResourceManager::LoadTexturesFromFile()
+//{
+//	FILE* gTexturesFile;
+//	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
+//	if (texturesStatus != 0)
+//	{
+//		printf("ERROR: Could not open file!");
+//		assert(false);
+//	}
+//	char readBuffer[4096];
+//	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
+//	rapidjson::Document texturesDoc;
+//	texturesDoc.ParseStream(is);
+//	fclose(gTexturesFile);
+//
+//	Value::Array texturesArray = texturesDoc["textures"].GetArray();
+//	for (int i = 0; i < texturesArray.Size(); i++)
+//	{
+//		std::string fileStr = texturesArray[0].GetString();																				// To convert from std::string to std::wstring
+//		std::wstring file(fileStr.begin(), fileStr.end());
+//		m_TexPaths.push_back(file);
+//	}
+//}
 
 // Goes through levels json file to add all needed level names to vector
 void ResourceManager::LoadLevelsFromFile()
@@ -63,6 +88,19 @@ void ResourceManager::LoadLevelsFromFile()
 		m_Levels.emplace_back(newMap);
 	}
 }
+
+//std::wstring ResourceManager::GetTexture(const std::string& tName)
+//{
+//	std::string nameStr = tName;																				// To convert from std::string to std::wstring
+//	std::wstring texName(nameStr.begin(), nameStr.end());
+//
+//	int i = 0;
+//	if (std::find(m_TexPaths.begin(), m_TexPaths.end(), texName) != m_TexPaths.end())
+//	{
+//		return m_TexPaths[i];
+//		i++;
+//	}
+//}
 
 // Reduces the given texture path to just the image name to give it a more appropriate name
 std::string ResourceManager::SetTexName(std::string path)
@@ -159,13 +197,13 @@ Map::Map(const char* filePath)
 
 void ResourceManager::UnloadZone()
 {
-	if (m_Tiles.size() > 0)
+	if (m_Objects.size() > 0)
 	{
-		for (int i = m_Tiles.size() - 1; i >= 0; i--)
+		for (int i = m_Objects.size() - 1; i >= 0; i--)
 		{
-			delete m_Tiles[i];
-			m_Tiles[i] = nullptr;
-			m_Tiles.pop_back();
+			delete m_Objects[i];
+			m_Objects[i] = nullptr;
+			m_Objects.pop_back();
 		}
 	}
 }
@@ -225,8 +263,18 @@ void ResourceManager::LoadZoneInfo(DeviceManager* d3d, int zoneNum)
 
 			if (objType == "Tile")
 			{   	
-				Tile* newTile = new Tile(d3d, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Tiles.emplace_back(newTile);
+				Tile* tile = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(tile);
+			}
+			else if (objType == "Respawner")
+			{
+				Tile* playerSpawner = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(playerSpawner);
+			}
+			else if (objType == "Damageable")
+			{
+				Tile* damageable = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(damageable);
 			}
 		}
 	}

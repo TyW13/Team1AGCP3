@@ -1,5 +1,5 @@
 #pragma once
-#include "Tile.h"
+#include "GameObject.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
@@ -117,8 +117,8 @@ public:
 	void Terminate();
 	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
 	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
-	//void CreateTexture(ID3D11Device& pDevice, const std::string &fPath);			// Creates a pointer to a texture object from texture image name string (Texture stores file name and path)
-	//Texture* GetTexture(const std::string& tName);									// Getter for pointer to texture object in m_Textures vector
+	//void CreateTexture(const std::string &fPath);			// Creates a pointer to a texture object from texture image name string (Texture stores file name and path)
+	//std::wstring GetTexture(const std::string& tName);									// Getter for pointer to texture object in m_Textures vector
 	std::string SetTexName(std::string path);										// Used to remove unneeded parts of texture path to get the images file name
 
 	int GetCurrentMapNum() { return currentMapNum; }
@@ -134,7 +134,8 @@ public:
 
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
-	std::vector<Tile*> m_Tiles;														// Vector to store current zone tiles
+	std::vector<std::wstring> m_TexPaths;
+	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 
 	int collisionWidth;

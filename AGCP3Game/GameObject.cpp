@@ -1,6 +1,6 @@
-#include "Tile.h"
+#include "GameObject.h"
 
-void Tile::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void GameObject::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
@@ -16,7 +16,7 @@ void Tile::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleMath::V
 	collisionBounds.right = mPos.x + objSize.x * mScale.x;
 	collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
 
-	d3d->GetResourceUpload()->Begin();
+	d3d->GetResourceUpload()->Begin();																				// Creating texture
 
 	DX::ThrowIfFailed(
 		DirectX::CreateDDSTextureFromFile(d3d->GetDevice(), *d3d->GetResourceUpload(), texPath.c_str(),
@@ -31,7 +31,7 @@ void Tile::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleMath::V
 	uploadResourcesFinished.wait();
 }
 
-void Tile::Render(DeviceManager* mD3D)
+void GameObject::Render(DeviceManager* mD3D)
 {
 	RECT* sourceRect = &objRect;
 
@@ -40,32 +40,32 @@ void Tile::Render(DeviceManager* mD3D)
 		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, 0.f, mD3D->GetOrigin(), mScale);
 }
 
-void Tile::SetActive(bool _isActive)
+void GameObject::SetActive(bool _isActive)
 {
 	isActive = _isActive;
 }
 
-void Tile::SetObjectSize(DirectX::SimpleMath::Vector2 _objSize)
+void GameObject::SetObjectSize(DirectX::SimpleMath::Vector2 _objSize)
 {
 	objSize = _objSize;
 }
 
-void Tile::SetIsCollidable(bool _isCollidable)
+void GameObject::SetIsCollidable(bool _isCollidable)
 {
 	isCollidable = _isCollidable;
 }
 
-void Tile::SetRect(RECT _objRect)
+void GameObject::SetRect(RECT _objRect)
 {
 	objRect = _objRect;
 }
 
-void Tile::SetPosition(DirectX::SimpleMath::Vector2 _position)
+void GameObject::SetPosition(DirectX::SimpleMath::Vector2 _position)
 {
 	mPos = _position;
 }
 
-void Tile::SetScale(DirectX::SimpleMath::Vector2 _scale)
+void GameObject::SetScale(DirectX::SimpleMath::Vector2 _scale)
 {
 	mScale = _scale;
 }
