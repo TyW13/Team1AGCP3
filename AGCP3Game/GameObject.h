@@ -11,6 +11,7 @@ public:
 	}
 
 	virtual void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 });
+	virtual void Update(float dTime);
 	virtual void Render(DeviceManager* dManager);
 
 	virtual bool GetActive() { return isActive; }
@@ -37,6 +38,7 @@ private:
 	RECT objRect;
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
+	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 
 	RECT collisionBounds;
 };

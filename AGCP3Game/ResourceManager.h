@@ -111,9 +111,9 @@ class ResourceManager
 public:
 	ResourceManager(){}
 
-	void Init(DeviceManager* d3d);
+	void Init(DeviceManager* dManager);
 	void Update(float dTime);
-	void Render(DeviceManager* d3d);
+	void Render(DeviceManager* dManager);
 	void Terminate();
 	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
 	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
@@ -127,10 +127,15 @@ public:
 		return m_Levels[currentMapNum]; 
 	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
-	void ReloadMap(DeviceManager* d3d, int mapNum);											// Load specific map by providing map num in vector
+	void LoadCurrentMap(DeviceManager* dManager);												// Just reloads curren tmap
+	void LoadNextMap(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadPreviousMap(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void ReloadMap(DeviceManager* dManager, int mapNum);											// Load specific map by providing map num in vector
 
 	void UnloadZone();																// Deletes all tile objects in vector to make room for the new zones tiles
-	void LoadZoneInfo(DeviceManager* d3d, int zoneNum);										// Load specific map by providing map num in vector
+	void LoadZoneInfo(DeviceManager* dManager, int zoneNum);										// Load specific map by providing map num in vector
+	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
+	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects

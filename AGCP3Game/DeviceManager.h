@@ -68,15 +68,6 @@ public:
         assert(spriteBatch);
         return spriteBatch.get();
     }
-
-    ID3D12Resource* GetTexture() {
-        assert(m_texture);
-        return m_texture.Get();
-    }
-    ID3D12Resource* GetBackground() {
-        assert(m_background);
-        return m_background.Get();
-    }
     DirectX::SimpleMath::Vector2 GetPosition() {
         return m_screenPos;
     }
@@ -94,9 +85,6 @@ private:
     std::unique_ptr<DirectX::ResourceUploadBatch> resourceUpload;
     std::unique_ptr<DirectX::DescriptorHeap> resourceDescriptors;
     ID3D12GraphicsCommandList* commandList;
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
 
     void Clear();
 

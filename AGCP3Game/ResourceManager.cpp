@@ -3,24 +3,42 @@
 #include <cstdio>
 #include "ResourceManager.h"
 #include "Tile.h"
+#include "Player.h"
 
 using namespace DirectX;
 
 
-void ResourceManager::Init(DeviceManager* d3d)
+void ResourceManager::Init(DeviceManager* dManager)
 {
 	LoadLevelsFromFile();
 
-	ReloadMap(d3d, 0);
+	RECT playerRect;
+	playerRect.left = 0;
+	playerRect.top= 0;
+	playerRect.right = 6;
+	playerRect.bottom = 16;
+
+	ReloadMap(dManager, 0);
 }
 
-void ResourceManager::Render(DeviceManager* d3d)
+void ResourceManager::Update(float dTime)
 {
 	if (m_Objects.size() > 0)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Render(d3d);
+			currentObj->Update(dTime);
+		}
+	}
+}
+
+void ResourceManager::Render(DeviceManager* dManager)
+{
+	if (m_Objects.size() > 0)
+	{
+		for (GameObject* currentObj : m_Objects)
+		{
+			currentObj->Render(dManager);
 		}
 	}
 }
@@ -119,12 +137,35 @@ void ResourceManager::SetCurrentMap(int _currentMapNum)
 	currentMapNum = _currentMapNum;
 }
 
+void ResourceManager::LoadCurrentMap(DeviceManager* dManager)
+{
+	ReloadMap(dManager, currentMapNum);
+}
+
+void ResourceManager::LoadNextMap(DeviceManager* dManager)
+{
+	if (currentMapNum < m_Levels.size() - 1)
+	{
+		currentMapNum++;
+		ReloadMap(dManager, currentMapNum);
+	}
+}
+
+void ResourceManager::LoadPreviousMap(DeviceManager* dManager)
+{
+	if (currentMapNum > 0)
+	{
+		currentMapNum--;
+		ReloadMap(dManager, currentMapNum);
+	}
+}
+
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
-void ResourceManager::ReloadMap(DeviceManager* d3d, int mapNum)
+void ResourceManager::ReloadMap(DeviceManager* dManager, int mapNum)
 {
 	SetCurrentMap(mapNum);
 
-	LoadZoneInfo(d3d, GetCurrentMap()->GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
+	LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());								// Calls the LoadZoneInfo function of currentmap, giving the currentzone we want to load
 }
 
 Map::Map(const char* filePath)
@@ -208,7 +249,7 @@ void ResourceManager::UnloadZone()
 	}
 }
 
-void ResourceManager::LoadZoneInfo(DeviceManager* d3d, int zoneNum)
+void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 {
 	UnloadZone();
 
@@ -224,6 +265,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* d3d, int zoneNum)
 
 	std::vector<int> data = GetCurrentMap()->GetCurrentZone().GetData();						// Initializing new vector<int> with current zones datavector (storing tile data)
 
+	DirectX::SimpleMath::Vector2 objScale = { 6,6 };
 	int collisionWidth = 0;
 	int collisionHeight = 0;
 	std::string objType;
@@ -242,8 +284,8 @@ void ResourceManager::LoadZoneInfo(DeviceManager* d3d, int zoneNum)
 			size_t xPos = i % GetCurrentMap()->getWidth();										//
 			size_t yPos = floor(i / GetCurrentMap()->getWidth());								//
 
-			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * 6;						// Tile object x and y position on screen
-			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * 6;;
+			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * objScale.x;						// Tile object x and y position on screen
+			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * objScale.y;
 
 			float x1 = x * GetCurrentMap()->getTileWidth();										// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
 			float x2 = (x + 1) * GetCurrentMap()->getTileWidth();
@@ -263,20 +305,51 @@ void ResourceManager::LoadZoneInfo(DeviceManager* d3d, int zoneNum)
 
 			if (objType == "Tile")
 			{   	
-				Tile* tile = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* tile = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(tile);
 			}
 			else if (objType == "Respawner")
 			{
-				Tile* playerSpawner = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
+
+				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
+				float collisionOffset = 1.0f;
+				RECT playerRect;
+				playerRect.left = 0;
+				playerRect.top = 0;
+				playerRect.right = 6;
+				playerRect.bottom = 16;
+				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
+				Player* player = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
+				m_Objects.emplace_back(player);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(d3d, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), DirectX::SimpleMath::Vector2(6, 6), true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
 			}
 		}
+	}
+}
+
+void ResourceManager::LoadNextZone(DeviceManager* dManager)
+{
+	int zoneOffset = 1;
+	if (GetCurrentMap()->GetCurrentZoneNum() < GetCurrentMap()->GetLayers().size() - zoneOffset)							// Check to see if incrementing zone num will go over max zones or not
+	{
+		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() + zoneOffset);
+		LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());
+	}
+}
+
+void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
+{
+	int zoneOffset = 1;
+	if (GetCurrentMap()->GetCurrentZoneNum() > 0)
+	{
+		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() - zoneOffset);
+		LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());
 	}
 }
 

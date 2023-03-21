@@ -1,12 +1,13 @@
 #include "GameObject.h"
 
-void GameObject::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
-	std::vector<RECT>* tempTileRect = new std::vector<RECT>;
-	tempTileRect->push_back(_objRect);
-
+	isActive = _active;
+	objSize = _objSize;
+	objType = _objType;
+	isCollidable = _isCollidable;
 	objRect = _objRect;
 	mPos = _position;
 	mScale = _scale;
@@ -16,28 +17,33 @@ void GameObject::Init(DeviceManager* d3d, std::wstring texPath, DirectX::SimpleM
 	collisionBounds.right = mPos.x + objSize.x * mScale.x;
 	collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
 
-	d3d->GetResourceUpload()->Begin();																				// Creating texture
+	dManager->GetResourceUpload()->Begin();																				// Creating texture
 
 	DX::ThrowIfFailed(
-		DirectX::CreateDDSTextureFromFile(d3d->GetDevice(), *d3d->GetResourceUpload(), texPath.c_str(),
+		DirectX::CreateDDSTextureFromFile(dManager->GetDevice(), *dManager->GetResourceUpload(), texPath.c_str(),
 			objTex.ReleaseAndGetAddressOf()));
 
-	DirectX::CreateShaderResourceView(d3d->GetDevice(), objTex.Get(),
-		d3d->GetResourceDescriptors()->GetCpuHandle(1));
+	DirectX::CreateShaderResourceView(dManager->GetDevice(), objTex.Get(),
+		dManager->GetResourceDescriptors()->GetCpuHandle(1));
 
-	auto uploadResourcesFinished = d3d->GetResourceUpload()->End(
-		d3d->GetDeviceResources()->GetCommandQueue());
+	auto uploadResourcesFinished = dManager->GetResourceUpload()->End(
+		dManager->GetDeviceResources()->GetCommandQueue());
 
 	uploadResourcesFinished.wait();
 }
 
-void GameObject::Render(DeviceManager* mD3D)
+void GameObject::Update(float dTime)
+{
+
+}
+
+void GameObject::Render(DeviceManager* dManager)
 {
 	RECT* sourceRect = &objRect;
 
-	mD3D->GetSpriteBatch()->Draw(mD3D->GetResourceDescriptors()->GetGpuHandle(1),
+	dManager->GetSpriteBatch()->Draw(dManager->GetResourceDescriptors()->GetGpuHandle(1),
 		DirectX::GetTextureSize(objTex.Get()),
-		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, 0.f, mD3D->GetOrigin(), mScale);
+		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, 0.f, dManager->GetOrigin(), mScale);
 }
 
 void GameObject::SetActive(bool _isActive)

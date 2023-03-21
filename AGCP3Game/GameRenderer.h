@@ -13,7 +13,7 @@ class Framework;
 class GameRenderer final
 {
 public:
-    GameRenderer(DeviceManager* _mD3D) noexcept(false);
+    GameRenderer(DeviceManager* _dManager) noexcept(false);
     ~GameRenderer();
 
     GameRenderer(GameRenderer&&) = default;
@@ -53,7 +53,7 @@ private:
     void CreateDeviceDependentResources();
 
     // Device resources.
-    DeviceManager* mD3D;
+    DeviceManager* dManager;
 
     ResourceManager rManager;
 

@@ -1,16 +1,16 @@
 #pragma once
 #include "GameObject.h"
-
-class Tile : public GameObject
+class Player : public GameObject
 {
 public:
-	Tile(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 8 ,8 })
+	Player(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
 		: GameObject(dManager, texPath, position, scale, active, objSize, objType, isCollidable, objRect)
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, isCollidable, objRect);
 	}
 
-	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 8 ,8 }) override;
+	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 }) override;
+	void Update(float dTime) override;
 	void Render(DeviceManager* dManager) override;
 
 	bool GetActive() override { return isActive; }
@@ -40,3 +40,4 @@ private:
 
 	RECT collisionBounds;
 };
+

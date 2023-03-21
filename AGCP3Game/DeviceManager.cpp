@@ -94,14 +94,8 @@ void DeviceManager::CreateDeviceDependentResources()
         throw std::runtime_error("Shader Model 6.0 is not supported!");
     }
 
-    // If using the DirectX Tool Kit for DX12, uncomment this line:
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
-
-    //m_graphicsMemory:
-
-
-    // Tiling a Sprite
     m_states = std::make_unique<CommonStates>(device);
 
     resourceDescriptors = std::make_unique<DescriptorHeap>(device,
@@ -111,33 +105,6 @@ void DeviceManager::CreateDeviceDependentResources()
 
     resourceUpload.get()->Begin();
 
-
-    // WIC
-
-    //DX::ThrowIfFailed(
-    //    CreateWICTextureFromFile(device, resourceUpload, L"cat.png",
-    //        m_texture.ReleaseAndGetAddressOf()));
-
-    // DDS
-
-    // CAT
-
-    //DX::ThrowIfFailed(
-    //    CreateDDSTextureFromFile(device, *resourceUpload.get(), L"Data/test_sheet2.dds",
-    //        m_texture.ReleaseAndGetAddressOf()));
-
-    //CreateShaderResourceView(device, m_texture.Get(),
-    //    resourceDescriptors.get()->GetCpuHandle(Descriptors::Tile));
-
-    //DX::ThrowIfFailed(
-    //    CreateWICTextureFromFile(device, *resourceUpload.get(), L"Data/sunset.jpg",
-    //        m_background.ReleaseAndGetAddressOf()));
-
-    //// BACKGROUND
-
-    //CreateShaderResourceView(device, m_background.Get(),
-    //    resourceDescriptors.get()->GetCpuHandle(Descriptors::Background));
-
     RenderTargetState rtState(deviceResources.get()->GetBackBufferFormat(),
         deviceResources.get()->GetDepthBufferFormat());
 
@@ -146,19 +113,6 @@ void DeviceManager::CreateDeviceDependentResources()
         rtState, nullptr, nullptr, nullptr, &sampler);
     ResourceUploadBatch* rUpload = resourceUpload.get();
     spriteBatch = std::make_unique<SpriteBatch>(device, *rUpload, pd);
-
-    //XMUINT2 catSize = GetTextureSize(m_texture.Get());
-
-    //m_origin.x = float(catSize.x / 2);
-    //m_origin.y = float(catSize.y / 2);
-
-    ////m_origin.x = float(catSize.x * 2);
-    ////m_origin.y = float(catSize.y * 2);
-
-    //m_tileRect.left = catSize.x * 2;
-    //m_tileRect.right = catSize.x * 6;
-    //m_tileRect.top = catSize.y * 2;
-    //m_tileRect.bottom = catSize.y * 6;
 
     auto uploadResourcesFinished = resourceUpload.get()->End(
         deviceResources.get()->GetCommandQueue());
@@ -195,8 +149,6 @@ void DeviceManager::OnDeviceLost()
     deviceResources.reset();
     resourceUpload.reset();
     resourceDescriptors.reset();
-    m_texture.Reset();
-    m_background.Reset();
     spriteBatch.reset();
     m_graphicsMemory.reset();
     m_states.reset();
