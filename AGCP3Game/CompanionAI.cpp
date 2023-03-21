@@ -14,24 +14,25 @@ CompanionAI::CompanionAI(ID3D12Device* device)
     m_velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_rotation = 0.0f;
     m_scale = 1.0f;
-    m_speechBubbleOffset = XMFLOAT3(0.0f, 40.0f, 0.0f);
+    //m_speechBubbleOffset = XMFLOAT3(0.0f, 40.0f, 0.0f);
 
   
 }
 
 void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
+    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
+    AIDescriptors::Count);
+
     ResourceUploadBatch resourceUpload(device);
 
     resourceUpload.Begin();
 
-    // Load companion model from file
-    std::wstring companionTexturePath = L"Data/companion.dds";
+    // Load Debug Dave from file
+    std::wstring companionTexturePath = L"Data/DebugDave.dds";
     ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, companionTexturePath.c_str(), m_companionAITexture.ReleaseAndGetAddressOf()));
 
-    // Load speech bubble model from file
-    std::wstring speechBubbleTexturePath = L"Data/speechBubble.dds";
-    ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, speechBubbleTexturePath.c_str(), m_speechBubbleTexture.ReleaseAndGetAddressOf()));
+
 
     
     auto uploadResourcesFinished = resourceUpload.End(
@@ -86,6 +87,15 @@ void CompanionAI::Render(ID3D12GraphicsCommandList* commandList, ID3D12Descripto
 
     // Draw the companion
     commandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
+
+    m_spriteBatch->Begin(commandList);
+
+
+    m_spriteBatch->Draw(m_resourceDescriptors->GetGPUHandle(AIDescriptors::companionAI),
+
+
+    m_spriteBatch->End();
+
 }
 
 

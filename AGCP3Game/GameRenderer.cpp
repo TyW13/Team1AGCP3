@@ -86,7 +86,7 @@ void GameRenderer::Update(DX::StepTimer const& timer)
 
     float elapsedTime = float(timer.GetElapsedSeconds());
 
-    audio.Update(elapsedTime);
+   
 
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
@@ -94,6 +94,7 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     m_pFramework->Update(elapsedTime);
+    audio.Update(elapsedTime);
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
@@ -394,10 +395,7 @@ void GameRenderer::Render()
         GetTextureSize(m_texture.Get()),
         m_screenPos, nullptr, Colors::White, 0.f, m_origin);
 
-    m_spriteBatch->Draw(m_resourceDescriptors->GetGpuHandle(Descriptors::CompanionAI),
-        GetTextureSize(m_AItexture.Get()),
-        m_screenPos, nullptr, Colors::White, 0.f, m_AIorigin);
-
+  
     m_spriteBatch->End();
 
   
@@ -527,16 +525,6 @@ void GameRenderer::CreateDeviceDependentResources()
     resourceUpload.Begin();
 
 
-    // WIC
-
-    //DX::ThrowIfFailed(
-    //    CreateWICTextureFromFile(device, resourceUpload, L"cat.png",
-    //        m_texture.ReleaseAndGetAddressOf()));
-
-    // DDS
-
-    // CAT
-
     DX::ThrowIfFailed(
         CreateDDSTextureFromFile(device, resourceUpload, L"Data/Cat.dds",
             m_texture.ReleaseAndGetAddressOf()));
@@ -545,19 +533,7 @@ void GameRenderer::CreateDeviceDependentResources()
     CreateShaderResourceView(device, m_texture.Get(),
         m_resourceDescriptors->GetCpuHandle(Descriptors::Cat));
 
-    // DebugDaves AI mate
-
-    DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, resourceUpload, L"Data/DebugDave.dds",
-            m_AItexture.ReleaseAndGetAddressOf()));
-
-    CreateShaderResourceView(device, m_AItexture.Get(),
-        m_resourceDescriptors->GetCpuHandle(Descriptors::CompanionAI));
-
-  
-
-    // BACKGROUND
-
+    
     DX::ThrowIfFailed(
         CreateWICTextureFromFile(device, resourceUpload, L"Data/sunset.jpg",
             m_background.ReleaseAndGetAddressOf()));
@@ -568,8 +544,7 @@ void GameRenderer::CreateDeviceDependentResources()
     RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(),
         m_deviceResources->GetDepthBufferFormat());
 
-    //SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::NonPremultiplied);
-    //m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
+  
 
     auto sampler = m_states->LinearWrap();
     SpriteBatchPipelineStateDescription pd(
@@ -590,20 +565,7 @@ void GameRenderer::CreateDeviceDependentResources()
     m_tileRect.top = catSize.y * 2;
     m_tileRect.bottom = catSize.y * 6;
 
-
-    /////////////// DEBUG DAVE ////////////////////
-    XMUINT2 AISize = GetTextureSize(m_AItexture.Get());
-
-    m_AIorigin.x = float(AISize.x / 2);
-    m_AIorigin.y = float(AISize.y / 2);
-
-   
-
-    m_tileRect.left = AISize.x * 1;
-    m_tileRect.right = AISize.x * 3;
-    m_tileRect.top = AISize.y * 1;
-    m_tileRect.bottom = AISize.y * 3;
-
+    
     auto uploadResourcesFinished = resourceUpload.End(
         m_deviceResources->GetCommandQueue());
 
@@ -638,7 +600,7 @@ void GameRenderer::OnDeviceLost()
     // If using the DirectX Tool Kit for DX12, uncomment this line:
     m_graphicsMemory.reset();
     m_texture.Reset();
-    m_AItexture.Reset();
+   /* m_AItexture.Reset();*/
     m_resourceDescriptors.reset();
     m_spriteBatch.reset();
     m_states.reset();

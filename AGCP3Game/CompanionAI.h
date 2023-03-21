@@ -7,7 +7,7 @@
 #include "DeviceResources.h"
 #include "pch.h"
 
-#include "d2d1.h"
+
 
 
 
@@ -20,7 +20,7 @@ public:
     void Update(float deltaTime, const DirectX::XMFLOAT3& playerPosition);
     void Render(ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap, UINT cbvOffset);
 
-    void Speak(const wchar_t* message);
+    //void Speak(const wchar_t* message);
 
 private:
     struct ConstantBuffer
@@ -35,23 +35,33 @@ private:
         DirectX::XMFLOAT2 uv;
     };
 
-    struct SpeechBubbleVertex
-    {
-	    DirectX::XMFLOAT3 position;
-        DirectX::XMFLOAT2 uv;
-    };
+    //struct SpeechBubbleVertex
+    //{
+	   // DirectX::XMFLOAT3 position;
+    //    DirectX::XMFLOAT2 uv;
+    //};
 
-    struct SpeechBubbleConstantBuffer
-    {
-	    DirectX::XMFLOAT4X4 worldMatrix;
-	    DirectX::XMFLOAT4 textColor;
-    };
+    //struct SpeechBubbleConstantBuffer
+    //{
+	   // DirectX::XMFLOAT4X4 worldMatrix;
+	   // DirectX::XMFLOAT4 textColor;
+    //};
 
     struct companionAIConstantBuffer
     {
         DirectX::XMFLOAT4X4 worldMatrix;
         DirectX::XMFLOAT4 textColor;
     };
+
+
+    enum AIDescriptors
+    {
+	    companionAI,
+        Count,
+    };
+    std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+
     std::unique_ptr<DX::DeviceResources>        m_deviceResources;
 
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
@@ -91,18 +101,18 @@ private:
     float m_rotation;
     float m_scale;
 
-    // Speech bubble variables
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleVertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleIndexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW m_speechBubbleVertexBufferView;
-    D3D12_INDEX_BUFFER_VIEW m_speechBubbleIndexBufferView;
-    UINT m_speechBubbleIndexCount;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_speechBubblePipelineState;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_speechBubbleRootSignature;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleConstantBuffer;
-    SpeechBubbleConstantBuffer* m_mappedSpeechBubbleConstantBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleTexture;
-    DirectX::XMFLOAT3 m_speechBubbleOffset;
+    //// Speech bubble variables
+    //Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleVertexBuffer;
+    //Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleIndexBuffer;
+    //D3D12_VERTEX_BUFFER_VIEW m_speechBubbleVertexBufferView;
+    //D3D12_INDEX_BUFFER_VIEW m_speechBubbleIndexBufferView;
+    //UINT m_speechBubbleIndexCount;
+    //Microsoft::WRL::ComPtr<ID3D12PipelineState> m_speechBubblePipelineState;
+    //Microsoft::WRL::ComPtr<ID3D12RootSignature> m_speechBubbleRootSignature;
+    //Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleConstantBuffer;
+    //SpeechBubbleConstantBuffer* m_mappedSpeechBubbleConstantBuffer;
+    //Microsoft::WRL::ComPtr<ID3D12Resource> m_speechBubbleTexture;
+    //DirectX::XMFLOAT3 m_speechBubbleOffset;
   
 };
 

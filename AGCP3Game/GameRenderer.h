@@ -82,7 +82,7 @@ private:
 
     std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_AItexture;
+ /*   Microsoft::WRL::ComPtr<ID3D12Resource> m_AItexture;*/
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     DirectX::SimpleMath::Vector2 m_screenPos;
@@ -150,7 +150,7 @@ private:
     {
         Cat,
         Background,
-        CompanionAI,
+        /*CompanionAI,*/
         Count
     };
 };
