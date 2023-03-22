@@ -214,7 +214,6 @@ void Animation::CheckState(std::string jsonPath)
 		LoadIdleAnimation("data/idle.json");
 		//LoadAnimationData("data/PlayerData.json);
 	}
-	
 	if (jsonPath == "data/Shotgun.json")
 	{
 		animType = State::SHOTGUN;

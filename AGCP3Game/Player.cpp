@@ -33,7 +33,6 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 
 void Player::Update(float dTime)
 {
-	PlayerAnim.Update(dTime, this.)
 	// PUT PLAYER UPDATE STUFF IN HERE!
 }
 
