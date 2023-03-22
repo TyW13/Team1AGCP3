@@ -7,6 +7,8 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include <sstream>
+#include <Keyboard.h>
+#include <Mouse.h>
 #define DBOUT(s)                \
 {                               \
     std::ostringstream os_;     \

@@ -112,6 +112,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         currentVel.x *= DRAG_X_IN_AIR;
     }
 
+    //--------- y-axis
+
     if (grounded)
     {
         //set initial velocity, start timer, record button pressed down during only the first frame

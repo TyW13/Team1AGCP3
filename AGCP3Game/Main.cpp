@@ -9,6 +9,9 @@
 #include "AudioManager.h"
 #include <Dbt.h>
 #include <ksmedia.h>
+//keyboard and mouse
+#include <Keyboard.h>
+#include <Mouse.h>
 
 using namespace DirectX;
 
@@ -234,6 +237,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 game->OnDeactivated();
             }
         }
+        Keyboard::ProcessMessage(message, wParam, lParam);
+        Mouse::ProcessMessage(message, wParam, lParam);
         break;
 
     case WM_POWERBROADCAST:
@@ -260,7 +265,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
 
-    case WM_SYSKEYDOWN:
+    case WM_KEYUP:
+        Keyboard::ProcessMessage(message, wParam, lParam);
+        break;
+
+    case WM_KEYDOWN:
         if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
         {
             // Implements the classic ALT+ENTER fullscreen toggle
@@ -290,6 +299,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             s_fullscreen = !s_fullscreen;
         }
+        Keyboard::ProcessMessage(message, wParam, lParam);
+        break;
+
+    case WM_MOUSEHOVER:
+        Mouse::ProcessMessage(message, wParam, lParam);
         break;
 
     case WM_MENUCHAR:
