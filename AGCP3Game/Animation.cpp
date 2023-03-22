@@ -38,7 +38,7 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 	{
 	case State::PLAYER:
 		float deltaTime = dTime;
-		int Frames = 0;
+		int Frames = Zero;//Temporary magic numbers unil animation data loading is complete
 		elapsedTime += deltaTime;
 		if (animState == 1 || 2)
 		{
@@ -63,7 +63,7 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 		float deltaTime = dTime;
 		elapsedTime += deltaTime;
 		int Frames = 4;//Temporary magic numbers unil animation data loading is complete
-		if (animState == 1 && currentFrame <= 0)
+		if (animState == 1 && currentFrame <= Zero)
 		{
 			if (elapsedTime >= frameDuration)
 			{
@@ -74,56 +74,60 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 				elapsedTime -= frameDuration;
 			}
 		}
-		if (animState == 0 && currentFrame >= 0)
+		if (animState == Zero && currentFrame >= Zero)
 		{
-
+			if (elapsedTime >= frameDuration)
+			{
+				if (currentFrame >= Zero)
+				{
+					--currentFrame;
+				}
+				elapsedTime -= frameDuration;
+			}
 		}
 		SwitchTex(Sprite, currentFrame, animState);
 	}
 }
 
-void Animation::SwitchTex(GameObject &Player, int currentFrame, int animState)
+void Animation::SwitchTex(GameObject &Sprite, int currentFrame, int animState)
 {
 	switch (animType)
 	{
 	case State::PLAYER:
 		if (animState == 0)
 		{
-			Player.SetTex(*p2);
-			Player.SetScale(Vector2(0.5,0.5));//Temporary magic numbers for temporary sprite CHANGE
-			Player.SetTexRect(idlespriteSheet[currentFrame]);
+			Sprite.SetTex(*p2);
+			Sprite.SetScale(Vector2(0.5,0.5));//Temporary magic numbers for temporary sprite CHANGE
+			Sprite.SetRect(idlespriteSheet[currentFrame]);
 		}
 		if (animState == 2)
 		{
-			Player.SetTex(*p);
-			Player.SetScale(Vector2(kSizeUp, kSizeUp));
-			Player.SetTexRect(walkspriteSheet[currentFrame]);
+			Sprite.SetTex(*p);
+			Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
+			Sprite.SetRect(walkspriteSheet[currentFrame]);
 		}
-		if (animState == 1
+		if (animState == 1)
 		{
-			Player.SetTex(*p);
-			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Player.SetTexRect(-walkspriteSheet[currentFrame]);
+			Sprite.SetTex(*p);
+			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
+			Sprite.SetRect(-walkspriteSheet[currentFrame]);
 		}
 		if (animState == 3)
 		{
-			Player.SetTex(*p3);
-			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Player.SetTexRect(-walkspriteSheet[Zero]);
+			Sprite.SetTex(*p3);
+			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
+			Sprite.SetRect(-walkspriteSheet[Zero]);
 		}
 		else
 		{
 			assert("Animation state invalid");
 		}
 	case State::SHOTGUN:
-		if (animstate == 1)
-		{
-			Player.SetTexRect(-ShotgunSheet[currentFrame]);
-		}
+		Sprite.SetRect(shotgunSpriteSheet[currentFrame]);
 	}
 }
 
-void Animation::LoadAnimation(std::string jsonPath)
+void Animation::LoadAnimation(std::string jsonPath, State Object )
 {
 	//From Joshua Moxon project 2
 	//Need rapidjson to test
@@ -147,7 +151,13 @@ void Animation::LoadAnimation(std::string jsonPath)
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
 			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
- 			walkspriteSheet[i] = TempRect;
+			switch (animType)
+			{
+			case State::PLAYER:
+				walkspriteSheet[i] = TempRect;
+			case State::SHOTGUN:
+				shotgunSpriteSheet[i] = TempRect;
+			}
 			++i;
 		}
 	}
@@ -199,17 +209,18 @@ void Animation::CheckState(std::string jsonPath)
 	if (jsonPath == "data/TestSheet.json")
 	{
 		animType = State::PLAYER;
-		LoadAnimation(jsonPath);
+		LoadAnimation(jsonPath, animType);
 		//LoadAnimation("data/jump.json");
 		LoadIdleAnimation("data/idle.json");
 		//LoadAnimationData("data/PlayerData.json);
 	}
-	/*
-	* if (jsonPath == "data/Shotgun.json")
-	*	animType = State::Shotgun;
-		LoadAnimation(jsonPath);
-		LoadAnimationData(data/ShotgunData.json);
-	*/
+	
+	if (jsonPath == "data/Shotgun.json")
+	{
+		animType = State::SHOTGUN;
+		LoadAnimation(jsonPath, animType);
+		//LoadAnimationData(data/ShotgunData.json);
+	}
 	else
 	{
 		assert("Animation does not exist");
