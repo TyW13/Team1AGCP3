@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Input.h"
+#include "ResourceManager.h"
 
 
 void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
@@ -13,11 +14,6 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 	objRect = _objRect;
 	mPos = _position;
 	mScale = _scale;
-
-	collisionBounds.left = mPos.x;
-	collisionBounds.top = mPos.y;
-	collisionBounds.right = mPos.x + objSize.x * mScale.x;
-	collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
 
 	dManager->GetResourceUpload()->Begin();																					// Start of texture loading
 
@@ -34,10 +30,23 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 
 }
 
-void Player::Update(DeviceManager* dManager, float dTime)
+void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
-	// PUT PLAYER UPDATE STUFF IN HERE!
+    collisionBounds.left = mPos.x;
+    collisionBounds.top = mPos.y;
+    collisionBounds.right = mPos.x + objSize.x * mScale.x;
+    collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
+
+    if (!collidedTop)                   // checks if player is on the ground
+    {
+        grounded = false;
+    }
+
+	// Player Animations update goes in here
+
 	UpdateInput(dManager, dTime);
+    
+    CheckCollision(dManager, rManager, dTime);
 }
 
 void Player::Render(DeviceManager* dManager)
@@ -59,7 +68,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     mPos += currentVel * dTime;
 
     //--------- mouse
-    if (GetAsyncKeyState(VK_LBUTTON) && detectMouseClick)
+    if (GetAsyncKeyState(VK_LBUTTON) && detectMouseClick && !fired)
     {
         POINT cursorPos;
         GetCursorPos(&cursorPos);
@@ -80,6 +89,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         //apply a jump force to the player character
         currentVel = (direction * 1500);
 
+        fired = true;
+        grounded = false;
         detectMouseClick = false;
     }
     if (!mouse.leftButton && !detectMouseClick)
@@ -117,7 +128,12 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (grounded)
     {
         //set initial velocity, start timer, record button pressed down during only the first frame
-        if (kb.Space && detectSpaceKey)
+        if (kb.Space)
+        {
+            detectSpaceKey = true;
+        }
+
+        if (detectSpaceKey)
         {
             start_time = std::chrono::high_resolution_clock::now();
             currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
@@ -126,7 +142,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             recordJumpTime = true;
             grounded = false;
         }
-
 
     }
     if (!grounded)
@@ -299,10 +314,106 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         detectSpaceKey = true;
         grounded = true;
     }
+}
 
-    if (kb.P)
+void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager, float dTime)
+{			
+    collidedTop = false;
+    collidedBottom = false;
+    collidedLeft = false;
+    collidedRight = false;
+
+    float maxVel = 30.f;
+    if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
     {
-        printf("afafwf");
+        currentVel.x = maxVel / dTime;
+    }
+    else if (currentVel.x * dTime <= -maxVel)
+    {
+        currentVel.x = -maxVel / dTime;
+    }
+    if (currentVel.y * dTime >= maxVel)
+    {
+        currentVel.y = maxVel / dTime;
+    }
+    else if (currentVel.y * dTime <= -maxVel)
+    {
+        currentVel.y = -maxVel / dTime;
+    }
+
+    DirectX::SimpleMath::Vector2 nextPos = mPos + currentVel * dTime;															// Player future position after forces applied
+    
+
+    RECT nextPosRect = RECT{                                                                                
+        static_cast<long> (nextPos.x),
+        static_cast<long> (nextPos.y),
+        static_cast<long> (nextPos.x + objSize.x * abs(mScale.x)),
+        static_cast<long> (nextPos.y + objSize.y * abs(mScale.y)) };
+
+    bool collided = false;                                                                             
+    std::vector<GameObject*> gObjects;                                                                 
+
+    for (GameObject* gObject : rManager->GetObjects())
+    {
+        if (nextPosRect.left <= gObject->GetCollisionBounds().right &&
+            nextPosRect.right >= gObject->GetCollisionBounds().left &&
+            nextPosRect.top <= gObject->GetCollisionBounds().bottom &&
+            nextPosRect.bottom >= gObject->GetCollisionBounds().top)
+        {
+            gObjects.emplace_back(gObject);
+        }
+    }
+
+    float collisionPosOffset = 1;               // Value to offset player by when they collide with an object
+    for (GameObject* obj : gObjects)
+    {
+        if (obj->GetObjectType() == "Tile")
+        {
+            //DBOUT(objType);
+            if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
+            {
+                mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
+                mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.y = 0;
+
+                collided = true;
+                collidedTop = true;
+                grounded = true;
+                fired = false;
+            }
+            else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
+            {
+                mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
+                mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.y = 0;
+
+                collided = true;
+                collidedBottom = true;
+            }
+            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
+            {
+                mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.x = 0;
+
+                collided = true;
+                collidedLeft = true;
+            }
+            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+            {
+                mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.x = 0;
+
+                collided = true;
+                collidedRight = true;
+            }
+        }
+
+        else if (obj->GetObjectType() == "Damageable")
+        {
+            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+        }
     }
 }
 

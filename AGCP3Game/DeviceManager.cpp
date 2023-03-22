@@ -53,6 +53,8 @@ void DeviceManager::Init(HWND window, int width, int height)
 
     //game logic, will move later
 
+
+    // Initialize keyboard and mouse 
     m_keyboard = std::make_unique<DirectX::Keyboard>();
     m_mouse = std::make_unique<DirectX::Mouse>();
     m_mouse->SetWindow(window);

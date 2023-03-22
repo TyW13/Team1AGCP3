@@ -137,6 +137,8 @@ public:
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
+	std::vector<GameObject*> GetObjects() { return m_Objects; }
+
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;

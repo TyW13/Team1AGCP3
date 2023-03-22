@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+class ResourceManager;
+
 class Player : public GameObject
 {
 public:
@@ -11,7 +13,7 @@ public:
 	}
 
 	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 }) override;
-	void Update(DeviceManager* dManager, float dTime) override;
+	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime) override;
 	void Render(DeviceManager* dManager) override;
 
     void UpdateInput(DeviceManager* dManager, float dTime);
@@ -42,10 +44,13 @@ private:
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 
+    void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
+    bool collidedTop = false;
+    bool collidedBottom = false;
+    bool collidedLeft = false;
+    bool collidedRight = false;
 	RECT collisionBounds;
-
-
-
+  
 
     //------ movement variables
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
@@ -62,7 +67,7 @@ private:
     const float WALL_JUMP_VEL_Y = 1500;
     const float CLIMB_VEL = 170;					    //player climbing velocity
     const float SLIDE_DOWN_VEL = 80;					//sliding down velocity
-    const float GRAVITY = 1;
+    const float GRAVITY = 400;
     const float PLAYER_SPEED = 400;
     const float DRAG_X = 0.82;				            //for deceleration in x-axis on the ground
     const float DRAG_X_IN_AIR = 0.88;			    	//for deceleration in x-axis in air
@@ -75,6 +80,7 @@ private:
 
     std::string jumpType;
 
+    bool fired = false;
     bool grounded = false;				                //
     bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
     bool recordJumpTime = false;				        //start/stop recording jump time

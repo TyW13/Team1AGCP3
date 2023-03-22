@@ -6,6 +6,7 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include <math.h>
 #include <sstream>
 #include <Keyboard.h>
 #include <Mouse.h>

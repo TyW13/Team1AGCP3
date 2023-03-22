@@ -7,7 +7,6 @@
 
 using namespace DirectX;
 
-
 void ResourceManager::Init(DeviceManager* dManager)
 {
 	LoadLevelsFromFile();
@@ -27,7 +26,7 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Update(dManager, dTime);
+			currentObj->Update(dManager, this, dTime);
 		}
 	}
 }
