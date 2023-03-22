@@ -31,57 +31,81 @@ void Animation::Init(std::string jsonPath, GameObject& Sprite)
 	CheckState(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
 }
-void Animation::Update(float dTime, GameObject &Sprite, std::string animState)
+void Animation::Update(float dTime, GameObject &Sprite, int animState)
 {
 	//calculate elapsed time
-	float deltaTime = dTime;
-	int Frames = 0;
-	elapsedTime += deltaTime;
-	if (animState == "Left" || "Right")
+	switch (animType)
 	{
-		Frames = PlayerFrames;
-	}
-	if (animState == "Stand")
-	{
-		Frames = IdleFrames;
-	}
-	//advance to the next frame if enough time has passed
+	case State::PLAYER:
+		float deltaTime = dTime;
+		int Frames = 0;
+		elapsedTime += deltaTime;
+		if (animState == 1 || 2)
+		{
+			Frames = PlayerFrames;
+		}
+		if (animState == 0)
+		{
+			Frames = IdleFrames;
+		}
+		//advance to the next frame if enough time has passed (Constantly changing frames)
 		if (elapsedTime >= frameDuration)
 		{
-			currentFrame++;
+			++currentFrame;
 			if (currentFrame >= Frames)
 			{
 				currentFrame = Zero;
 			}
 			elapsedTime -= frameDuration;
 		}
-	SwitchTex(Sprite, currentFrame, animState);
+		SwitchTex(Sprite, currentFrame, animState);
+	case State::SHOTGUN:
+		float deltaTime = dTime;
+		elapsedTime += deltaTime;
+		int Frames = 4;//Temporary magic numbers unil animation data loading is complete
+		if (animState == 1 && currentFrame <= 0)
+		{
+			if (elapsedTime >= frameDuration)
+			{
+				if (currentFrame <= Frames)
+				{
+					++currentFrame;
+				}
+				elapsedTime -= frameDuration;
+			}
+		}
+		if (animState == 0 && currentFrame >= 0)
+		{
+
+		}
+		SwitchTex(Sprite, currentFrame, animState);
+	}
 }
 
-void Animation::SwitchTex(GameObject &Player, int currentFrame, std::string animState)
+void Animation::SwitchTex(GameObject &Player, int currentFrame, int animState)
 {
 	switch (animType)
 	{
 	case State::PLAYER:
-		if (animState == "Stand")
+		if (animState == 0)
 		{
 			Player.SetTex(*p2);
 			Player.SetScale(Vector2(0.5,0.5));//Temporary magic numbers for temporary sprite CHANGE
 			Player.SetTexRect(idlespriteSheet[currentFrame]);
 		}
-		if (animState == "Right")
+		if (animState == 2)
 		{
 			Player.SetTex(*p);
 			Player.SetScale(Vector2(kSizeUp, kSizeUp));
 			Player.SetTexRect(walkspriteSheet[currentFrame]);
 		}
-		if (animState == "Left")
+		if (animState == 1
 		{
 			Player.SetTex(*p);
 			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
 			Player.SetTexRect(-walkspriteSheet[currentFrame]);
 		}
-		if (animState == "Jump")
+		if (animState == 3)
 		{
 			Player.SetTex(*p3);
 			Player.SetScale(Vector2(-kSizeUp, kSizeUp));
@@ -90,6 +114,11 @@ void Animation::SwitchTex(GameObject &Player, int currentFrame, std::string anim
 		else
 		{
 			assert("Animation state invalid");
+		}
+	case State::SHOTGUN:
+		if (animstate == 1)
+		{
+			Player.SetTexRect(-ShotgunSheet[currentFrame]);
 		}
 	}
 }

@@ -17,10 +17,10 @@ private:
 	void LoadIdleAnimation(std::string);
 	void CheckState(std::string jsonPath);
 
-	ID3D11ShaderResourceView* p;
-	ID3D11ShaderResourceView* p2;
-	ID3D11ShaderResourceView* p3;
-	enum class State {PLAYER};
+	//ID3D11ShaderResourceView* p;
+	//ID3D11ShaderResourceView* p2;
+	//ID3D11ShaderResourceView* p3;
+	enum class State {PLAYER, SHOTGUN};
 	State animType = State::PLAYER;
 	const int Zero = 0;
 	const int kSizeUp = 6;

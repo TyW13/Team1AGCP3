@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Animation.h"
 class Player : public GameObject
 {
 public:
@@ -29,6 +30,7 @@ public:
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
+	Animation PlayerAnim;
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
 	std::string objType;
