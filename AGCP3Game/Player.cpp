@@ -28,21 +28,22 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
+    PlayerAnim.Init("TestSheet.json", *this);
 }
 
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
     collisionBounds.left = mPos.x;
     collisionBounds.top = mPos.y;
-    collisionBounds.right = mPos.x + objSize.x * mScale.x;
-    collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
+    collisionBounds.right = mPos.x + objSize.x * abs(mScale.x);
+    collisionBounds.bottom = mPos.y + objSize.y * abs(mScale.y);
 
     if (!collidedTop)                   // checks if player is on the ground
     {
         grounded = false;
     }
 
-	// Player Animations update goes in here
+    PlayerAnim.Update(dTime, *this, AnimState);
 
 	UpdateInput(dManager, dTime);
     
@@ -104,11 +105,13 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (kb.D && !deactivate_D)
     {
         currentVel.x = PLAYER_SPEED;
+        AnimState = 0;
     }
     //left
     else if (kb.A && !deactivate_A)
     {
         currentVel.x = -PLAYER_SPEED;
+        AnimState = 2;
     }
     //deceleration
     //

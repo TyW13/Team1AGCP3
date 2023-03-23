@@ -6,6 +6,7 @@
 using namespace rapidjson;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+
 Animation::Animation()
 {
 }
@@ -16,18 +17,7 @@ Animation::~Animation()
 
 void Animation::Init(std::string jsonPath, GameObject& Sprite)
 {
-	/*if (jsonPath == "TestSheet.json")
-	{
-		
-	p = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "test_chara_walk.dds");
-	p2 = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "idle.dds");
-	p3 = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "jump.dds");
-	}
-	else
-	{
-		p = d3d.GetCache().LoadTexture(&d3d.GetDevice(), "Shotgun.dds");
-	}*/
-	jsonPath = "data/" + jsonPath;
+	jsonPath = "Data/" + jsonPath;
 	CheckState(jsonPath);
 	SwitchTex(Sprite, Zero, InitState);
 }
@@ -37,32 +27,33 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 	switch (animType)
 	{
 	case State::PLAYER:
-		float deltaTime = dTime;
-		int Frames = Zero;//Temporary magic numbers unil animation data loading is complete
+		deltaTime = dTime;
+		FramesTemp = Zero;//Temporary magic numbers unil animation data loading is complete
 		elapsedTime += deltaTime;
-		if (animState == 1 || 2)
+		if (animState == 1 || animState == 2)
 		{
-			Frames = PlayerFrames;
+			FramesTemp = PlayerFrames;
 		}
 		if (animState == 0)
 		{
-			Frames = IdleFrames;
+			FramesTemp = IdleFrames;
 		}
 		//advance to the next frame if enough time has passed (Constantly changing frames)
 		if (elapsedTime >= frameDuration)
 		{
 			++currentFrame;
-			if (currentFrame >= Frames)
+			if (currentFrame >= FramesTemp)
 			{
 				currentFrame = Zero;
 			}
 			elapsedTime -= frameDuration;
 		}
 		SwitchTex(Sprite, currentFrame, animState);
+		break;
 	case State::SHOTGUN:
-		float deltaTime = dTime;
+		deltaTime = dTime;
 		elapsedTime += deltaTime;
-		int Frames = 4;//Temporary magic numbers unil animation data loading is complete
+		Frames = 4;//Temporary magic numbers unil animation data loading is complete
 		if (animState == 1 && currentFrame <= Zero)
 		{
 			if (elapsedTime >= frameDuration)
@@ -86,6 +77,7 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 			}
 		}
 		SwitchTex(Sprite, currentFrame, animState);
+		break;
 	}
 }
 
@@ -94,36 +86,37 @@ void Animation::SwitchTex(GameObject &Sprite, int currentFrame, int animState)
 	switch (animType)
 	{
 	case State::PLAYER:
+	
 		if (animState == 0)
 		{
-			Sprite.SetTex(*p2);
-			Sprite.SetScale(Vector2(0.5,0.5));//Temporary magic numbers for temporary sprite CHANGE
-			Sprite.SetRect(idlespriteSheet[currentFrame]);
-		}
-		if (animState == 2)
-		{
-			Sprite.SetTex(*p);
 			Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
 			Sprite.SetRect(walkspriteSheet[currentFrame]);
 		}
 		if (animState == 1)
 		{
-			Sprite.SetTex(*p);
+			//Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
+			//Sprite.SetRect(walkspriteSheet[currentFrame]);
+		}
+		if (animState == 2)
+		{
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
 			Sprite.SetRect(-walkspriteSheet[currentFrame]);
 		}
 		if (animState == 3)
 		{
-			Sprite.SetTex(*p3);
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(-walkspriteSheet[Zero]);
+			//Sprite.SetRect(-walkspriteSheet[Zero]);
 		}
 		else
 		{
 			assert("Animation state invalid");
 		}
+		break;
 	case State::SHOTGUN:
+	
 		Sprite.SetRect(shotgunSpriteSheet[currentFrame]);
+		break;
+	
 	}
 }
 
@@ -131,7 +124,13 @@ void Animation::LoadAnimation(std::string jsonPath, State Object )
 {
 	//From Joshua Moxon project 2
 	//Need rapidjson to test
-	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	FILE* Animation;
+	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
+	if (levelsStatus != 0)
+	{
+		printf("ERROR: Could not open file!");
+		assert(false);
+	}
 	char readBuffer[bufferMemory];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
@@ -150,13 +149,15 @@ void Animation::LoadAnimation(std::string jsonPath, State Object )
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			switch (animType)
 			{
 			case State::PLAYER:
 				walkspriteSheet[i] = TempRect;
+				break;
 			case State::SHOTGUN:
 				shotgunSpriteSheet[i] = TempRect;
+				break;
 			}
 			++i;
 		}
@@ -165,7 +166,13 @@ void Animation::LoadAnimation(std::string jsonPath, State Object )
 void Animation::LoadAnimationData(std::string jsonPath)
 {
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
-	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	FILE* Animation;
+	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
+	if (levelsStatus != 0)
+	{
+		printf("ERROR: Could not open file!");
+		assert(false);
+	}
 	char readBuffer[bufferMemory];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
@@ -178,7 +185,13 @@ void Animation::LoadIdleAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
 	//Need rapidjson to test
-	FILE* Animation = fopen(jsonPath.c_str(), "rb");
+	FILE* Animation;
+	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
+	if (levelsStatus != 0)
+	{
+		printf("ERROR: Could not open file!");
+		assert(false);
+	}
 	char readBuffer[bufferMemory];
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
@@ -197,7 +210,7 @@ https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			idlespriteSheet[i] = TempRect;
 			++i;
 		}
@@ -206,19 +219,19 @@ https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 
 void Animation::CheckState(std::string jsonPath)
 {
-	if (jsonPath == "data/TestSheet.json")
+	if (jsonPath == "Data/TestSheet.json")
 	{
 		animType = State::PLAYER;
 		LoadAnimation(jsonPath, animType);
 		//LoadAnimation("data/jump.json");
-		LoadIdleAnimation("data/idle.json");
+		LoadIdleAnimation("Data/idle.json");
 		//LoadAnimationData("data/PlayerData.json);
 	}
-	if (jsonPath == "data/Shotgun.json")
+	if (jsonPath == "Data/Shotgun.json")
 	{
 		animType = State::SHOTGUN;
 		LoadAnimation(jsonPath, animType);
-		//LoadAnimationData(data/ShotgunData.json);
+		//LoadAnimationData(Data/ShotgunData.json);
 	}
 	else
 	{

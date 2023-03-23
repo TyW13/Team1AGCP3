@@ -1,4 +1,5 @@
 #pragma once
+#include "Animation.h"
 #include "GameObject.h"
 
 class ResourceManager;
@@ -94,6 +95,8 @@ private:
     bool deactivate_A = false;							//deactivate A key input while wall jumping
     bool deactivate_D = false;							//deactivate D key input while wall jumping
     bool hasWallJumped = false;							//detect if wall jumped
+
+    int AnimState = 0;
 
     float spaceClickElapsedTime = 0.f;
 
