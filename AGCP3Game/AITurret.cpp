@@ -11,6 +11,7 @@ AITurret::AITurret() :
 
 AITurret::~AITurret()
 {
+
 }
 
 
