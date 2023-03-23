@@ -115,6 +115,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AITurret.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DeviceResources.h" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AITurret.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="Framework.cpp" />
