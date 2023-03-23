@@ -76,3 +76,16 @@ void GameObject::SetScale(DirectX::SimpleMath::Vector2 _scale)
 {
 	mScale = _scale;
 }
+
+DirectX::SimpleMath::Vector2 GameObject::GetVelocity() const
+{
+	return DirectX::SimpleMath::Vector2();
+}
+
+DirectX::SimpleMath::Vector2 GameObject::SetVelocity(float x, float y)
+{
+	m_bulletVelocity.y = y;
+	m_bulletVelocity.y = x;
+}
+
+

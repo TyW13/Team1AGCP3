@@ -5,6 +5,7 @@
 
 AITurret::AITurret() :
     GameObject()
+
 {
     // Set initial values
     m_shotTimer = 0.0f;
@@ -15,6 +16,8 @@ AITurret::~AITurret()
 {
 
 }
+
+
 
 
 
@@ -39,4 +42,7 @@ void AITurret::Shoot()
     Bullet* bullet = new Bullet();
     bullet->SetPosition(GetPosition());
     bullet->SetVelocity(DirectX::SimpleMath::Vector2(0.0f, -1.0f));
+
+
+
 }

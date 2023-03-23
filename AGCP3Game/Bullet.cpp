@@ -1,9 +1,20 @@
 #include "Bullet.h"
 
+Bullet::Bullet() :
+	GameObject()
+{
+
+	// Speed
+
+	m_speed = 200.f;
+}
 Bullet::~Bullet()
 {
 
 }
+
+
+
 
 void Bullet::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {

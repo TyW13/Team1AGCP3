@@ -1,6 +1,9 @@
 #pragma once
 
 #include "DeviceManager.h"
+#include "Bullet.h"
+#include "AITurret.h"
+
 
 class ResourceManager;
 
@@ -31,6 +34,12 @@ public:
 	virtual void SetPosition(DirectX::SimpleMath::Vector2 _position);
 	virtual void SetScale(DirectX::SimpleMath::Vector2 _scale);
 
+
+	
+
+	DirectX::SimpleMath::Vector2 GetVelocity() const;
+	DirectX::SimpleMath::Vector2 SetVelocity(float x, float y);
+	
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;
@@ -41,6 +50,8 @@ private:
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
+
+
 
 	RECT collisionBounds;
 };
