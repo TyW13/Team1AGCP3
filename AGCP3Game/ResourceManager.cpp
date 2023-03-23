@@ -352,6 +352,31 @@ void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
 	}
 }
 
+// TODO - Call Save function with button on UI and call Load function on rManager Init
+void ResourceManager::SavePlayerData()
+{
+	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
+	playerDataFile << GetCurrentMapNum();														// Writes players current map number to file
+	playerDataFile << "\n";
+	playerDataFile << GetCurrentMap()->GetCurrentZoneNum();										// Writes players current zone number to file
+	playerDataFile.close();																		// Closes playerData text file
+}
+
+void ResourceManager::LoadPlayerData()
+{
+	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
+
+	std::string line;																			// String to temporarily store data being pulled from text file
+
+	std::getline(playerDataFile, line);															// Grabs first number from text file which relates to the map number
+	SetCurrentMap(stoi(line));																	// Converts map number from string to int and sets it 
+
+	std::getline(playerDataFile, line);															// Grabs second number from text file which relates to the zone number
+	GetCurrentMap()->SetCurrentZoneNum(stoi(line));												// Converts zone number from string to int and sets it 
+
+	playerDataFile.close();																		// Closes playerData text file
+}
+
 Layer::Layer(Value& value)
 {
 	if (value.HasMember("data")) {
