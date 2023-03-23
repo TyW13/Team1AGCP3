@@ -35,7 +35,7 @@ private:
 	State animType = State::PLAYER;
 	const int Zero = 0;
 	const int kSizeUp = 6;
-	float frameDuration = 0.1f; //time in seconds per frame (regulates animation speed)
+	float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	float deltaTime;
 	int FramesTemp;
