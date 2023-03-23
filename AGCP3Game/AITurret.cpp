@@ -1,5 +1,7 @@
 #include "AITurret.h"
 
+#include "Bullet.h"
+
 
 AITurret::AITurret() :
     GameObject()
