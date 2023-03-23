@@ -26,8 +26,7 @@ CompanionAI::CompanionAI(ID3D12Device* device)
 
 void CompanionAI::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
-    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
-    AIDescriptors::Count);
+    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device, AIDescriptors::Count);
 
     ResourceUploadBatch resourceUpload2(device);
 
