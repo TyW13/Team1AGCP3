@@ -6,6 +6,16 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include <math.h>
+#include <sstream>
+#include <Keyboard.h>
+#include <Mouse.h>
+#define DBOUT(s)                \
+{                               \
+    std::ostringstream os_;     \
+    os_ << s << "\n";           \
+    OutputDebugString(os_.str().cstr());    \
+}
 
 enum Descriptors;
 
@@ -36,6 +46,9 @@ public:
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
+
+    DirectX::Keyboard* GetKeyboard() { return m_keyboard.get(); }
+    DirectX::Mouse* GetMouse() { return m_mouse.get(); }
 
     enum Descriptors
     {
@@ -113,4 +126,15 @@ private:
 
 
     Descriptors mDescriptors;
+
+
+
+
+
+
+
+    //game logic, will move later
+
+    std::unique_ptr<DirectX::Keyboard> m_keyboard;
+    std::unique_ptr<DirectX::Mouse> m_mouse;
 };

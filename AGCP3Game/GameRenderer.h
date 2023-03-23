@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include "AudioManager.h"
-#include "ResourceManager.h"
+#include "Framework.h"
 
-class Framework;
+//class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class GameRenderer final
@@ -52,10 +51,10 @@ private:
 
     void CreateDeviceDependentResources();
 
+    Framework framework;
+
     // Device resources.
     DeviceManager* dManager;
-
-    ResourceManager rManager;
 
     //std::unique_ptr<DX::DeviceResources> m_deviceResources;
     //ID3D12Device* device;
@@ -74,7 +73,6 @@ private:
     RECT m_tileRect;
     RECT m_stretchRect;
 
-    AudioManager audio;
     std::vector<Tile*> m_Tiles;
 
 

@@ -2,9 +2,7 @@
 // Game.cpp
 //
 #include "stdafx.h"
-
 #include "GameRenderer.h"
-#include "Framework.h"
 
 extern void ExitGame() noexcept;
 
@@ -30,8 +28,7 @@ GameRenderer::~GameRenderer()
 // Initialize the Direct3D resources required to run.
 void GameRenderer::Initialize(HWND window, int width, int height)
 {
-    audio.Init();
-    rManager.Init(dManager);
+    framework.Init(dManager);
 }
 
 #pragma region Frame Update
@@ -52,13 +49,12 @@ void GameRenderer::Update(DX::StepTimer const& timer)
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
     float elapsedTime = float(timer.GetElapsedSeconds());
-
-    rManager.Update(elapsedTime);
-    audio.Update(elapsedTime);
+   
 
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     /// This is our game logic all here!
+    framework.Update(dManager, elapsedTime);
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////////////////////////////////////////
@@ -78,9 +74,7 @@ void GameRenderer::Render()
 
     dManager->GetSpriteBatch()->Begin(dManager->GetCommandList());
 
-
-    rManager.Render(dManager);
-
+    framework.Render(dManager);
 
     dManager->GetSpriteBatch()->End();
 
@@ -102,7 +96,7 @@ void GameRenderer::OnDeactivated()
 
 void GameRenderer::OnSuspending()
 {
-    audio.OnSuspending();
+    framework.OnSuspending();
 
     // TODO: Game is being power-suspended (or minimized).
 }
@@ -111,7 +105,7 @@ void GameRenderer::OnResuming()
 {
     m_timer.ResetElapsedTime();
 
-    audio.OnResuming();
+    framework.OnResuming();
 
     // TODO: Game is being power-resumed (or returning from minimize).
 }

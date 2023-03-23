@@ -1,29 +1,25 @@
 #pragma once
 
+#include "AudioManager.h"
+#include "ResourceManager.h"
 
-//#include "GameRenderer.h"
+class Framework
+{
 
-//class GameRenderer;
+public:
+
+	void Init(DeviceManager* dManager);
+	void Update(DeviceManager* dManager, float elapsedTime);
+	void Render(DeviceManager* dManager);
+	void Terminate();
+	void OnSuspending();
+	void OnResuming();
 
 
-//class Framework
-//{
-//
-//
-//
-//public:
-//	void Initialise();
-//	void Update(float elapsedTime);
-//
-//	void Terminate();
-//
-//
-//
-//private:
-//
-//	//GameRenderer* m_pRenderer;
-//
-//
-//
-//};
+private:
 
+	AudioManager audioManager;
+	ResourceManager rManager;
+	DeviceManager* dManager;
+
+};

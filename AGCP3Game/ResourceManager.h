@@ -4,6 +4,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 
+#include <fstream>;
+
 using namespace rapidjson;
 
 //class Texture;
@@ -112,7 +114,7 @@ public:
 	ResourceManager(){}
 
 	void Init(DeviceManager* dManager);
-	void Update(float dTime);
+	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
 	void Terminate();
 	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
@@ -137,6 +139,11 @@ public:
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
+	std::vector<GameObject*> GetObjects() { return m_Objects; }
+
+	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
+	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
+
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
@@ -145,4 +152,6 @@ private:
 
 	int collisionWidth;
 	int collisionHeight;
+
+	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
 };

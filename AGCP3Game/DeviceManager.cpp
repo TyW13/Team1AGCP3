@@ -6,6 +6,9 @@
 #include "DeviceManager.h"
 #include "Framework.h"
 
+#include <Keyboard.h>
+#include <Mouse.h>
+
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
@@ -48,6 +51,13 @@ void DeviceManager::Init(HWND window, int width, int height)
  /*   m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);*/
 
+    //game logic, will move later
+
+
+    // Initialize keyboard and mouse 
+    m_keyboard = std::make_unique<DirectX::Keyboard>();
+    m_mouse = std::make_unique<DirectX::Mouse>();
+    m_mouse->SetWindow(window);
 }
 
 /////

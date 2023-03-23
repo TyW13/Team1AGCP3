@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "ResourceManager.h"
 
 void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 {
@@ -32,7 +33,7 @@ void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Si
 	uploadResourcesFinished.wait();
 }
 
-void GameObject::Update(float dTime)
+void GameObject::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
 
 }
