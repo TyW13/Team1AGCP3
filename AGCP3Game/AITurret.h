@@ -10,11 +10,6 @@ public:
 	virtual ~AITurret();
 
 
-
-
-
-	
-
 	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 	void Shoot();
 

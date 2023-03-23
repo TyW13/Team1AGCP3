@@ -77,6 +77,9 @@ void GameObject::SetScale(DirectX::SimpleMath::Vector2 _scale)
 	mScale = _scale;
 }
 
+
+// BULLET / AI
+
 DirectX::SimpleMath::Vector2 GameObject::GetVelocity() const
 {
 	return DirectX::SimpleMath::Vector2();
@@ -87,5 +90,20 @@ DirectX::SimpleMath::Vector2 GameObject::SetVelocity(float x, float y)
 	m_bulletVelocity.y = y;
 	m_bulletVelocity.y = x;
 }
+
+void GameObject::SetPosition(DirectX::XMFLOAT2 position)
+{
+	m_position = position;
+}
+
+DirectX::XMFLOAT2 GameObject::GetPosition(float x, float y)
+{
+	return m_position;
+}
+
+//DirectX::XMFLOAT2 GameObject::GetPosition() const;
+//{
+//	return m_position;
+//}
 
 

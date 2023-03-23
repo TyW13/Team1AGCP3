@@ -36,9 +36,11 @@ public:
 
 
 	
-
 	DirectX::SimpleMath::Vector2 GetVelocity() const;
 	DirectX::SimpleMath::Vector2 SetVelocity(float x, float y);
+
+	virtual void SetPosition(DirectX::XMFLOAT2 position);
+	DirectX::XMFLOAT2 GetPosition(float x, float y);
 	
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
@@ -51,7 +53,7 @@ private:
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 
-
+	DirectX::XMFLOAT2 m_position;
 
 	RECT collisionBounds;
 };

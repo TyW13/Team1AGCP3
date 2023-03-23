@@ -4,7 +4,7 @@
 
 
 AITurret::AITurret() :
-    GameObject()
+    GameObject(position, velocity)
 
 {
     // Set initial values
