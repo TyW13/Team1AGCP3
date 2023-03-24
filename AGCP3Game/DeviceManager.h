@@ -52,8 +52,8 @@ public:
 
     enum Descriptors
     {
-        Cat,
         Tile,
+        Player,
         Background,
         Count
     };

@@ -9,6 +9,7 @@ using namespace DirectX;
 
 void ResourceManager::Init(DeviceManager* dManager)
 {
+	LoadTexturesFromFile(dManager);
 	LoadLevelsFromFile();
 
 	RECT playerRect;
@@ -37,7 +38,7 @@ void ResourceManager::Render(DeviceManager* dManager)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Render(dManager);
+			currentObj->Render(dManager, *this);
 		}
 	}
 }
@@ -57,29 +58,46 @@ void ResourceManager::Terminate()
 	}
 }
 
-//void ResourceManager::LoadTexturesFromFile()
-//{
-//	FILE* gTexturesFile;
-//	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
-//	if (texturesStatus != 0)
-//	{
-//		printf("ERROR: Could not open file!");
-//		assert(false);
-//	}
-//	char readBuffer[4096];
-//	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
-//	rapidjson::Document texturesDoc;
-//	texturesDoc.ParseStream(is);
-//	fclose(gTexturesFile);
-//
-//	Value::Array texturesArray = texturesDoc["textures"].GetArray();
-//	for (int i = 0; i < texturesArray.Size(); i++)
-//	{
-//		std::string fileStr = texturesArray[0].GetString();																				// To convert from std::string to std::wstring
-//		std::wstring file(fileStr.begin(), fileStr.end());
-//		m_TexPaths.push_back(file);
-//	}
-//}
+void ResourceManager::LoadTexturesFromFile(DeviceManager* dManager)
+{
+	FILE* gTexturesFile;
+	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
+	if (texturesStatus != 0)
+	{
+		printf("ERROR: Could not open file!");
+		assert(false);
+	}
+	char readBuffer[4096];
+	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
+	rapidjson::Document texturesDoc;
+	texturesDoc.ParseStream(is);
+	fclose(gTexturesFile);
+
+	Value::Array texturesArray = texturesDoc["textures"].GetArray();
+	for (int i = 0; i < texturesArray.Size(); i++)
+	{
+		std::string fileStr = filePath + (texturesArray[i].GetString());																				// To convert from std::string to std::wstring
+		std::wstring file(fileStr.begin(), fileStr.end());
+		texture tex;
+
+		dManager->GetResourceUpload()->Begin();																										// Descriptor and textures in GameTextures.json array must
+																																					// be in the same order
+		DX::ThrowIfFailed(
+			DirectX::CreateDDSTextureFromFile(dManager->GetDevice(), *dManager->GetResourceUpload(), file.c_str(),
+				&tex.resource));
+
+		DirectX::CreateShaderResourceView(dManager->GetDevice(), tex.resource,
+			dManager->GetResourceDescriptors()->GetCpuHandle(i));
+
+		auto uploadResourcesFinished = dManager->GetResourceUpload()->End(
+			dManager->GetDeviceResources()->GetCommandQueue());
+		uploadResourcesFinished.wait();
+
+		tex.id = i;
+		tex.texPath = file;
+		m_Textures.push_back(tex);
+	}
+}
 
 // Goes through levels json file to add all needed level names to vector
 void ResourceManager::LoadLevelsFromFile()
@@ -239,10 +257,10 @@ void ResourceManager::UnloadZone()
 {
 	if (m_Objects.size() > 0)
 	{
-		for (int i = m_Objects.size() - 1; i >= 0; i--)
+		for (int i = 0; i < m_Objects.size(); ++i)
 		{
 			delete m_Objects[i];
-			m_Objects[i] = nullptr;
+			//m_Objects[i] = nullptr;
 			m_Objects.pop_back();
 		}
 	}
@@ -303,13 +321,13 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
 
 			if (objType == "Tile")
-			{   	
-				Tile* tile = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+			{
+				Tile* tile = new Tile(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(tile);
 			}
 			else if (objType == "Respawner")
 			{
-				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* playerSpawner = new Tile(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
 
 				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
@@ -320,12 +338,12 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerRect.right = 6;
 				playerRect.bottom = 16;
 				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
-				Player* player = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
+				Player* player = new Player(dManager, m_Textures[1].id, DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
 				m_Objects.emplace_back(player);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* damageable = new Tile(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
 			}
 		}

@@ -7,14 +7,14 @@ class ResourceManager;
 class GameObject
 {
 public:
-	GameObject(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
+	GameObject(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
 	{
-		Init(dManager, texPath, position, scale, active, objSize, objType, isCollidable, objRect);
+		Init(dManager, texId, position, scale, active, objSize, objType, isCollidable, objRect);
 	}
 
-	virtual void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 });
+	virtual void Init(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 });
 	virtual void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime);
-	virtual void Render(DeviceManager* dManager);
+	virtual void Render(DeviceManager* dManager, ResourceManager& resourceManager);
 
 	virtual bool GetActive() { return isActive; }
 	virtual DirectX::SimpleMath::Vector2 GetObjectSize() { return objSize; }
@@ -23,6 +23,7 @@ public:
 	virtual RECT GetCollisionBounds() { return collisionBounds; }
 	virtual DirectX::SimpleMath::Vector2 GetPosition() { return mPos; }
 	virtual DirectX::SimpleMath::Vector2 GetScale() { return mScale; }
+	virtual int GetTexId() { return texId; }
 
 	virtual void SetActive(bool _isActive);
 	virtual void SetObjectSize(DirectX::SimpleMath::Vector2 _objSize);
@@ -41,6 +42,7 @@ private:
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
+	int texId;
 
 	RECT collisionBounds;
 };
