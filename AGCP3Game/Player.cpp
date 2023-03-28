@@ -42,6 +42,15 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
         grounded = false;
     }
 
+    if (canCollideRightWall)
+    {
+        canCollideLeftWall = false;
+    }
+    if (canCollideLeftWall)
+    {
+        canCollideRightWall = false;
+    }
+
 	// Player Animations update goes in here
 
 	UpdateInput(dManager, dTime);
@@ -61,8 +70,8 @@ void Player::Render(DeviceManager* dManager)
 void Player::UpdateInput(DeviceManager* dManager, float dTime)
 {
     //get keyboard stated
-    auto kb = dManager->GetKeyboard()->GetState();
-    auto mouse = dManager->GetMouse()->GetState();
+    kb = dManager->GetKeyboard()->GetState();
+    mouse = dManager->GetMouse()->GetState();
 
     //update player core movement
     mPos += currentVel * dTime;
@@ -320,6 +329,10 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
 
 void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {			
+    //get keyboard stated
+    kb = dManager->GetKeyboard()->GetState();
+    mouse = dManager->GetMouse()->GetState();
+
     collidedTop = false;
     collidedBottom = false;
     collidedLeft = false;
@@ -401,6 +414,17 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
 
                 collided = true;
                 collidedLeft = true;
+                canCollideRightWall = true;
+
+                if (kb.D && !deactivate_D)
+                {
+                    isWallSliding = true;
+                }
+                else
+                {
+                    isWallSliding = false;
+                }
+                
             }
             else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
             {
@@ -410,6 +434,16 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
 
                 collided = true;
                 collidedRight = true;
+                canCollideLeftWall = true;
+
+                if (kb.A && !deactivate_A)
+                {
+                    isWallSliding = true;
+                }
+                else
+                {
+                    isWallSliding = false;
+                }
             }
         }
 

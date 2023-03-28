@@ -51,6 +51,8 @@ private:
     bool collidedRight = false;
 	RECT collisionBounds;
   
+    DirectX::Keyboard::State kb;
+    DirectX::Mouse::State mouse;
 
     //------ movement variables
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
@@ -86,7 +88,9 @@ private:
     bool recordJumpTime = false;				        //start/stop recording jump time
     bool detectSpaceKey = true;				        	//start detecting the space button pressed down
     bool detectMouseClick = true;					    //
-    bool canShotGunJump = false;
+    bool canShotGunJump = false;                        //allow shotgun jumping
+    bool canCollideRightWall = false;                   //for not letting the player to jump off the same wall twice
+    bool canCollideLeftWall = false;                    //for not letting the player to jump off the same wall twice
 
     //------ simple "collisions"
     double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
