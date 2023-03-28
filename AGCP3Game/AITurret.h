@@ -49,7 +49,24 @@ private:
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
 	std::string objType;
+	bool isCollidable;
+	RECT objRect;
 
+
+	DirectX::SimpleMath::Vector2 mPos;
+	DirectX::SimpleMath::Vector2 mScale;
+	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
+
+	void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
+	bool collidedTop = false;
+	bool collidedBottom = false;
+	bool collidedLeft = false;
+	bool collidedRight = false;
+	RECT collisionBounds;
+
+
+
+	// Turret Variables
 
 };
 
