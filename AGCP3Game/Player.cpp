@@ -228,8 +228,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             currentVel.y *= DRAG_Y;
         }
 
-        //--wall sliding
-        //
         //wall jump
         if (isWallSliding && kb.Space && !hasWallJumped)
         {
@@ -247,7 +245,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             if (elapsedtime < 0.5)
             {
 
-                currentVel *= 0.99;
+                currentVel.x *= 0.95;
+                currentVel.y *= 0.99;
                 deactivate_A = true;
                 deactivate_D = true;
             }
@@ -258,6 +257,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
                 deactivate_D = false;
             }
         }
+        //wall slide
         else
         {
             if (isWallSliding && !kb.W)
@@ -448,6 +448,10 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         }
 
         else if (obj->GetObjectType() == "Damageable")
+        {
+            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+        }
+        else if (obj->GetObjectType() == "BouncePad")
         {
             rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
         }
