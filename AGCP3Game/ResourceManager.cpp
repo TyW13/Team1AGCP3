@@ -333,7 +333,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
 
-				// MISSILE
+				// MISSILE.....
 
 			}
 			else if(objType ==  "Turret")
