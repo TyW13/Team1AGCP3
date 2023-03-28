@@ -29,6 +29,30 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 			currentObj->Update(dManager, this, dTime);
 		}
 	}
+
+	switch (currentState)
+	{
+		case GameState::Intro:
+		{
+			break;
+		}
+		case GameState::Game:
+		{
+			break;
+		}
+		case GameState::Paused:
+		{
+			break;
+		}
+		case GameState::End:
+		{
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
 }
 
 void ResourceManager::Render(DeviceManager* dManager)

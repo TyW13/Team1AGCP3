@@ -148,10 +148,14 @@ private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
+	std::vector<GameObject*> m_IntroObjects;										// Vector to store Intro scene objects 
 	int currentMapNum;					
 
 	int collisionWidth;
 	int collisionHeight;
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
+
+	enum class GameState { Intro, Game, Paused, End};
+	GameState currentState = GameState::Intro;
 };
