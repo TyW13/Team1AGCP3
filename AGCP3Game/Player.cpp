@@ -92,6 +92,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         fired = true;
         grounded = false;
         detectMouseClick = false;
+        canShotGunJump = false;
+
     }
     if (!mouse.leftButton && !detectMouseClick)
     {
@@ -263,57 +265,57 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         }
     }
 
-    //get screen dimensions
-    int width = GetSystemMetricsForDpi(SM_CXSCREEN, GetDpiForSystem());
-    int height = GetSystemMetricsForDpi(SM_CYSCREEN, GetDpiForSystem());
+    ////get screen dimensions
+    //int width = GetSystemMetricsForDpi(SM_CXSCREEN, GetDpiForSystem());
+    //int height = GetSystemMetricsForDpi(SM_CYSCREEN, GetDpiForSystem());
 
-    //bottom
-    if (mPos.y >= height - 2 * mOrigin.y)
-    {
-        mPos.y = height - 2 * mOrigin.y;
-    }
-    //top
-    if (mPos.y < mOrigin.y * 2)
-    {
-        mPos.y = mOrigin.y * 2;
-    }
-    //right
-    if (mPos.x + mOrigin.x >= width)
-    {
-        if (kb.D && !deactivate_D)
-        {
-            isWallSliding = true;
-        }
-        else
-        {
-            isWallSliding = false;
-        }
-        mPos.x = width - mOrigin.x;
-    }
-    //left
-    else if (mPos.x - mOrigin.x <= 0)
-    {
-        if (kb.A && !deactivate_A)
-        {
-            isWallSliding = true;
-        }
-        else
-        {
-            isWallSliding = false;
-        }
-        mPos.x = mOrigin.x;
-    }
-    else
-    {
-        isWallSliding = false;
-    }
+    ////bottom
+    //if (mPos.y >= height - 2 * mOrigin.y)
+    //{
+    //    mPos.y = height - 2 * mOrigin.y;
+    //}
+    ////top
+    //if (mPos.y < mOrigin.y * 2)
+    //{
+    //    mPos.y = mOrigin.y * 2;
+    //}
+    ////right
+    //if (mPos.x + mOrigin.x >= width)
+    //{
+    //    if (kb.D && !deactivate_D)
+    //    {
+    //        isWallSliding = true;
+    //    }
+    //    else
+    //    {
+    //        isWallSliding = false;
+    //    }
+    //    mPos.x = width - mOrigin.x;
+    //}
+    ////left
+    //else if (mPos.x - mOrigin.x <= 0)
+    //{
+    //    if (kb.A && !deactivate_A)
+    //    {
+    //        isWallSliding = true;
+    //    }
+    //    else
+    //    {
+    //        isWallSliding = false;
+    //    }
+    //    mPos.x = mOrigin.x;
+    //}
+    //else
+    //{
+    //    isWallSliding = false;
+    //}
 
-    //if the player is on the bottom line (let's say it's the ground for now)
-    if (mPos.y == height - 2 * mOrigin.y)
-    {
-        detectSpaceKey = true;
-        grounded = true;
-    }
+    ////if the player is on the bottom line (let's say it's the ground for now)
+    //if (mPos.y == height - 2 * mOrigin.y)
+    //{
+    //    detectSpaceKey = true;
+    //    grounded = true;
+    //}
 }
 
 void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -379,6 +381,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 collided = true;
                 collidedTop = true;
                 grounded = true;
+                canShotGunJump = true;
                 fired = false;
             }
             else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
