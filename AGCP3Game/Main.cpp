@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "pch.h"
 #include "Framework.h"
 #include "GameRenderer.h"
 #include <Windows.h>
@@ -13,6 +12,9 @@
 #include "AudioManager.h"
 #include <Dbt.h>
 #include <ksmedia.h>
+//keyboard and mouse
+#include <Keyboard.h>
+#include <Mouse.h>
 
 using namespace DirectX;
 
@@ -59,8 +61,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(initialize))
         return 1;
 #endif
-
-    g_game = std::make_unique<GameRenderer>();
+    std::unique_ptr<DeviceManager> dManager = std::make_unique<DeviceManager>();
+    g_game = std::make_unique<GameRenderer>(dManager.get());
     HDEVNOTIFY hNewAudio = nullptr;     //audio
 
     // Register class and create window
@@ -103,6 +105,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         GetClientRect(hwnd, &rc);
 
+        dManager->Init(hwnd, rc.right - rc.left, rc.bottom - rc.top);
         g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
     }
 
@@ -278,8 +281,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
                 SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
 
-                int width = 800;
-                int height = 600;
+                int width = 1920;
+                int height = 1080;
                 if (game)
                     game->GetDefaultSize(width, height);
 

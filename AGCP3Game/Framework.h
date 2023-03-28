@@ -1,35 +1,25 @@
 #pragma once
 
-
-//#include "GameRenderer.h"
-
-//class GameRenderer;
-
-#include "SpriteBatch.h"
-#include <Keyboard.h>
+#include "AudioManager.h"
+#include "ResourceManager.h"
 
 class Framework
 {
 
-
-
 public:
-	void Initialise();
-	void Update(float elapsedTime);
 
+	void Init(DeviceManager* dManager);
+	void Update(DeviceManager* dManager, float elapsedTime);
+	void Render(DeviceManager* dManager);
 	void Terminate();
-
+	void OnSuspending();
+	void OnResuming();
 
 
 private:
 
-	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-	//DirectX::SimpleMath::Vector2 m_screenPos;
-	//DirectX::SimpleMath::Vector2 m_origin;
-
-	//GameRenderer* m_pRenderer;
-
-	//std::unique_ptr<Keyboard> keyboard;
+	AudioManager audioManager;
+	ResourceManager rManager;
+	DeviceManager* dManager;
 
 };
-

@@ -4,24 +4,15 @@
 
 #pragma once
 
-#include "DeviceResources.h"
-#include "StepTimer.h"
-#include "SpriteBatch.h"
-#include <SpriteFont.h>
-#include "AudioManager.h"
-#include <Windows.h>
-#include <Keyboard.h>
-#include <Mouse.h>
+#include "Framework.h"
 
-class Framework;
-class Input;
+//class Framework;
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
-class GameRenderer final : public DX::IDeviceNotify
+class GameRenderer final
 {
 public:
-
-    GameRenderer() noexcept(false);
+    GameRenderer(DeviceManager* _dManager) noexcept(false);
     ~GameRenderer();
 
     GameRenderer(GameRenderer&&) = default;
@@ -36,10 +27,6 @@ public:
     // Basic game loop
     void Tick();
 
-    // IDeviceNotify
-    void OnDeviceLost() override;
-    void OnDeviceRestored() override;
-
     // Messages
     void OnActivated();
     void OnDeactivated();
@@ -52,50 +39,42 @@ public:
     // Properties
     void GetDefaultSize(int& width, int& height) const noexcept;
 
-private:
-    Framework* m_pFramework;
+    //DX::DeviceResources* GetDeviceResources() { return m_deviceResources.get(); }
+    //ID3D12Device* GetDevice() { return device; }
+    //ResourceUploadBatch* GetResourceUpload() { return resourceUpload.get(); }
 
-    DirectX::SpriteBatch* mpSB = nullptr;
+private:
     DirectX::SpriteFont* mpSF = nullptr;
 
     void Update(DX::StepTimer const& timer);
     void Render();
 
-    void Clear();
-
     void CreateDeviceDependentResources();
-    void CreateWindowSizeDependentResources();
+
+    Framework framework;
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>        m_deviceResources;
+    DeviceManager* dManager;
+
+    //std::unique_ptr<DX::DeviceResources> m_deviceResources;
+    //ID3D12Device* device;
+    //std::unique_ptr <ResourceUploadBatch> resourceUpload;
 
     // Rendering loop timer.
-    DX::StepTimer                               m_timer;
+    DX::StepTimer m_timer;
 
     // If using the DirectX Tool Kit for DX12, uncomment this line:
-    std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
     using VertexType = DirectX::VertexPositionColor;
 
-    std::unique_ptr<DirectX::BasicEffect> m_effect;
-    std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
-
-    std::unique_ptr<DirectX::DescriptorHeap> m_resourceDescriptors;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-    DirectX::SimpleMath::Vector2 m_screenPos;
-    DirectX::SimpleMath::Vector2 m_origin;
 
     RECT m_tileRect;
-    std::unique_ptr<DirectX::CommonStates> m_states;
-
     RECT m_stretchRect;
 
-    RECT m_fullscreenRect;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_background;
+    std::vector<Tile*> m_Tiles;
 
-    AudioManager audio;
 
     //game logic, will move later
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
@@ -147,6 +126,7 @@ private:
     enum Descriptors
     {
         Cat,
+        Tiles,
         Background,
         Count
     };
