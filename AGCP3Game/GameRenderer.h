@@ -81,6 +81,8 @@ private:
         Cat,
         Tiles,
         Background,
+        AITurretHead,
+        AITurretBody,
         Count
     };
 };

@@ -2,6 +2,8 @@
 
 #include <cstdio>
 #include "ResourceManager.h"
+
+#include "AITurret.h"
 #include "Tile.h"
 #include "Player.h"
 
@@ -325,9 +327,13 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(damageable);
+				//Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				/*m_Objects.emplace_back(damageable);*/
+
+				auto* turret = new AITurret(dManager, L"Data/singleTurret.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true);
+				m_Objects.emplace_back(turret);
 			}
+			
 		}
 	}
 }

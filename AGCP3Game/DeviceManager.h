@@ -55,6 +55,8 @@ public:
         Cat,
         Tile,
         Background,
+        AITurretHead,
+        AITurretBody,
         Count
     };
 

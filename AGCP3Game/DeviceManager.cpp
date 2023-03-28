@@ -155,7 +155,7 @@ void DeviceManager::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
 
-    // If using the DirectX Tool Kit for DX12, uncomment this line:
+  
     deviceResources.reset();
     resourceUpload.reset();
     resourceDescriptors.reset();
