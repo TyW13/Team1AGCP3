@@ -23,7 +23,7 @@ void AITurret::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simp
 			objTex.ReleaseAndGetAddressOf()));
 
 	DirectX::CreateShaderResourceView(dManager->GetDevice(), objTex.Get(),													// Creation of shader resource view?
-		dManager->GetResourceDescriptors()->GetCpuHandle(4));
+		dManager->GetResourceDescriptors()->GetCpuHandle(1));
 
 	auto uploadResourcesFinished = dManager->GetResourceUpload()->End(
 		dManager->GetDeviceResources()->GetCommandQueue());
@@ -47,7 +47,7 @@ void AITurret::Render(DeviceManager* dManager)
 {
 	RECT* sourceRect = &objRect;
 
-	dManager->GetSpriteBatch()->Draw(dManager->GetResourceDescriptors()->GetGpuHandle(4),
+	dManager->GetSpriteBatch()->Draw(dManager->GetResourceDescriptors()->GetGpuHandle(1),
 		DirectX::GetTextureSize(objTex.Get()),
 		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, 0.f, mOrigin, mScale);
 }

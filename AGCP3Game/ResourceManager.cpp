@@ -206,7 +206,7 @@ Map::Map(const char* filePath)
 	ts_source = tilesets[0]["source"].GetString();
 
 	// IMPORT CODE TO CONVERT TILESET TSX FILE TO JSON FILE
-	std::string newSource = "Data/" + ts_source.substr(0, ts_source.size() - 4) + ".json";
+	std::string newSource = "Data/" + ts_source/*.substr(0, ts_source.size() - 4) + ".json"*/;
 
 	FILE* f;
 	errno_t tileSetStatus = fopen_s(&f, newSource.c_str(), "rb");		// opens json file 
@@ -255,7 +255,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	UnloadZone();
 
 	FILE* fp;
-	errno_t tileSetStatus = fopen_s(&fp, "Data/TSTestingLevel0.json", "rb");		// opening
+	errno_t tileSetStatus = fopen_s(&fp, "Data/test_sheet4ProgrammerART.json", "rb");		// opening
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;
@@ -301,17 +301,18 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
-			objType = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["class"].GetString();
-			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
+			//objType = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["class"].GetString();
+			objType = tilesetDoc["tiles"].GetArray()[val]["type"].GetString();
+			//isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
 
 			if (objType == "Tile")
 			{   	
-				Tile* tile = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* tile = new Tile(dManager, L"Data/test_sheet4ProgrammerART.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(tile);
 			}
 			else if (objType == "Respawner")
 			{
-				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet4ProgrammerART.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
 
 				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
@@ -327,13 +328,21 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			}
 			else if (objType == "Damageable")
 			{
-				//Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				/*m_Objects.emplace_back(damageable);*/
+				// SPIKES
 
-				auto* turret = new AITurret(dManager, L"Data/singleTurret.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true);
+				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(damageable);
+
+				// MISSILE
+
+			}
+			else if(objType ==  "Turret")
+			{
+				// TURRET
+				auto* turret = new AITurret(dManager, L"Data/test_sheet4ProgrammerART.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
 				m_Objects.emplace_back(turret);
 			}
-			
+
 		}
 	}
 }
