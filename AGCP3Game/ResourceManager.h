@@ -117,7 +117,7 @@ public:
 	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
 	void Terminate();
-	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
+	void LoadTexturesFromFile(DeviceManager* dManager);													// Reads json file to obtain texture image file names from array (strings)
 	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
 	//void CreateTexture(const std::string &fPath);			// Creates a pointer to a texture object from texture image name string (Texture stores file name and path)
 	//std::wstring GetTexture(const std::string& tName);									// Getter for pointer to texture object in m_Textures vector
@@ -139,19 +139,29 @@ public:
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
-	std::vector<GameObject*> GetObjects() { return m_Objects; }
+	std::vector<std::shared_ptr<GameObject>> GetObjects() { return m_Objects; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
+	struct texture
+	{
+		int id;
+		std::wstring texPath;
+		ID3D12Resource* resource;
+	};
+	std::vector<texture> GetTextures() { return m_Textures; }
+
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
-	std::vector<std::wstring> m_TexPaths;
-	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
+	std::vector<texture> m_Textures;
+	std::vector<std::shared_ptr<GameObject>> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 
 	int collisionWidth;
 	int collisionHeight;
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
+
+	std::string filePath = "Data/";
 };

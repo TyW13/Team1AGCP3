@@ -125,8 +125,8 @@ private:
 
     enum Descriptors
     {
-        Cat,
         Tiles,
+        Player,
         Background,
         Count
     };

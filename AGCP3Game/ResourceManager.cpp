@@ -9,13 +9,8 @@ using namespace DirectX;
 
 void ResourceManager::Init(DeviceManager* dManager)
 {
+	LoadTexturesFromFile(dManager);
 	LoadLevelsFromFile();
-
-	RECT playerRect;
-	playerRect.left = 0;
-	playerRect.top= 0;
-	playerRect.right = 6;
-	playerRect.bottom = 16;
 
 	ReloadMap(dManager, 0);
 }
@@ -24,9 +19,9 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 {
 	if (m_Objects.size() > 0)
 	{
-		for (GameObject* currentObj : m_Objects)
+		for (int i = 0; i < m_Objects.size(); ++i)
 		{
-			currentObj->Update(dManager, this, dTime);
+			m_Objects[i].get()->Update(dManager, this, dTime);
 		}
 	}
 }
@@ -35,9 +30,9 @@ void ResourceManager::Render(DeviceManager* dManager)
 {
 	if (m_Objects.size() > 0)
 	{
-		for (GameObject* currentObj : m_Objects)
+		for (int i = 0; i < m_Objects.size(); ++i)
 		{
-			currentObj->Render(dManager);
+			m_Objects[i].get()->Render(dManager, *this);
 		}
 	}
 }
@@ -50,36 +45,49 @@ void ResourceManager::Terminate()
 		map = nullptr;
 	}
 	 
-	for (GameObject* obj : m_Objects)
-	{
-		delete obj;
-		obj = nullptr;
-	}
+	UnloadZone();
 }
 
-//void ResourceManager::LoadTexturesFromFile()
-//{
-//	FILE* gTexturesFile;
-//	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
-//	if (texturesStatus != 0)
-//	{
-//		printf("ERROR: Could not open file!");
-//		assert(false);
-//	}
-//	char readBuffer[4096];
-//	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
-//	rapidjson::Document texturesDoc;
-//	texturesDoc.ParseStream(is);
-//	fclose(gTexturesFile);
-//
-//	Value::Array texturesArray = texturesDoc["textures"].GetArray();
-//	for (int i = 0; i < texturesArray.Size(); i++)
-//	{
-//		std::string fileStr = texturesArray[0].GetString();																				// To convert from std::string to std::wstring
-//		std::wstring file(fileStr.begin(), fileStr.end());
-//		m_TexPaths.push_back(file);
-//	}
-//}
+void ResourceManager::LoadTexturesFromFile(DeviceManager* dManager)
+{
+	FILE* gTexturesFile;
+	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
+	if (texturesStatus != 0)
+	{
+		printf("ERROR: Could not open file!");
+		assert(false);
+	}
+	char readBuffer[4096];
+	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
+	rapidjson::Document texturesDoc;
+	texturesDoc.ParseStream(is);
+	fclose(gTexturesFile);
+
+	Value::Array texturesArray = texturesDoc["textures"].GetArray();
+	for (int i = 0; i < texturesArray.Size(); i++)
+	{
+		std::string fileStr = filePath + (texturesArray[i].GetString());																				// To convert from std::string to std::wstring
+		std::wstring file(fileStr.begin(), fileStr.end());
+		texture tex;
+
+		dManager->GetResourceUpload()->Begin();																										// Descriptor and textures in GameTextures.json array must
+																																					// be in the same order
+		DX::ThrowIfFailed(
+			DirectX::CreateDDSTextureFromFile(dManager->GetDevice(), *dManager->GetResourceUpload(), file.c_str(),
+				&tex.resource));
+
+		DirectX::CreateShaderResourceView(dManager->GetDevice(), tex.resource,
+			dManager->GetResourceDescriptors()->GetCpuHandle(i));
+
+		auto uploadResourcesFinished = dManager->GetResourceUpload()->End(
+			dManager->GetDeviceResources()->GetCommandQueue());
+		uploadResourcesFinished.wait();
+
+		tex.id = i;
+		tex.texPath = file;
+		m_Textures.push_back(tex);
+	}
+}
 
 // Goes through levels json file to add all needed level names to vector
 void ResourceManager::LoadLevelsFromFile()
@@ -105,19 +113,6 @@ void ResourceManager::LoadLevelsFromFile()
 		m_Levels.emplace_back(newMap);
 	}
 }
-
-//std::wstring ResourceManager::GetTexture(const std::string& tName)
-//{
-//	std::string nameStr = tName;																				// To convert from std::string to std::wstring
-//	std::wstring texName(nameStr.begin(), nameStr.end());
-//
-//	int i = 0;
-//	if (std::find(m_TexPaths.begin(), m_TexPaths.end(), texName) != m_TexPaths.end())
-//	{
-//		return m_TexPaths[i];
-//		i++;
-//	}
-//}
 
 // Reduces the given texture path to just the image name to give it a more appropriate name
 std::string ResourceManager::SetTexName(std::string path)
@@ -239,10 +234,8 @@ void ResourceManager::UnloadZone()
 {
 	if (m_Objects.size() > 0)
 	{
-		for (int i = m_Objects.size() - 1; i >= 0; i--)
+		for (int i = m_Objects.size() - 1; i >= 0; --i)
 		{
-			delete m_Objects[i];
-			m_Objects[i] = nullptr;
 			m_Objects.pop_back();
 		}
 	}
@@ -303,14 +296,14 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
 
 			if (objType == "Tile")
-			{   	
-				Tile* tile = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(tile);
+			{
+				std::shared_ptr<Tile> tile = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.push_back(tile);
 			}
 			else if (objType == "Respawner")
 			{
-				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(playerSpawner);
+				std::shared_ptr<Tile> playerSpawner = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.push_back(playerSpawner);
 
 				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
 				float collisionOffset = 1.0f;
@@ -320,13 +313,18 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerRect.right = 6;
 				playerRect.bottom = 16;
 				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
-				Player* player = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
-				m_Objects.emplace_back(player);
+				std::shared_ptr<Player> player = std::make_shared<Player>(dManager, m_Textures[1].id, DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
+				m_Objects.push_back(player);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(damageable);
+				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.push_back(damageable);
+			}
+			else if (objType == "NextZone")
+			{
+				std::shared_ptr<Tile> nextZone = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.push_back(nextZone);
 			}
 		}
 	}
@@ -335,7 +333,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 void ResourceManager::LoadNextZone(DeviceManager* dManager)
 {
 	int zoneOffset = 1;
-	if (GetCurrentMap()->GetCurrentZoneNum() < GetCurrentMap()->GetLayers().size() - zoneOffset)							// Check to see if incrementing zone num will go over max zones or not
+	if (GetCurrentMap()->GetCurrentZoneNum() < GetCurrentMap()->GetLayers().size() - 1)							// Check to see if incrementing zone num will go over max zones or not
 	{
 		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() + zoneOffset);
 		LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());
