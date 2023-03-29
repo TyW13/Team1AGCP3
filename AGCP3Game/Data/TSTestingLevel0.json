@@ -420,7 +420,7 @@
              "name":"",
              "objects":[
                     {
-                     "class":"Damageable",
+                     "class":"NextZone",
                      "height":5,
                      "id":1,
                      "name":"",

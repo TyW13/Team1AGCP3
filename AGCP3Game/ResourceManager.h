@@ -139,7 +139,7 @@ public:
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
-	std::vector<GameObject*> GetObjects() { return m_Objects; }
+	std::vector<std::shared_ptr<GameObject>> GetObjects() { return m_Objects; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
@@ -155,7 +155,7 @@ public:
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<texture> m_Textures;
-	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
+	std::vector<std::shared_ptr<GameObject>> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 
 	int collisionWidth;

@@ -352,28 +352,39 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         static_cast<long> (nextPos.y + objSize.y * abs(mScale.y)) };
 
     bool collided = false;                                                                             
-    std::vector<GameObject*> gObjects;                                                                 
+    std::vector<std::shared_ptr<GameObject>> gObjects;                                                                 
 
-    for (GameObject* gObject : rManager->GetObjects())
+    for (int i = 0; i < rManager->GetObjects().size(); ++i)
     {
-        if (nextPosRect.left <= gObject->GetCollisionBounds().right &&
-            nextPosRect.right >= gObject->GetCollisionBounds().left &&
-            nextPosRect.top <= gObject->GetCollisionBounds().bottom &&
-            nextPosRect.bottom >= gObject->GetCollisionBounds().top)
+        if (nextPosRect.left <= rManager->GetObjects()[i].get()->GetCollisionBounds().right &&
+            nextPosRect.right >= rManager->GetObjects()[i].get()->GetCollisionBounds().left &&
+            nextPosRect.top <= rManager->GetObjects()[i].get()->GetCollisionBounds().bottom &&
+            nextPosRect.bottom >= rManager->GetObjects()[i].get()->GetCollisionBounds().top)
         {
-            gObjects.emplace_back(gObject);
+            gObjects.push_back(rManager->GetObjects()[i]);
         }
     }
+    //for (GameObject* gObject : rManager->GetObjects())
+    //{
+    //    if (nextPosRect.left <= gObject->GetCollisionBounds().right &&
+    //        nextPosRect.right >= gObject->GetCollisionBounds().left &&
+    //        nextPosRect.top <= gObject->GetCollisionBounds().bottom &&
+    //        nextPosRect.bottom >= gObject->GetCollisionBounds().top)
+    //    {
+    //        gObjects.emplace_back(gObject);
+    //    }
+    //}
 
     float collisionPosOffset = 1;               // Value to offset player by when they collide with an object
-    for (GameObject* obj : gObjects)
+
+    for (int i = 0; i < gObjects.size(); ++i)
     {
-        if (obj->GetObjectType() == "Tile")
+        if (gObjects[i].get()->GetObjectType() == "Tile")
         {
             //DBOUT(objType);
-            if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
+            if (collisionBounds.bottom < gObjects[i].get()->GetCollisionBounds().top && nextPosRect.bottom >= gObjects[i].get()->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
             {
-                mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
+                mPos.y = gObjects[i].get()->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
                 mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.y = 0;
 
@@ -382,27 +393,27 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 grounded = true;
                 fired = false;
             }
-            else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
+            else if (collisionBounds.top > gObjects[i].get()->GetCollisionBounds().bottom && nextPosRect.top <= gObjects[i].get()->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
             {
-                mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
+                mPos.y = gObjects[i].get()->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
                 mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.y = 0;
 
                 collided = true;
                 collidedBottom = true;
             }
-            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
+            if (collisionBounds.right < gObjects[i].get()->GetCollisionBounds().left && nextPosRect.right >= gObjects[i].get()->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
             {
-                mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                mPos.x = gObjects[i].get()->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
                 mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.x = 0;
 
                 collided = true;
                 collidedLeft = true;
             }
-            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+            else if (collisionBounds.left > gObjects[i].get()->GetCollisionBounds().right && nextPosRect.left <= gObjects[i].get()->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
             {
-                mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+                mPos.x = gObjects[i].get()->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
                 mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.x = 0;
 
@@ -411,11 +422,67 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             }
         }
 
-        else if (obj->GetObjectType() == "Damageable")
+        else if (gObjects[i].get()->GetObjectType() == "Damageable")
         {
             rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
         }
+
+        else if (gObjects[i].get()->GetObjectType() == "NextZone")
+        {
+            rManager->LoadNextZone(dManager);               // needs device manager in params
+        }
     }
+
+    //for (GameObject* obj : gObjects)
+    //{
+    //    if (obj->GetObjectType() == "Tile")
+    //    {
+    //        //DBOUT(objType);
+    //        if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
+    //        {
+    //            mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
+    //            mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+    //            currentVel.y = 0;
+    //
+    //            collided = true;
+    //            collidedTop = true;
+    //            grounded = true;
+    //            fired = false;
+    //        }
+    //        else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
+    //        {
+    //            mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
+    //            mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+    //            currentVel.y = 0;
+    //
+    //            collided = true;
+    //            collidedBottom = true;
+    //        }
+    //        if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
+    //        {
+    //            mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+    //            mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+    //            currentVel.x = 0;
+    //
+    //            collided = true;
+    //            collidedLeft = true;
+    //        }
+    //        else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+    //        {
+    //            mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+    //            mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+    //            currentVel.x = 0;
+    //
+    //            collided = true;
+    //            collidedRight = true;
+    //        }
+    //    }
+    //
+    //    else if (obj->GetObjectType() == "Damageable")
+    //    {
+    //        rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+    //    }
+    //}
 }
 
 void Player::SetActive(bool _isActive)
