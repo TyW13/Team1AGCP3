@@ -42,13 +42,25 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
         grounded = false;
     }
 
-    if (canCollideRightWall)
+    /*if (canCollideRightWall)
     {
         canCollideLeftWall = false;
     }
     if (canCollideLeftWall)
     {
         canCollideRightWall = false;
+    }*/
+
+    // Check if the player is on the ground
+    if (grounded)
+    {
+        //reset the coyote time remaining
+        coyoteTimeRemaining = coyoteTimeDuration;
+    }
+    else
+    {
+        //decrease the coyote time remaining
+        coyoteTimeRemaining -= dTime;
     }
 
 	// Player Animations update goes in here
@@ -144,7 +156,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             detectSpaceKey = true;
         }
 
-        if (detectSpaceKey)
+        if (detectSpaceKey && coyoteTimeRemaining > 0.0f)
         {
             start_time = std::chrono::high_resolution_clock::now();
             currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
