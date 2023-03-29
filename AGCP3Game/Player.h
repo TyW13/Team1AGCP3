@@ -76,7 +76,7 @@ private:
     const float	DRAG_Y = 0.92;				            //for deceleration in y-axis
     const float HIGH_JUMP_TIME = 0.20;					//how much time it takes to do a higher jump
     const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;	    //how much time it takes to do a lower jump
-    const float coyoteTimeDuration = 1.2f;              //define the coyote time duration (in seconds)
+    const float coyoteTimeDuration = 0.15f;              //define the coyote time duration (in seconds)
 
     float coyoteTimeRemaining = 0.0f;                   //define a variable to track the coyote time remaining
 
@@ -103,6 +103,9 @@ private:
     bool hasWallJumped = false;							//detect if wall jumped
 
     float spaceClickElapsedTime = 0.f;
+
+
+    int recordLastCollision = 0;
 
 
 };

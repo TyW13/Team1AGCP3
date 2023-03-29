@@ -148,7 +148,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
 
     //--------- y-axis
 
-    if (grounded)
+    if (grounded || coyoteTimeRemaining >= 0.0f && recordLastCollision == 1 && currentVel.x != 0)
     {
         //set initial velocity, start timer, record button pressed down during only the first frame
         if (kb.Space)
@@ -156,7 +156,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             detectSpaceKey = true;
         }
 
-        if (detectSpaceKey && coyoteTimeRemaining > 0.0f)
+        if (detectSpaceKey)
         {
             start_time = std::chrono::high_resolution_clock::now();
             currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
@@ -408,6 +408,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 grounded = true;
                 canShotGunJump = true;
                 fired = false;
+                recordLastCollision = 1;
             }
             else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
             {
@@ -417,6 +418,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
 
                 collided = true;
                 collidedBottom = true;
+                recordLastCollision = 2;
             }
             if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
             {
@@ -427,6 +429,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 collided = true;
                 collidedLeft = true;
                 canCollideRightWall = true;
+                recordLastCollision = 3;
 
                 if (kb.D && !deactivate_D)
                 {
@@ -447,6 +450,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 collided = true;
                 collidedRight = true;
                 canCollideLeftWall = true;
+                recordLastCollision = 4;
 
                 if (kb.A && !deactivate_A)
                 {
