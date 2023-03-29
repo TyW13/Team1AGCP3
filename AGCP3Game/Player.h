@@ -88,6 +88,7 @@ private:
     bool recordJumpTime = false;				        //start/stop recording jump time
     bool detectSpaceKey = true;				        	//start detecting the space button pressed down
     bool detectMouseClick = true;					    //
+    int PlayerState = 0;
 
     //------ simple "collisions"
     double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped

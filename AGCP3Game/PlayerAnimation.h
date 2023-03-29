@@ -19,25 +19,22 @@ public:
 	Animation();
 	~Animation();
 	void Init(std::string, GameObject&);
-	void Update(float, GameObject&,int);
+	void Update(float, GameObject&, int);
 
 private:
-	enum class State { PLAYER, SHOTGUN };
-	void SwitchTex(GameObject&, int,int);
-	void LoadAnimation(std::string, State);
+	void SwitchTex(GameObject&, int, int);
+	void LoadAnimation(std::string);
 	void LoadAnimationData(std::string);
 	void LoadIdleAnimation(std::string);
 	void CheckState(std::string jsonPath);
 
-	//ID3D11ShaderResourceView* p;
-	//ID3D11ShaderResourceView* p2;
-	//ID3D11ShaderResourceView* p3;
-	State animType = State::PLAYER;
 	const int Zero = 0;
 	const int kSizeUp = 6;
 	float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	float deltaTime;
+	float delayTime;
+	bool PlayIdle = false;
 	int FramesTemp;
 	int currentFrame = Zero;
 	const int InitState = 0;
@@ -47,8 +44,4 @@ private:
 	const int PlayerFrames = 5;
 	const int IdleFrames = 4;
 	int Frames;
-	int IdleOffset;
-	int JumpOffset;
-	float delayTime
 };
-

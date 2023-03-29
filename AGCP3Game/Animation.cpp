@@ -18,7 +18,7 @@ Animation::~Animation()
 void Animation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	jsonPath = "Data/" + jsonPath;
-	CheckState(jsonPath);
+	LoadAnimation(jsonPath)
 	SwitchTex(Sprite, Zero, InitState);
 }
 void Animation::Update(float dTime, GameObject &Sprite, int animState)
@@ -214,28 +214,6 @@ https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 			idlespriteSheet[i] = TempRect;
 			++i;
 		}
-	}
-}
-
-void Animation::CheckState(std::string jsonPath)
-{
-	if (jsonPath == "Data/TestSheet.json")
-	{
-		animType = State::PLAYER;
-		LoadAnimation(jsonPath, animType);
-		//LoadAnimation("data/jump.json");
-		LoadIdleAnimation("Data/idle.json");
-		//LoadAnimationData("data/PlayerData.json);
-	}
-	if (jsonPath == "Data/Shotgun.json")
-	{
-		animType = State::SHOTGUN;
-		LoadAnimation(jsonPath, animType);
-		//LoadAnimationData(Data/ShotgunData.json);
-	}
-	else
-	{
-		assert("Animation does not exist");
 	}
 }
 

@@ -43,9 +43,8 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
         grounded = false;
     }
 
-    PlayerAnim.Update(dTime, *this, AnimState);
-
 	UpdateInput(dManager, dTime);
+    PlayerAnim.Update(dTime, *this, AnimState);
     
     CheckCollision(dManager, rManager, dTime);
 }
@@ -61,6 +60,7 @@ void Player::Render(DeviceManager* dManager)
 
 void Player::UpdateInput(DeviceManager* dManager, float dTime)
 {
+    AnimState = 0;
     //get keyboard stated
     auto kb = dManager->GetKeyboard()->GetState();
     auto mouse = dManager->GetMouse()->GetState();
@@ -105,7 +105,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (kb.D && !deactivate_D)
     {
         currentVel.x = PLAYER_SPEED;
-        AnimState = 0;
+        AnimState = 1;
     }
     //left
     else if (kb.A && !deactivate_A)
