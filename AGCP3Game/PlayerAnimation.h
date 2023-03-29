@@ -13,7 +13,7 @@ struct RECTF
 		return RECTF{ -(float)left,(float)top,-(float)right,(float)bottom };
 	}
 };
-class Animation
+class PlayerAnimation
 {
 public:
 	Animation();
@@ -26,7 +26,6 @@ private:
 	void LoadAnimation(std::string);
 	void LoadAnimationData(std::string);
 	void LoadIdleAnimation(std::string);
-	void CheckState(std::string jsonPath);
 
 	const int Zero = 0;
 	const int kSizeUp = 6;
@@ -44,4 +43,6 @@ private:
 	const int PlayerFrames = 5;
 	const int IdleFrames = 4;
 	int Frames;
+	int IdleOffset;
+	int JumpOffset;
 };

@@ -7,7 +7,7 @@ using namespace rapidjson;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-void Animation::Init(std::string jsonPath, GameObject& Sprite)
+void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	jsonPath = "Data/" + jsonPath;
 	if (jsonPath == "Data/TestSheet.json")
@@ -21,7 +21,7 @@ void Animation::Init(std::string jsonPath, GameObject& Sprite)
 		assert("Animation does not exist");
 	}
 }
-void Animation::Update(float dTime, GameObject& Sprite, int animState)
+void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 {
 		//calculate elapsed time
 		FramesTemp = Zero;//Temporary magic numbers unil animation data loading is complete
@@ -67,7 +67,7 @@ void Animation::Update(float dTime, GameObject& Sprite, int animState)
 	
 }
 
-void Animation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
+void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
 {
 		if (animState == 0)
 		{
@@ -95,7 +95,7 @@ void Animation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
 		}
 }
 
-void Animation::LoadAnimation(std::string jsonPath)
+void PlayerAnimation::LoadAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
 	FILE* Animation;
@@ -110,7 +110,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);
 	int i = 0;
-https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
+	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 	GenericArray fullArray = AnimationDoc["frames"].GetArray();
 	for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
 	{
@@ -130,7 +130,7 @@ https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
 	}
 }
 
-void Animation::LoadAnimationData(std::string jsonPath)
+void PlayerAnimation::LoadAnimationData(std::string jsonPath)
 {
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
 	FILE* Animation;

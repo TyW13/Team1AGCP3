@@ -1,5 +1,5 @@
 #pragma once
-#include "Animation.h"
+#include "PlayerAnimation.h"
 #include "GameObject.h"
 
 class ResourceManager;
@@ -36,7 +36,7 @@ public:
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
-	Animation PlayerAnim;
+	PlayerAnimation PlayerAnim;
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
 	std::string objType;
@@ -88,7 +88,7 @@ private:
     bool recordJumpTime = false;				        //start/stop recording jump time
     bool detectSpaceKey = true;				        	//start detecting the space button pressed down
     bool detectMouseClick = true;					    //
-    int PlayerState = 0;
+    int AnimState = 0; // Current state the player is in to detect what frames of animation needs to be used
 
     //------ simple "collisions"
     double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
@@ -97,7 +97,6 @@ private:
     bool deactivate_D = false;							//deactivate D key input while wall jumping
     bool hasWallJumped = false;							//detect if wall jumped
 
-    int AnimState = 0;
 
     float spaceClickElapsedTime = 0.f;
 

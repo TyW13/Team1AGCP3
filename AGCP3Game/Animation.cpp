@@ -7,37 +7,19 @@ using namespace rapidjson;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-Animation::Animation()
+void Animation::Init(std::string FramePath, std::string DataPath, GameObject& Sprite)
 {
+	FramePath = "Data/" + FramePath;
+	DataPath = "Data/" + DataPath;
+	LoadAnimation(FramePath);
+	LoadAnimationData(DataPath);
+	SwitchTex(Sprite, Zero);
 }
-
-Animation::~Animation()
-{
-}
-
-void Animation::Init(std::string jsonPath, GameObject& Sprite)
-{
-	jsonPath = "Data/" + jsonPath;
-	LoadAnimation(jsonPath)
-	SwitchTex(Sprite, Zero, InitState);
-}
-void Animation::Update(float dTime, GameObject &Sprite, int animState)
+void Animation::Update(float dTime, GameObject &Sprite)
 {
 	//calculate elapsed time
-	switch (animType)
-	{
-	case State::PLAYER:
-		deltaTime = dTime;
 		FramesTemp = Zero;//Temporary magic numbers unil animation data loading is complete
-		elapsedTime += deltaTime;
-		if (animState == 1 || animState == 2)
-		{
-			FramesTemp = PlayerFrames;
-		}
-		if (animState == 0)
-		{
-			FramesTemp = IdleFrames;
-		}
+		elapsedTime += dTime;
 		//advance to the next frame if enough time has passed (Constantly changing frames)
 		if (elapsedTime >= frameDuration)
 		{
@@ -48,79 +30,15 @@ void Animation::Update(float dTime, GameObject &Sprite, int animState)
 			}
 			elapsedTime -= frameDuration;
 		}
-		SwitchTex(Sprite, currentFrame, animState);
-		break;
-	case State::SHOTGUN:
-		deltaTime = dTime;
-		elapsedTime += deltaTime;
-		Frames = 4;//Temporary magic numbers unil animation data loading is complete
-		if (animState == 1 && currentFrame <= Zero)
-		{
-			if (elapsedTime >= frameDuration)
-			{
-				if (currentFrame <= Frames)
-				{
-					++currentFrame;
-				}
-				elapsedTime -= frameDuration;
-			}
-		}
-		if (animState == Zero && currentFrame >= Zero)
-		{
-			if (elapsedTime >= frameDuration)
-			{
-				if (currentFrame >= Zero)
-				{
-					--currentFrame;
-				}
-				elapsedTime -= frameDuration;
-			}
-		}
-		SwitchTex(Sprite, currentFrame, animState);
-		break;
-	}
+		SwitchTex(Sprite, currentFrame);
 }
 
-void Animation::SwitchTex(GameObject &Sprite, int currentFrame, int animState)
+void Animation::SwitchTex(GameObject &Sprite, int currentFrame)
 {
-	switch (animType)
-	{
-	case State::PLAYER:
-	
-		if (animState == 0)
-		{
-			Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
-			Sprite.SetRect(walkspriteSheet[currentFrame]);
-		}
-		if (animState == 1)
-		{
-			//Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
-			//Sprite.SetRect(walkspriteSheet[currentFrame]);
-		}
-		if (animState == 2)
-		{
-			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(-walkspriteSheet[currentFrame]);
-		}
-		if (animState == 3)
-		{
-			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			//Sprite.SetRect(-walkspriteSheet[Zero]);
-		}
-		else
-		{
-			assert("Animation state invalid");
-		}
-		break;
-	case State::SHOTGUN:
-	
-		Sprite.SetRect(shotgunSpriteSheet[currentFrame]);
-		break;
-	
-	}
+	Sprite.SetRect(SpriteSheet[currentFrame]);
 }
 
-void Animation::LoadAnimation(std::string jsonPath, State Object )
+void Animation::LoadAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
 	//Need rapidjson to test
@@ -150,15 +68,7 @@ void Animation::LoadAnimation(std::string jsonPath, State Object )
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
 			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
-			switch (animType)
-			{
-			case State::PLAYER:
-				walkspriteSheet[i] = TempRect;
-				break;
-			case State::SHOTGUN:
-				shotgunSpriteSheet[i] = TempRect;
-				break;
-			}
+			SpriteSheet[i] = TempRect;
 			++i;
 		}
 	}

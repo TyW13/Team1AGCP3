@@ -8,7 +8,7 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 
-void Animation::Init(std::string jsonPath, GameObject& Sprite)
+void ShotgunAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	jsonPath = "Data/" + jsonPath;
 	if (jsonPath == "Data/Shotgun.json")
@@ -22,7 +22,7 @@ void Animation::Init(std::string jsonPath, GameObject& Sprite)
 		assert("Animation does not exist");
 	}
 }
-void Animation::Update(float dTime, GameObject& Sprite, int animState)
+void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 {
 	//calculate elapsed time
 	deltaTime = dTime;
@@ -53,12 +53,12 @@ void Animation::Update(float dTime, GameObject& Sprite, int animState)
 	SwitchTex(Sprite, currentFrame, animState);
 }
 
-void Animation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
+void ShotgunAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
 {
 	Sprite.SetRect(shotgunSpriteSheet[currentFrame]);
 }
 
-void Animation::LoadAnimation(std::string jsonPath)
+void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 {
 	//From Joshua Moxon project 2
 	FILE* Animation;
@@ -92,7 +92,7 @@ void Animation::LoadAnimation(std::string jsonPath)
 		}
 	}
 }
-void Animation::LoadAnimationData(std::string jsonPath)
+void ShotgunAnimation::LoadAnimationData(std::string jsonPath)
 {
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
 	FILE* Animation;

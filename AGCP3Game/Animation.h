@@ -16,23 +16,15 @@ struct RECTF
 class Animation
 {
 public:
-	Animation();
-	~Animation();
-	void Init(std::string, GameObject&);
-	void Update(float, GameObject&,int);
+	void Init(std::string,std::string, GameObject&);
+	void Update(float, GameObject&);
 
 private:
-	enum class State { PLAYER, SHOTGUN };
-	void SwitchTex(GameObject&, int,int);
-	void LoadAnimation(std::string, State);
+	void SwitchTex(GameObject&, int);
+	void LoadAnimation(std::string);
 	void LoadAnimationData(std::string);
 	void LoadIdleAnimation(std::string);
-	void CheckState(std::string jsonPath);
 
-	//ID3D11ShaderResourceView* p;
-	//ID3D11ShaderResourceView* p2;
-	//ID3D11ShaderResourceView* p3;
-	State animType = State::PLAYER;
 	const int Zero = 0;
 	const int kSizeUp = 6;
 	float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
@@ -40,15 +32,7 @@ private:
 	float deltaTime;
 	int FramesTemp;
 	int currentFrame = Zero;
-	const int InitState = 0;
-	RECTF walkspriteSheet[5];
-	RECTF idlespriteSheet[5];
-	RECTF shotgunSpriteSheet[4];
-	const int PlayerFrames = 5;
-	const int IdleFrames = 4;
-	int Frames;
-	int IdleOffset;
-	int JumpOffset;
-	float delayTime
+	RECTF SpriteSheet[4];
+	int Frames = 5; //Temporary
 };
 
