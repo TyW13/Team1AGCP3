@@ -23,7 +23,6 @@ private:
 	void SwitchTex(GameObject&, int);
 	void LoadAnimation(std::string);
 	void LoadAnimationData(std::string);
-	void LoadIdleAnimation(std::string);
 
 	const int Zero = 0;
 	const int kSizeUp = 6;

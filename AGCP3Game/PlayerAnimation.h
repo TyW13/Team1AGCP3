@@ -16,8 +16,6 @@ struct RECTF
 class PlayerAnimation
 {
 public:
-	Animation();
-	~Animation();
 	void Init(std::string, GameObject&);
 	void Update(float, GameObject&, int);
 
@@ -25,7 +23,6 @@ private:
 	void SwitchTex(GameObject&, int, int);
 	void LoadAnimation(std::string);
 	void LoadAnimationData(std::string);
-	void LoadIdleAnimation(std::string);
 
 	const int Zero = 0;
 	const int kSizeUp = 6;
