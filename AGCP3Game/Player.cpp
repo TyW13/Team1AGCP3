@@ -429,10 +429,14 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             }
         }
 
-        //else if (obj->GetObjectType() == "Damageable")
-        //{
-        //    rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
-        //}
+        else if (gObjects[i]->GetObjectType() == "Damageable")
+        {
+            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+        }
+        else if (gObjects[i]->GetObjectType() == "NextZone")
+        {
+            rManager->LoadNextZone(dManager);          // needs device manager in params
+        }
 
         //lets assume it's the bounce pad for a sec
         //else if (obj->GetObjectType() == "Damageable")

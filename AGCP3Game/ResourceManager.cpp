@@ -320,8 +320,14 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			}
 			else if (objType == "Damageable")
 			{
-				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[2].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.push_back(damageable);
+
+			}
+			else if (objType == "NextZone")
+			{
+				std::shared_ptr<Tile> nextZone = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.push_back(nextZone);
 
 			}
 			/*else if (objType == "BouncePad")
