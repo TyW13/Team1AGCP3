@@ -55,7 +55,7 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
     if (grounded)
     {
         //reset the coyote time remaining
-        coyoteTimeRemaining = coyoteTimeDuration;
+        coyoteTimeRemaining = COYOTE_TIME_DURATION;
     }
     else
     {
@@ -86,7 +86,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     mouse = dManager->GetMouse()->GetState();
 
     //update player core movement
-    mPos += currentVel * dTime;
+    mPos += currentVel * slowdown_modifier * dTime;        //slowdown modifier by default should be 1
 
     //--------- mouse
     if (GetAsyncKeyState(VK_LBUTTON) && detectMouseClick && !fired)
@@ -114,6 +114,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         grounded = false;
         detectMouseClick = false;
         canShotGunJump = false;
+        canReloadGemJump = false;
+        slowdown_modifier = 1;
 
     }
     if (!mouse.leftButton && !detectMouseClick)
@@ -245,7 +247,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         {
             //start_time_wall_jump = std::chrono::high_resolution_clock::now();
             currentVel.y = -WALL_JUMP_VEL_Y;
-            currentVel.x = -3 * currentVel.x;
+            (currentVel.x > 0) ? currentVel.x = -WALL_JUMP_VEL_X : (currentVel.x < 0) ? currentVel.x = WALL_JUMP_VEL_X : 0 ;
             elapsedtime = 0;
             hasWallJumped = true;
             isWallSliding = false;
@@ -463,10 +465,59 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             }
         }
 
+        //else if (obj->GetObjectType() == "Damageable")
+        //{
+        //    rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+        //}
+
+        //lets assume it's the bounce pad for a sec
         else if (obj->GetObjectType() == "Damageable")
         {
-            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
+            //if player collided from their bottom bound
+            if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)
+            {
+                currentVel.y = -BOUNCE_PAD_JUMP_Y;
+            }
+            //if player collided from their top bound
+            else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)
+            {
+                currentVel.y = BOUNCE_PAD_JUMP_Y;
+            }
+            //if player collided from their right bound
+            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)
+            {
+                currentVel.y = -BOUNCE_PAD_JUMP_X;
+            }
+            //if player collided from their left bound
+            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)
+            {
+                currentVel.y = BOUNCE_PAD_JUMP_X;
+            }
         }
+
+        //lets assume it's the reloadable gem for a sec
+        //if (obj->GetObjectType() == "Damageable" && gemSlowdownRemaining >= 0.0f)
+        //{
+        //    obj->SetActive(false);
+        //    canReloadGemJump = true;
+        //    slowdown_modifier = 0.1;
+        //}
+
+
+        //if (canReloadGemJump)
+        //{
+        //    gemSlowdownRemaining -= dTime;
+        //    if (gemSlowdownRemaining <= 0)
+        //    {
+        //        canReloadGemJump = false;
+        //        slowdown_modifier = 1;
+        //    }
+        //}
+        //else
+        //{
+        //    //reset the slowdown time remaining
+        //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
+        //}
     }
 }
 

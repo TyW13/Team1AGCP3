@@ -122,6 +122,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameRenderer.h" />
+    <ClInclude Include="Gem.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="pch.h" />
@@ -141,6 +142,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
+    <ClCompile Include="Gem.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="pch.cpp" />

@@ -67,6 +67,7 @@ private:
     const float MAX_JUMP_VEL = 400;
     const float MIN_JUMP_VEL = MAX_JUMP_VEL / 2;
     const float WALL_JUMP_VEL_Y = 1500;
+    const float WALL_JUMP_VEL_X = 1500;
     const float CLIMB_VEL = 170;					    //player climbing velocity
     const float SLIDE_DOWN_VEL = 80;					//sliding down velocity
     const float GRAVITY = 400;
@@ -76,9 +77,14 @@ private:
     const float	DRAG_Y = 0.92;				            //for deceleration in y-axis
     const float HIGH_JUMP_TIME = 0.20;					//how much time it takes to do a higher jump
     const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;	    //how much time it takes to do a lower jump
-    const float coyoteTimeDuration = 0.15f;              //define the coyote time duration (in seconds)
+    const float BOUNCE_PAD_JUMP_X = 1200;               //bounce pad force in x axis
+    const float BOUNCE_PAD_JUMP_Y = 1500;               //bounce pad force in y axis
+    const float COYOTE_TIME_DURATION = 0.15;            //define the coyote time duration (in seconds)
+    const float GEM_SLOWDOWN_DURATION = 1.3;            //define the coyote time duration (in seconds)
 
+    float slowdown_modifier = 1;
     float coyoteTimeRemaining = 0.0f;                   //define a variable to track the coyote time remaining
+    float gemSlowdownRemaining = 0.0f;                //define a variable to track the reload jump slow down remaining
 
     double elapsed_time = 0;					        //measure how much time has elapsed between starting and ending time counting
     double elapsed_t_bouncepad = 0;
@@ -92,6 +98,7 @@ private:
     bool detectSpaceKey = true;				        	//start detecting the space button pressed down
     bool detectMouseClick = true;					    //
     bool canShotGunJump = false;                        //allow shotgun jumping
+    bool canReloadGemJump = false;
     bool canCollideRightWall = false;                   //for not letting the player to jump off the same wall twice
     bool canCollideLeftWall = false;                    //for not letting the player to jump off the same wall twice
 
