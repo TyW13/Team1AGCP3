@@ -55,7 +55,9 @@ public:
         Tile,
         Player,
         Background,
-        Count
+        Count,
+        BouncePad,
+        Gem
     };
 
     // Properties

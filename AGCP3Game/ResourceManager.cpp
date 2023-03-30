@@ -4,6 +4,8 @@
 #include "ResourceManager.h"
 #include "Tile.h"
 #include "Player.h"
+#include "BouncePad.h"
+#include "Gem.h"
 
 using namespace DirectX;
 
@@ -318,13 +320,19 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			}
 			else if (objType == "Damageable")
 			{
-				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.push_back(damageable);
+				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(damageable);
+
 			}
-			else if (objType == "NextZone")
+			else if (objType == "BouncePad")
 			{
-				std::shared_ptr<Tile> nextZone = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
-				m_Objects.push_back(nextZone);
+				BouncePad* bouncepad = new BouncePad(dManager, L"Data/bouncepad.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(bouncepad);
+			}
+			else if (objType == "Gem")
+			{
+				Gem* gem = new Gem(dManager, L"Data/gem.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(gem);
 			}
 		}
 	}
