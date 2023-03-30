@@ -55,7 +55,9 @@ public:
         Cat,
         Tile,
         Background,
-        Count
+        Count,
+        BouncePad,
+        Gem
     };
 
     // Properties

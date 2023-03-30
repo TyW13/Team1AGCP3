@@ -467,10 +467,6 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         {
             rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
         }
-        else if (obj->GetObjectType() == "BouncePad")
-        {
-            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());               // needs device manager in params
-        }
     }
 }
 

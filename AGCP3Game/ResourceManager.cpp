@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "Tile.h"
 #include "Player.h"
+#include "BouncePad.h"
 
 using namespace DirectX;
 
@@ -325,14 +326,22 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(damageable);
+				//Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				//m_Objects.emplace_back(damageable);
+
+				BouncePad* bouncepad = new BouncePad(dManager, L"Data/bouncepad.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(bouncepad);
 			}
 			else if (objType == "BouncePad")
 			{
-				Tile* bouncepad = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				BouncePad* bouncepad = new BouncePad(dManager, L"Data/bouncepad.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
 				m_Objects.emplace_back(bouncepad);
 			}
+			/*else if (objType == "Gem")
+			{
+				Tile* gem = new Tile(dManager, L"Data/gem.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(gem);
+			}*/
 		}
 	}
 }

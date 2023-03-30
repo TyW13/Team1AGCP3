@@ -126,16 +126,10 @@ private:
     enum Descriptors
     {
         Cat,
-        Tiles,
+        Tile,
         Background,
-        Count
+        Count,
+        BouncePad,
+        Gem
     };
-};
-
-class Player
-{
-public:
-
-private:
-
 };
