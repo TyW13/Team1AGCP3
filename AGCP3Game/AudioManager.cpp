@@ -13,7 +13,7 @@ AudioManager::~AudioManager()
 		m_audEngine->Suspend();
 	}
 
-	m_nightLoop.reset();
+	//m_footsteploop.reset();
 }
 
 void AudioManager::Init()
@@ -24,69 +24,41 @@ void AudioManager::Init()
 #endif
 	m_audEngine = std::make_unique<AudioEngine>(eflags);
 
-	m_explode = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/angry cat meow.wav");
-	m_ambient = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/la chanson du chat.wav");
+	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
+		L"Data/shotgun.wav");
+	m_jump = std::make_unique<SoundEffect>(m_audEngine.get(),
+		L"Data/jump.wav");
+	auto m_footstep = std::make_unique<SoundEffect>(m_audEngine.get(),
+		L"Data/footstep.wav");
 
-	std::random_device rd;
-	m_random = std::make_unique<std::mt19937>(rd());
+	//m_footsteploop = m_footstep->CreateInstance();
 
-	explodeDelay = 2.f;
-
-	m_nightLoop = m_ambient->CreateInstance();
-	m_nightLoop->Play(true);
-
-	nightVolume = 1.f;
-	nightSlide = -0.1f;
+	/*nightVolume = 1.f;
+	nightSlide = -0.1f;*/
 }
 
 void AudioManager::Update(float timer)
 {
-	float elapsedTime = float(timer);
 
-	nightVolume += elapsedTime * nightSlide;
-	if (nightVolume < 0.2f)
-	{
-		nightVolume = 0.2f;
-		nightSlide = -nightSlide;
-	}
-	else if (nightVolume > 1.f)
-	{
-		nightVolume = 1.f;
-		nightSlide = -nightSlide;
-	}
-	m_nightLoop->SetVolume(nightVolume);
+	//if (m_retryAudio)
+	//{
+	//	m_retryAudio = false;
+	//	if (m_audEngine->Reset())
+	//	{
+	//		// TODO: restart any looped sounds here
 
-	explodeDelay -= elapsedTime;
-
-	if (explodeDelay < 0.f)
-	{
-		m_explode->Play();
-
-		std::uniform_real_distribution<float> dist(1.f, 10.f);
-		explodeDelay = dist(*m_random);
-	}
-
-	if (m_retryAudio)
-	{
-		m_retryAudio = false;
-		if (m_audEngine->Reset())
-		{
-			// TODO: restart any looped sounds here
-
-			// TODO: restart any looped sounds here
-			if (m_nightLoop)
-				m_nightLoop->Play(true);
-		}
-	}
-	else if (!m_audEngine->Update())
-	{
-		if (m_audEngine->IsCriticalError())
-		{
-			m_retryAudio = true;
-		}
-	}
+	//		// TODO: restart any looped sounds here
+	//		/*if (m_nightLoop)
+	//			m_nightLoop->Play(true);*/
+	//	}
+	//}
+	//else if (!m_audEngine->Update())
+	//{
+	//	if (m_audEngine->IsCriticalError())
+	//	{
+	//		m_retryAudio = true;
+	//	}
+	//}
 }
 
 void AudioManager::Render()
@@ -100,7 +72,21 @@ void AudioManager::OnSuspending()
 
 void AudioManager::OnResuming()
 {
-	explodeDelay = 2.f;
 
 	m_audEngine->Resume();
+}
+
+void AudioManager::PlayShotgun()
+{
+	//m_shotgun->Play();
+}
+
+void AudioManager::PlayJump()
+{
+	//m_jump->Play();
+}
+
+void AudioManager::Playfootstep()
+{
+	//m_footsteploop->Play(true);
 }

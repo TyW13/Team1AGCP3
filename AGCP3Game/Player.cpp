@@ -110,6 +110,8 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         //apply a jump force to the player character
         currentVel = (direction * 1500);
 
+        //audioManager.m_shotgun->Play();
+
         fired = true;
         grounded = false;
         detectMouseClick = false;
@@ -287,58 +289,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             else { currentVel.y += 1.01 * (GRAVITY / 20); }
         }
     }
-
-    ////get screen dimensions
-    //int width = GetSystemMetricsForDpi(SM_CXSCREEN, GetDpiForSystem());
-    //int height = GetSystemMetricsForDpi(SM_CYSCREEN, GetDpiForSystem());
-
-    ////bottom
-    //if (mPos.y >= height - 2 * mOrigin.y)
-    //{
-    //    mPos.y = height - 2 * mOrigin.y;
-    //}
-    ////top
-    //if (mPos.y < mOrigin.y * 2)
-    //{
-    //    mPos.y = mOrigin.y * 2;
-    //}
-    ////right
-    //if (mPos.x + mOrigin.x >= width)
-    //{
-    //    if (kb.D && !deactivate_D)
-    //    {
-    //        isWallSliding = true;
-    //    }
-    //    else
-    //    {
-    //        isWallSliding = false;
-    //    }
-    //    mPos.x = width - mOrigin.x;
-    //}
-    ////left
-    //else if (mPos.x - mOrigin.x <= 0)
-    //{
-    //    if (kb.A && !deactivate_A)
-    //    {
-    //        isWallSliding = true;
-    //    }
-    //    else
-    //    {
-    //        isWallSliding = false;
-    //    }
-    //    mPos.x = mOrigin.x;
-    //}
-    //else
-    //{
-    //    isWallSliding = false;
-    //}
-
-    ////if the player is on the bottom line (let's say it's the ground for now)
-    //if (mPos.y == height - 2 * mOrigin.y)
-    //{
-    //    detectSpaceKey = true;
-    //    grounded = true;
-    //}
 }
 
 void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -404,6 +354,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 mPos.y = obj->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
                 mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.y = 0;
+                //(!isWallSliding) ? currentVel.y = 0 : 0;
 
                 collided = true;
                 collidedTop = true;
@@ -417,6 +368,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 mPos.y = obj->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
                 mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
                 currentVel.y = 0;
+                //(!isWallSliding) ? currentVel.y = 0 : 0;
 
                 collided = true;
                 collidedBottom = true;
@@ -424,44 +376,44 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             }
             if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
             {
-                mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
-                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                currentVel.x = 0;
+                //mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                //mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                //currentVel.x = 0;
 
-                collided = true;
-                collidedLeft = true;
-                canCollideRightWall = true;
-                recordLastCollision = 3;
+                //collided = true;
+                //collidedLeft = true;
+                //canCollideRightWall = true;
+                //recordLastCollision = 3;
 
-                if (kb.D && !deactivate_D)
-                {
-                    isWallSliding = true;
-                }
-                else
-                {
-                    isWallSliding = false;
-                }
+                //if (kb.D && !deactivate_D)
+                //{
+                //    isWallSliding = true;
+                //}
+                //else
+                //{
+                //    isWallSliding = false;
+                //}
                 
             }
             else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
             {
-                mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
-                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                currentVel.x = 0;
+                //mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+                //mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                //currentVel.x = 0;
 
-                collided = true;
-                collidedRight = true;
-                canCollideLeftWall = true;
-                recordLastCollision = 4;
+                //collided = true;
+                //collidedRight = true;
+                //canCollideLeftWall = true;
+                //recordLastCollision = 4;
 
-                if (kb.A && !deactivate_A)
-                {
-                    isWallSliding = true;
-                }
-                else
-                {
-                    isWallSliding = false;
-                }
+                //if (kb.A && !deactivate_A)
+                //{
+                //    isWallSliding = true;
+                //}
+                //else
+                //{
+                //    isWallSliding = false;
+                //}
             }
         }
 
@@ -502,8 +454,6 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         //    canReloadGemJump = true;
         //    slowdown_modifier = 0.1;
         //}
-
-
         //if (canReloadGemJump)
         //{
         //    gemSlowdownRemaining -= dTime;
@@ -513,7 +463,7 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         //        slowdown_modifier = 1;
         //    }
         //}
-        //else
+        //if(!canReloadGemJump)
         //{
         //    //reset the slowdown time remaining
         //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;

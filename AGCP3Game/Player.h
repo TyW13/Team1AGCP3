@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "AudioManager.h"
 
 class ResourceManager;
 
@@ -34,6 +35,9 @@ public:
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
 
 private:
+
+    AudioManager audioManager;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
