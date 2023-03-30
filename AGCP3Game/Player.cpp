@@ -435,29 +435,29 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
         //}
 
         //lets assume it's the bounce pad for a sec
-        else if (obj->GetObjectType() == "Damageable")
-        {
-            //if player collided from their bottom bound
-            if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_Y;
-            }
-            //if player collided from their top bound
-            else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_Y;
-            }
-            //if player collided from their right bound
-            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_X;
-            }
-            //if player collided from their left bound
-            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_X;
-            }
-        }
+        //else if (obj->GetObjectType() == "Damageable")
+        //{
+        //    //if player collided from their bottom bound
+        //    if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)
+        //    {
+        //        currentVel.y = -BOUNCE_PAD_JUMP_Y;
+        //    }
+        //    //if player collided from their top bound
+        //    else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)
+        //    {
+        //        currentVel.y = BOUNCE_PAD_JUMP_Y;
+        //    }
+        //    //if player collided from their right bound
+        //    if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)
+        //    {
+        //        currentVel.y = -BOUNCE_PAD_JUMP_X;
+        //    }
+        //    //if player collided from their left bound
+        //    else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)
+        //    {
+        //        currentVel.y = BOUNCE_PAD_JUMP_X;
+        //    }
+        //}
 
         //lets assume it's the reloadable gem for a sec
         //if (obj->GetObjectType() == "Damageable" && gemSlowdownRemaining >= 0.0f)
