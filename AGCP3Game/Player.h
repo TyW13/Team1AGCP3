@@ -7,13 +7,13 @@ class ResourceManager;
 class Player : public GameObject
 {
 public:
-	Player(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
-		: GameObject(dManager, texId, position, scale, active, objSize, objType, isCollidable, objRect)
+	Player(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
+		: GameObject(dManager, texId, position, scale, rotation, active, objSize, objType, isCollidable, objRect)
 	{
-		Init(dManager, texId, position, scale, active, objSize, objType, isCollidable, objRect);
+		Init(dManager, texId, position, scale, rotation, active, objSize, objType, isCollidable, objRect);
 	}
 
-	void Init(DeviceManager* dManager, int _texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 }) override;
+	void Init(DeviceManager* dManager, int _texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 }) override;
 	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime) override;
 	void Render(DeviceManager* dManager, ResourceManager& resourceManager) override;
 
@@ -47,6 +47,7 @@ private:
 	RECT objRect;
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
+    float mRotation;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
     int texId;
 

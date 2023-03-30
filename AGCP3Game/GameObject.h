@@ -7,12 +7,12 @@ class ResourceManager;
 class GameObject
 {
 public:
-	GameObject(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
+	GameObject(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
 	{
-		Init(dManager, texId, position, scale, active, objSize, objType, isCollidable, objRect);
+		Init(dManager, texId, position, scale, rotation, active, objSize, objType, isCollidable, objRect);
 	}
 
-	virtual void Init(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 });
+	virtual void Init(DeviceManager* dManager, int texId, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 });
 	virtual void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 	virtual void Render(DeviceManager* dManager, ResourceManager& resourceManager);
 
@@ -40,6 +40,7 @@ private:
 	RECT objRect;
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
+	float mRotation;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 	int texId;
 

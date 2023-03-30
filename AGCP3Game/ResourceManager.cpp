@@ -291,6 +291,8 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			tileRect.right = x2;
 			tileRect.top = y1;
 			tileRect.bottom = y2;
+			
+			float tileRotation = 0.0f;
 
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
@@ -299,12 +301,12 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 
 			if (objType == "Tile")
 			{
-				std::shared_ptr<Tile> tile = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				std::shared_ptr<Tile> tile = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, tileRotation, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
 				m_Objects.push_back(tile);
 			}
 			else if (objType == "Respawner")
 			{
-				std::shared_ptr<Tile> playerSpawner = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				std::shared_ptr<Tile> playerSpawner = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, tileRotation, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.push_back(playerSpawner);
 
 				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
@@ -315,18 +317,18 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerRect.right = 6;
 				playerRect.bottom = 16;
 				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
-				std::shared_ptr<Player> player = std::make_shared<Player>(dManager, m_Textures[1].id, DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
+				std::shared_ptr<Player> player = std::make_shared<Player>(dManager, m_Textures[1].id, DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, tileRotation, true, playerSize, "Player", true, playerRect);
 				m_Objects.push_back(player);
 			}
 			else if (objType == "Damageable")
 			{
-				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				std::shared_ptr<Tile> damageable = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, tileRotation, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.push_back(damageable);
 
 			}
 			else if (objType == "NextZone")
 			{
-				std::shared_ptr<Tile> nextZone = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				std::shared_ptr<Tile> nextZone = std::make_shared<Tile>(dManager, m_Textures[0].id, DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, tileRotation, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.push_back(nextZone);
 
 			}
