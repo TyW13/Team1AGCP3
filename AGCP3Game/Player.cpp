@@ -376,44 +376,44 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             }
             if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
             {
-                //mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
-                //mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                //currentVel.x = 0;
+                mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.x = 0;
 
-                //collided = true;
-                //collidedLeft = true;
-                //canCollideRightWall = true;
-                //recordLastCollision = 3;
+                collided = true;
+                collidedLeft = true;
+                canCollideRightWall = true;
+                recordLastCollision = 3;
 
-                //if (kb.D && !deactivate_D)
-                //{
-                //    isWallSliding = true;
-                //}
-                //else
-                //{
-                //    isWallSliding = false;
-                //}
+                if (kb.D && !deactivate_D)
+                {
+                    isWallSliding = true;
+                }
+                else
+                {
+                    isWallSliding = false;
+                }
                 
             }
             else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
             {
-                //mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
-                //mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                //currentVel.x = 0;
+                mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                currentVel.x = 0;
 
-                //collided = true;
-                //collidedRight = true;
-                //canCollideLeftWall = true;
-                //recordLastCollision = 4;
+                collided = true;
+                collidedRight = true;
+                canCollideLeftWall = true;
+                recordLastCollision = 4;
 
-                //if (kb.A && !deactivate_A)
-                //{
-                //    isWallSliding = true;
-                //}
-                //else
-                //{
-                //    isWallSliding = false;
-                //}
+                if (kb.A && !deactivate_A)
+                {
+                    isWallSliding = true;
+                }
+                else
+                {
+                    isWallSliding = false;
+                }
             }
         }
 
