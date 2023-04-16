@@ -10,7 +10,7 @@ using namespace DirectX::SimpleMath;
 void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	jsonPath = "Data/" + jsonPath;
-	if (jsonPath == "Data/TestSheet.json")
+	if (jsonPath == "Data/Player.json")
 	{
 		LoadAnimation(jsonPath);
 		//LoadAnimationData("Data/PlayerAnimData.json") For Full spritesheet implementation
@@ -29,20 +29,19 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 		if (animState == 1 || animState == 2)
 		{
 			PlayIdle = false;
-			FramesTemp = PlayerFrames;
+			FramesTemp = Frames;
 			if (elapsedTime >= frameDuration)
 			{
 				++currentFrame;
 				if (currentFrame >= FramesTemp)
 				{
-					currentFrame = Zero;
+					currentFrame = JumpOffset;
 				}
 				elapsedTime -= frameDuration;
 			}
 		}
 		if (animState == 0)
 		{
-			//FramesTemp = IdleFrames + IdleOffset; For Full spritesheet implementation
 			FramesTemp = IdleFrames;
 			if (elapsedTime >= delayTime)
 			{
@@ -55,13 +54,27 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 					++currentFrame;
 					if (currentFrame >= FramesTemp)
 					{
-						//currentFrame = IdleOffset;For Full spritesheet implementation
 						currentFrame = Zero;
 					}
 					elapsedTime -= frameDuration;
 				}
 			}
 		}
+		if (animState == 3)
+		{
+			FramesTemp = JumpOffset;
+			if (elapsedTime >= frameDuration)
+			{
+				++currentFrame;
+				if (currentFrame >= FramesTemp)
+				{
+					currentFrame = IdleFrames;
+				}
+				elapsedTime -= frameDuration;
+			}
+
+		}
+
 		//advance to the next frame if enough time has passed (Constantly changing frames)
 		SwitchTex(Sprite, currentFrame, animState);
 	
@@ -87,7 +100,7 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 		if (animState == 3)
 		{
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			//Sprite.SetRect(-walkspriteSheet[Zero]);
+			Sprite.SetRect(-walkspriteSheet[currentFrame]);
 		}
 		else
 		{
@@ -146,7 +159,4 @@ void PlayerAnimation::LoadAnimationData(std::string jsonPath)
 	AnimationDoc.ParseStream(is);
 	frameDuration = AnimationDoc["Duration"].GetFloat();
 	Frames = AnimationDoc["FrameCount"].GetInt();
-	delayTime = AnimationDoc["IdleDelay"].GetFloat();
-	IdleOffset = AnimationDoc["IdleOffset"].GetFloat();
-	JumpOffset = AnimationDoc["JumpOffset"].GetFloat();
 }

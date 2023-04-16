@@ -28,7 +28,7 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
-    PlayerAnim.Init("TestSheet.json", *this);
+    PlayerAnim.Init("Player.json", *this);
 }
 
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -144,6 +144,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             detectSpaceKey = false;
             recordJumpTime = true;
             grounded = false;
+            AnimState = 3;
         }
 
     }

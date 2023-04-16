@@ -33,5 +33,6 @@ private:
 	int currentFrame = Zero;
 	RECTF SpriteSheet[4];
 	int Frames = 5; //Temporary
+	int WalkOffset = 24;
 };
 

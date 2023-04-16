@@ -37,9 +37,10 @@ private:
 	RECTF walkspriteSheet[5];
 	RECTF idlespriteSheet[5];
 	RECTF shotgunSpriteSheet[4];
-	const int PlayerFrames = 5;
-	const int IdleFrames = 4;
+	const int PlayerFrames = 32;
+	const int IdleFrames = 24;
 	int Frames;
-	int IdleOffset;
-	int JumpOffset;
+	int IdleOffset = 24;
+	int JumpOffset = 27;
+	float delaytime = 5.0f;
 };

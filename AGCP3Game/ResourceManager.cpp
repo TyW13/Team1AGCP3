@@ -321,7 +321,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerRect.right = 6;
 				playerRect.bottom = 16;
 				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
-				Player* player = new Player(dManager, L"Data/walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
+				Player* player = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
 				m_Objects.emplace_back(player);
 			}
 			else if (objType == "Damageable")
