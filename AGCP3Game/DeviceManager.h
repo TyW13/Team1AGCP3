@@ -52,10 +52,12 @@ public:
 
     enum Descriptors
     {
-        Cat,
         Tile,
+        Player,
         Background,
-        Count
+        Count,
+        BouncePad,
+        Gem
     };
 
     // Properties
