@@ -114,7 +114,7 @@ public:
 	ResourceManager(){}
 
 	void Init(DeviceManager* dManager);
-	void Update(DeviceManager* dManager, float dTime);
+	void Update(DeviceManager* dManager, DirectX::Keyboard* kb, float dTime);
 	void Render(DeviceManager* dManager);
 	void Terminate();
 	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
@@ -144,6 +144,11 @@ public:
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
+	void UpdateIntro(DeviceManager* dManager, DirectX::Keyboard* kb);										// Updates all Intro screen (animation + detecting key input)
+	void UpdatePaused(DeviceManager* dManager, DirectX::Keyboard* kb);										// Updates all Pause screen
+	void UpdateGame(DeviceManager* dManager, DirectX::Keyboard* kb, float dTime);							// Updates all Game screen 
+	void UpdateEnd(DeviceManager* dManager);																// Updates all End screen (animation)
+
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
@@ -156,6 +161,6 @@ private:
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
 
-	enum class GameState { Intro, Game, Paused, End};
-	GameState currentState = GameState::Intro;
+	enum class GameState { Intro, Game, Paused, End};								// Game states to know what to update and render at what time 
+	GameState currentState = GameState::Intro;										// Holds current state of the game - defaulted to Intro 
 };

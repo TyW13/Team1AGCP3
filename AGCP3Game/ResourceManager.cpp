@@ -20,36 +20,28 @@ void ResourceManager::Init(DeviceManager* dManager)
 	ReloadMap(dManager, 0);
 }
 
-void ResourceManager::Update(DeviceManager* dManager, float dTime)
+void ResourceManager::Update(DeviceManager* dManager, DirectX::Keyboard* kb, float dTime)
 {
-	if (m_Objects.size() > 0)
-	{
-		for (GameObject* currentObj : m_Objects)
-		{
-			currentObj->Update(dManager, this, dTime);
-		}
-	}
-
 	switch (currentState)
 	{
 		case GameState::Intro:
 		{
+			UpdateIntro(dManager, kb);
 			break;
 		}
 		case GameState::Game:
 		{
+			UpdateGame(dManager, kb, dTime);
 			break;
 		}
 		case GameState::Paused:
 		{
+			UpdatePaused(dManager, kb);
 			break;
 		}
 		case GameState::End:
 		{
-			break;
-		}
-		default:
-		{
+			UpdateEnd(dManager);
 			break;
 		}
 	}
@@ -57,11 +49,33 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 
 void ResourceManager::Render(DeviceManager* dManager)
 {
-	if (m_Objects.size() > 0)
-	{
-		for (GameObject* currentObj : m_Objects)
+	switch (currentState)
 		{
-			currentObj->Render(dManager);
+		case GameState::Intro:
+		{
+
+			break;
+		}
+		case GameState::Game:
+		{
+			if (m_Objects.size() > 0)
+			{
+				for (GameObject* currentObj : m_Objects)
+				{
+					currentObj->Render(dManager);
+				}
+			}
+			break;
+		}
+		case GameState::Paused:
+		{
+		
+			break;
+		}
+		case GameState::End:
+		{
+	
+			break;
 		}
 	}
 }
@@ -307,7 +321,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			size_t xPos = i % GetCurrentMap()->getWidth();										//
 			size_t yPos = floor(i / GetCurrentMap()->getWidth());								//
 
-			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * objScale.x;						// Tile object x and y position on screen
+			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * objScale.x;				// Tile object x and y position on screen
 			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * objScale.y;
 
 			float x1 = x * GetCurrentMap()->getTileWidth();										// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
@@ -399,6 +413,36 @@ void ResourceManager::LoadPlayerData()
 	GetCurrentMap()->SetCurrentZoneNum(stoi(line));												// Converts zone number from string to int and sets it 
 
 	playerDataFile.close();																		// Closes playerData text file
+}
+
+void ResourceManager::UpdateIntro(DeviceManager* dManager, DirectX::Keyboard* kb)
+{
+	// Update intro screen animation
+	if (kb->Space == true)
+	{
+		currentState = GameState::Game;
+	}
+}
+
+void ResourceManager::UpdatePaused(DeviceManager* dManager, DirectX::Keyboard* kb)
+{
+
+}
+
+void ResourceManager::UpdateGame(DeviceManager* dManager, DirectX::Keyboard* kb, float dTime)
+{
+	if (m_Objects.size() > 0)
+	{
+		for (GameObject* currentObj : m_Objects)
+		{
+			currentObj->Update(dManager, this, dTime);
+		}
+	}
+}
+
+void ResourceManager::UpdateEnd(DeviceManager* dManager)
+{
+
 }
 
 Layer::Layer(Value& value)

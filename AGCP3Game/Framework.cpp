@@ -9,7 +9,7 @@ void Framework::Init(DeviceManager* dManager)
 }
 void Framework::Update(DeviceManager* dManager, float elapsedTime)
 {
-	rManager.Update(dManager, elapsedTime);
+	rManager.Update(dManager, dManager->GetKeyboard(), elapsedTime);
 	audioManager.Update(elapsedTime);
 }
 
