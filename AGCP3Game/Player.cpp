@@ -28,6 +28,7 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
+
 }
 
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
