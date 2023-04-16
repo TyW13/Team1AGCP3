@@ -37,6 +37,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
     PlayerAnimation PlayerAnim;
+    int AnimState = 0;
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
 	std::string objType;

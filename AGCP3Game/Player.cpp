@@ -60,6 +60,7 @@ void Player::Render(DeviceManager* dManager)
 void Player::UpdateInput(DeviceManager* dManager, float dTime)
 {
     //get keyboard stated
+    AnimState = 0;
     auto kb = dManager->GetKeyboard()->GetState();
     auto mouse = dManager->GetMouse()->GetState();
 
