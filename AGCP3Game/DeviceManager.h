@@ -10,12 +10,13 @@
 #include <sstream>
 #include <Keyboard.h>
 #include <Mouse.h>
-#define DBOUT(s)                \
-{                               \
-    std::ostringstream os_;     \
-    os_ << s << "\n";           \
-    OutputDebugString(os_.str().cstr());    \
-}
+
+#define DBOUT( s )            \
+{                             \
+   std::ostringstream os_;    \
+   os_ << s;                   \
+   OutputDebugStringA( os_.str().c_str() );  \
+}                             \
 
 enum Descriptors;
 

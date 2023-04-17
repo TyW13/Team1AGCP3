@@ -30,6 +30,8 @@
 #include <winsdkver.h>
 #include <Audio.h>
 #include <random>
+#include <limits>
+#include <stdlib.h>
 
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0A00

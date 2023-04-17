@@ -24,11 +24,20 @@ void ResourceManager::Init(DeviceManager* dManager)
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
 {
+	if (playerChar != nullptr)
+	{
+		playerChar->Update(dManager, this, dTime);
+	}
+	else { assert(false); }
+
 	if (m_Objects.size() > 0)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Update(dManager, this, dTime);
+			if (currentObj->GetActive())
+			{
+				currentObj->Update(dManager, this, dTime);
+			}
 		}
 	}
 }
@@ -39,13 +48,24 @@ void ResourceManager::Render(DeviceManager* dManager)
 	{
 		for (GameObject* currentObj : m_Objects)
 		{
-			currentObj->Render(dManager);
+			if (currentObj->GetActive())
+			{
+				currentObj->Render(dManager);
+			}
 		}
+	}
+
+	if (playerChar != nullptr && playerChar->GetActive())
+	{
+		playerChar->Render(dManager);
 	}
 }
 
 void ResourceManager::Terminate()
 {
+	delete playerChar;
+	playerChar = nullptr;
+
 	for (Map* map : m_Levels)
 	{
 		delete map;
@@ -148,7 +168,12 @@ void ResourceManager::LoadNextMap(DeviceManager* dManager)
 	if (currentMapNum < m_Levels.size() - 1)
 	{
 		currentMapNum++;
+		GetCurrentMap()->SetCurrentZoneNum(0);
 		ReloadMap(dManager, currentMapNum);
+	}
+	else
+	{
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -157,6 +182,7 @@ void ResourceManager::LoadPreviousMap(DeviceManager* dManager)
 	if (currentMapNum > 0)
 	{
 		currentMapNum--;
+		GetCurrentMap()->SetCurrentZoneNum(0);
 		ReloadMap(dManager, currentMapNum);
 	}
 }
@@ -255,7 +281,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	UnloadZone();
 
 	FILE* fp;
-	errno_t tileSetStatus = fopen_s(&fp, "Data/TSTestingLevel0.json", "rb");		// opening
+	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset.json", "rb");		// opening
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;
@@ -271,6 +297,12 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	int collisionHeight = 0;
 	std::string objType;
 	bool isCollidable;
+
+	if (playerChar == nullptr)
+	{
+		playerChar = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 0,0,0,0 });
+	}
+
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -301,18 +333,15 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
-			objType = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["class"].GetString();
-			isCollidable = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetBool();
+			objType = tilesetDoc["tiles"].GetArray()[val]["class"].GetString();
 
 			if (objType == "Tile")
 			{   	
-				Tile* tile = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* tile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(tile);
 			}
-			else if (objType == "Respawner")
+			else if (objType == "Spawner")
 			{
-				Tile* playerSpawner = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-				m_Objects.emplace_back(playerSpawner);
 
 				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
 				float collisionOffset = 1.0f;
@@ -321,25 +350,37 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerRect.top = 0;
 				playerRect.right = 6;
 				playerRect.bottom = 16;
-				int newPlayerYPos = (tileYPos + collisionHeight * objScale.y) - playerSize.y * objScale.y - collisionOffset;
-				Player* player = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
-				m_Objects.emplace_back(player);
+				float newPlayerYPos = tileYPos - (playerSize.y * objScale.y) / 2 - collisionOffset;
+				playerChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
+				playerChar->SetVelocity({ 0,0 });
+				playerChar->SetObjectSize(playerSize);
+				playerChar->SetRect(playerRect);
+
+				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				m_Objects.emplace_back(playerSpawner);
+
+				//playerChar = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/test_sheet2.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* damageable = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
 
 			}
 			else if (objType == "BouncePad")
 			{
-				BouncePad* bouncepad = new BouncePad(dManager, L"Data/bouncepad.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				Tile* bouncepad = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
 				m_Objects.emplace_back(bouncepad);
 			}
-			else if (objType == "Gem")
+			else if (objType == "ReloadGem")
 			{
-				Gem* gem = new Gem(dManager, L"Data/gem.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
-				m_Objects.emplace_back(gem);
+				Tile* reloadGem = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(reloadGem);
+			}
+			else if (objType == "EndZone")
+			{
+				Tile* endZoneTile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				m_Objects.emplace_back(endZoneTile);
 			}
 		}
 	}
@@ -353,6 +394,11 @@ void ResourceManager::LoadNextZone(DeviceManager* dManager)
 		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() + zoneOffset);
 		LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());
 	}
+	else
+	{
+
+		LoadNextMap(dManager);
+	}
 }
 
 void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
@@ -362,6 +408,10 @@ void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
 	{
 		GetCurrentMap()->SetCurrentZoneNum(GetCurrentMap()->GetCurrentZoneNum() - zoneOffset);
 		LoadZoneInfo(dManager, GetCurrentMap()->GetCurrentZoneNum());
+	}
+	else
+	{
+		LoadPreviousMap(dManager);
 	}
 }
 

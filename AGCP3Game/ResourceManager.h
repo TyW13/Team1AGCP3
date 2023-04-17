@@ -12,6 +12,7 @@ using namespace rapidjson;
 //class GameObject;
 class PlayerCharacter;
 class Tile;
+class Player;
 
 class Layer
 {
@@ -112,15 +113,17 @@ class ResourceManager
 {
 public:
 	ResourceManager(){}
+	~ResourceManager()
+	{
+		Terminate();
+	}
 
 	void Init(DeviceManager* dManager);
 	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
 	void Terminate();
-	//void LoadTexturesFromFile();													// Reads json file to obtain texture image file names from array (strings)
+
 	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
-	//void CreateTexture(const std::string &fPath);			// Creates a pointer to a texture object from texture image name string (Texture stores file name and path)
-	//std::wstring GetTexture(const std::string& tName);									// Getter for pointer to texture object in m_Textures vector
 	std::string SetTexName(std::string path);										// Used to remove unneeded parts of texture path to get the images file name
 
 	int GetCurrentMapNum() { return currentMapNum; }
@@ -147,6 +150,7 @@ public:
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
+	Player* playerChar;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 

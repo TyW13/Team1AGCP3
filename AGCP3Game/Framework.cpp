@@ -3,14 +3,12 @@
 
 void Framework::Init(DeviceManager* dManager)
 {
-	audioManager.Init();
 	rManager.Init(dManager);
 
 }
 void Framework::Update(DeviceManager* dManager, float elapsedTime)
 {
 	rManager.Update(dManager, elapsedTime);
-	audioManager.Update(elapsedTime);
 }
 
 void Framework::Render(DeviceManager* dManager)

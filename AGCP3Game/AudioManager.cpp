@@ -18,18 +18,18 @@ AudioManager::~AudioManager()
 
 void AudioManager::Init()
 {
-	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
-#ifdef _DEBUG
-	eflags |= AudioEngine_Debug;
-#endif
-	m_audEngine = std::make_unique<AudioEngine>(eflags);
-
-	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/shotgun.wav");
-	m_jump = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/jump.wav");
-	auto m_footstep = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/footstep.wav");
+//	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
+//#ifdef _DEBUG
+//	eflags |= AudioEngine_Debug;
+//#endif
+//	m_audEngine = std::make_unique<AudioEngine>(eflags);
+//
+//	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
+//		L"Data/shotgun.wav");
+//	m_jump = std::make_unique<SoundEffect>(m_audEngine.get(),
+//		L"Data/jump.wav");
+//	auto m_footstep = std::make_unique<SoundEffect>(m_audEngine.get(),
+//		L"Data/footstep.wav");
 
 	//m_footsteploop = m_footstep->CreateInstance();
 

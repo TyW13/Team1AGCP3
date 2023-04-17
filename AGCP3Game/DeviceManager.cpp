@@ -19,9 +19,7 @@ using Microsoft::WRL::ComPtr;
 DeviceManager::DeviceManager() noexcept(false)
 {
     deviceResources = std::make_unique<DX::DeviceResources>();
-    // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
-    //   Add DX::DeviceResources::c_AllowTearing to opt-in to variable rate displays.
-    //   Add DX::DeviceResources::c_EnableHDR for HDR10 display.
+
     deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -48,8 +46,8 @@ void DeviceManager::Init(HWND window, int width, int height)
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
 
- /*   m_timer.SetFixedTimeStep(true);
-    m_timer.SetTargetElapsedSeconds(1.0 / 60);*/
+    m_timer.SetFixedTimeStep(true);
+    m_timer.SetTargetElapsedSeconds(1.0 / 60);
 
     //game logic, will move later
 

@@ -1,0 +1,806 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AudioManager" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAQABAAgAUIAAAAAAgAQAAACABECAACIAQA=</HashCode>
+      <FileName>AudioManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Framework" Collapsed="true">
+    <Position X="25.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIQAAAAAAAQAAAAAAAACAAAAAAAAAAAAABAGAAAIAAA=</HashCode>
+      <FileName>Framework.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEQDAAACACAAAAAAEAAAABAAAEAACkBAIBAOAsKBAAA=</HashCode>
+      <FileName>GameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameRenderer" Collapsed="true">
+    <Position X="27.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQQBAgQAEQQIYFqMCgDAAAAmSkRSACGAJEqAAN5SCQ=</HashCode>
+      <FileName>GameRenderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Graphics" Collapsed="true">
+    <Position X="29.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAEAAAAAAAAAAAAAAAAAAACAEAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Graphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input" Collapsed="true">
+    <Position X="20.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAIBAAAAAAAAAAAAAAAAEACAAAIAACAAQAAAAAA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeviceManager" BaseTypeListCollapsed="true">
+    <Position X="37" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="DeviceManager::Descriptors" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>DeviceManager.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AIABFEACCDAGkgEWgIIBgABAAAAACAjgAAAiBCRQSA0=</HashCode>
+      <FileName>DeviceManager.h</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>DMZTAAhSAGAQIIIo8ChSAFAAGWEwCkjGYBMOI8PhBCA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Layer">
+    <Position X="31.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAQAEAAAEAQAQAAAAABQEAAEAQAEYABwCEIABhA=</HashCode>
+      <FileName>ResourceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Map">
+    <Position X="33.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QEBRgAAAABBgADSBQGgABCCAAUABwIABFaAMBQAAARA=</HashCode>
+      <FileName>ResourceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResourceManager">
+    <Position X="35.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gQQpAEAAEAEAEACABIAAEAAAAAAAABAgEBAGAAAIIEM=</HashCode>
+      <FileName>ResourceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HrException" Collapsed="true">
+    <Position X="18.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQEAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DXSampleHelper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tile" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEADAAACACAAAAAAEAAAABAAAEAACkBAIBAOAsCBAQA=</HashCode>
+      <FileName>Tile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_PIPELINE_STATE_STREAM_SUBOBJECT&lt;InnerStructType, Type, DefaultArg&gt;" Collapsed="true">
+    <Position X="10.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACgAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAgAAAARAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_STATE_OBJECT_DESC" Collapsed="true">
+    <Position X="27.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BACAAAAAAAAAAEAAAAAAAFAAAAAACEIAIAACAEAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_DXIL_LIBRARY_SUBOBJECT" Collapsed="true">
+    <Position X="20.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAgAEAAAAAAAEAAgAAAABAEAQACAgAAAAE=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_EXISTING_COLLECTION_SUBOBJECT" Collapsed="true">
+    <Position X="24" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAggAEAAAAAAAEAAAAAQEBAAAQACAgAAEAE=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_SUBOBJECT_TO_EXPORTS_ASSOCIATION_SUBOBJECT" Collapsed="true">
+    <Position X="29.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAggAAAAAAAAAAAAAEAAAAAAABAKAQACAkAAAAE=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_DXIL_SUBOBJECT_TO_EXPORTS_ASSOCIATION" Collapsed="true">
+    <Position X="22.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAgAAAAAAAAAAAAAAFAAAAAAABIIAQACAhAAAAE=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_HIT_GROUP_SUBOBJECT" Collapsed="true">
+    <Position X="27.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAgAAgQAAAIQAAAAAECAAAQAABAAAQACAgAAAIA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_RAYTRACING_SHADER_CONFIG_SUBOBJECT" Collapsed="true">
+    <Position X="24" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAgAAAAAAAAAAAEAAAABAABAAAQACAgAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_RAYTRACING_PIPELINE_CONFIG_SUBOBJECT" Collapsed="true">
+    <Position X="20.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAgAAQAAAAAEAAAAAAABAAAQACAgAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_RAYTRACING_PIPELINE_CONFIG1_SUBOBJECT" Collapsed="true">
+    <Position X="22.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgBAAAAAAAAAQEAAAAAAABAAAQACAgAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_GLOBAL_ROOT_SIGNATURE_SUBOBJECT" Collapsed="true">
+    <Position X="25.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAIAAAAAAAhAAAQgCAgAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_LOCAL_ROOT_SIGNATURE_SUBOBJECT" Collapsed="true">
+    <Position X="29.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQIAAIAAAAAAAhAAAQACAgAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_STATE_OBJECT_CONFIG_SUBOBJECT" Collapsed="true">
+    <Position X="25.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAEAAEAAAABAAAQACAgBAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CD3DX12_NODE_MASK_SUBOBJECT" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAEAAAAIAABAAAQACAgAAAAQ=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BouncePad" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BMQDAAJCACAAAAAAEAAAABAAAEAgCkjAIBAOAsCBAAA=</HashCode>
+      <FileName>BouncePad.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gem" Collapsed="true">
+    <Position X="5.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BMQDAABCACAAAABAEAAAABAAAEAgCkjAIBAOAsCBAAA=</HashCode>
+      <FileName>Gem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX::com_exception" Collapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAACAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>pch.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX::DeviceResources" Collapsed="true">
+    <Position X="22.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KgAAhgAAAAISSJRAyAIBJAKwERgQAZjRIEWkBgyUEgo=</HashCode>
+      <FileName>DeviceResources.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX::StepTimer" Collapsed="true">
+    <Position X="27.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQEQAAAAQEQAABQEAIAIAAIAABQCAAgCAwBQJAAwAA=</HashCode>
+      <FileName>StepTimer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft::WRL::Wrappers::Event" Collapsed="true">
+    <Position X="24" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAEAgAAEAAAoAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>pch.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="CD3DX12_DEFAULT" Collapsed="true">
+    <Position X="25.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RECT" Collapsed="true">
+    <Position X="29.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_VIEWPORT" Collapsed="true">
+    <Position X="24" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_BOX" Collapsed="true">
+    <Position X="20.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_DEPTH_STENCIL_DESC" Collapsed="true">
+    <Position X="27.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_DEPTH_STENCIL_DESC1" Collapsed="true">
+    <Position X="29.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_BLEND_DESC" Collapsed="true">
+    <Position X="18.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RASTERIZER_DESC" Collapsed="true">
+    <Position X="27.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RESOURCE_ALLOCATION_INFO" Collapsed="true">
+    <Position X="18.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_HEAP_PROPERTIES" Collapsed="true">
+    <Position X="25.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_HEAP_DESC" Collapsed="true">
+    <Position X="24" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_CLEAR_VALUE" Collapsed="true">
+    <Position X="22.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RANGE" Collapsed="true">
+    <Position X="24" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RANGE_UINT64" Collapsed="true">
+    <Position X="25.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_SUBRESOURCE_RANGE_UINT64" Collapsed="true">
+    <Position X="22.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_SHADER_BYTECODE" Collapsed="true">
+    <Position X="29.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_TILED_RESOURCE_COORDINATE" Collapsed="true">
+    <Position X="18.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_TILE_REGION_SIZE" Collapsed="true">
+    <Position X="27.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_SUBRESOURCE_TILING" Collapsed="true">
+    <Position X="24" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_TILE_SHAPE" Collapsed="true">
+    <Position X="29.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RESOURCE_BARRIER" Collapsed="true">
+    <Position X="20.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAQAAAAAAAAAABAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PACKED_MIP_INFO" Collapsed="true">
+    <Position X="27.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_SUBRESOURCE_FOOTPRINT" Collapsed="true">
+    <Position X="20.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_TEXTURE_COPY_LOCATION" Collapsed="true">
+    <Position X="25.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_DESCRIPTOR_RANGE" Collapsed="true">
+    <Position X="18.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_DESCRIPTOR_TABLE" Collapsed="true">
+    <Position X="29.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_CONSTANTS" Collapsed="true">
+    <Position X="25.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_DESCRIPTOR" Collapsed="true">
+    <Position X="27.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_PARAMETER" Collapsed="true">
+    <Position X="22.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIQAAAAAAAACAAAAAAAAAAAECAAAAAAgAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_STATIC_SAMPLER_DESC" Collapsed="true">
+    <Position X="18.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_SIGNATURE_DESC" Collapsed="true">
+    <Position X="25.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_DESCRIPTOR_RANGE1" Collapsed="true">
+    <Position X="20.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAgA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_DESCRIPTOR_TABLE1" Collapsed="true">
+    <Position X="18.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_DESCRIPTOR1" Collapsed="true">
+    <Position X="20.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_ROOT_PARAMETER1" Collapsed="true">
+    <Position X="24" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAABAAACAAAAAAAAAAAECAAAAAAgAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC" Collapsed="true">
+    <Position X="20.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAQAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_CPU_DESCRIPTOR_HANDLE" Collapsed="true">
+    <Position X="24" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAARAAAAAAAAAAAAAgAAAAgAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_GPU_DESCRIPTOR_HANDLE" Collapsed="true">
+    <Position X="22.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAARAAAAAAAAAAAAAgAAAAgAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RESOURCE_DESC" Collapsed="true">
+    <Position X="22.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIA0AAAAAgAAAAAAAgCAAAAAAAgAAAAAAAAQQA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RESOURCE_DESC1" Collapsed="true">
+    <Position X="24" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIA0AAAAAgBAAAAAAgAAAAAAAAgAAAAAAAAQQA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_VIEW_INSTANCING_DESC" Collapsed="true">
+    <Position X="22.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_RT_FORMAT_ARRAY" Collapsed="true">
+    <Position X="27.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DefaultSampleMask" Collapsed="true">
+    <Position X="29.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DefaultSampleDesc" Collapsed="true">
+    <Position X="27.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ID3DX12PipelineParserCallbacks" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oACQCEAAAMAASQEICAgCQQAAAAEIAgEAACAEBIAAACA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="D3DX12_MESH_SHADER_PIPELINE_STATE_DESC" Collapsed="true">
+    <Position X="25.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgGABAAAEAAEAEAAAAAAAAAAAAIAQAAABAAAACAATEA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM2" Collapsed="true">
+    <Position X="22.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgGABIAgEBAEAEAAgAAAAAABAAIAQAAABAAAAiCAXUg=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM1" Collapsed="true">
+    <Position X="20.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgGABIAgEBAEAEAAgAAAAAABAAIAQAAABAAAAiCAGUg=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_MESH_STATE_STREAM" Collapsed="true">
+    <Position X="29.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAGgBAAAEAAEAEAAAAAAAAAAAAIAQAAABQAAACAATQA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM" Collapsed="true">
+    <Position X="18.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgGABIAgEBAEAEAAgAAAAAABAAIAQAAABAAAAiCAGUg=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM2_PARSE_HELPER" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oACQCEAAAIAAYAEIAAgCQQAAAIEIAgEEACAEBIAAACA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM_PARSE_HELPER" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oACACUAAAIAAYAEIAAgCQQAAAIAIAgEAACAEBIAAACA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_FLAGS" Collapsed="true">
+    <Position X="13.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_NODE_MASK" Collapsed="true">
+    <Position X="7.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_ROOT_SIGNATURE" Collapsed="true">
+    <Position X="13.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_INPUT_LAYOUT" Collapsed="true">
+    <Position X="16.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_IB_STRIP_CUT_VALUE" Collapsed="true">
+    <Position X="16.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_PRIMITIVE_TOPOLOGY" Collapsed="true">
+    <Position X="4.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_VS" Collapsed="true">
+    <Position X="4.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_GS" Collapsed="true">
+    <Position X="10.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_STREAM_OUTPUT" Collapsed="true">
+    <Position X="10.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_HS" Collapsed="true">
+    <Position X="16.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_DS" Collapsed="true">
+    <Position X="4.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_PS" Collapsed="true">
+    <Position X="13.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_AS" Collapsed="true">
+    <Position X="7.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_MS" Collapsed="true">
+    <Position X="13.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_CS" Collapsed="true">
+    <Position X="7.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_BLEND_DESC" Collapsed="true">
+    <Position X="10.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL" Collapsed="true">
+    <Position X="10.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL1" Collapsed="true">
+    <Position X="13.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT" Collapsed="true">
+    <Position X="13.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_RASTERIZER" Collapsed="true">
+    <Position X="7.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS" Collapsed="true">
+    <Position X="7.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC" Collapsed="true">
+    <Position X="13.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_MASK" Collapsed="true">
+    <Position X="7.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_CACHED_PSO" Collapsed="true">
+    <Position X="10.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="CD3DX12_PIPELINE_STATE_STREAM_VIEW_INSTANCING" Collapsed="true">
+    <Position X="10.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Interface Name="DX::IDeviceNotify" Collapsed="true">
+    <Position X="18.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAEAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DeviceResources.h</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="DirectX::DDS_ALPHA_MODE" Collapsed="true">
+    <Position X="18.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAACAAAAAQAAAQAAAAAAAAABA=</HashCode>
+      <FileName>DDSTextureLoader.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DirectX::DX12::DDS_LOADER_FLAGS" Collapsed="true">
+    <Position X="20.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAABIAA=</HashCode>
+      <FileName>DDSTextureLoader.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

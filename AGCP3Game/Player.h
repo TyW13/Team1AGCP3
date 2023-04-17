@@ -1,8 +1,10 @@
 #pragma once
 #include "GameObject.h"
 #include "AudioManager.h"
+#include "PlayerAnimation.h"
 
 class ResourceManager;
+class PlayerAnimation;
 
 class Player : public GameObject
 {
@@ -34,9 +36,14 @@ public:
 	void SetPosition(DirectX::SimpleMath::Vector2 _position) override;
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
 
+    void SetVelocity(DirectX::SimpleMath::Vector2 _newVel) { currentVel = _newVel; }
+
 private:
+    static bool Player::CompareDistance(GameObject* a, GameObject* b);
 
     AudioManager audioManager;
+    PlayerAnimation playerAnim;
+    int animState = 0;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;
@@ -44,11 +51,18 @@ private:
 	std::string objType;
 	bool isCollidable;
 	RECT objRect;
-	DirectX::SimpleMath::Vector2 mPos;
+	static DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 
     void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
+
+    // Found at gamedev.net - Swept AABB Collision Detection and Response by BrendanL.K, posted by stu_pidd_cow April 30, 2013
+    void NewCheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
+    DirectX::SimpleMath::Vector4 GetSweptBroadphaseBox(Player* obj);
+    bool AABBCheck(DirectX::SimpleMath::Vector4 obj1, GameObject* obj2);
+    float SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& normalY, float dTime);
+
     bool collidedTop = false;
     bool collidedBottom = false;
     bool collidedLeft = false;
@@ -74,15 +88,15 @@ private:
     const float WALL_JUMP_VEL_X = 1500;
     const float CLIMB_VEL = 170;					    //player climbing velocity
     const float SLIDE_DOWN_VEL = 80;					//sliding down velocity
-    const float GRAVITY = 400;
+    const float GRAVITY = 500;
     const float PLAYER_SPEED = 400;
     const float DRAG_X = 0.82;				            //for deceleration in x-axis on the ground
     const float DRAG_X_IN_AIR = 0.88;			    	//for deceleration in x-axis in air
     const float	DRAG_Y = 0.92;				            //for deceleration in y-axis
     const float HIGH_JUMP_TIME = 0.20;					//how much time it takes to do a higher jump
     const float LOW_JUMP_TIME = HIGH_JUMP_TIME / 2;	    //how much time it takes to do a lower jump
-    const float BOUNCE_PAD_JUMP_X = 1200;               //bounce pad force in x axis
-    const float BOUNCE_PAD_JUMP_Y = 1500;               //bounce pad force in y axis
+    const float BOUNCE_PAD_JUMP_X = 3600;               //bounce pad force in x axis
+    const float BOUNCE_PAD_JUMP_Y = 4500;               //bounce pad force in y axis
     const float COYOTE_TIME_DURATION = 0.15;            //define the coyote time duration (in seconds)
     const float GEM_SLOWDOWN_DURATION = 1.3;            //define the coyote time duration (in seconds)
 
