@@ -18,7 +18,8 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 	mPos = _position;
 	mScale = _scale;
 
-	dManager->GetResourceUpload()->Begin();																					// Start of texture loading
+
+    dManager->GetResourceUpload()->Begin();																					// Start of texture loading
 
 	DX::ThrowIfFailed(																										// Error check for creation of dds texture
 		DirectX::CreateDDSTextureFromFile(dManager->GetDevice(), *dManager->GetResourceUpload(), texPath.c_str(),
@@ -31,7 +32,7 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
-    //playerAnim.Init("Player.json", *this);
+    playerAnim.Init("Player.json", *this);
 }
 
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -68,7 +69,7 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
     }
 
 	// Player Animations update goes in here
-    //playerAnim.Update(dTime, *this, animState);
+    playerAnim.Update(dTime, *this, animState);
 
 	UpdateInput(dManager, dTime);
 
@@ -92,8 +93,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     //get keyboard stated
     kb = dManager->GetKeyboard()->GetState();
     mouse = dManager->GetMouse()->GetState();
-    animState = 0;
-
     //update player core movement
     mPos += currentVel * slowdown_modifier * dTime;        //slowdown modifier by default should be 1
 
@@ -140,13 +139,13 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (kb.D && !deactivate_D)
     {
         currentVel.x = PLAYER_SPEED;
-        animState = 1;
+        //animState = 1;
     }
     //left
     else if (kb.A && !deactivate_A)
     {
         currentVel.x = -PLAYER_SPEED;
-        animState = 2;
+        //animState = 2;
     }
     //deceleration
     //
@@ -165,6 +164,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
 
     if (grounded || coyoteTimeRemaining >= 0.0f && recordLastCollision == 1 && currentVel.x != 0)
     {
+        animState = 0;
         //set initial velocity, start timer, record button pressed down during only the first frame
         if (kb.Space)
         {

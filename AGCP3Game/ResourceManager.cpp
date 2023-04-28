@@ -300,7 +300,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 
 	if (playerChar == nullptr)
 	{
-		playerChar = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 0,0,0,0 });
+		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 5,2,13,17 });
 	}
 
 
@@ -343,18 +343,12 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			else if (objType == "Spawner")
 			{
 
-				DirectX::SimpleMath::Vector2 playerSize{ 6,16 };
+				DirectX::SimpleMath::Vector2 playerSize{ 8,15 };
 				float collisionOffset = 1.0f;
-				RECT playerRect;
-				playerRect.left = 0;
-				playerRect.top = 0;
-				playerRect.right = 6;
-				playerRect.bottom = 16;
 				float newPlayerYPos = tileYPos - (playerSize.y * objScale.y) / 2 - collisionOffset;
 				playerChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
 				playerChar->SetVelocity({ 0,0 });
 				playerChar->SetObjectSize(playerSize);
-				playerChar->SetRect(playerRect);
 
 				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);

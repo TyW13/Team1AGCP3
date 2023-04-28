@@ -3,10 +3,10 @@
 		{
 			"filename": "c_idle1.png",
 			"frame": {
-				"x": 1,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 5,
+				"y": 2,
+				"w": 13,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -24,10 +24,10 @@
 		{
 			"filename": "c_idle10.png",
 			"frame": {
-				"x": 19,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 24,
+				"y": 2,
+				"w": 32,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -45,10 +45,10 @@
 		{
 			"filename": "c_idle11.png",
 			"frame": {
-				"x": 37,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 42,
+				"y": 2,
+				"w": 50,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -66,10 +66,10 @@
 		{
 			"filename": "c_idle12.png",
 			"frame": {
-				"x": 55,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 60,
+				"y": 2,
+				"w": 68,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -87,10 +87,10 @@
 		{
 			"filename": "c_idle13.png",
 			"frame": {
-				"x": 73,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 78,
+				"y": 2,
+				"w": 86,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -108,10 +108,10 @@
 		{
 			"filename": "c_idle14.png",
 			"frame": {
-				"x": 91,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 96,
+				"y": 2,
+				"w": 104,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -129,10 +129,10 @@
 		{
 			"filename": "c_idle15.png",
 			"frame": {
-				"x": 109,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 114,
+				"y": 2,
+				"w": 122,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -150,10 +150,10 @@
 		{
 			"filename": "c_idle16.png",
 			"frame": {
-				"x": 127,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 132,
+				"y": 2,
+				"w": 140,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -171,10 +171,10 @@
 		{
 			"filename": "c_idle17.png",
 			"frame": {
-				"x": 145,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 149,
+				"y": 2,
+				"w": 157,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -192,10 +192,10 @@
 		{
 			"filename": "c_idle18.png",
 			"frame": {
-				"x": 163,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 167,
+				"y": 2,
+				"w": 175,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -213,10 +213,10 @@
 		{
 			"filename": "c_idle19.png",
 			"frame": {
-				"x": 181,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 185,
+				"y": 2,
+				"w": 193,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -234,10 +234,10 @@
 		{
 			"filename": "c_idle2.png",
 			"frame": {
-				"x": 199,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 203,
+				"y": 2,
+				"w": 211,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -255,10 +255,10 @@
 		{
 			"filename": "c_idle20.png",
 			"frame": {
-				"x": 217,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 221,
+				"y": 2,
+				"w": 229,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -276,10 +276,10 @@
 		{
 			"filename": "c_idle21.png",
 			"frame": {
-				"x": 235,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 239,
+				"y": 2,
+				"w": 247,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -297,10 +297,10 @@
 		{
 			"filename": "c_idle22.png",
 			"frame": {
-				"x": 253,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 257,
+				"y": 2,
+				"w": 265,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -318,10 +318,10 @@
 		{
 			"filename": "c_idle23.png",
 			"frame": {
-				"x": 271,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 275,
+				"y": 2,
+				"w": 283,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -339,10 +339,10 @@
 		{
 			"filename": "c_idle24.png",
 			"frame": {
-				"x": 289,
-				"y": 1,
-				"w": 16,
-				"h": 16
+				"x": 293,
+				"y": 2,
+				"w": 301	,
+				"h": 17
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -360,10 +360,10 @@
 		{
 			"filename": "c_idle3.png",
 			"frame": {
-				"x": 1,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 5,
+				"y": 20,
+				"w": 13,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -381,10 +381,10 @@
 		{
 			"filename": "c_idle4.png",
 			"frame": {
-				"x": 19,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 24,
+				"y": 20,
+				"w": 32,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -402,10 +402,10 @@
 		{
 			"filename": "c_idle5.png",
 			"frame": {
-				"x": 37,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 42,
+				"y": 20,
+				"w": 50,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -423,10 +423,10 @@
 		{
 			"filename": "c_idle6.png",
 			"frame": {
-				"x": 55,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 60,
+				"y": 20,
+				"w": 68,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -444,10 +444,10 @@
 		{
 			"filename": "c_idle7.png",
 			"frame": {
-				"x": 73,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 78,
+				"y": 20,
+				"w": 86,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -465,10 +465,10 @@
 		{
 			"filename": "c_idle8.png",
 			"frame": {
-				"x": 91,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 96,
+				"y": 20,
+				"w": 104,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -486,10 +486,10 @@
 		{
 			"filename": "c_idle9.png",
 			"frame": {
-				"x": 109,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 114,
+				"y": 20,
+				"w": 122,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -507,10 +507,10 @@
 		{
 			"filename": "c_jump1.png",
 			"frame": {
-				"x": 127,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 131,
+				"y": 20,
+				"w": 139,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -528,10 +528,10 @@
 		{
 			"filename": "c_jump2.png",
 			"frame": {
-				"x": 145,
-				"y": 19,
-				"w": 16,
-				"h": 16
+				"x": 149,
+				"y": 20,
+				"w": 157,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
@@ -549,10 +549,10 @@
 		{
 			"filename": "c_jump3.png",
 			"frame": {
-				"x": 163,
+				"x": 167,
 				"y": 19,
-				"w": 16,
-				"h": 16
+				"w": 175,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
