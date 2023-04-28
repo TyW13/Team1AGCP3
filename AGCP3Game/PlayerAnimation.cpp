@@ -2,6 +2,7 @@
 #include "D3D.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
+#include <windef.h>
 
 using namespace rapidjson;
 using namespace DirectX;
@@ -13,7 +14,7 @@ void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 	if (jsonPath == "Data/Player.json")
 	{
 		LoadAnimation(jsonPath);
-		//LoadAnimationData("Data/PlayerAnimData.json") For Full spritesheet implementation
+		LoadAnimationData("Data/PlayerAnimData.json");
 		SwitchTex(Sprite, Zero, InitState);
 	}
 	else
@@ -62,13 +63,21 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 		}
 		if (animState == 3)
 		{
+			PlayIdle = false;
 			FramesTemp = JumpOffset;
-			if (elapsedTime >= frameDuration)
+			if (currentFrame < IdleFrames)
 			{
-				++currentFrame;
-				if (currentFrame >= FramesTemp)
+				currentFrame = IdleFrames;
+			}
+			if (elapsedTime >= JumpDuration)
+			{
+				if (currentFrame != 26)
 				{
-					currentFrame = IdleFrames;
+					++currentFrame;
+					if (currentFrame >= FramesTemp)
+					{
+						currentFrame = IdleFrames;
+					}
 				}
 				elapsedTime -= frameDuration;
 			}
@@ -95,12 +104,12 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 		if (animState == 2)
 		{
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(-walkspriteSheet[currentFrame]);
+			Sprite.SetRect(walkspriteSheet[currentFrame]);
 		}
 		if (animState == 3)
 		{
-			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(-walkspriteSheet[currentFrame]);
+			Sprite.SetScale(Vector2(kSizeUp, kSizeUp));
+			Sprite.SetRect(walkspriteSheet[currentFrame]);
 		}
 		else
 		{
@@ -136,7 +145,7 @@ void PlayerAnimation::LoadAnimation(std::string jsonPath)
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			walkspriteSheet[i] = TempRect;
 			++i;
 		}
@@ -157,6 +166,8 @@ void PlayerAnimation::LoadAnimationData(std::string jsonPath)
 	FileReadStream is(Animation, readBuffer, sizeof(readBuffer));
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);
+	fclose(Animation);
+
 	frameDuration = AnimationDoc["Duration"].GetFloat();
 	Frames = AnimationDoc["FrameCount"].GetInt();
 }

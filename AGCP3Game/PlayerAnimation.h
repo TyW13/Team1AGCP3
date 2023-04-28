@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 constexpr int bufferMemory = 8192;
-struct RECTF
+/*struct RECTF
 {
 	float left, top, right, bottom;
 	operator RECT() {
@@ -12,7 +12,7 @@ struct RECTF
 	{
 		return RECTF{ -(float)left,(float)top,-(float)right,(float)bottom };
 	}
-};
+};*/
 class PlayerAnimation
 {
 public:
@@ -26,7 +26,8 @@ private:
 
 	const int Zero = 0;
 	const int kSizeUp = 6;
-	float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
+	float JumpDuration = 0.1f;
+	float frameDuration = 0.05f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	float deltaTime;
 	float delayTime;
@@ -34,9 +35,7 @@ private:
 	int FramesTemp;
 	int currentFrame = Zero;
 	const int InitState = 0;
-	RECTF walkspriteSheet[5];
-	RECTF idlespriteSheet[5];
-	RECTF shotgunSpriteSheet[4];
+	RECT walkspriteSheet[50];
 	const int PlayerFrames = 32;
 	const int IdleFrames = 24;
 	int Frames;
