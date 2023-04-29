@@ -33,8 +33,9 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 	uploadResourcesFinished.wait();
 
     playerAnim.Init("Player.json", *this);
-}
 
+}
+void Player::InitShotgun(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
     collisionBounds.left = mPos.x;
@@ -341,7 +342,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     RECT nextPosRect = RECT{                                                                                
         static_cast<long> (nextPos.x),
         static_cast<long> (nextPos.y),
-        static_cast<long> (nextPos.x + objSize.x * abs(mScale.x)),
+        static_cast<long> (nextPos.x + objSize.x * mScale.x),
         static_cast<long> (nextPos.y + objSize.y * abs(mScale.y)) };
 
     bool collided = false;                                                                             
@@ -353,6 +354,17 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     {
         if (rManager->GetObjects()[i]->GetObjectType() != "Player")
         {
+            if (animState == 2)
+            {
+                LONG TempStorage = collisionBounds.left;
+                LONG TempStorage2 = collisionBounds.right;
+                collisionBounds.left = TempStorage2;
+                collisionBounds.right = TempStorage;
+                TempStorage = nextPosRect.left;
+                TempStorage2 = nextPosRect.right;
+                nextPosRect.right = TempStorage;
+                nextPosRect.left = TempStorage2;
+            }
             if (nextPosRect.left < rManager->GetObjects()[i]->GetCollisionBounds().right &&
                 nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left &&
                 nextPosRect.top < rManager->GetObjects()[i]->GetCollisionBounds().bottom &&
@@ -392,14 +404,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     }
                     if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
                     {
-                        if (animState != 2)
-                        {
-                            mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
-                        }
-                        else
-                        {
-                             mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left + collisionPosOffset;	
-                        }
+                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
                         mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                         currentVel.x = 0;
 
@@ -421,7 +426,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     }
                     else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
                     {
-                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + (objSize.x * abs(mScale.x) + collisionPosOffset);																        // Setting position to just outside tile
                         mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                         currentVel.x = 0;
 
