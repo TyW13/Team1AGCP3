@@ -69,11 +69,11 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
     }
 
 	// Player Animations update goes in here
-    playerAnim.Update(dTime, *this, animState);
 
 	UpdateInput(dManager, dTime);
 
     CheckCollision(dManager, rManager, dTime);
+    playerAnim.Update(dTime, *this, animState);
     //NewCheckCollision(dManager, rManager, dTime);
 
     DBOUT("x: " + std::to_string(mPos.x) + " y: " + std::to_string(mPos.y));
@@ -392,7 +392,14 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     }
                     if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
                     {
-                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                        if (animState != 2)
+                        {
+                            mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                        }
+                        else
+                        {
+                             mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left + collisionPosOffset;	
+                        }
                         mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                         currentVel.x = 0;
 
