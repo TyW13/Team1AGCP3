@@ -31,6 +31,10 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 		{
 			PlayIdle = false;
 			FramesTemp = Frames;
+			if (currentFrame < JumpOffset)
+			{
+				currentFrame = JumpOffset;
+			}
 			if (elapsedTime >= frameDuration)
 			{
 				++currentFrame;
@@ -103,8 +107,11 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 		}
 		if (animState == 2)
 		{
+
+			//Code for Flipped sprite CURRENTLY NOT COMPATIBLE WITH COLLISION
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(walkspriteSheet[currentFrame]);
+			RECT ReverseWSS = {walkspriteSheet[currentFrame].right, walkspriteSheet[currentFrame].top, walkspriteSheet[currentFrame].left, walkspriteSheet[currentFrame].bottom };
+			Sprite.SetRect(ReverseWSS);
 		}
 		if (animState == 3)
 		{

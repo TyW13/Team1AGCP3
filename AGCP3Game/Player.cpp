@@ -90,6 +90,7 @@ void Player::Render(DeviceManager* dManager)
 
 void Player::UpdateInput(DeviceManager* dManager, float dTime)
 {
+    animState = 0;
     //get keyboard stated
     kb = dManager->GetKeyboard()->GetState();
     mouse = dManager->GetMouse()->GetState();
@@ -139,13 +140,13 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (kb.D && !deactivate_D)
     {
         currentVel.x = PLAYER_SPEED;
-        //animState = 1;
+        animState = 1;
     }
     //left
     else if (kb.A && !deactivate_A)
     {
         currentVel.x = -PLAYER_SPEED;
-        //animState = 2;
+        animState = 2;
     }
     //deceleration
     //
@@ -164,7 +165,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
 
     if (grounded || coyoteTimeRemaining >= 0.0f && recordLastCollision == 1 && currentVel.x != 0)
     {
-        animState = 0;
         //set initial velocity, start timer, record button pressed down during only the first frame
         if (kb.Space)
         {

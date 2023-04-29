@@ -2,17 +2,6 @@
 #include "GameObject.h"
 
 constexpr int bufferMemory = 8192;
-/*struct RECTF
-{
-	float left, top, right, bottom;
-	operator RECT() {
-		return RECT{ (int)left,(int)top,(int)right,(int)bottom };
-	}
-	RECTF operator-()
-	{
-		return RECTF{ -(float)left,(float)top,-(float)right,(float)bottom };
-	}
-};*/
 class PlayerAnimation
 {
 public:
