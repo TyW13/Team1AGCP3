@@ -1879,14 +1879,14 @@
              "objects":[
                     {
                      "class":"",
-                     "height":5,
+                     "height":1,
                      "id":1,
                      "name":"",
                      "rotation":0,
                      "visible":true,
-                     "width":8,
+                     "width":3,
                      "x":0,
-                     "y":3
+                     "y":7
                     }],
              "opacity":1,
              "type":"objectgroup",

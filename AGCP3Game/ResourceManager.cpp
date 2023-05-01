@@ -19,7 +19,7 @@ void ResourceManager::Init(DeviceManager* dManager)
 	playerRect.right = 6;
 	playerRect.bottom = 16;
 
-	ReloadMap(dManager, 2);
+	ReloadMap(dManager, 1);
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
@@ -356,14 +356,11 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 
 				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
-
-				//playerChar = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* damageable = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(collisionWidth, collisionHeight), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
-
 			}
 			else if (objType == "BouncePad")
 			{
