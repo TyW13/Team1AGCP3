@@ -139,7 +139,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     {
         currentVel.x = PLAYER_SPEED;
         //animState = 1;
-    }
+    
         if (grounded)
         {
             audioManager.Playfootstep(0.8);
@@ -159,7 +159,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         audioManager.Stopfootstep();
     }
         //animState = 2;
-    }
+    
     //deceleration
     //
     //if on the ground
@@ -491,39 +491,6 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         currentVel.y = BOUNCE_PAD_JUMP_X;
                     }
                 }
-        //lets assume it's the bounce pad for a sec
-        else if (obj->GetObjectType() == "Damageable")
-        {
-            //if player collided from their bottom bound
-            if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_Y;
-                audioManager.PlayJump();
-                grounded = false;
-            }
-            //if player collided from their top bound
-            else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_Y;
-                audioManager.PlayJump();
-                grounded = false;
-            }
-            //if player collided from their right bound
-            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_X;
-                audioManager.PlayJump();
-                grounded = false;
-            }
-            //if player collided from their left bound
-            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_X;
-                audioManager.PlayJump();
-                grounded = false;
-            }
-        }
-
                 if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
                 {
                     rManager->GetObjects()[i]->SetActive(false);
