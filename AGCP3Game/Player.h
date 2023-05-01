@@ -72,7 +72,7 @@ private:
     DirectX::Keyboard::State kb;
     DirectX::Mouse::State mouse;
 
-    //------ movement variables
+    //------ movement variables ----------------------------------------------------------------//
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
     std::chrono::time_point<std::chrono::high_resolution_clock> end_time;
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time_wall_jump;
@@ -82,11 +82,11 @@ private:
     DirectX::SimpleMath::Vector2 mousePos = mousePos.Zero;
     DirectX::SimpleMath::Vector2 direction = direction.Zero;
 
+    //const variables
     const float MAX_JUMP_VEL = 400;
     const float MIN_JUMP_VEL = MAX_JUMP_VEL / 2;
     const float WALL_JUMP_VEL_Y = 1500;
     const float WALL_JUMP_VEL_X = 1500;
-    const float CLIMB_VEL = 170;					    //player climbing velocity
     const float SLIDE_DOWN_VEL = 80;					//sliding down velocity
     const float GRAVITY = 500;
     const float PLAYER_SPEED = 400;
@@ -100,38 +100,50 @@ private:
     const float COYOTE_TIME_DURATION = 0.15;            //define the coyote time duration (in seconds)
     const float GEM_SLOWDOWN_DURATION = 1.3;            //define the coyote time duration (in seconds)
 
-    float slowdown_modifier = 1;
-    float coyoteTimeRemaining = 0.0f;                   //define a variable to track the coyote time remaining
-    float gemSlowdownRemaining = 0.0f;                //define a variable to track the reload jump slow down remaining
+    
 
     double elapsed_time = 0;					        //measure how much time has elapsed between starting and ending time counting
-    double elapsed_t_bouncepad = 0;
+    std::string jumpType;                               //set type of the jump (low/ high jump)
 
-    std::string jumpType;
+    //------ mouse
+    bool detectMouseClick = true;					    //start detecting the mouse button
 
-    bool fired = false;
-    bool grounded = false;				                //
+    //------ keyboard
     bool timeSpaceClickDetected = false;				//if space button has been released stop measuring time for picking either high or low jump
+
+    //------ basic movement
+    float spaceClickElapsedTime = 0.f;                  //check how much time has passed since pressing space button, uses chrono
+    bool fired = false;
+    bool grounded = false;				                //keep track if the player is grounded or not
     bool recordJumpTime = false;				        //start/stop recording jump time
     bool detectSpaceKey = true;				        	//start detecting the space button pressed down
-    bool detectMouseClick = true;					    //
-    bool canShotGunJump = false;                        //allow shotgun jumping
+    
+    //------ reloadable gem
+    float slowdown_modifier = 1;
+    float gemSlowdownRemaining = 0.0f;                  //define a variable to track the reload jump slow down remaining
     bool canReloadGemJump = false;
+
+    //------ coyote time
+    int recordLastCollision = 0;                        //keep track of the last collision, can do coyote time only when collided with ground
+    float coyoteTimeRemaining = 0.0f;                   //define a variable to track the coyote time remaining
+
+    //------ shotgun jump
+    bool canShotGunJump = false;                        //allow shotgun jumping
+
+    //------ bounce pad
+    double elapsed_t_bouncepad = 0;
+
+    //------ wall jump
+    double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
     bool canCollideRightWall = false;                   //for not letting the player to jump off the same wall twice
     bool canCollideLeftWall = false;                    //for not letting the player to jump off the same wall twice
-
-    bool jumpSound = false;
-    double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
     bool isWallSliding = false;							//true whenever the player is wall sliding
     bool deactivate_A = false;							//deactivate A key input while wall jumping
     bool deactivate_D = false;							//deactivate D key input while wall jumping
     bool hasWallJumped = false;							//detect if wall jumped
 
-    float spaceClickElapsedTime = 0.f;
-
-
-    int recordLastCollision = 0;
-
+    //------ audio
+    bool jumpSound = false;                             //for jumping only, to prevent repeated jump sound
 
 };
 
