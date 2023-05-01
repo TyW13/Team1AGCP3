@@ -18,18 +18,11 @@ AudioManager::~AudioManager()
 
 void AudioManager::Init()
 {
-//	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
-//#ifdef _DEBUG
-//	eflags |= AudioEngine_Debug;
-//#endif
-//	m_audEngine = std::make_unique<AudioEngine>(eflags);
-//
-//	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
-//		L"Data/shotgun.wav");
-//	m_jump = std::make_unique<SoundEffect>(m_audEngine.get(),
-//		L"Data/jump.wav");
-//	auto m_footstep = std::make_unique<SoundEffect>(m_audEngine.get(),
-//		L"Data/footstep.wav");
+	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
+#ifdef _DEBUG
+	eflags |= AudioEngine_Debug;
+#endif
+	m_audEngine = std::make_unique<AudioEngine>(eflags);
 
 	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
 		L"Data/shotgun.wav");
@@ -40,10 +33,10 @@ void AudioManager::Init()
 
 	// Create an instance of the sound effect and set it to loop
 	m_footstep_looped = m_footstep->CreateInstance();
+}
 
-	float explodeDelay = 2.f;
-
-	//m_nightLoop = m_ambient->CreateInstance();
+void AudioManager::Update(float timer)
+{
 	if (m_retryAudio)
 	{
 		m_retryAudio = false;
@@ -55,7 +48,7 @@ void AudioManager::Init()
 				m_footstep_looped->Play(true);
 		}
 	}
-	
+
 }
 
 void AudioManager::Render()
@@ -66,7 +59,7 @@ void AudioManager::OnSuspending()
 {
 	m_audEngine->Suspend();
 }
-	//else if (nightVolume > 1.f)
+
 void AudioManager::OnResuming()
 {
 
@@ -88,7 +81,7 @@ void AudioManager::PlayJump()
 		m_jump->Play();
 	}
 }
-			// TODO: restart any looped sounds here
+
 void AudioManager::Playfootstep(float pitchMultiplier)
 {
 	if (m_footstep_looped)
@@ -96,12 +89,11 @@ void AudioManager::Playfootstep(float pitchMultiplier)
 		m_footstep_looped->SetPitch(pitchMultiplier);
 		m_footstep_looped->Play(true);
 	}
-	//if (m_nightLoop)
-		//m_nightLoop->Play(true);
 }
+
 void AudioManager::Stopfootstep()
 {
-	if (m_footstep_looped-> IsLooped())
+	if (m_footstep_looped->IsLooped())
 	{
 		m_footstep_looped->Stop();
 	}
