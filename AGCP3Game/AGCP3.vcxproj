@@ -132,6 +132,7 @@
     <ClInclude Include="PlayerAnimation.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Shotgun.h" />
     <ClInclude Include="ShotgunAnimation.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="d3dx12.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimation.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Shotgun.cpp" />
     <ClCompile Include="ShotgunAnimation.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

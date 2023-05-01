@@ -58,7 +58,8 @@ public:
         Background,
         Count,
         BouncePad,
-        Gem
+        Gem,
+        Gun
     };
 
     // Properties

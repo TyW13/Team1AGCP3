@@ -33,11 +33,10 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 	uploadResourcesFinished.wait();
 
     playerAnim.Init("Player.json", *this);
-
 }
-void Player::InitShotgun(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
+    //SmPos = DirectX::SimpleMath::Vector2{ mPos.x + 5, mPos.y };
     collisionBounds.left = mPos.x;
     collisionBounds.top = mPos.y;
     collisionBounds.right = mPos.x + objSize.x * mScale.x;

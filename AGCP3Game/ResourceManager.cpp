@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "Tile.h"
 #include "Player.h"
+#include "Shotgun.h"
 #include "BouncePad.h"
 #include "Gem.h"
 
@@ -27,6 +28,7 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 	if (playerChar != nullptr)
 	{
 		playerChar->Update(dManager, this, dTime);
+		shotgunChar->Update(dManager, this, dTime);
 	}
 	else { assert(false); }
 
@@ -58,6 +60,7 @@ void ResourceManager::Render(DeviceManager* dManager)
 	if (playerChar != nullptr && playerChar->GetActive())
 	{
 		playerChar->Render(dManager);
+		shotgunChar->Render(dManager);
 	}
 }
 
@@ -301,6 +304,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	if (playerChar == nullptr)
 	{
 		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 5,2,13,17 });
+		shotgunChar = new Shotgun(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Shotgun", false, { 5,2,13,17 });
 	}
 
 
@@ -349,6 +353,8 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
 				playerChar->SetVelocity({ 0,0 });
 				playerChar->SetObjectSize(playerSize);
+				shotgunChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
+				shotgunChar->SetObjectSize(playerSize);
 
 				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);

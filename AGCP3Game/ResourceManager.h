@@ -13,6 +13,7 @@ using namespace rapidjson;
 class PlayerCharacter;
 class Tile;
 class Player;
+class Shotgun;
 
 class Layer
 {
@@ -143,6 +144,7 @@ public:
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 	std::vector<GameObject*> GetObjects() { return m_Objects; }
+	Player* GetPlayer() { return playerChar; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
@@ -151,6 +153,7 @@ private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
 	Player* playerChar;
+	Shotgun* shotgunChar;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 

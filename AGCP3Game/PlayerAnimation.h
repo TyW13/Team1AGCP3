@@ -1,7 +1,5 @@
 #pragma once
 #include "GameObject.h"
-
-constexpr int bufferMemory = 8192;
 class PlayerAnimation
 {
 public:

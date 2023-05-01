@@ -126,6 +126,7 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 
 void PlayerAnimation::LoadAnimation(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//From Joshua Moxon project 2
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
@@ -161,6 +162,7 @@ void PlayerAnimation::LoadAnimation(std::string jsonPath)
 
 void PlayerAnimation::LoadAnimationData(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
