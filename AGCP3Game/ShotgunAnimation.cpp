@@ -2,6 +2,7 @@
 #include "D3D.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
+#include "ShotgunAnimation.h"
 
 using namespace rapidjson;
 using namespace DirectX;
@@ -14,8 +15,8 @@ void ShotgunAnimation::Init(std::string jsonPath, GameObject& Sprite)
 	if (jsonPath == "Data/Shotgun.json")
 	{
 		LoadAnimation(jsonPath);
-		//LoadAnimationData(Data/ShotgunData.json);
-		SwitchTex(Sprite, Zero, InitState);
+		LoadAnimationData("Data/ShotgunAnimData.json");
+		SwitchTex(Sprite, 6, InitState);
 	}
 	else
 	{
@@ -27,9 +28,17 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 	//calculate elapsed time
 	deltaTime = dTime;
 	elapsedTime += deltaTime;
-	Frames = ShotgunFrames;//Temporary magic numbers unil animation data loading is complete
-	if (animState == 1 && currentFrame <= Zero)
+
+	if (currentFrame < 5)
 	{
+		animState = 1;
+	}
+	if (animState == 0)
+	{
+		if (currentFrame <= 5)
+		{
+			currentFrame = 6;
+		}
 		if (elapsedTime >= frameDuration)
 		{
 			if (currentFrame < Frames)
@@ -39,13 +48,17 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 			elapsedTime -= frameDuration;
 		}
 	}
-	if (animState == Zero && currentFrame >= Zero)
+	if (animState == 1)
 	{
+		if (currentFrame >= 6)
+		{
+			currentFrame = Zero;
+		}
 		if (elapsedTime >= frameDuration)
 		{
-			if (currentFrame >= Zero)
+			if (currentFrame <= 4)
 			{
-				--currentFrame;
+				++currentFrame;
 			}
 			elapsedTime -= frameDuration;
 		}
@@ -60,6 +73,7 @@ void ShotgunAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animS
 
 void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//From Joshua Moxon project 2
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
@@ -86,7 +100,7 @@ void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 			float FrameHeight = FrameData["y"].GetInt();
 			float FrameOffsetW = FrameData["w"].GetInt();
 			float FrameOffsetH = FrameData["h"].GetInt();
-			RECTF TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
+			RECT TempRect = { FrameWidth, FrameHeight,FrameOffsetW,FrameOffsetH };
 			shotgunSpriteSheet[i] = TempRect;
 			++i;
 		}
@@ -94,6 +108,7 @@ void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 }
 void ShotgunAnimation::LoadAnimationData(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");

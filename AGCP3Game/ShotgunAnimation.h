@@ -28,9 +28,8 @@ private:
 	float frameDuration = 0.07f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	float deltaTime;
-	int currentFrame = Zero;
+	int currentFrame = 6;
 	const int InitState = 1;
-	RECTF shotgunSpriteSheet[4];
-	const int ShotgunFrames = 4;
+	RECT shotgunSpriteSheet[11];
 	int Frames;
 };

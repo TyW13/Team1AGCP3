@@ -31,6 +31,10 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 		{
 			PlayIdle = false;
 			FramesTemp = Frames;
+			if (currentFrame < JumpOffset)
+			{
+				currentFrame = JumpOffset;
+			}
 			if (elapsedTime >= frameDuration)
 			{
 				++currentFrame;
@@ -66,7 +70,7 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 			PlayIdle = false;
 			FramesTemp = JumpOffset;
 			if (currentFrame < IdleFrames)
-			{	
+			{
 				currentFrame = IdleFrames;
 			}
 			if (elapsedTime >= JumpDuration)
@@ -103,8 +107,11 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 		}
 		if (animState == 2)
 		{
+
+			//Code for Flipped sprite CURRENTLY NOT COMPATIBLE WITH COLLISION
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
-			Sprite.SetRect(walkspriteSheet[currentFrame]);
+			RECT ReverseWSS = {walkspriteSheet[currentFrame].right, walkspriteSheet[currentFrame].top, walkspriteSheet[currentFrame].left, walkspriteSheet[currentFrame].bottom };
+			Sprite.SetRect(ReverseWSS);
 		}
 		if (animState == 3)
 		{
@@ -119,6 +126,7 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 
 void PlayerAnimation::LoadAnimation(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//From Joshua Moxon project 2
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
@@ -154,6 +162,7 @@ void PlayerAnimation::LoadAnimation(std::string jsonPath)
 
 void PlayerAnimation::LoadAnimationData(std::string jsonPath)
 {
+	constexpr int bufferMemory = 8192;
 	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");

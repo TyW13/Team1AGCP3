@@ -2,9 +2,14 @@
 #include "GameObject.h"
 #include "AudioManager.h"
 #include "PlayerAnimation.h"
+#include "AudioManager.h"
+#include "PlayerAnimation.h"
+#include "ShotgunAnimation.h"
 
 class ResourceManager;
 class PlayerAnimation;
+class PlayerAnimation;
+class ShotgunAnimation;
 
 class Player : public GameObject
 {
@@ -21,6 +26,8 @@ public:
 
     void UpdateInput(DeviceManager* dManager, float dTime);
 
+    bool GetGrounded() { return grounded; }
+    bool GetFired() { return fired; }
 	bool GetActive() override { return isActive; }
 	DirectX::SimpleMath::Vector2 GetObjectSize() override { return objSize; }
 	std::string GetObjectType() override { return objType; }
@@ -45,6 +52,14 @@ private:
     PlayerAnimation playerAnim;
     int animState = 0;
 
+    static bool Player::CompareDistance(GameObject* a, GameObject* b);
+
+    AudioManager audioManager;
+    PlayerAnimation playerAnim;
+    PlayerAnimation shotgunAnim;
+    int animState = 0;
+    int shotgunState = 0;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
@@ -54,6 +69,9 @@ private:
 	static DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
+
+
+
 
     void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 
