@@ -431,6 +431,9 @@ namespace internal {
     { };
 }
 
+#undef min
+#undef max
+
 template<typename T, typename A>
 inline T* Realloc(A& a, T* old_p, size_t old_n, size_t new_n)
 {
