@@ -413,190 +413,156 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                 //gObjects.emplace_back(gObject);
                 float collisionPosOffset = 1;               // Value to offset player by when they collide with an object
 
-                for (int i = 0; i < rManager->GetObjects().size(); ++i)
+
+                if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
                 {
-                    if (rManager->GetObjects()[i]->GetObjectType() != "Player")
+                    if (collisionBounds.bottom <= rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom > rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
                     {
-                        if (nextPosRect.left < rManager->GetObjects()[i]->GetCollisionBounds().right &&
-                            nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left &&
-                            nextPosRect.top < rManager->GetObjects()[i]->GetCollisionBounds().bottom &&
-                            nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top)
-                        {
-                            //gObjects.emplace_back(gObject);
+                        mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
+                        mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+                        currentVel.y = 0;
+                        //(!isWallSliding) ? currentVel.y = 0 : 0;
+                        //DBOUT("afafaf");
+                        collided = true;
+                        collidedTop = true;
+                        grounded = true;
+                        canShotGunJump = true;
+                        fired = false;
+                        recordLastCollision = 1;
+                        //DBOUT("collidedTop");
 
-                            if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
-                            {
-                                if (collisionBounds.bottom <= rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom > rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)			    // Collided from top, moving down
-                                {
-                                    mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().top - (objSize.y * abs(mScale.y) + collisionPosOffset);							                        // Setting position to just outside obj
-                                    mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
-                                    currentVel.y = 0;
-                                    //(!isWallSliding) ? currentVel.y = 0 : 0;
-                                    //DBOUT("afafaf");
-                                    collided = true;
-                                    collidedTop = true;
-                                    grounded = true;
-                                    canShotGunJump = true;
-                                    fired = false;
-                                    recordLastCollision = 1;
-                                    //DBOUT("collidedTop");
+                    }
+                    else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
+                    {
+                        mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
+                        mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
+                        currentVel.y = 0;
+                        //(!isWallSliding) ? currentVel.y = 0 : 0;
 
-                                }
-                                else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)	    // Collided from bottom, moving up
-                                {
-                                    mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
-                                    mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
-                                    currentVel.y = 0;
-                                    //(!isWallSliding) ? currentVel.y = 0 : 0;
+                        collided = true;
+                        collidedBottom = true;
+                        recordLastCollision = 2;
+                        //DBOUT("collided bottom");
+                    }
+                    if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
+                    {
+                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+                        mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                        currentVel.x = 0;
 
-                                    collided = true;
-                                    collidedBottom = true;
-                                    recordLastCollision = 2;
-                                    //DBOUT("collided bottom");
-                                }
-                                if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
-                                {
-                                    mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
-                                    mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                                    currentVel.x = 0;
+                        collided = true;
+                        collidedLeft = true;
+                        //canCollideRightWall = true;
+                        //recordLastCollision = 3;
 
-                                    collided = true;
-                                    collidedLeft = true;
-                                    //canCollideRightWall = true;
-                                    //recordLastCollision = 3;
+                        //if (kb.D && !deactivate_D)
+                        //{
+                        //    isWallSliding = true;
+                        //}
+                        //else
+                        //{
+                        //    isWallSliding = false;
+                        //}
+                        //DBOUT("collidedRight");
 
-                                    //if (kb.D && !deactivate_D)
-                                    //{
-                                    //    isWallSliding = true;
-                                    //}
-                                    //else
-                                    //{
-                                    //    isWallSliding = false;
-                                    //}
-                                    //DBOUT("collidedRight");
+                    }
+                    else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+                    {
+                        mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + (objSize.x * abs(mScale.x) + collisionPosOffset);																        // Setting position to just outside tile
+                        mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+                        currentVel.x = 0;
 
-                                }
-                                else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
-                                {
-                                    mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + (objSize.x * abs(mScale.x) + collisionPosOffset);																        // Setting position to just outside tile
-                                    mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                                    currentVel.x = 0;
-                                    collided = true;
-                                    collidedLeft = true;
-                                    //canCollideRightWall = true;
-                                    //recordLastCollision = 3;
+                        collided = true;
+                        collidedRight = true;
+                        //canCollideLeftWall = true;
+                        //recordLastCollision = 4;
 
-                                    //if (kb.D && !deactivate_D)
-                                    //{
-                                    //    isWallSliding = true;
-                                    //}
-                                    //else
-                                    //{
-                                    //    isWallSliding = false;
-                                    //}
-                                    //DBOUT("collidedRight");
+                        //if (kb.A && !deactivate_A)
+                        //{
+                        //    isWallSliding = true;
+                        //}
+                        //else
+                        //{
+                        //    isWallSliding = false;
+                        //}
+                        //DBOUT("collidedLeft");
 
-                                }
-                                else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
-                                {
-                                    mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
-                                    mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                                    currentVel.x = 0;
-
-                                    collided = true;
-                                    collidedRight = true;
-                                    //canCollideLeftWall = true;
-                                    //recordLastCollision = 4;
-
-                                    //if (kb.A && !deactivate_A)
-                                    //{
-                                    //    isWallSliding = true;
-                                    //}
-                                    //else
-                                    //{
-                                    //    isWallSliding = false;
-                                    //}
-                                    //DBOUT("collidedLeft");
-
-                                }
-                            }
-
-                            if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
-                            {
-                                rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
-                            }
-
-                            if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
-                            {
-                                //if player collided from their bottom bound
-                                if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
-                                {
-                                    currentVel.y = -BOUNCE_PAD_JUMP_Y;
-                                }
-                                //if player collided from their top bound
-                                else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
-                                {
-                                    currentVel.y = BOUNCE_PAD_JUMP_Y;
-                                }
-                                //if player collided from their right bound
-                                else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
-                                {
-                                    currentVel.y = -BOUNCE_PAD_JUMP_X;
-                                }
-                                //if player collided from their left bound
-                                else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
-                                {
-                                    currentVel.y = BOUNCE_PAD_JUMP_X;
-                                }
-                            }
-
-                            if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
-                            {
-                                rManager->GetObjects()[i]->SetActive(false);
-                                SetVelocity({ 0,0 });
-                                fired = false;
-
-
-                                /*canReloadGemJump = true;
-                                slowdown_modifier = 0.1;*/
-                            }
-                            //else if (canReloadGemJump)
-                            //{
-                            //    gemSlowdownRemaining -= dTime;
-                            //    if (gemSlowdownRemaining <= 0)
-                            //    {
-                            //        canReloadGemJump = false;
-                            //        slowdown_modifier = 1;
-                            //    }
-                            //}
-                            //else if (!canReloadGemJump)
-                            //{
-                            //    //reset the slowdown time remaining
-                            //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
-                            //}
-
-                            if (rManager->GetObjects()[i]->GetObjectType() == "EndZone")
-                            {
-                                rManager->LoadNextZone(dManager);
-                            }
-                        }
                     }
                 }
 
-
-                //std::sort(gObjects.begin(), gObjects.end(), CompareDistance);
-
-
-                //DBOUT(gObjects.size());
-                for (GameObject* obj : gObjects)
+                if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
                 {
+                    rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
+                }
 
+                if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
+                {
+                    //if player collided from their bottom bound
+                    if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
+                    {
+                        currentVel.y = -BOUNCE_PAD_JUMP_Y;
+                    }
+                    //if player collided from their top bound
+                    else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
+                    {
+                        currentVel.y = BOUNCE_PAD_JUMP_Y;
+                    }
+                    //if player collided from their right bound
+                    else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
+                    {
+                        currentVel.y = -BOUNCE_PAD_JUMP_X;
+                    }
+                    //if player collided from their left bound
+                    else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
+                    {
+                        currentVel.y = BOUNCE_PAD_JUMP_X;
+                    }
+                }
+
+                if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
+                {
+                    rManager->GetObjects()[i]->SetActive(false);
+                    SetVelocity({ 0,0 });
+                    fired = false;
+
+
+                    /*canReloadGemJump = true;
+                    slowdown_modifier = 0.1;*/
+                }
+                //else if (canReloadGemJump)
+                //{
+                //    gemSlowdownRemaining -= dTime;
+                //    if (gemSlowdownRemaining <= 0)
+                //    {
+                //        canReloadGemJump = false;
+                //        slowdown_modifier = 1;
+                //    }
+                //}
+                //else if (!canReloadGemJump)
+                //{
+                //    //reset the slowdown time remaining
+                //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
+                //}
+
+                if (rManager->GetObjects()[i]->GetObjectType() == "EndZone")
+                {
+                    rManager->LoadNextZone(dManager);
                 }
             }
         }
     }
+
+
+    //std::sort(gObjects.begin(), gObjects.end(), CompareDistance);
+
+
+    //DBOUT(gObjects.size());
+    for (GameObject* obj : gObjects)
+    {
+
+    }
 }
-/*
+
 void Player::NewCheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
     DirectX::SimpleMath::Vector4 broadphaseBox = GetSweptBroadphaseBox(this);
@@ -834,7 +800,7 @@ float Player::SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& n
             rManager->LoadNextZone(dManager);
         }
     }
-    */
+    
 void Player::SetActive(bool _isActive)
 {
 	isActive = _isActive;
