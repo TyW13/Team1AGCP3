@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ResourceManager.h"
 #include "Shotgun.h"
+#include <math.h> 
 
 void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
 {
@@ -31,9 +32,20 @@ void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simpl
 
 void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
+	mOrigin = DirectX::SimpleMath::Vector2(this->GetObjectSize().x / 2, this->GetObjectSize().y / 2);
 	DirectX::SimpleMath::Vector2 playerPos = rManager->GetPlayer()->GetPosition();
-	mPos = playerPos;
-	mPos.x += 50;
+	mPos = playerPos + PosOffset;
+
+
+	POINT cursorPos;
+	GetCursorPos(&cursorPos);
+	float DistX = cursorPos.x - mPos.x;
+	float DistY = cursorPos.y - mPos.y;
+	Rotation = atan(DistY / DistX);
+	if (DistX < 0)
+	{
+		Rotation += Rads180;
+	}
 	if (rManager->GetPlayer()->GetGrounded() == true && AnimState == 1)
 	{
 		AnimState = 0;
@@ -50,8 +62,8 @@ void Shotgun::Render(DeviceManager* dManager)
 	RECT* sourceRect = &objRect;
 
 	dManager->GetSpriteBatch()->Draw(dManager->GetResourceDescriptors()->GetGpuHandle(2),
-		DirectX::GetTextureSize(objTex.Get()),
-		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, 0.f, mOrigin, mScale);
+		DirectX::GetTextureSize(objTex.Get()),	
+		mPos, sourceRect, { 1.f, 1.f, 1.f, 1.f }, Rotation, mOrigin, mScale);
 }
 
 void Shotgun::SetActive(bool _isActive)

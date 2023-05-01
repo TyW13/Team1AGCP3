@@ -55,7 +55,7 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 		}
 		if (elapsedTime >= frameDuration)
 		{
-			if (currentFrame <= 5)
+			if (currentFrame <= 4)
 			{
 				++currentFrame;
 			}

@@ -30,6 +30,7 @@ public:
 	void SetPosition(DirectX::SimpleMath::Vector2 _position) override;
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
 private:
+	float Rotation = 0;
 	int AnimState = 0;
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;
@@ -41,4 +42,6 @@ private:
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 	ShotgunAnimation Anim;
+	const DirectX::SimpleMath::Vector2 PosOffset = DirectX::SimpleMath::Vector2(23, 30);
+	const float Rads180 = 3.14;
 };

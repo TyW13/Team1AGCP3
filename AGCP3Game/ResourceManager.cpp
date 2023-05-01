@@ -348,13 +348,14 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			{
 
 				DirectX::SimpleMath::Vector2 playerSize{ 8,15 };
+				DirectX::SimpleMath::Vector2 shotgunSize{ -14,17 };
 				float collisionOffset = 1.0f;
 				float newPlayerYPos = tileYPos - (playerSize.y * objScale.y) / 2 - collisionOffset;
 				playerChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
 				playerChar->SetVelocity({ 0,0 });
 				playerChar->SetObjectSize(playerSize);
 				shotgunChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
-				shotgunChar->SetObjectSize(playerSize);
+				shotgunChar->SetObjectSize(shotgunSize);
 
 				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
