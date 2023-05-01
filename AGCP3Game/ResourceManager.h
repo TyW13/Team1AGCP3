@@ -155,7 +155,6 @@ private:
 	std::vector<std::wstring> m_TexPaths;
 	Player* playerChar;
 	Shotgun* shotgunChar;
-	Player* playerChar;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum;					
 

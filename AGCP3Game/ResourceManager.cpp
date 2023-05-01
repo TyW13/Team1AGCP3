@@ -70,12 +70,6 @@ void ResourceManager::Render(DeviceManager* dManager)
 	}
 }
 
-	if (playerChar != nullptr && playerChar->GetActive())
-	{
-		playerChar->Render(dManager);
-	}
-}
-
 void ResourceManager::Terminate()
 {
 	delete playerChar;
@@ -374,15 +368,6 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				playerChar->SetObjectSize(playerSize);
 				shotgunChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
 				shotgunChar->SetObjectSize(shotgunSize);
-
-				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
-
-				DirectX::SimpleMath::Vector2 playerSize{ 8,15 };
-				float collisionOffset = 1.0f;
-				float newPlayerYPos = tileYPos - (playerSize.y * objScale.y) / 2 - collisionOffset;
-				playerChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
-				playerChar->SetVelocity({ 0,0 });
-				playerChar->SetObjectSize(playerSize);
 
 				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);

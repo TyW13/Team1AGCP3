@@ -3,11 +3,9 @@
 #include "AudioManager.h"
 #include "PlayerAnimation.h"
 #include "AudioManager.h"
-#include "PlayerAnimation.h"
 #include "ShotgunAnimation.h"
 
 class ResourceManager;
-class PlayerAnimation;
 class PlayerAnimation;
 class ShotgunAnimation;
 
@@ -47,13 +45,6 @@ public:
 
 private:
     static bool Player::CompareDistance(GameObject* a, GameObject* b);
-
-    AudioManager audioManager;
-    PlayerAnimation playerAnim;
-    int animState = 0;
-
-    static bool Player::CompareDistance(GameObject* a, GameObject* b);
-
     AudioManager audioManager;
     PlayerAnimation playerAnim;
     PlayerAnimation shotgunAnim;

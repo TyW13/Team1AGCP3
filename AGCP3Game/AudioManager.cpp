@@ -41,9 +41,9 @@ void AudioManager::Init()
 	// Create an instance of the sound effect and set it to loop
 	m_footstep_looped = m_footstep->CreateInstance();
 
-	explodeDelay = 2.f;
+	float explodeDelay = 2.f;
 
-	m_nightLoop = m_ambient->CreateInstance();
+	//m_nightLoop = m_ambient->CreateInstance();
 	if (m_retryAudio)
 	{
 		m_retryAudio = false;
@@ -66,7 +66,7 @@ void AudioManager::OnSuspending()
 {
 	m_audEngine->Suspend();
 }
-	else if (nightVolume > 1.f)
+	//else if (nightVolume > 1.f)
 void AudioManager::OnResuming()
 {
 
@@ -87,7 +87,7 @@ void AudioManager::PlayJump()
 	{
 		m_jump->Play();
 	}
-		{
+}
 			// TODO: restart any looped sounds here
 void AudioManager::Playfootstep(float pitchMultiplier)
 {
@@ -96,29 +96,13 @@ void AudioManager::Playfootstep(float pitchMultiplier)
 		m_footstep_looped->SetPitch(pitchMultiplier);
 		m_footstep_looped->Play(true);
 	}
-			if (m_nightLoop)
-				m_nightLoop->Play(true);
+	//if (m_nightLoop)
+		//m_nightLoop->Play(true);
+}
 void AudioManager::Stopfootstep()
 {
 	if (m_footstep_looped-> IsLooped())
 	{
 		m_footstep_looped->Stop();
 	}
-	}
-}
-
-void AudioManager::Render()
-{
-}
-
-void AudioManager::OnSuspending()
-{
-	m_audEngine->Suspend();
-}
-
-void AudioManager::OnResuming()
-{
-	explodeDelay = 2.f;
-
-	m_audEngine->Resume();
 }
