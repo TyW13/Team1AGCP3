@@ -28,6 +28,7 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
+    audioManager.Init();
 }
 
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -96,8 +97,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         mousePos.x = cursorPos.x;
         mousePos.y = cursorPos.y;
 
-        //playerToMouseDist = Distance(character.mPos.x, mousePos.x, character.mPos.y, mousePos.y);
-
         //calculate the direction vector from the player to the mouse click
         direction = mousePos - mPos;
 
@@ -118,7 +117,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         canShotGunJump = false;
         canReloadGemJump = false;
         slowdown_modifier = 1;
-
+        audioManager.PlayShotgun();
     }
     if (!mouse.leftButton && !detectMouseClick)
     {
@@ -131,11 +130,23 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     if (kb.D && !deactivate_D)
     {
         currentVel.x = PLAYER_SPEED;
+        if (grounded)
+        {
+            audioManager.Playfootstep();
+        }
     }
     //left
     else if (kb.A && !deactivate_A)
     {
         currentVel.x = -PLAYER_SPEED;
+        if (grounded)
+        {
+            audioManager.Playfootstep();
+        }
+    }
+    else
+    {
+        audioManager.Stopfootstep();
     }
     //deceleration
     //
@@ -164,7 +175,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         {
             start_time = std::chrono::high_resolution_clock::now();
             currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
-
+            audioManager.PlayJump();
             detectSpaceKey = false;
             recordJumpTime = true;
             grounded = false;
@@ -184,7 +195,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
             if (elapsed_time >= HIGH_JUMP_TIME)
                 elapsed_time = HIGH_JUMP_TIME;
 
-
+            
         }
 
         //detect during which of two time frames the space button has been released and then set the jump type based on it 
@@ -374,47 +385,47 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
                 collidedBottom = true;
                 recordLastCollision = 2;
             }
-            if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
-            {
-                mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
-                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                currentVel.x = 0;
+            //if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)			    // Collided from left, moving right
+            //{
+            //    mPos.x = obj->GetCollisionBounds().left - (objSize.x * abs(mScale.x) + collisionPosOffset);							                        // Setting position to just outside obj
+            //    mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+            //    currentVel.x = 0;
 
-                collided = true;
-                collidedLeft = true;
-                canCollideRightWall = true;
-                recordLastCollision = 3;
+            //    collided = true;
+            //    collidedLeft = true;
+            //    canCollideRightWall = true;
+            //    recordLastCollision = 3;
 
-                if (kb.D && !deactivate_D)
-                {
-                    isWallSliding = true;
-                }
-                else
-                {
-                    isWallSliding = false;
-                }
-                
-            }
-            else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
-            {
-                mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
-                mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
-                currentVel.x = 0;
+            //    if (kb.D && !deactivate_D)
+            //    {
+            //        isWallSliding = true;
+            //    }
+            //    else
+            //    {
+            //        isWallSliding = false;
+            //    }
+            //    
+            //}
+            //else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)		// Collided from right, moving left
+            //{
+            //    mPos.x = obj->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
+            //    mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
+            //    currentVel.x = 0;
 
-                collided = true;
-                collidedRight = true;
-                canCollideLeftWall = true;
-                recordLastCollision = 4;
+            //    collided = true;
+            //    collidedRight = true;
+            //    canCollideLeftWall = true;
+            //    recordLastCollision = 4;
 
-                if (kb.A && !deactivate_A)
-                {
-                    isWallSliding = true;
-                }
-                else
-                {
-                    isWallSliding = false;
-                }
-            }
+            //    if (kb.A && !deactivate_A)
+            //    {
+            //        isWallSliding = true;
+            //    }
+            //    else
+            //    {
+            //        isWallSliding = false;
+            //    }
+            //}
         }
 
         //else if (obj->GetObjectType() == "Damageable")
