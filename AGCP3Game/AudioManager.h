@@ -23,18 +23,20 @@ public:
 
     void PlayShotgun();
     void PlayJump();
-    void Playfootstep();
+    void Playfootstep(float pitchMultiplier);
+    void Stopfootstep();
 
     void OnNewAudioDevice() noexcept { m_retryAudio = true; }
 
-    std::unique_ptr<DirectX::SoundEffect> m_shotgun;
+  
 private:
 
-    std::unique_ptr<std::mt19937> m_random;
     std::unique_ptr<DirectX::AudioEngine> m_audEngine;
-    //std::unique_ptr<DirectX::SoundEffect> m_shotgun;
+
+    std::unique_ptr<DirectX::SoundEffect> m_shotgun;
     std::unique_ptr<DirectX::SoundEffect> m_jump;
-    std::unique_ptr<DirectX::SoundEffectInstance> m_footsteploop;
+    std::unique_ptr<DirectX::SoundEffect> m_footstep;
+    std::unique_ptr<DirectX::SoundEffectInstance> m_footstep_looped;
 
     bool m_retryAudio;
 
