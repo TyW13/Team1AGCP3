@@ -23,7 +23,7 @@ public:
 
     void PlayShotgun();
     void PlayJump();
-    void Playfootstep(float pitchMultiplier);
+    void Playfootstep(float pitchMultiplier);   //pitchMultiplier for setting how quick the playback should be
     void Stopfootstep();
 
     void OnNewAudioDevice() noexcept { m_retryAudio = true; }
@@ -31,12 +31,12 @@ public:
   
 private:
 
-    std::unique_ptr<DirectX::AudioEngine> m_audEngine;
+    std::unique_ptr<DirectX::AudioEngine> m_audEngine;                      //audio engine
 
-    std::unique_ptr<DirectX::SoundEffect> m_shotgun;
-    std::unique_ptr<DirectX::SoundEffect> m_jump;
-    std::unique_ptr<DirectX::SoundEffect> m_footstep;
-    std::unique_ptr<DirectX::SoundEffectInstance> m_footstep_looped;
+    std::unique_ptr<DirectX::SoundEffect> m_shotgun;                        //shotgun sound
+    std::unique_ptr<DirectX::SoundEffect> m_jump;                           //jump sound
+    std::unique_ptr<DirectX::SoundEffect> m_footstep;                       //footstep sound
+    std::unique_ptr<DirectX::SoundEffectInstance> m_footstep_looped;        //footstep sound, for looping
 
     bool m_retryAudio;
 
