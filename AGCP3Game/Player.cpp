@@ -618,7 +618,6 @@ bool Player::AABBCheck(DirectX::SimpleMath::Vector4 obj1, GameObject* obj2)
         obj1Pos.y > obj2->GetPosition().y + (obj2->GetObjectSize().y * obj2->GetScale().y));
 }
 
-
 float Player::SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& normalY, float dTime)
 {
     float xInvEntry, yInvEntry;
@@ -670,24 +669,7 @@ float Player::SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& n
         yEntry = xInvEntry / obj1->currentVel.y;
         yExit = xInvExit / obj1->currentVel.y;
     }
-                        collided = true;
-                        collidedRight = true;
-                        //canCollideLeftWall = true;
-                        //recordLastCollision = 4;
 
-                        //if (kb.A && !deactivate_A)
-                        //{
-                        //    isWallSliding = true;
-                        //}
-                        //else
-                        //{
-                        //    isWallSliding = false;
-                        //}
-                        //DBOUT("collidedLeft");
-
-                    }
-                }
-                
 
     float entryTime, exitTime;
 
@@ -733,73 +715,17 @@ float Player::SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& n
             }
         } // return the time of collisionreturn entryTime; 
     }
+}
 
-    bool Player::CompareDistance(GameObject* a, GameObject* b)
-    {
-        float aDist = sqrt((pow(a->GetPosition().x, 2) - pow(mPos.x, 2)) + (pow(a->GetPosition().y, 2) - pow(mPos.y, 2)));
-        float bDist = sqrt((pow(b->GetPosition().x, 2) - pow(mPos.x, 2)) + (pow(b->GetPosition().y, 2) - pow(mPos.y, 2)));
+bool Player::CompareDistance(GameObject* a, GameObject* b)
+{
+    float aDist = sqrt((pow(a->GetPosition().x, 2) - pow(mPos.x, 2)) + (pow(a->GetPosition().y, 2) - pow(mPos.y, 2)));
+    float bDist = sqrt((pow(b->GetPosition().x, 2) - pow(mPos.x, 2)) + (pow(b->GetPosition().y, 2) - pow(mPos.y, 2)));
 
-        //DBOUT("A dist: " + std::to_string(aDist) + " B dist: " + std::to_string(bDist) + "\n");
+    //DBOUT("A dist: " + std::to_string(aDist) + " B dist: " + std::to_string(bDist) + "\n");
 
-        return fabs(aDist) < fabs(bDist);
-        if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
-        {
-            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
-        }
-
-        if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
-        {
-            //if player collided from their bottom bound
-            if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_Y;
-            }
-            //if player collided from their top bound
-            else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_Y;
-            }
-            //if player collided from their right bound
-            else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
-            {
-                currentVel.y = -BOUNCE_PAD_JUMP_X;
-            }
-            //if player collided from their left bound
-            else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
-            {
-                currentVel.y = BOUNCE_PAD_JUMP_X;
-            }
-        }
-        if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
-        {
-            rManager->GetObjects()[i]->SetActive(false);
-            SetVelocity({ 0,0 });
-            fired = false;
-
-
-            canReloadGemJump = true;
-            slowdown_modifier = 0.1;
-        }
-        else if (canReloadGemJump)
-        {
-            gemSlowdownRemaining -= dTime;
-            if (gemSlowdownRemaining <= 0)
-            {
-                canReloadGemJump = false;
-                slowdown_modifier = 1;
-            }
-        }
-        else if (!canReloadGemJump)
-        {
-            //reset the slowdown time remaining
-            gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
-        }
-
-        if (rManager->GetObjects()[i]->GetObjectType() == "EndZone" || kb.Q)
-        {
-            rManager->LoadNextZone(dManager);
-        }
-    }
+    return fabs(aDist) < fabs(bDist);
+}
     
 void Player::SetActive(bool _isActive)
 {
