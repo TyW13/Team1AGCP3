@@ -132,7 +132,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         currentVel.x = PLAYER_SPEED;
         if (grounded)
         {
-            audioManager.Playfootstep();
+            audioManager.Playfootstep(0.8);
         }
     }
     //left
@@ -141,7 +141,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         currentVel.x = -PLAYER_SPEED;
         if (grounded)
         {
-            audioManager.Playfootstep();
+            audioManager.Playfootstep(0.8);
         }
     }
     else
@@ -162,6 +162,10 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     }
 
     //--------- y-axis
+    if (grounded)
+    {
+        jumpSound = true;
+    }
 
     if (grounded || coyoteTimeRemaining >= 0.0f && recordLastCollision == 1 && currentVel.x != 0)
     {
@@ -175,13 +179,23 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         {
             start_time = std::chrono::high_resolution_clock::now();
             currentVel.y = -MAX_JUMP_VEL;	//set initial velocity to max velocity
-            audioManager.PlayJump();
             detectSpaceKey = false;
             recordJumpTime = true;
             grounded = false;
         }
 
+        if (jumpSound && kb.Space)
+        {
+            audioManager.PlayJump();
+            jumpSound = false;
+        }
+
     }
+    else
+    {
+        jumpSound = false;
+    }
+
     if (!grounded)
     {
         //record how much time has been passed since pressing down and releasing space button
@@ -440,21 +454,29 @@ void Player::CheckCollision( DeviceManager* dManager, ResourceManager* rManager,
             if (collisionBounds.bottom < obj->GetCollisionBounds().top && nextPosRect.bottom >= obj->GetCollisionBounds().top && !collidedTop)
             {
                 currentVel.y = -BOUNCE_PAD_JUMP_Y;
+                audioManager.PlayJump();
+                grounded = false;
             }
             //if player collided from their top bound
             else if (collisionBounds.top > obj->GetCollisionBounds().bottom && nextPosRect.top <= obj->GetCollisionBounds().bottom && !collidedBottom)
             {
                 currentVel.y = BOUNCE_PAD_JUMP_Y;
+                audioManager.PlayJump();
+                grounded = false;
             }
             //if player collided from their right bound
             if (collisionBounds.right < obj->GetCollisionBounds().left && nextPosRect.right >= obj->GetCollisionBounds().left && !collidedLeft)
             {
                 currentVel.y = -BOUNCE_PAD_JUMP_X;
+                audioManager.PlayJump();
+                grounded = false;
             }
             //if player collided from their left bound
             else if (collisionBounds.left > obj->GetCollisionBounds().right && nextPosRect.left <= obj->GetCollisionBounds().right && !collidedRight)
             {
                 currentVel.y = BOUNCE_PAD_JUMP_X;
+                audioManager.PlayJump();
+                grounded = false;
             }
         }
 

@@ -82,10 +82,11 @@ void AudioManager::PlayJump()
 	}
 }
 
-void AudioManager::Playfootstep()
+void AudioManager::Playfootstep(float pitchMultiplier)
 {
 	if (m_footstep_looped)
 	{
+		m_footstep_looped->SetPitch(pitchMultiplier);
 		m_footstep_looped->Play(true);
 	}
 }

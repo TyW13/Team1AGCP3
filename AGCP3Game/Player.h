@@ -106,7 +106,7 @@ private:
     bool canCollideRightWall = false;                   //for not letting the player to jump off the same wall twice
     bool canCollideLeftWall = false;                    //for not letting the player to jump off the same wall twice
 
-    //------ simple "collisions"
+    bool jumpSound = false;
     double elapsedtime = 0;								//for deactivating A and D buttons after the player has wall jumped
     bool isWallSliding = false;							//true whenever the player is wall sliding
     bool deactivate_A = false;							//deactivate A key input while wall jumping

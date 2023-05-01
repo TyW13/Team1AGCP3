@@ -23,7 +23,7 @@ public:
 
     void PlayShotgun();
     void PlayJump();
-    void Playfootstep();
+    void Playfootstep(float pitchMultiplier);
     void Stopfootstep();
 
     void OnNewAudioDevice() noexcept { m_retryAudio = true; }
