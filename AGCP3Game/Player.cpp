@@ -490,67 +490,66 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     }
                 }
 
-                if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
-                {
-                    rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
-                }
+                        if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
+                        {
+                            rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
+                        }
 
-                if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
-                {
-                    //if player collided from their bottom bound
-                    if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
-                    {
-                        currentVel.y = -BOUNCE_PAD_JUMP_Y;
+                        if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
+                        {
+                            //if player collided from their bottom bound
+                            if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
+                            {
+                                currentVel.y = -BOUNCE_PAD_JUMP_Y;
+                            }
+                            //if player collided from their top bound
+                            else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
+                            {
+                                currentVel.y = BOUNCE_PAD_JUMP_Y;
+                            }
+                            //if player collided from their right bound
+                            else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
+                            {
+                                currentVel.y = -BOUNCE_PAD_JUMP_X;
+                            }
+                            //if player collided from their left bound
+                            else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
+                            {
+                                currentVel.y = BOUNCE_PAD_JUMP_X;
+                            }
+                        }
+                        if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
+                        {
+                            rManager->GetObjects()[i]->SetActive(false);
+                            SetVelocity({ 0,0 });
+                            fired = false;
+
+
+                            canReloadGemJump = true;
+                            slowdown_modifier = 0.1;
+                        }
+                        else if (canReloadGemJump)
+                        {
+                            gemSlowdownRemaining -= dTime;
+                            if (gemSlowdownRemaining <= 0)
+                            {
+                                canReloadGemJump = false;
+                                slowdown_modifier = 1;
+                            }
+                        }
+                        else if (!canReloadGemJump)
+                        {
+                            //reset the slowdown time remaining
+                            gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
+                        }
+
+                        if (rManager->GetObjects()[i]->GetObjectType() == "EndZone" || kb.Q)
+                        {
+                            rManager->LoadNextZone(dManager);
+                        }
+                        }
                     }
-                    //if player collided from their top bound
-                    else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
-                    {
-                        currentVel.y = BOUNCE_PAD_JUMP_Y;
-                    }
-                    //if player collided from their right bound
-                    else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
-                    {
-                        currentVel.y = -BOUNCE_PAD_JUMP_X;
-                    }
-                    //if player collided from their left bound
-                    else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
-                    {
-                        currentVel.y = BOUNCE_PAD_JUMP_X;
-                    }
                 }
-
-                if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
-                {
-                    rManager->GetObjects()[i]->SetActive(false);
-                    SetVelocity({ 0,0 });
-                    fired = false;
-
-
-                    /*canReloadGemJump = true;
-                    slowdown_modifier = 0.1;*/
-                }
-                //else if (canReloadGemJump)
-                //{
-                //    gemSlowdownRemaining -= dTime;
-                //    if (gemSlowdownRemaining <= 0)
-                //    {
-                //        canReloadGemJump = false;
-                //        slowdown_modifier = 1;
-                //    }
-                //}
-                //else if (!canReloadGemJump)
-                //{
-                //    //reset the slowdown time remaining
-                //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
-                //}
-
-                if (rManager->GetObjects()[i]->GetObjectType() == "EndZone")
-                {
-                    rManager->LoadNextZone(dManager);
-                }
-            }
-        }
-    }
 
 
     //std::sort(gObjects.begin(), gObjects.end(), CompareDistance);
