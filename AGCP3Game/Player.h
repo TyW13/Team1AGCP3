@@ -9,13 +9,13 @@ class PlayerAnimation;
 class Player : public GameObject
 {
 public:
-	Player(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 })
-		: GameObject(dManager, texPath, position, scale, active, objSize, objType, isCollidable, objRect)
+	Player(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 0 ,0 })
+		: GameObject(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect)
 	{
-		Init(dManager, texPath, position, scale, active, objSize, objType, isCollidable, objRect);
+		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
 
-	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, bool isCollidable, RECT objRect = { 0, 0, 0 ,0 }) override;
+	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 0 ,0 }) override;
 	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime) override;
 	void Render(DeviceManager* dManager) override;
 
@@ -24,14 +24,14 @@ public:
 	bool GetActive() override { return isActive; }
 	DirectX::SimpleMath::Vector2 GetObjectSize() override { return objSize; }
 	std::string GetObjectType() override { return objType; }
-	bool GetIsCollidable() override { return isCollidable; }
+    int GetCollisionDirection() override { return collisionDirection; }
 	RECT GetCollisionBounds() override { return collisionBounds; }
 	virtual DirectX::SimpleMath::Vector2 GetPosition() { return mPos; }
 	virtual DirectX::SimpleMath::Vector2 GetScale() { return mScale; }
 
 	void SetActive(bool _isActive) override;
 	void SetObjectSize(DirectX::SimpleMath::Vector2 _objSize) override;
-	void SetIsCollidable(bool _isCollidable) override;
+    void SetCollisionDirection(int _direction);
 	void SetRect(RECT _objRect) override;
 	void SetPosition(DirectX::SimpleMath::Vector2 _position) override;
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
@@ -49,19 +49,13 @@ private:
 	bool isActive;
 	DirectX::SimpleMath::Vector2 objSize;
 	std::string objType;
-	bool isCollidable;
+    int collisionDirection;
 	RECT objRect;
 	static DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 
     void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
-
-    // Found at gamedev.net - Swept AABB Collision Detection and Response by BrendanL.K, posted by stu_pidd_cow April 30, 2013
-    void NewCheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
-    DirectX::SimpleMath::Vector4 GetSweptBroadphaseBox(Player* obj);
-    bool AABBCheck(DirectX::SimpleMath::Vector4 obj1, GameObject* obj2);
-    float SweptAABB(Player* obj1, GameObject* obj2, float& normalX, float& normalY, float dTime);
 
     bool collidedTop = false;
     bool collidedBottom = false;

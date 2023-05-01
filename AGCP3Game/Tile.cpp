@@ -1,13 +1,13 @@
 #include "Tile.h"
 
-void Tile::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void Tile::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, int _collisionDirection, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
 	isActive = _active;
 	objSize = _objSize;
 	objType = _objType;
-	isCollidable = _isCollidable;
+	collisionDirection = _collisionDirection;
 	objRect = _objRect;
 	mPos = _position;
 	mScale = _scale;
@@ -50,9 +50,9 @@ void Tile::SetObjectSize(DirectX::SimpleMath::Vector2 _objSize)
 	objSize = _objSize;
 }
 
-void Tile::SetIsCollidable(bool _isCollidable)
+void Tile::SetCollisionDirection(int _direction)
 {
-	isCollidable = _isCollidable;
+	collisionDirection = _direction;
 }
 
 void Tile::SetRect(RECT _objRect)

@@ -122,14 +122,4 @@ private:
     bool hasWallJumped = false;							//detect if wall jumped
 
     float spaceClickElapsedTime = 0.f;
-
-    enum Descriptors
-    {
-        Cat,
-        Tile,
-        Background,
-        Count,
-        BouncePad,
-        Gem
-    };
 };
