@@ -385,9 +385,12 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                 if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
                 {
+                    int yDiff = 0;
+                    int xDiff = 0;
+
                     switch (rManager->GetObjects()[i]->GetCollisionDirection())
                     {
-                    case(1):
+                    case(1):                                                                                        // Top
                         ///mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().top - (objSize.y * abs(mScale.y) - collisionPosOffset);							                        // Setting position to just outside obj
                         ///mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
                         //currentVel.y = 0;
@@ -408,9 +411,27 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                         break;
 
-                    case(2):
+                    case(2):                                                                                        // Top Right
+                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);
+                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);
+
+                        if (currentVel.y > 0 && yDiff <= xDiff)                                                               // Colliding from top
+                        {
+                            currentVel.y = 0;
+
+                            collidedTop = true;
+                            grounded = true;
+                            canShotGunJump = true;
+                            fired = false;
+                        }
+
+                        if (currentVel.x < 0 && xDiff < yDiff)
+                        {
+                            currentVel.x = 0;
+                        }
+
                         break;
-                    case(3):
+                    case(3):                                                                                        // Right
                         ///mPos.x = rManager->GetObjects()[i]->GetCollisionBounds().right + collisionPosOffset;																		        // Setting position to just outside tile
                         ///mPos.y += currentVel.y * dTime;																										        // Only adding velocity on non colliding axis
                         ///currentVel.x = 0;
@@ -436,6 +457,20 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         }
 
                         break;
+                    case(4):
+                        yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
+                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);
+
+                        if (currentVel.x < 0 && xDiff <= yDiff)
+                        {
+                            currentVel.x = 0;
+                        }
+                        if (currentVel.y < 0 && yDiff < xDiff)
+                        {
+                            currentVel.y = 0;
+                        }
+
+                        break;
                     case(5):
                         ///mPos.y = rManager->GetObjects()[i]->GetCollisionBounds().bottom + collisionPosOffset;																		        // Setting position to just outside obj
                         ///mPos.x += currentVel.x * dTime;																										        // Only adding velocity on non colliding axis
@@ -450,6 +485,20 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         if (currentVel.y < 0)
                         {
                             currentVel.y = 0;
+                        }
+
+                        break;
+                    case(6):
+                        yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
+                        xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
+
+                        if (currentVel.y < 0 && yDiff < xDiff)
+                        {
+                            currentVel.y = 0;
+                        }
+                        if (currentVel.x > 0 && xDiff <= yDiff)
+                        {
+                            currentVel.x = 0;
                         }
 
                         break;
@@ -483,6 +532,26 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         if (currentVel.x > 0)
                         {
                             currentVel.x = 0;
+                        }
+
+                        break;
+
+                    case(8):
+                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);
+                        xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
+
+                        if (currentVel.x > 0 && xDiff < yDiff)
+                        {
+                            currentVel.x = 0;
+                        }
+                        if (currentVel.y > 0 && yDiff <= xDiff)
+                        {
+                            currentVel.y = 0;
+
+                            collidedTop = true;
+                            grounded = true;
+                            canShotGunJump = true;
+                            fired = false;
                         }
 
                         break;

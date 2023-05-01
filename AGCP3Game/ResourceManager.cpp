@@ -19,7 +19,7 @@ void ResourceManager::Init(DeviceManager* dManager)
 	playerRect.right = 6;
 	playerRect.bottom = 16;
 
-	ReloadMap(dManager, 0);
+	ReloadMap(dManager, 2);
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
