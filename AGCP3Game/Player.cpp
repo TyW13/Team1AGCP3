@@ -117,8 +117,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         //apply a jump force to the player character
         currentVel += (direction * 2500);
 
-        //audioManager.m_shotgun->Play();
-
         fired = true;
         grounded = false;
         detectMouseClick = false;
@@ -498,25 +496,25 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     fired = false;
 
 
-                    /*canReloadGemJump = true;
-                    slowdown_modifier = 0.1;*/
+                    canReloadGemJump = true;
+                    slowdown_modifier = 0.1;
                 }
-                //else if (canReloadGemJump)
-                //{
-                //    gemSlowdownRemaining -= dTime;
-                //    if (gemSlowdownRemaining <= 0)
-                //    {
-                //        canReloadGemJump = false;
-                //        slowdown_modifier = 1;
-                //    }
-                //}
-                //else if (!canReloadGemJump)
-                //{
-                //    //reset the slowdown time remaining
-                //    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
-                //}
+                else if (canReloadGemJump)
+                {
+                    gemSlowdownRemaining -= dTime;
+                    if (gemSlowdownRemaining <= 0)
+                    {
+                        canReloadGemJump = false;
+                         slowdown_modifier = 1;
+                    }
+                }
+                else if (!canReloadGemJump)
+                {
+                    //reset the slowdown time remaining
+                    gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
+                }
 
-                if (rManager->GetObjects()[i]->GetObjectType() == "EndZone")
+                if (rManager->GetObjects()[i]->GetObjectType() == "EndZone" || kb.Q)
                 {
                     rManager->LoadNextZone(dManager);
                 }

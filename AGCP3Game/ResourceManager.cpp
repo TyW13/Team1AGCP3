@@ -4,8 +4,6 @@
 #include "ResourceManager.h"
 #include "Tile.h"
 #include "Player.h"
-#include "BouncePad.h"
-#include "Gem.h"
 
 using namespace DirectX;
 
