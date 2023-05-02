@@ -143,7 +143,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     {
         currentVel.x = PLAYER_SPEED;
         animState = 1;
-        //animState = 1;
     
         if (grounded)
         {
@@ -164,7 +163,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     {
         audioManager.Stopfootstep();
     }
-        //animState = 2;
     
     //deceleration
     //
@@ -189,7 +187,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
 
     if (grounded || coyoteTimeRemaining >= 0.0f && recordLastCollision == 1 && currentVel.x != 0)
     {
-        animState = 0;
         //set initial velocity, start timer, record button pressed down during only the first frame
         if (kb.Space)
         {

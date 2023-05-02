@@ -30,7 +30,6 @@ private:
 	float frameDuration = 0.05f; //time in seconds per frame (regulates animation speed)
 	float elapsedTime = Zero;
 	float deltaTime;
-	float delayTime;
 	bool PlayIdle = false;
 	int FramesTemp;
 	int currentFrame = Zero;
@@ -41,5 +40,5 @@ private:
 	int Frames;
 	int IdleOffset = 24;
 	int JumpOffset = 27;
-	float delaytime = 5.0f;
+	const float delaytime = 5.0f;
 };

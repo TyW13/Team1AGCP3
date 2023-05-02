@@ -11,6 +11,7 @@ using namespace DirectX::SimpleMath;
 
 void ShotgunAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
+	//Grabs all the necessary data
 	jsonPath = "Data/" + jsonPath;
 	if (jsonPath == "Data/Shotgun.json")
 	{
@@ -29,10 +30,12 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 	deltaTime = dTime;
 	elapsedTime += deltaTime;
 
+	//Checks to make sure the gun has fired before animating
 	if (currentFrame < 5)
 	{
 		animState = 1;
 	}
+	//Checks for when the gun is appearing/reloading
 	if (animState == 0)
 	{
 		if (currentFrame <= 5)
@@ -48,6 +51,7 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 			elapsedTime -= frameDuration;
 		}
 	}
+	//Checks to make the firing animation move along 
 	if (animState == 1)
 	{
 		if (currentFrame >= 6)
@@ -68,6 +72,7 @@ void ShotgunAnimation::Update(float dTime, GameObject& Sprite, int animState)
 
 void ShotgunAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animState)
 {
+	//Sets the necessary RECT
 	Sprite.SetRect(shotgunSpriteSheet[currentFrame]);
 }
 
@@ -109,7 +114,7 @@ void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 void ShotgunAnimation::LoadAnimationData(std::string jsonPath)
 {
 	constexpr int bufferMemory = 8192;
-	//Frameworks for any additional animation data that isnt created when creating a texture packer animation
+	//Grabs for any additional animation data that isnt created when creating a texture packer animation such as frame duration
 	FILE* Animation;
 	errno_t levelsStatus = fopen_s(&Animation, jsonPath.c_str(), "rb");
 	if (levelsStatus != 0)

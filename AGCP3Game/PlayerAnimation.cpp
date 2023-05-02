@@ -10,6 +10,7 @@ using namespace DirectX::SimpleMath;
 
 void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
+	//Grabs the necessary data for the animation
 	jsonPath = "Data/" + jsonPath;
 	if (jsonPath == "Data/Player.json")
 	{
@@ -25,8 +26,9 @@ void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 {
 		//calculate elapsed time
-		FramesTemp = Zero;//Temporary magic numbers unil animation data loading is complete
+		FramesTemp = Zero;
 		elapsedTime += dTime;
+		//If player is walking it plays that animation
 		if (animState == 1 || animState == 2)
 		{
 			PlayIdle = false;
@@ -45,10 +47,11 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 				elapsedTime -= frameDuration;
 			}
 		}
+		//Animation for idling/standing still
 		if (animState == 0)
 		{
 			FramesTemp = IdleFrames;
-			if (elapsedTime >= delayTime)
+			if (elapsedTime >= delaytime)
 			{
 				PlayIdle = true;
 			}
@@ -61,7 +64,7 @@ void PlayerAnimation::Update(float dTime, GameObject& Sprite, int animState)
 					{
 						currentFrame = Zero;
 					}
-					elapsedTime -= frameDuration;
+					elapsedTime = 0;
 				}
 			}
 		}
