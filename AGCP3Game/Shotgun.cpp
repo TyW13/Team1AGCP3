@@ -32,20 +32,25 @@ void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simpl
 
 void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
+	//Changes the origin to the center of the shotgun
 	mOrigin = DirectX::SimpleMath::Vector2(this->GetObjectSize().x / 2, this->GetObjectSize().y / 2);
+
+	//Sets Shotgun position to be attached to the player but at an offset away from them
 	DirectX::SimpleMath::Vector2 playerPos = rManager->GetPlayer()->GetPosition();
 	mPos = playerPos + PosOffset;
 
-
+	//Gets the cursors position and uses it and the shotguns position to find the angle the shotgun needs to point at using trigonometry
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
 	float DistX = cursorPos.x - mPos.x;
 	float DistY = cursorPos.y - mPos.y;
 	Rotation = atan(DistY / DistX);
+	//If the x is negative it rotates the gun 180 degrees
 	if (DistX < 0)
 	{
 		Rotation += Rads180;
 	}
+	//Checks to make sure the gun should appear and animate
 	if (rManager->GetPlayer()->GetGrounded() == true && AnimState == 1)
 	{
 		AnimState = 0;
