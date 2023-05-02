@@ -20,7 +20,7 @@ void ResourceManager::Init(DeviceManager* dManager)
 	playerRect.right = 6;
 	playerRect.bottom = 16;
 
-	ReloadMap(dManager, 0);
+	ReloadMap(dManager, 1);
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
@@ -290,7 +290,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	UnloadZone();
 
 	FILE* fp;
-	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset.json", "rb");		// opening
+	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset2.json", "rb");		// opening
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;
@@ -305,20 +305,15 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	int collisionWidth = 0;
 	int collisionHeight = 0;
 	std::string objType;
+	int collisionDirection;
+
 	bool isCollidable;
 
 	if (playerChar == nullptr)
 	{
-		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 5,2,13,17 });
-		shotgunChar = new Shotgun(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Shotgun", false, { 5,2,13,17 });
+		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", 0, { 5,2,13,17 });
+		shotgunChar = new Shotgun(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Shotgun", 0, { 5,2,13,17 });
 	}
-
-
-	if (playerChar == nullptr)
-	{
-		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", true, { 5,2,13,17 });
-	}
-
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -350,10 +345,12 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			collisionWidth = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
 			objType = tilesetDoc["tiles"].GetArray()[val]["class"].GetString();
+			collisionDirection = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetInt();
 
+			//DBOUT(collisionDirection);
 			if (objType == "Tile")
 			{   	
-				Tile* tile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* tile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(tile);
 			}
 			else if (objType == "Spawner")
@@ -369,30 +366,27 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 				shotgunChar->SetPosition(DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos));
 				shotgunChar->SetObjectSize(shotgunSize);
 
-				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* playerSpawner = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(playerSpawner);
-
-				//playerChar = new Player(dManager, L"Data/newtest_chara_walk.dds", DirectX::SimpleMath::Vector2(tileXPos, newPlayerYPos), objScale, true, playerSize, "Player", true, playerRect);
 			}
 			else if (objType == "Damageable")
 			{
-				Tile* damageable = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);				// Creating and pushing tile objects to m_Tiles vector
+				Tile* damageable = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(collisionWidth, collisionHeight), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
 				m_Objects.emplace_back(damageable);
-
 			}
 			else if (objType == "BouncePad")
 			{
-				Tile* bouncepad = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				Tile* bouncepad = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);
 				m_Objects.emplace_back(bouncepad);
 			}
 			else if (objType == "ReloadGem")
 			{
-				Tile* reloadGem = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				Tile* reloadGem = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);
 				m_Objects.emplace_back(reloadGem);
 			}
 			else if (objType == "EndZone")
 			{
-				Tile* endZoneTile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, true, tileRect);
+				Tile* endZoneTile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);
 				m_Objects.emplace_back(endZoneTile);
 			}
 		}
@@ -409,7 +403,6 @@ void ResourceManager::LoadNextZone(DeviceManager* dManager)
 	}
 	else
 	{
-
 		LoadNextMap(dManager);
 	}
 }
