@@ -1,14 +1,14 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 
-void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void GameObject::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, int _collisionDirection, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
 	isActive = _active;
 	objSize = _objSize;
 	objType = _objType;
-	isCollidable = _isCollidable;
+	collisionDirection = _collisionDirection;
 	objRect = _objRect;
 	mPos = _position;
 	mScale = _scale;
@@ -57,9 +57,9 @@ void GameObject::SetObjectSize(DirectX::SimpleMath::Vector2 _objSize)
 	objSize = _objSize;
 }
 
-void GameObject::SetIsCollidable(bool _isCollidable)
+void GameObject::SetCollisionDirection(int _direction)
 {
-	isCollidable = _isCollidable;
+	collisionDirection = _direction;
 }
 
 void GameObject::SetRect(RECT _objRect)
