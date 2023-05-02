@@ -50,17 +50,8 @@ void GameRenderer::Update(DX::StepTimer const& timer)
 
     float elapsedTime = float(timer.GetElapsedSeconds());
    
-
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// This is our game logic all here!
+    // Game logic
     framework.Update(dManager, elapsedTime);
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////////////////////
-
 
     PIXEndEvent();
 }
@@ -86,19 +77,17 @@ void GameRenderer::Render()
 // Message handlers
 void GameRenderer::OnActivated()
 {
-    // TODO: Game is becoming active window.
+
 }
 
 void GameRenderer::OnDeactivated()
 {
-    // TODO: Game is becoming background window.
+
 }
 
 void GameRenderer::OnSuspending()
 {
     framework.OnSuspending();
-
-    // TODO: Game is being power-suspended (or minimized).
 }
 
 void GameRenderer::OnResuming()
@@ -106,8 +95,6 @@ void GameRenderer::OnResuming()
     m_timer.ResetElapsedTime();
 
     framework.OnResuming();
-
-    // TODO: Game is being power-resumed (or returning from minimize).
 }
 
 void GameRenderer::OnWindowMoved()
@@ -127,14 +114,11 @@ void GameRenderer::OnWindowSizeChanged(int width, int height)
         return;
 
     dManager->CreateWindowSizeDependentResources();
-
-    // TODO: Game window is being resized.
 }
 
 // Properties
 void GameRenderer::GetDefaultSize(int& width, int& height) const noexcept
 {
-    // TODO: Change to desired default window size (note minimum size is 320x200).
     width = 1920;
     height = 1080;
 }

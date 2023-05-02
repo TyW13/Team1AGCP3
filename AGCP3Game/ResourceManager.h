@@ -8,8 +8,6 @@
 
 using namespace rapidjson;
 
-//class Texture;
-//class GameObject;
 class PlayerCharacter;
 class Tile;
 class Player;

@@ -110,8 +110,6 @@ void PlayerAnimation::SwitchTex(GameObject& Sprite, int currentFrame, int animSt
 		}
 		if (animState == 2)
 		{
-
-			//Code for Flipped sprite CURRENTLY NOT COMPATIBLE WITH COLLISION
 			Sprite.SetScale(Vector2(-kSizeUp, kSizeUp));
 			RECT ReverseWSS = {walkspriteSheet[currentFrame].right, walkspriteSheet[currentFrame].top, walkspriteSheet[currentFrame].left, walkspriteSheet[currentFrame].bottom };
 			Sprite.SetRect(ReverseWSS);

@@ -5,8 +5,6 @@
 #include "Tile.h"
 #include "Player.h"
 #include "Shotgun.h"
-#include "BouncePad.h"
-#include "Gem.h"
 
 using namespace DirectX;
 
@@ -20,7 +18,7 @@ void ResourceManager::Init(DeviceManager* dManager)
 	playerRect.right = 6;
 	playerRect.bottom = 16;
 
-	ReloadMap(dManager, 1);
+	ReloadMap(dManager, 0);
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
@@ -88,30 +86,6 @@ void ResourceManager::Terminate()
 	}
 }
 
-//void ResourceManager::LoadTexturesFromFile()
-//{
-//	FILE* gTexturesFile;
-//	errno_t texturesStatus = fopen_s(&gTexturesFile, "Data/GameTextures.json", "rb");
-//	if (texturesStatus != 0)
-//	{
-//		printf("ERROR: Could not open file!");
-//		assert(false);
-//	}
-//	char readBuffer[4096];
-//	rapidjson::FileReadStream is(gTexturesFile, readBuffer, sizeof(readBuffer));
-//	rapidjson::Document texturesDoc;
-//	texturesDoc.ParseStream(is);
-//	fclose(gTexturesFile);
-//
-//	Value::Array texturesArray = texturesDoc["textures"].GetArray();
-//	for (int i = 0; i < texturesArray.Size(); i++)
-//	{
-//		std::string fileStr = texturesArray[0].GetString();																				// To convert from std::string to std::wstring
-//		std::wstring file(fileStr.begin(), fileStr.end());
-//		m_TexPaths.push_back(file);
-//	}
-//}
-
 // Goes through levels json file to add all needed level names to vector
 void ResourceManager::LoadLevelsFromFile()
 {
@@ -135,31 +109,6 @@ void ResourceManager::LoadLevelsFromFile()
 		Map* newMap = new Map(("Data/" + file).c_str());
 		m_Levels.emplace_back(newMap);
 	}
-}
-
-//std::wstring ResourceManager::GetTexture(const std::string& tName)
-//{
-//	std::string nameStr = tName;																				// To convert from std::string to std::wstring
-//	std::wstring texName(nameStr.begin(), nameStr.end());
-//
-//	int i = 0;
-//	if (std::find(m_TexPaths.begin(), m_TexPaths.end(), texName) != m_TexPaths.end())
-//	{
-//		return m_TexPaths[i];
-//		i++;
-//	}
-//}
-
-// Reduces the given texture path to just the image name to give it a more appropriate name
-std::string ResourceManager::SetTexName(std::string path)
-{
-	// path is data/(.dds)
-	path.substr(0, 1);
-	auto itr = path.find_last_of(".");
-	std::string noSuff = path.substr(0, itr);
-	auto lastSlash = noSuff.find_last_of("/");
-	std::string noPath = noSuff.substr(lastSlash + 1, noSuff.length() - lastSlash);
-	return noPath;
 }
 
 void ResourceManager::SetCurrentMap(int _currentMapNum)
@@ -279,10 +228,10 @@ void ResourceManager::UnloadZone()
 		for (int i = m_Objects.size() - 1; i >= 0; i--)
 		{
 			delete m_Objects[i];
-			m_Objects[i] = nullptr;
 			m_Objects.pop_back();
 		}
 	}
+
 }
 
 void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
@@ -290,7 +239,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	UnloadZone();
 
 	FILE* fp;
-	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset2.json", "rb");		// opening
+	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset.json", "rb");		// opening
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;
@@ -326,7 +275,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			size_t xPos = i % GetCurrentMap()->getWidth();										//
 			size_t yPos = floor(i / GetCurrentMap()->getWidth());								//
 
-			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * objScale.x;						// Tile object x and y position on screen
+			float tileXPos = xPos * GetCurrentMap()->getTileWidth() * objScale.x;				// Tile object x and y position on screen
 			float tileYPos = yPos * GetCurrentMap()->getTileWidth() * objScale.y;
 
 			float x1 = x * GetCurrentMap()->getTileWidth();										// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
@@ -345,7 +294,6 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 			objType = tilesetDoc["tiles"].GetArray()[val]["class"].GetString();
 			collisionDirection = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetInt();
 
-			//DBOUT(collisionDirection);
 			if (objType == "Tile")
 			{   	
 				Tile* tile = new Tile(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(GetCurrentMap()->getTileWidth(), GetCurrentMap()->getTileHeight()), objType, collisionDirection, tileRect);				// Creating and pushing tile objects to m_Tiles vector
@@ -419,7 +367,6 @@ void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
 	}
 }
 
-// TODO - Call Save function with button on UI and call Load function on rManager Init
 void ResourceManager::SavePlayerData()
 {
 	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 

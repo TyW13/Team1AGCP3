@@ -38,7 +38,7 @@ void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float d
 
 	//Sets Shotgun position to be attached to the player but at an offset away from them
 	DirectX::SimpleMath::Vector2 playerPos = rManager->GetPlayer()->GetPosition();
-	mPos = playerPos + (rManager->GetPlayer()->GetObjectSize() * rManager->GetPlayer()->GetScale()) / 2/*+ PosOffset*/;
+	mPos = playerPos + PosOffset;
 
 	//Gets the cursors position and uses it and the shotguns position to find the angle the shotgun needs to point at using trigonometry
 	POINT cursorPos;

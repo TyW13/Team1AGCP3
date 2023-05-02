@@ -89,17 +89,17 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-        HWND hwnd = CreateWindowExW(0, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_OVERLAPPEDWINDOW,
+        // Change to CreateWindowExW(0, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_OVERLAPPEDWINDOW, for windowed mode
+        // Currently fullscreen mode
+        HWND hwnd = CreateWindowExW(WS_EX_TOPMOST, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_POPUP,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
             nullptr);
-        // TODO: Change to CreateWindowExW(WS_EX_TOPMOST, L"Y3PROJECT3Team1WindowClass", g_szAppName, WS_POPUP,
-        // to default to fullscreen.
 
         if (!hwnd)
             return 1;
 
-        ShowWindow(hwnd, nCmdShow);
-        // TODO: Change nCmdShow to SW_SHOWMAXIMIZED to default to fullscreen.
+        // Change to mCmdShow for windowed
+        ShowWindow(hwnd, SW_SHOWMAXIMIZED);
 
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(g_game.get()));
 
@@ -143,8 +143,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static bool s_in_sizemove = false;
     static bool s_in_suspend = false;
     static bool s_minimized = false;
-    static bool s_fullscreen = false;
-    // TODO: Set s_fullscreen to true if defaulting to fullscreen.
+    static bool s_fullscreen = true;
+    // Set s_fullscreen to false if not defaulting to fullscreen.
 
     auto game = reinterpret_cast<GameRenderer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     auto audio = reinterpret_cast<AudioManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));

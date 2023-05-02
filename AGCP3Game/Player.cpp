@@ -49,15 +49,6 @@ void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dT
         grounded = false;
     }
 
-    /*if (canCollideRightWall)
-    {
-        canCollideLeftWall = false;
-    }
-    if (canCollideLeftWall)
-    {
-        canCollideRightWall = false;
-    }*/
-
     // Check if the player is on the ground
     if (grounded)
     {
@@ -96,6 +87,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
     mouse = dManager->GetMouse()->GetState();
     //update player core movement
     mPos += currentVel * slowdown_modifier * dTime;        //slowdown modifier by default should be 1
+    
 
     //--------- mouse
     if (GetAsyncKeyState(VK_LBUTTON) && detectMouseClick && !fired)
@@ -115,9 +107,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
 
         //apply a jump force to the player character
-        currentVel += (direction * 3500);
-
-        //audioManager.m_shotgun->Play();
+        currentVel += (direction * 3250);
 
         fired = true;
         grounded = false;
@@ -291,7 +281,6 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         //wall jump
         if (isWallSliding && kb.Space && !hasWallJumped)
         {
-            //start_time_wall_jump = std::chrono::high_resolution_clock::now();
             currentVel.y = -WALL_JUMP_VEL_Y;
             (currentVel.x > 0) ? currentVel.x = -WALL_JUMP_VEL_X : (currentVel.x < 0) ? currentVel.x = WALL_JUMP_VEL_X : 0 ;
             elapsedtime = 0;
@@ -325,21 +314,13 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
                 currentVel.y = SLIDE_DOWN_VEL;
             }
         }
-        //bool addGravity = false;
 
-        //DBOUT(std::to_string(currentVel.y) + "\n");
         //if the player has slowed down moving upward activate the gravity to take them back down
         if (currentVel.y >= -40 && !isWallSliding)
         {
-            //addGravity = true;
             if (currentVel.y > GRAVITY) { currentVel.y = GRAVITY; }
             else { currentVel.y += 1.02 * (GRAVITY / 10); }
         }
-
-        //addGravity = true;
-        //if (currentVel.y > GRAVITY) { currentVel.y = GRAVITY; }
-        //else { currentVel.y += 1.02 * (GRAVITY / 10); }
-        //DBOUT(addGravity);
     }
 }
 
@@ -378,17 +359,20 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     DirectX::SimpleMath::Vector2 nextPos = mPos + currentVel * dTime;															// Player future position after forces applied
 
 
-    RECT nextPosRect = RECT{
+    RECT nextPosRect = RECT{                                                                                                    // Rect representing player future position collision bounds
         static_cast<long> (nextPos.x),
         static_cast<long> (nextPos.y),
         static_cast<long> (nextPos.x + objSize.x * abs(mScale.x)),
         static_cast<long> (nextPos.y + objSize.y * abs(mScale.y)) };
 
-    auto tempCollisionBoundsLeft = collisionBounds.left;
-    auto tempCollisionBoundsRight = collisionBounds.right;
+    auto tempCollisionBoundsLeft = collisionBounds.left;                                                                        // Temporarily storing left and right bounds positions to assign back after             
+    auto tempCollisionBoundsRight = collisionBounds.right;                                                                      //collision if player is facing left
 
     if (mScale.x <= 0)
     {
+        auto tempCollisionBoundsLeft = collisionBounds.left;                                                                        // Temporarily storing left and right bounds positions to assign back after             
+        auto tempCollisionBoundsRight = collisionBounds.right;                                                                      //collision if player is facing left
+
         collisionBounds.left = tempCollisionBoundsRight;
         collisionBounds.right = tempCollisionBoundsLeft;
     }
@@ -396,28 +380,12 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     for (int i = 0; i < rManager->GetObjects().size(); ++i)
     {
         if (rManager->GetObjects()[i]->GetObjectType() != "Player")
-        {
-			// Keeping for now in merge, dont forget to compare
-            //if (animState == 2)
-            //{
-            //    LONG TempStorage = collisionBounds.left;
-            //    LONG TempStorage2 = collisionBounds.right;
-            //    collisionBounds.left = TempStorage2;
-            //    collisionBounds.right = TempStorage;
-            //    TempStorage = nextPosRect.left;
-            //    TempStorage2 = nextPosRect.right;
-            //    nextPosRect.right = TempStorage;
-            //    nextPosRect.left = TempStorage2;
-            //}
-			///////////////////////////////////////////////////////
-			
-            if (nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right &&
+        {	
+            if (nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
                 nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left &&
                 nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom &&
                 nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top)
             {
-                float collisionPosOffset = 1;               // Value to offset player by when they collide with an object
-
                 if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
                 {
                     int yDiff = 0;
@@ -425,8 +393,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                     switch (rManager->GetObjects()[i]->GetCollisionDirection())
                     {
-                    case(1):                                                                                        // Top
-                        //(!isWallSliding) ? currentVel.y = 0 : 0;
+                    case(1):                                                                                        // Top facing tile
                         collidedTop = true;
                         grounded = true;
                         canShotGunJump = true;
@@ -440,11 +407,11 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                         break;
 
-                    case(2):                                                                                        // Top Right
-                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);
-                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);
+                    case(2):                                                                                        // Top Right facing tile
+                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);      // For each corner tile, calculate distance between appropriate sides for collision
+                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);      //
 
-                        if (currentVel.y > 0 && yDiff <= xDiff)                                                               // Colliding from top
+                        if (currentVel.y > 0 && yDiff <= xDiff)                                                     // Colliding from top of tile
                         {
                             currentVel.y = 0;
 
@@ -454,27 +421,14 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                             fired = false;
                         }
 
-                        if (currentVel.x < 0 && xDiff < yDiff)
+                        if (currentVel.x < 0 && xDiff < yDiff)                                                      // Colliding from right of tile
                         {
                             currentVel.x = 0;
 
                             collidedRight = true;
                         }
                         break;
-                    case(3):                                                                                        // Right
-                        //canCollideLeftWall = true;
-                        //recordLastCollision = 4;
-
-                        //if (kb.A && !deactivate_A)
-                        //{
-                        //    isWallSliding = true;
-                        //}
-                        //else
-                        //{
-                        //    isWallSliding = false;
-                        //}
-                        //DBOUT("collidedLeft");
-
+                    case(3):                                                                                        // Right facing tile
                         if (currentVel.x < 0)
                         {
                             currentVel.x = 0;
@@ -483,7 +437,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         }
 
                         break;
-                    case(4):
+                    case(4):                                                                                        // Bottom right facing tile
                         yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
                         xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);
 
@@ -501,12 +455,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         }
 
                         break;
-                    case(5):
-                        //(!isWallSliding) ? currentVel.y = 0 : 0;
-
-
-                        //DBOUT("collided bottom");
-
+                    case(5):                                                                                        // Bottom facing tile
                         if (currentVel.y < 0)
                         {
                             currentVel.y = 0;
@@ -516,7 +465,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         }
 
                         break;
-                    case(6):
+                    case(6):                                                                                        // Bottom left facing tile
                         yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
                         xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
 
@@ -534,7 +483,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         }
 
                         break;
-                    case(7):
+                    case(7):                                                                                        // Left facing tile
                         if (currentVel.x > 0)
                         {
                             currentVel.x = 0;
@@ -544,7 +493,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 						
                         break;
 						
-                    case(8):
+                    case(8):                                                                                        // Top left facing tile
                         yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);
                         xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
 
@@ -616,7 +565,6 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 					rManager->GetObjects()[i]->SetActive(false);
 					SetVelocity({ 0,0 });
 					fired = false;
-					////////////////////////////////////////////////////////////////////
 
 					canReloadGemJump = true;
 					slowdown_modifier = 0.1;
@@ -644,7 +592,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
         }
     }
 	
-	collisionBounds.left = tempCollisionBoundsLeft;
+	collisionBounds.left = tempCollisionBoundsLeft;                                                                     // Correcting collision bounds after collision so player faces left again if they were before
     collisionBounds.right = tempCollisionBoundsRight;
 }
 

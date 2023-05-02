@@ -1,5 +1,5 @@
 { "columns":4,
- "image":"master_sheet.png",
+ "image":"master_sheet2.png",
  "imageheight":128,
  "imagewidth":32,
  "margin":0,
@@ -34,7 +34,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -61,7 +67,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -88,7 +100,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -115,7 +133,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -142,7 +166,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -169,7 +199,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":3
+                }]
         }, 
         {
          "class":"Tile",
@@ -196,7 +232,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":5
+                }]
         }, 
         {
          "class":"Tile",
@@ -223,7 +265,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":7
+                }]
         }, 
         {
          "class":"Tile",
@@ -250,7 +298,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":2
+                }]
         }, 
         {
          "class":"Tile",
@@ -277,7 +331,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":4
+                }]
         }, 
         {
          "class":"Tile",
@@ -304,7 +364,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":6
+                }]
         }, 
         {
          "class":"Tile",
@@ -331,7 +397,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":8
+                }]
         }, 
         {
          "class":"Tile",
@@ -358,7 +430,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":2
+                }]
         }, 
         {
          "class":"Tile",
@@ -385,7 +463,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":4
+                }]
         }, 
         {
          "class":"Tile",
@@ -412,7 +496,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":6
+                }]
         }, 
         {
          "class":"Tile",
@@ -439,7 +529,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":8
+                }]
         }, 
         {
          "class":"Tile",
@@ -466,7 +562,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -493,7 +595,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":3
+                }]
         }, 
         {
          "class":"Tile",
@@ -520,7 +628,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":5
+                }]
         }, 
         {
          "class":"Tile",
@@ -547,7 +661,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":7
+                }]
         }, 
         {
          "class":"Tile",
@@ -574,7 +694,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":2
+                }]
         }, 
         {
          "class":"Tile",
@@ -601,7 +727,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":4
+                }]
         }, 
         {
          "class":"Tile",
@@ -628,7 +760,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":6
+                }]
         }, 
         {
          "class":"Tile",
@@ -655,7 +793,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":8
+                }]
         }, 
         {
          "class":"Tile",
@@ -682,7 +826,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -709,7 +859,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -736,7 +892,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -763,7 +925,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -790,7 +958,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -817,7 +991,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":3
+                }]
         }, 
         {
          "class":"Tile",
@@ -844,7 +1024,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":5
+                }]
         }, 
         {
          "class":"Tile",
@@ -871,7 +1057,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":7
+                }]
         }, 
         {
          "class":"Tile",
@@ -898,7 +1090,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":2
+                }]
         }, 
         {
          "class":"Tile",
@@ -925,7 +1123,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":4
+                }]
         }, 
         {
          "class":"Tile",
@@ -952,7 +1156,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":6
+                }]
         }, 
         {
          "class":"Tile",
@@ -979,7 +1189,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":8
+                }]
         }, 
         {
          "class":"Tile",
@@ -1006,7 +1222,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1033,7 +1255,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1060,7 +1288,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1087,7 +1321,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1114,7 +1354,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -1141,7 +1387,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":3
+                }]
         }, 
         {
          "class":"Tile",
@@ -1168,7 +1420,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":5
+                }]
         }, 
         {
          "class":"Tile",
@@ -1195,7 +1453,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":7
+                }]
         }, 
         {
          "class":"Tile",
@@ -1222,7 +1486,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":2
+                }]
         }, 
         {
          "class":"Tile",
@@ -1249,7 +1519,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":4
+                }]
         }, 
         {
          "class":"Tile",
@@ -1276,7 +1552,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":6
+                }]
         }, 
         {
          "class":"Tile",
@@ -1303,7 +1585,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":8
+                }]
         }, 
         {
          "class":"Tile",
@@ -1330,7 +1618,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1357,7 +1651,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1384,7 +1684,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1411,7 +1717,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1438,7 +1750,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":1
+                }]
         }, 
         {
          "class":"Tile",
@@ -1465,7 +1783,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":3
+                }]
         }, 
         {
          "class":"Tile",
@@ -1492,7 +1816,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":5
+                }]
         }, 
         {
          "class":"Tile",
@@ -1530,7 +1860,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":7
+                }]
         }, 
         {
          "class":"Damageable",
@@ -1543,21 +1879,27 @@
              "objects":[
                     {
                      "class":"",
-                     "height":5,
+                     "height":1,
                      "id":1,
                      "name":"",
                      "rotation":0,
                      "visible":true,
-                     "width":5,
+                     "width":3,
                      "x":0,
-                     "y":3
+                     "y":7
                     }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":9
+                }]
         }, 
         {
          "class":"Tile",
@@ -1584,7 +1926,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Tile",
@@ -1611,7 +1959,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"Spawner",
@@ -1638,7 +1992,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"ReloadGem",
@@ -1665,7 +2025,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":9
+                }]
         }, 
         {
          "class":"EndZone",
@@ -1692,7 +2058,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":9
+                }]
         }, 
         {
          "class":"Gem",
@@ -1719,7 +2091,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":0
+                }]
         }, 
         {
          "class":"BouncePad",
@@ -1746,7 +2124,13 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "properties":[
+                {
+                 "name":"CollisionDirection",
+                 "type":"int",
+                 "value":9
+                }]
         }],
  "tilewidth":8,
  "type":"tileset",

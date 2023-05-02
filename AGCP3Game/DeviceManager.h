@@ -53,9 +53,9 @@ public:
 
     enum Descriptors
     {
-        Cat,
+        Player,
         Tile,
-        Background,
+        Shotgun,
         Count,
     };
 
@@ -92,7 +92,6 @@ public:
         return m_fullscreenRect;
     }
 
-    //enum  Descriptors GetDescriptors() { return Descriptors; }
 private:
     std::unique_ptr<DX::DeviceResources> deviceResources;
     ID3D12Device* device;
@@ -127,14 +126,6 @@ private:
 
 
     Descriptors mDescriptors;
-
-
-
-
-
-
-
-    //game logic, will move later
 
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
     std::unique_ptr<DirectX::Mouse> m_mouse;

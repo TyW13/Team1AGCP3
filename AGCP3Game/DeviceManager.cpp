@@ -1,6 +1,3 @@
-//
-// Game.cpp
-//
 #include "stdafx.h"
 
 #include "DeviceManager.h"
@@ -170,12 +167,6 @@ void DeviceManager::OnDeviceRestored()
 }
 void DeviceManager::BeginRender()
 {
-    // Don't try to render anything before the first Update.
-    //if (m_timer.GetFrameCount() == 0)
-    //{
-    //    return;
-    //}
-
     // Prepare the command list to render a new frame.
     deviceResources->Prepare();
 
