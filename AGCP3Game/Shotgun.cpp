@@ -3,14 +3,14 @@
 #include "Shotgun.h"
 #include <math.h> 
 
-void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, bool _isCollidable, RECT _objRect)
+void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale, bool _active, DirectX::SimpleMath::Vector2 _objSize, std::string _objType, int _collisionDirection, RECT _objRect)
 {
 	std::string tileRectsString = std::to_string(_objRect.left) + std::to_string(_objRect.top) + std::to_string(_objRect.right) + std::to_string(_objRect.bottom);
 
 	isActive = _active;
 	objSize = _objSize;
 	objType = _objType;
-	isCollidable = _isCollidable;
+	collisionDirection = _collisionDirection;
 	objRect = _objRect;
 	mPos = _position;
 	mScale = _scale;
@@ -27,6 +27,7 @@ void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simpl
 	auto uploadResourcesFinished = dManager->GetResourceUpload()->End(
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
+
 	Anim.Init("Shotgun.json", *this);
 }
 
@@ -34,7 +35,7 @@ void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float d
 {
 	mOrigin = DirectX::SimpleMath::Vector2(this->GetObjectSize().x / 2, this->GetObjectSize().y / 2);
 	DirectX::SimpleMath::Vector2 playerPos = rManager->GetPlayer()->GetPosition();
-	mPos = playerPos + PosOffset;
+	mPos = playerPos + (rManager->GetPlayer()->GetObjectSize() * rManager->GetPlayer()->GetScale()) / 2/*+ PosOffset*/;
 
 
 	POINT cursorPos;
@@ -46,7 +47,7 @@ void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float d
 	{
 		Rotation += Rads180;
 	}
-	if (rManager->GetPlayer()->GetGrounded() == true && AnimState == 1)
+	if (rManager->GetPlayer()->GetFired() == false && AnimState == 1)
 	{
 		AnimState = 0;
 	}
@@ -76,9 +77,9 @@ void Shotgun::SetObjectSize(DirectX::SimpleMath::Vector2 _objSize)
 	objSize = _objSize;
 }
 
-void Shotgun::SetIsCollidable(bool _isCollidable)
+void Shotgun::SetCollisionDirection(int _direction)
 {
-	isCollidable = _isCollidable;
+	collisionDirection = _direction;
 }
 
 void Shotgun::SetRect(RECT _objRect)

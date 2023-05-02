@@ -44,7 +44,6 @@ public:
     void SetVelocity(DirectX::SimpleMath::Vector2 _newVel) { currentVel = _newVel; }
 
 private:
-    static bool Player::CompareDistance(GameObject* a, GameObject* b);
     AudioManager audioManager;
     PlayerAnimation playerAnim;
     PlayerAnimation shotgunAnim;
@@ -60,9 +59,6 @@ private:
 	static DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
-
-
-
 
     void CheckCollision(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 
@@ -92,7 +88,7 @@ private:
     const float WALL_JUMP_VEL_X = 1500;
     const float SLIDE_DOWN_VEL = 80;					//sliding down velocity
     const float GRAVITY = 500;
-    const float PLAYER_SPEED = 400;
+    const float PLAYER_SPEED = 350;
     const float DRAG_X = 0.82;				            //for deceleration in x-axis on the ground
     const float DRAG_X_IN_AIR = 0.88;			    	//for deceleration in x-axis in air
     const float	DRAG_Y = 0.92;				            //for deceleration in y-axis

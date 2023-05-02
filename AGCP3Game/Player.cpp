@@ -115,7 +115,7 @@ void Player::UpdateInput(DeviceManager* dManager, float dTime)
         direction /= sqrt(pow(direction.x, 2) + pow(direction.y, 2));
 
         //apply a jump force to the player character
-        currentVel += (direction * 2500);
+        currentVel += (direction * 3500);
 
         //audioManager.m_shotgun->Play();
 
@@ -357,23 +357,23 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     collidedLeft = false;
     collidedRight = false;
 
-    //float maxVel = 30.f;
-    //if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
-    //{
-    //    currentVel.x = maxVel / dTime;
-    //}
-    //else if (currentVel.x * dTime <= -maxVel)
-    //{
-    //    currentVel.x = -maxVel / dTime;
-    //}
-    //if (currentVel.y * dTime >= maxVel)
-    //{
-    //    currentVel.y = maxVel / dTime;
-    //}
-    //else if (currentVel.y * dTime <= -maxVel)
-    //{
-    //    currentVel.y = -maxVel / dTime;
-    //}
+    float maxVel = 30.f;
+    if (currentVel.x * dTime >= maxVel)													// Making sure speed doesnt exceed max speed
+    {
+        currentVel.x = maxVel / dTime;
+    }
+    else if (currentVel.x * dTime <= -maxVel)
+    {
+        currentVel.x = -maxVel / dTime;
+    }
+    if (currentVel.y * dTime >= maxVel)
+    {
+        currentVel.y = maxVel / dTime;
+    }
+    else if (currentVel.y * dTime <= -maxVel)
+    {
+        currentVel.y = -maxVel / dTime;
+    }
 
     mPos.x = std::ceil(mPos.x);
     mPos.y = std::ceil(mPos.y);
@@ -384,7 +384,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
     RECT nextPosRect = RECT{
         static_cast<long> (nextPos.x),
         static_cast<long> (nextPos.y),
-        static_cast<long> (nextPos.x + objSize.x * mScale.x),
+        static_cast<long> (nextPos.x + objSize.x * abs(mScale.x)),
         static_cast<long> (nextPos.y + objSize.y * abs(mScale.y)) };
 
     auto tempCollisionBoundsLeft = collisionBounds.left;
@@ -401,17 +401,17 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
         if (rManager->GetObjects()[i]->GetObjectType() != "Player")
         {
 			// Keeping for now in merge, dont forget to compare
-            if (animState == 2)
-            {
-                LONG TempStorage = collisionBounds.left;
-                LONG TempStorage2 = collisionBounds.right;
-                collisionBounds.left = TempStorage2;
-                collisionBounds.right = TempStorage;
-                TempStorage = nextPosRect.left;
-                TempStorage2 = nextPosRect.right;
-                nextPosRect.right = TempStorage;
-                nextPosRect.left = TempStorage2;
-            }
+            //if (animState == 2)
+            //{
+            //    LONG TempStorage = collisionBounds.left;
+            //    LONG TempStorage2 = collisionBounds.right;
+            //    collisionBounds.left = TempStorage2;
+            //    collisionBounds.right = TempStorage;
+            //    TempStorage = nextPosRect.left;
+            //    TempStorage2 = nextPosRect.right;
+            //    nextPosRect.right = TempStorage;
+            //    nextPosRect.left = TempStorage2;
+            //}
 			///////////////////////////////////////////////////////
 			
             if (nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right &&
@@ -583,6 +583,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     {
                         currentVel.y = -BOUNCE_PAD_JUMP_Y;
 
+                        canShotGunJump = true;
                         fired = false;
                     }
                     //if player collided from their top bound
@@ -590,6 +591,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     {
                         currentVel.y = BOUNCE_PAD_JUMP_Y;
 
+                        canShotGunJump = true;
                         fired = false;
                     }
                     //if player collided from their right bound
@@ -597,6 +599,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     {
                         currentVel.y = -BOUNCE_PAD_JUMP_X;
 
+                        canShotGunJump = true;
                         fired = false;
                     }
                     //if player collided from their left bound
@@ -604,6 +607,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     {
                         currentVel.y = BOUNCE_PAD_JUMP_X;
 
+                        canShotGunJump = true;
                         fired = false;
                     }
                 }

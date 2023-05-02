@@ -307,8 +307,6 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 	std::string objType;
 	int collisionDirection;
 
-	bool isCollidable;
-
 	if (playerChar == nullptr)
 	{
 		playerChar = new Player(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", 0, { 5,2,13,17 });
