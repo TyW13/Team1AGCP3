@@ -421,16 +421,6 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
             {
                 float collisionPosOffset = 1;               // Value to offset player by when they collide with an object
 
-                for (int i = 0; i < rManager->GetObjects().size(); ++i)
-                {
-                    if (rManager->GetObjects()[i]->GetObjectType() != "Player")
-                    {
-                        if (nextPosRect.left < rManager->GetObjects()[i]->GetCollisionBounds().right &&
-                            nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left &&
-                            nextPosRect.top < rManager->GetObjects()[i]->GetCollisionBounds().bottom &&
-                            nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top)
-                        {                          
-					}
                 if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
                 {
                     int yDiff = 0;
@@ -473,7 +463,6 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                             collidedRight = true;
                         }
-
                         break;
                     case(3):                                                                                        // Right
                         //canCollideLeftWall = true;
