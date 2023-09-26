@@ -1,7 +1,4 @@
-#include "stdafx.h"
-
 #include "DeviceManager.h"
-#include "Framework.h"
 
 #include <Keyboard.h>
 #include <Mouse.h>

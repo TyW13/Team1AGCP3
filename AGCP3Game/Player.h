@@ -1,13 +1,8 @@
 #pragma once
-#include "GameObject.h"
 #include "AudioManager.h"
 #include "PlayerAnimation.h"
-#include "AudioManager.h"
-#include "ShotgunAnimation.h"
 
 class ResourceManager;
-class PlayerAnimation;
-class ShotgunAnimation;
 
 class Player : public GameObject
 {

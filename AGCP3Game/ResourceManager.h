@@ -1,24 +1,21 @@
 #pragma once
-#include "GameObject.h"
-
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 
 #include <fstream>;
 
-using namespace rapidjson;
+#include "Player.h"
 
-class PlayerCharacter;
-class Tile;
-class Player;
+class DeviceManager;
+class GameObject;
+//class Player;
 class Shotgun;
-class Player;
 
 class Layer
 {
 public:
 	Layer() {}
-	Layer(Value& value);
+	Layer(rapidjson::Value& value);
 	~Layer(){}
 
 	std::vector<int> GetData() { return data; }
@@ -35,16 +32,16 @@ public:
 
 private:
 	std::vector<int> data;
-	std::string name;
-	int id;
-	int opacity;
-	int height;
-	int width;
-	std::string image;
-	std::string layersType;
-	bool visible;
-	int x;
-	int y;
+	std::string name = "";
+	int id = 0;
+	int opacity = 0;
+	int height = 0;
+	int width = 0;
+	std::string image = "";
+	std::string layersType = "";
+	bool visible = false;
+	int x = 0;
+	int y = 0;
 };
 
 class Map
@@ -124,7 +121,6 @@ public:
 	void Terminate();
 
 	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
-	std::string SetTexName(std::string path);										// Used to remove unneeded parts of texture path to get the images file name
 
 	int GetCurrentMapNum() { return currentMapNum; }
 	Map* GetCurrentMap()															// Getter for map object using currentMapNum set elsewhere
@@ -151,13 +147,10 @@ public:
 private:
 	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
 	std::vector<std::wstring> m_TexPaths;
-	Player* playerChar;
-	Shotgun* shotgunChar;
+	Player* playerChar = NULL;
+	Shotgun* shotgunChar = NULL;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
-	int currentMapNum;					
-
-	int collisionWidth;
-	int collisionHeight;
+	int currentMapNum = 0;					
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
 };

@@ -1,4 +1,3 @@
-
 #include "Framework.h"
 
 void Framework::Init(DeviceManager* dManager)

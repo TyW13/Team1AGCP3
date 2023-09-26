@@ -2,19 +2,11 @@
 // Main.cpp
 //
 
-#include "stdafx.h"
-#include "Framework.h"
 #include "GameRenderer.h"
-#include <Windows.h>
-#include <Keyboard.h>
-#include <Mouse.h>
 //audio
-#include "AudioManager.h"
 #include <Dbt.h>
 #include <ksmedia.h>
-//keyboard and mouse
-#include <Keyboard.h>
-#include <Mouse.h>
+
 
 using namespace DirectX;
 

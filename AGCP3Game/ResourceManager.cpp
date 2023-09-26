@@ -3,10 +3,7 @@
 #include <cstdio>
 #include "ResourceManager.h"
 #include "Tile.h"
-#include "Player.h"
 #include "Shotgun.h"
-
-using namespace DirectX;
 
 void ResourceManager::Init(DeviceManager* dManager)
 {
@@ -102,7 +99,7 @@ void ResourceManager::LoadLevelsFromFile()
 	levelsDoc.ParseStream(is);
 	fclose(gLevelsFile);
 
-	Value::Array levelsArray = levelsDoc["levels"].GetArray();
+	rapidjson::Value levelsArray = levelsDoc["levels"].GetArray();
 	for (int i = 0; i < levelsArray.Size(); i++)
 	{
 		std::string file = levelsArray[i].GetString();
@@ -170,7 +167,7 @@ Map::Map(const char* filePath)
 	height = document["height"].GetInt();
 	infinite = document["infinite"].GetBool();
 
-	GenericArray layersA = document["layers"].GetArray();
+	rapidjson::Value layersA = document["layers"].GetArray();
 	for (size_t i = 0; i < layersA.Capacity(); i++)
 	{
 		Layer layer(layersA[i]);
@@ -185,7 +182,7 @@ Map::Map(const char* filePath)
 	type = document["type"].GetString();
 	width = document["width"].GetInt();
 
-	Value::Array tilesets = document["tilesets"].GetArray();
+	rapidjson::Value tilesets = document["tilesets"].GetArray();
 	ts_firstgid = tilesets[0]["firstgid"].GetInt();
 	ts_source = tilesets[0]["source"].GetString();
 
@@ -391,10 +388,11 @@ void ResourceManager::LoadPlayerData()
 	playerDataFile.close();																		// Closes playerData text file
 }
 
-Layer::Layer(Value& value)
+Layer::Layer(rapidjson::Value& value)
 {
 	if (value.HasMember("data")) {
-		for (auto& a : value["data"].GetArray()) {
+		for (auto& a : value["data"].GetArray()) 
+		{
 			data.push_back(a.GetInt());
 		}
 	}

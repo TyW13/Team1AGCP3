@@ -2,10 +2,10 @@
 
 #include "AudioManager.h"
 #include "ResourceManager.h"
+#include "DeviceManager.h"
 
 class Framework
 {
-
 public:
 
 	void Init(DeviceManager* dManager);
@@ -15,11 +15,9 @@ public:
 	void OnSuspending();
 	void OnResuming();
 
-
 private:
 
 	AudioManager audioManager;
 	ResourceManager rManager;
 	DeviceManager* dManager;
-
 };

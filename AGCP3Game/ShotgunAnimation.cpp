@@ -2,7 +2,6 @@
 #include "D3D.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
-#include "ShotgunAnimation.h"
 
 using namespace rapidjson;
 using namespace DirectX;
@@ -92,8 +91,8 @@ void ShotgunAnimation::LoadAnimation(std::string jsonPath)
 	Document AnimationDoc;
 	AnimationDoc.ParseStream(is);
 	int i = 0;
-	https://stackoverflow.com/questions/41857273/rapidjson-get-member-name-of-value
-	GenericArray fullArray = AnimationDoc["frames"].GetArray();
+	
+	rapidjson::Value fullArray = AnimationDoc["frames"].GetArray();
 	for (Value::ConstValueIterator itr = fullArray.Begin(); itr != fullArray.End(); ++itr)
 	{
 		auto obj = itr->GetObj();

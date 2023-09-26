@@ -1,7 +1,6 @@
 //
 // Game.cpp
 //
-#include "stdafx.h"
 #include "GameRenderer.h"
 
 extern void ExitGame() noexcept;

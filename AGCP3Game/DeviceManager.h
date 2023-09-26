@@ -1,8 +1,8 @@
 //
 // Game.h
 //
-
 #pragma once
+
 #include "pch.h"
 #include "DeviceResources.h"
 #include "StepTimer.h"
