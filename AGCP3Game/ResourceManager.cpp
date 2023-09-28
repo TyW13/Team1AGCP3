@@ -8,6 +8,7 @@
 void ResourceManager::Init(DeviceManager* dManager)
 {
 	LoadLevelsFromFile();
+	LoadTileSet(dManager);
 
 	RECT playerRect;
 	playerRect.left = 0;
@@ -70,11 +71,11 @@ void ResourceManager::Terminate()
 	delete playerChar;
 	playerChar = nullptr;
 
-	for (Map* map : m_Levels)
-	{
-		delete map;
-		map = nullptr;
-	}
+	//for (Map* map : m_Levels)
+	//{
+	//	delete map;
+	//	map = nullptr;
+	//}
 	 
 	for (GameObject* obj : m_Objects)
 	{
@@ -103,8 +104,8 @@ void ResourceManager::LoadLevelsFromFile()
 	for (int i = 0; i < levelsArray.Size(); i++)
 	{
 		std::string file = levelsArray[i].GetString();
-		Map* newMap = new Map(("Data/" + file).c_str());
-		m_Levels.emplace_back(newMap);
+		//Map* newMap = new Map(("Data/" + file).c_str());
+		m_Levels.emplace_back(std::make_unique<Map>(("Data/" + file).c_str()));
 	}
 }
 
@@ -264,7 +265,7 @@ void ResourceManager::LoadZoneInfo(DeviceManager* dManager, int zoneNum)
 		if (data[i] != 0)
 		{
 			size_t columns = GetCurrentMap()->GetColumns();
-			size_t val = data[i] - GetCurrentMap()->getFirstgid();								// Value of tile in tileset starting from 0 -> 13
+			size_t val = data[i] - GetCurrentMap()->getFirstgid();								// Value of tile in tileset starting from 0 -> 63
 
 			size_t x = val % columns;															// Position of tile on the tile map, (0,0) is top left going down and to the right
 			size_t y = floor(val / columns);													// Floor rounds down (returns biggest int thats lower than original value)
@@ -386,6 +387,56 @@ void ResourceManager::LoadPlayerData()
 	GetCurrentMap()->SetCurrentZoneNum(stoi(line));												// Converts zone number from string to int and sets it 
 
 	playerDataFile.close();																		// Closes playerData text file
+}
+
+void ResourceManager::LoadTileSet(DeviceManager* dManager)
+{
+	FILE* fp;
+	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset.json", "rb");		// opening
+	char readBuffer[4096];
+	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
+	rapidjson::Document tilesetDoc;
+	tilesetDoc.ParseStream(mapStream);
+	fclose(fp);
+
+	DirectX::SimpleMath::Vector2 objScale = { 6,6 };
+	int collisionWidth = 0;
+	int collisionHeight = 0;
+	std::string objType;
+	int collisionDirection;
+	int tileCount = tilesetDoc["tilecount"].GetInt();
+
+	int columns = GetCurrentMap()->GetColumns();
+	int rows = ceil(tileCount / columns);
+
+	int id = 0;
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < columns; j++)
+		{
+			int x1 = j * GetCurrentMap()->getTileWidth();									// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			int x2 = (j + 1) * GetCurrentMap()->getTileWidth();
+			int y1 = i * GetCurrentMap()->getTileWidth();
+			int y2 = (i + 1) * GetCurrentMap()->getTileWidth();
+
+			RECT tileRect;																	// Creating new RECT to pass to tile object constructor
+			tileRect.left = x1;
+			tileRect.right = x2;
+			tileRect.top = y1;
+			tileRect.bottom = y2;
+
+			collisionWidth = tilesetDoc["tiles"].GetArray()[id]["objectgroup"].GetObj()["objects"].GetArray()[0]["width"].GetInt();			// Get collision bounds width and height from tileset json
+			collisionHeight = tilesetDoc["tiles"].GetArray()[id]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
+			objType = tilesetDoc["tiles"].GetArray()[id]["class"].GetString();
+			collisionDirection = tilesetDoc["tiles"].GetArray()[id]["properties"].GetArray()[0]["value"].GetInt();
+
+			tileSet.emplace_back(std::make_shared<Tile>(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(collisionWidth, collisionHeight), objType, collisionDirection, tileRect));
+			
+			id++;
+		}
+	}
+
+	tileSet;
 }
 
 Layer::Layer(rapidjson::Value& value)

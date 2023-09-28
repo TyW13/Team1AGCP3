@@ -9,13 +9,8 @@ void Tile::Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMa
 	objType = _objType;
 	collisionDirection = _collisionDirection;
 	objRect = _objRect;
-	mPos = _position;
 	mScale = _scale;
-
-	collisionBounds.left = mPos.x;
-	collisionBounds.top = mPos.y;
-	collisionBounds.right = mPos.x + objSize.x * mScale.x;
-	collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
+	SetPosition(_position);
 
 	dManager->GetResourceUpload()->Begin();
 
@@ -63,6 +58,11 @@ void Tile::SetRect(RECT _objRect)
 void Tile::SetPosition(DirectX::SimpleMath::Vector2 _position)
 {
 	mPos = _position;
+
+	collisionBounds.left = mPos.x;
+	collisionBounds.top = mPos.y;
+	collisionBounds.right = mPos.x + objSize.x * mScale.x;
+	collisionBounds.bottom = mPos.y + objSize.y * mScale.y;
 }
 
 void Tile::SetScale(DirectX::SimpleMath::Vector2 _scale)

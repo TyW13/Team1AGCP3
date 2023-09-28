@@ -125,7 +125,7 @@ public:
 	int GetCurrentMapNum() { return currentMapNum; }
 	Map* GetCurrentMap()															// Getter for map object using currentMapNum set elsewhere
 	{ 
-		return m_Levels[currentMapNum]; 
+		return m_Levels[currentMapNum].get(); 
 	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
 	void LoadCurrentMap(DeviceManager* dManager);												// Just reloads curren tmap
@@ -144,9 +144,14 @@ public:
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
+
+	void LoadTileSet(DeviceManager*);
 private:
-	std::vector<Map*> m_Levels;														// Vector to store pointers to Map objects
-	std::vector<std::wstring> m_TexPaths;
+	std::vector<std::shared_ptr<GameObject>> tileSet;
+
+
+	std::vector<std::unique_ptr<Map>> m_Levels;														// Vector to store pointers to Map objects
+	//std::vector<std::wstring> m_TexPaths;
 	Player* playerChar = NULL;
 	Shotgun* shotgunChar = NULL;
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles

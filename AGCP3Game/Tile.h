@@ -9,6 +9,7 @@ public:
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
+	~Tile() {}
 
 	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 }) override;
 	void Render(DeviceManager* dManager) override;
@@ -27,6 +28,7 @@ public:
 	void SetRect(RECT _objRect) override;
 	void SetPosition(DirectX::SimpleMath::Vector2 _position) override;
 	void SetScale(DirectX::SimpleMath::Vector2 _scale) override;
+
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> objTex;
 	bool isActive;

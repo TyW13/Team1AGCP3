@@ -12,6 +12,7 @@ public:
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
+    ~Player() {}
 
 	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 0 ,0 }) override;
 	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime) override;
