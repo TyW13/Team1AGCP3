@@ -5,20 +5,19 @@
 #include <fstream>;
 
 #include "Player.h"
+#include "Shotgun.h"
 
-class DeviceManager;
-class GameObject;
-//class Player;
-class Shotgun;
+class Map;
 
 class Layer
 {
 public:
 	Layer() {}
-	Layer(rapidjson::Value& value);
+	Layer(DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value);
 	~Layer(){}
 
 	std::vector<int> GetData() { return data; }
+	std::vector<std::shared_ptr<GameObject>> GetTiles() { return tileObjects; }
 	std::string GetName() { return name; }
 	int GetId() { return id; }
 	int GetOpacity() { return opacity; }
@@ -30,8 +29,14 @@ public:
 	int GetX() { return x; }
 	int GetY() { return y; }
 
+	Player* GetPlayer() { return playerChar.get(); }
+	Shotgun* GetShotgunObj() { return shotgunChar.get(); }
+
+	void LoadZoneTiles(DeviceManager* dManager, Map* ownerMap);
+
 private:
 	std::vector<int> data;
+	std::vector<std::shared_ptr<GameObject>> tileObjects;
 	std::string name = "";
 	int id = 0;
 	int opacity = 0;
@@ -42,13 +47,16 @@ private:
 	bool visible = false;
 	int x = 0;
 	int y = 0;
+
+	std::unique_ptr<Player> playerChar;
+	std::unique_ptr<Shotgun> shotgunChar;
 };
 
 class Map
 {
 public:
 
-	Map::Map(const char* filePath);
+	Map::Map(DeviceManager* dManager, const char* filePath);
 
 	~Map() {}
 
@@ -67,14 +75,14 @@ public:
 	std::string getSource() { return ts_source; }
 	int GetColumns() { return ts_Columns; }
 
-	std::vector<Layer> GetLayers() { return layers; }								// Getter function for layers vector (current system stores each map zone data)
-	Layer GetCurrentZone() { return layers[currentZoneNum]; }						// Gets current layer (zone) to access its data)
+	std::vector<std::shared_ptr<Layer>> GetLayers() { return layers; }								// Getter function for layers vector (current system stores each map zone data)
+	Layer* GetCurrentZone() { return layers[currentZoneNum].get(); }						// Gets current layer (zone) to access its data)
 	int GetCurrentZoneNum() { return currentZoneNum; }								// Gets current layer (zone) num
 	void SetCurrentZoneNum(int zoneNum) { currentZoneNum = zoneNum; }				// Setter for currentZoneNum
 
 private:
 	int currentZoneNum;
-	std::vector<Layer> layers;														// Layers are being used to represent each zone of a map
+	std::vector<std::shared_ptr<Layer>> layers;														// Layers are being used to represent each zone of a map
 
 	int height;																		// height of the map in tiles 
 	bool infinite;																	// refers to if map has infinite height/width 
@@ -120,7 +128,7 @@ public:
 	void Render(DeviceManager* dManager);
 	void Terminate();
 
-	void LoadLevelsFromFile();														// Reads json file to obtain level file names from array (strings)
+	void LoadLevelsFromFile(DeviceManager* dManager);														// Reads json file to obtain level file names from array (strings)
 
 	int GetCurrentMapNum() { return currentMapNum; }
 	Map* GetCurrentMap()															// Getter for map object using currentMapNum set elsewhere
@@ -139,21 +147,19 @@ public:
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 	std::vector<GameObject*> GetObjects() { return m_Objects; }
-	Player* GetPlayer() { return playerChar; }
+	//Player* GetPlayer() { return playerChar; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
-
-	void LoadTileSet(DeviceManager*);
 private:
 	std::vector<std::shared_ptr<GameObject>> tileSet;
 
 
-	std::vector<std::unique_ptr<Map>> m_Levels;														// Vector to store pointers to Map objects
+	std::vector<std::unique_ptr<Map>> m_Levels;										// Vector to store pointers to Map objects
 	//std::vector<std::wstring> m_TexPaths;
-	Player* playerChar = NULL;
-	Shotgun* shotgunChar = NULL;
+	//Player* playerChar = NULL;														// NOTE: HAS BEEN MOVED
+	//Shotgun* shotgunChar = NULL;													// NOTE: HAS BEEN MOVED
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum = 0;					
 

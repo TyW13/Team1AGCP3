@@ -33,7 +33,7 @@ void Player::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simple
 	uploadResourcesFinished.wait();
 
     playerAnim.Init("Player.json", *this);
-    playerAnim.Init("Player.json", *this);
+    //playerAnim.Init("Player.json", *this);
     audioManager.Init();
 }
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
@@ -377,21 +377,21 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
         collisionBounds.right = tempCollisionBoundsLeft;
     }
 
-    for (int i = 0; i < rManager->GetObjects().size(); ++i)
+    for (int i = 0; i < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles().size(); ++i)
     {
-        if (rManager->GetObjects()[i]->GetObjectType() != "Player")
+        if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() != "Player")
         {	
-            if (nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
-                nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left &&
-                nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom &&
-                nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top)
+            if (nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
+                nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left &&
+                nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom &&
+                nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top)
             {
-                if (rManager->GetObjects()[i]->GetObjectType() == "Tile")
+                if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Tile")
                 {
                     int yDiff = 0;
                     int xDiff = 0;
 
-                    switch (rManager->GetObjects()[i]->GetCollisionDirection())
+                    switch (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionDirection())
                     {
                     case(1):                                                                                        // Top facing tile
                         collidedTop = true;
@@ -408,8 +408,8 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         break;
 
                     case(2):                                                                                        // Top Right facing tile
-                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);      // For each corner tile, calculate distance between appropriate sides for collision
-                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);      //
+                        yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);      // For each corner tile, calculate distance between appropriate sides for collision
+                        xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);      //
 
                         if (currentVel.y > 0 && yDiff <= xDiff)                                                     // Colliding from top of tile
                         {
@@ -438,8 +438,8 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                         break;
                     case(4):                                                                                        // Bottom right facing tile
-                        yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
-                        xDiff = abs(nextPosRect.left - rManager->GetObjects()[i]->GetCollisionBounds().right);
+                        yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
+                        xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);
 
                         if (currentVel.x < 0 && xDiff <= yDiff)
                         {
@@ -466,8 +466,8 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
                         break;
                     case(6):                                                                                        // Bottom left facing tile
-                        yDiff = abs(nextPosRect.top - rManager->GetObjects()[i]->GetCollisionBounds().bottom);
-                        xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
+                        yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
+                        xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
 
                         if (currentVel.y < 0 && yDiff < xDiff)
                         {
@@ -494,8 +494,8 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         break;
 						
                     case(8):                                                                                        // Top left facing tile
-                        yDiff = abs(nextPosRect.bottom - rManager->GetObjects()[i]->GetCollisionBounds().top);
-                        xDiff = abs(nextPosRect.right - rManager->GetObjects()[i]->GetCollisionBounds().left);
+                        yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);
+                        xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
 
                         if (currentVel.x > 0 && xDiff < yDiff)
                         {
@@ -517,15 +517,15 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                     }
                 }
 
-				if (rManager->GetObjects()[i]->GetObjectType() == "Damageable")
+				if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Damageable")
 				{
 					rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
 				}
 				
-                if (rManager->GetObjects()[i]->GetObjectType() == "BouncePad")
+                if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "BouncePad")
                 {
                     //if player collided from their bottom bound
-                    if (collisionBounds.bottom < rManager->GetObjects()[i]->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetObjects()[i]->GetCollisionBounds().top && !collidedTop)
+                    if (collisionBounds.bottom < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && !collidedTop)
                     {
                         currentVel.y = -BOUNCE_PAD_JUMP_Y;
 
@@ -533,7 +533,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         fired = false;
                     }
                     //if player collided from their top bound
-                    else if (collisionBounds.top > rManager->GetObjects()[i]->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetObjects()[i]->GetCollisionBounds().bottom && !collidedBottom)
+                    else if (collisionBounds.top > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && !collidedBottom)
                     {
                         currentVel.y = BOUNCE_PAD_JUMP_Y;
 
@@ -541,7 +541,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         fired = false;
                     }
                     //if player collided from their right bound
-                    else if (collisionBounds.right < rManager->GetObjects()[i]->GetCollisionBounds().left && nextPosRect.right >= rManager->GetObjects()[i]->GetCollisionBounds().left && !collidedLeft)
+                    else if (collisionBounds.right < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && !collidedLeft)
                     {
                         currentVel.y = -BOUNCE_PAD_JUMP_X;
 
@@ -549,7 +549,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
                         fired = false;
                     }
                     //if player collided from their left bound
-                    else if (collisionBounds.left > rManager->GetObjects()[i]->GetCollisionBounds().right && nextPosRect.left <= rManager->GetObjects()[i]->GetCollisionBounds().right && !collidedRight)
+                    else if (collisionBounds.left > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && !collidedRight)
                     {
                         currentVel.y = BOUNCE_PAD_JUMP_X;
 
@@ -560,9 +560,9 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
 
 				// For simpler version, only use first 3 lines
-				 if (rManager->GetObjects()[i]->GetObjectType() == "ReloadGem" && rManager->GetObjects()[i]->GetActive())
+				 if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "ReloadGem" && rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetActive())
 				{
-					rManager->GetObjects()[i]->SetActive(false);
+					rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->SetActive(false);
 					SetVelocity({ 0,0 });
 					fired = false;
 
@@ -584,7 +584,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 					gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
 				}
 
-				if (rManager->GetObjects()[i]->GetObjectType() == "EndZone" || kb.Q)
+				if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "EndZone" || kb.Q)
 				{
 					rManager->LoadNextZone(dManager);
 				}

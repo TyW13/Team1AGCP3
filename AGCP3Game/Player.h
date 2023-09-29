@@ -1,6 +1,7 @@
 #pragma once
 #include "AudioManager.h"
 #include "PlayerAnimation.h"
+#include <windef.h>
 
 class ResourceManager;
 
