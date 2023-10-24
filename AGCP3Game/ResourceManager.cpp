@@ -26,16 +26,16 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 	}
 	else { assert(false); }
 
-	if (GetCurrentMap()->GetCurrentZone()->GetTiles().size() > 0)
-	{
-		for (auto& currentObj : GetCurrentMap()->GetCurrentZone()->GetTiles())
-		{
-			if (currentObj.get()->GetActive())
-			{
-				currentObj.get()->Update(dManager, this, dTime);
-			}
-		}
-	}
+	//if (GetCurrentMap()->GetCurrentZone()->GetTiles().size() > 0)
+	//{
+	//	for (auto& currentObj : GetCurrentMap()->GetCurrentZone()->GetTiles())
+	//	{
+	//		if (currentObj.get()->GetActive())
+	//		{
+	//			currentObj.get()->Update(dManager, this, dTime);
+	//		}
+	//	}
+	//}
 }
 
 void ResourceManager::Render(DeviceManager* dManager)
@@ -116,7 +116,8 @@ void ResourceManager::LoadNextMap(DeviceManager* dManager)
 	{
 		currentMapNum++;
 		GetCurrentMap()->SetCurrentZoneNum(0);
-		ReloadMap(dManager, currentMapNum);
+		//ReloadMap(dManager, currentMapNum);
+
 	}
 	else
 	{
@@ -466,6 +467,11 @@ Layer::Layer(DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value)
 	LoadZoneTiles(dManager, ownerMap);
 }
 
+void Layer::RespwanPlayer()
+{
+	playerChar->SetPosition(DirectX::SimpleMath::Vector2(playerSpawnPosition.x, playerSpawnPosition.y));
+}
+
 void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 {
 	FILE* fp;
@@ -485,7 +491,7 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 	RECT playerRect = { 5,2,13,17 };
 	RECT shotgunRect = { 5,2,13,17 };
 	playerChar =  std::make_unique<Player>(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Player", 0, playerRect);
-	shotgunChar = std::make_unique<Shotgun>(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(0, 0), "Shotgun", 0, shotgunRect);
+	shotgunChar = std::make_unique<Shotgun>(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(9, 17), "Shotgun", 0, shotgunRect);
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -518,6 +524,11 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 			collisionHeight = tilesetDoc["tiles"].GetArray()[val]["objectgroup"].GetObj()["objects"].GetArray()[0]["height"].GetInt();
 			objType = tilesetDoc["tiles"].GetArray()[val]["class"].GetString();
 			collisionDirection = tilesetDoc["tiles"].GetArray()[val]["properties"].GetArray()[0]["value"].GetInt();
+
+			if (objType == "Spawner")
+			{
+				playerSpawnPosition = DirectX::SimpleMath::Vector2(tileXPos, tileYPos + (playerChar->GetObjectSize().y * playerChar->GetScale().y));
+			}
 
 			tileObjects.emplace_back(std::make_shared<Tile>(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(ownerMap->getTileWidth(), ownerMap->getTileHeight()), objType, collisionDirection, tileRect));
 
@@ -565,4 +576,6 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 			//}
 		}
 	}
+
+	RespwanPlayer();
 }

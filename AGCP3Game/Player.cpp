@@ -379,216 +379,213 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
     for (int i = 0; i < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles().size(); ++i)
     {
-        if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() != "Player")
-        {	
-            if (nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
-                nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left &&
-                nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom &&
-                nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top)
+        if (nextPosRect.left < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
+            nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left &&
+            nextPosRect.top < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom &&
+            nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top)
+        {
+            if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Tile")
             {
-                if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Tile")
-                {
-                    int yDiff = 0;
-                    int xDiff = 0;
+                int yDiff = 0;
+                int xDiff = 0;
 
-                    switch (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionDirection())
+                switch (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionDirection())
+                {
+                case(1):                                                                                        // Top facing tile
+                    collidedTop = true;
+                    grounded = true;
+                    canShotGunJump = true;
+                    fired = false;
+                    recordLastCollision = 1;
+
+                    if (currentVel.y > 0)
                     {
-                    case(1):                                                                                        // Top facing tile
+                        currentVel.y = 0;
+                    }
+
+                    break;
+
+                case(2):                                                                                        // Top Right facing tile
+                    yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);      // For each corner tile, calculate distance between appropriate sides for collision
+                    xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);      //
+
+                    if (currentVel.y > 0 && yDiff <= xDiff)                                                     // Colliding from top of tile
+                    {
+                        currentVel.y = 0;
+
                         collidedTop = true;
                         grounded = true;
                         canShotGunJump = true;
                         fired = false;
-                        recordLastCollision = 1;
+                    }
 
-                        if (currentVel.y > 0)
-                        {
-                            currentVel.y = 0;
-                        }
+                    if (currentVel.x < 0 && xDiff < yDiff)                                                      // Colliding from right of tile
+                    {
+                        currentVel.x = 0;
 
-                        break;
+                        collidedRight = true;
+                    }
+                    break;
+                case(3):                                                                                        // Right facing tile
+                    if (currentVel.x < 0)
+                    {
+                        currentVel.x = 0;
 
-                    case(2):                                                                                        // Top Right facing tile
-                        yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);      // For each corner tile, calculate distance between appropriate sides for collision
-                        xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);      //
+                        collidedRight = true;
+                    }
 
-                        if (currentVel.y > 0 && yDiff <= xDiff)                                                     // Colliding from top of tile
-                        {
-                            currentVel.y = 0;
+                    break;
+                case(4):                                                                                        // Bottom right facing tile
+                    yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
+                    xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);
 
-                            collidedTop = true;
-                            grounded = true;
-                            canShotGunJump = true;
-                            fired = false;
-                        }
+                    if (currentVel.x < 0 && xDiff <= yDiff)
+                    {
+                        currentVel.x = 0;
 
-                        if (currentVel.x < 0 && xDiff < yDiff)                                                      // Colliding from right of tile
-                        {
-                            currentVel.x = 0;
+                        collidedRight = true;
+                    }
+                    if (currentVel.y < 0 && yDiff < xDiff)
+                    {
+                        currentVel.y = 0;
 
-                            collidedRight = true;
-                        }
-                        break;
-                    case(3):                                                                                        // Right facing tile
-                        if (currentVel.x < 0)
-                        {
-                            currentVel.x = 0;
+                        collidedBottom = true;
+                    }
 
-                            collidedRight = true;
-                        }
+                    break;
+                case(5):                                                                                        // Bottom facing tile
+                    if (currentVel.y < 0)
+                    {
+                        currentVel.y = 0;
 
-                        break;
-                    case(4):                                                                                        // Bottom right facing tile
-                        yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
-                        xDiff = abs(nextPosRect.left - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right);
+                        collidedBottom = true;
+                        recordLastCollision = 2;
+                    }
 
-                        if (currentVel.x < 0 && xDiff <= yDiff)
-                        {
-                            currentVel.x = 0;
+                    break;
+                case(6):                                                                                        // Bottom left facing tile
+                    yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
+                    xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
 
-                            collidedRight = true;
-                        }
-                        if (currentVel.y < 0 && yDiff < xDiff)
-                        {
-                            currentVel.y = 0;
+                    if (currentVel.y < 0 && yDiff < xDiff)
+                    {
+                        currentVel.y = 0;
 
-                            collidedBottom = true;
-                        }
+                        collidedBottom = true;
+                    }
+                    if (currentVel.x > 0 && xDiff <= yDiff)
+                    {
+                        currentVel.x = 0;
 
-                        break;
-                    case(5):                                                                                        // Bottom facing tile
-                        if (currentVel.y < 0)
-                        {
-                            currentVel.y = 0;
+                        collidedLeft = true;
+                    }
 
-                            collidedBottom = true;
-                            recordLastCollision = 2;
-                        }
+                    break;
+                case(7):                                                                                        // Left facing tile
+                    if (currentVel.x > 0)
+                    {
+                        currentVel.x = 0;
 
-                        break;
-                    case(6):                                                                                        // Bottom left facing tile
-                        yDiff = abs(nextPosRect.top - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom);
-                        xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
-
-                        if (currentVel.y < 0 && yDiff < xDiff)
-                        {
-                            currentVel.y = 0;
-
-                            collidedBottom = true;
-                        }
-                        if (currentVel.x > 0 && xDiff <= yDiff)
-                        {
-                            currentVel.x = 0;
-
-                            collidedLeft = true;
-                        }
-
-                        break;
-                    case(7):                                                                                        // Left facing tile
-                        if (currentVel.x > 0)
-                        {
-                            currentVel.x = 0;
-
-                            collidedLeft = true;
-                        }
+                        collidedLeft = true;
+                    }
 						
-                        break;
+                    break;
 						
-                    case(8):                                                                                        // Top left facing tile
-                        yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);
-                        xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
+                case(8):                                                                                        // Top left facing tile
+                    yDiff = abs(nextPosRect.bottom - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top);
+                    xDiff = abs(nextPosRect.right - rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left);
 
-                        if (currentVel.x > 0 && xDiff < yDiff)
-                        {
-                            currentVel.x = 0;
+                    if (currentVel.x > 0 && xDiff < yDiff)
+                    {
+                        currentVel.x = 0;
 
-                            collidedLeft = true;
-                        }
-                        if (currentVel.y > 0 && yDiff <= xDiff)
-                        {
-                            currentVel.y = 0;
-
-                            collidedTop = true;
-                            grounded = true;
-                            canShotGunJump = true;
-                            fired = false;
-                        }
-
-                        break;
+                        collidedLeft = true;
                     }
+                    if (currentVel.y > 0 && yDiff <= xDiff)
+                    {
+                        currentVel.y = 0;
+
+                        collidedTop = true;
+                        grounded = true;
+                        canShotGunJump = true;
+                        fired = false;
+                    }
+
+                    break;
                 }
-
-				if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Damageable")
-				{
-					rManager->ReloadMap(dManager, rManager->GetCurrentMapNum());
-				}
-				
-                if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "BouncePad")
-                {
-                    //if player collided from their bottom bound
-                    if (collisionBounds.bottom < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && !collidedTop)
-                    {
-                        currentVel.y = -BOUNCE_PAD_JUMP_Y;
-
-                        canShotGunJump = true;
-                        fired = false;
-                    }
-                    //if player collided from their top bound
-                    else if (collisionBounds.top > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && !collidedBottom)
-                    {
-                        currentVel.y = BOUNCE_PAD_JUMP_Y;
-
-                        canShotGunJump = true;
-                        fired = false;
-                    }
-                    //if player collided from their right bound
-                    else if (collisionBounds.right < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && !collidedLeft)
-                    {
-                        currentVel.y = -BOUNCE_PAD_JUMP_X;
-
-                        canShotGunJump = true;
-                        fired = false;
-                    }
-                    //if player collided from their left bound
-                    else if (collisionBounds.left > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && !collidedRight)
-                    {
-                        currentVel.y = BOUNCE_PAD_JUMP_X;
-
-                        canShotGunJump = true;
-                        fired = false;
-                    }
-                }
-
-
-				// For simpler version, only use first 3 lines
-				 if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "ReloadGem" && rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetActive())
-				{
-					rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->SetActive(false);
-					SetVelocity({ 0,0 });
-					fired = false;
-
-					canReloadGemJump = true;
-					slowdown_modifier = 0.1;
-				}
-				else if (canReloadGemJump)
-				{
-					gemSlowdownRemaining -= dTime;
-					if (gemSlowdownRemaining <= 0)
-					{
-						canReloadGemJump = false;
-						slowdown_modifier = 1;
-					}
-				}
-				else if (!canReloadGemJump)
-				{
-					//reset the slowdown time remaining
-					gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
-				}
-
-				if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "EndZone" || kb.Q)
-				{
-					rManager->LoadNextZone(dManager);
-				}
             }
+
+			if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Damageable")
+			{
+                rManager->GetCurrentMap()->GetCurrentZone()->RespwanPlayer();
+			}
+				
+            if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "BouncePad")
+            {
+                //if player collided from their bottom bound
+                if (collisionBounds.bottom < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top && !collidedTop)
+                {
+                    currentVel.y = -BOUNCE_PAD_JUMP_Y;
+
+                    canShotGunJump = true;
+                    fired = false;
+                }
+                //if player collided from their top bound
+                else if (collisionBounds.top > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom && !collidedBottom)
+                {
+                    currentVel.y = BOUNCE_PAD_JUMP_Y;
+
+                    canShotGunJump = true;
+                    fired = false;
+                }
+                //if player collided from their right bound
+                else if (collisionBounds.right < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left && !collidedLeft)
+                {
+                    currentVel.y = -BOUNCE_PAD_JUMP_X;
+
+                    canShotGunJump = true;
+                    fired = false;
+                }
+                //if player collided from their left bound
+                else if (collisionBounds.left > rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right && !collidedRight)
+                {
+                    currentVel.y = BOUNCE_PAD_JUMP_X;
+
+                    canShotGunJump = true;
+                    fired = false;
+                }
+            }
+
+
+			// For simpler version, only use first 3 lines
+				if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "ReloadGem" && rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetActive())
+			{
+				rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->SetActive(false);
+				SetVelocity({ 0,0 });
+				fired = false;
+
+				canReloadGemJump = true;
+				slowdown_modifier = 0.1;
+			}
+			else if (canReloadGemJump)
+			{
+				gemSlowdownRemaining -= dTime;
+				if (gemSlowdownRemaining <= 0)
+				{
+					canReloadGemJump = false;
+					slowdown_modifier = 1;
+				}
+			}
+			else if (!canReloadGemJump)
+			{
+				//reset the slowdown time remaining
+				gemSlowdownRemaining = GEM_SLOWDOWN_DURATION;
+			}
+
+			if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "EndZone" || kb.Q)
+			{
+				rManager->LoadNextZone(dManager);
+			}
         }
     }
 	

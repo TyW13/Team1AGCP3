@@ -43,6 +43,6 @@ private:
 	DirectX::SimpleMath::Vector2 mScale;
 	DirectX::SimpleMath::Vector2 mOrigin = { 0,0 };
 	ShotgunAnimation Anim;
-	const DirectX::SimpleMath::Vector2 PosOffset = DirectX::SimpleMath::Vector2(23, 30); // Offset away from the player
+	const DirectX::SimpleMath::Vector2 PosOffset = DirectX::SimpleMath::Vector2(25, 52); // Offset away from the player
 	const float Rads180 = 3.14; //Adds 180 degrees in radians
 };

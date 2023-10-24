@@ -34,7 +34,8 @@ void Shotgun::Init(DeviceManager* dManager, std::wstring texPath, DirectX::Simpl
 void Shotgun::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)
 {
 	//Changes the origin to the center of the shotgun
-	mOrigin = DirectX::SimpleMath::Vector2(this->GetObjectSize().x / 2, this->GetObjectSize().y / 2);
+	mOrigin = DirectX::SimpleMath::Vector2(GetObjectSize().x / 2, GetObjectSize().y / 2);
+	//mOrigin = { 0,0 };
 
 	//Sets Shotgun position to be attached to the player but at an offset away from them
 	DirectX::SimpleMath::Vector2 playerPos = rManager->GetCurrentMap()->GetCurrentZone()->GetPlayer()->GetPosition();

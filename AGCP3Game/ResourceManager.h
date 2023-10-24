@@ -32,6 +32,7 @@ public:
 	Player* GetPlayer() { return playerChar.get(); }
 	Shotgun* GetShotgunObj() { return shotgunChar.get(); }
 
+	void RespwanPlayer();
 	void LoadZoneTiles(DeviceManager* dManager, Map* ownerMap);
 
 private:
@@ -47,6 +48,7 @@ private:
 	bool visible = false;
 	int x = 0;
 	int y = 0;
+	DirectX::SimpleMath::Vector2 playerSpawnPosition = { 0, 0 };
 
 	std::unique_ptr<Player> playerChar;
 	std::unique_ptr<Shotgun> shotgunChar;
@@ -136,7 +138,7 @@ public:
 		return m_Levels[currentMapNum].get(); 
 	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
-	void LoadCurrentMap(DeviceManager* dManager);												// Just reloads curren tmap
+	void LoadCurrentMap(DeviceManager* dManager);												// Just reloads current map
 	void LoadNextMap(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousMap(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void ReloadMap(DeviceManager* dManager, int mapNum);											// Load specific map by providing map num in vector
