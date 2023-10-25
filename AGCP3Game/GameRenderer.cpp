@@ -34,12 +34,15 @@ void GameRenderer::Initialize(HWND window, int width, int height)
 // Executes the basic game loop.
 void GameRenderer::Tick()
 {
+    Render();
+
+
     m_timer.Tick([&]()
         {
             Update(m_timer);
         });
 
-    Render();
+    //Render();
 }
 
 // Updates the world.

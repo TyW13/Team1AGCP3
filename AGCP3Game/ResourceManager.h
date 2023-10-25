@@ -32,7 +32,7 @@ public:
 	Player* GetPlayer() { return playerChar.get(); }
 	Shotgun* GetShotgunObj() { return shotgunChar.get(); }
 
-	void RespwanPlayer();
+	void RespawnPlayer();
 	void LoadZoneTiles(DeviceManager* dManager, Map* ownerMap);
 
 private:
@@ -58,6 +58,7 @@ class Map
 {
 public:
 
+	Map(){}
 	Map::Map(DeviceManager* dManager, const char* filePath);
 
 	~Map() {}
@@ -138,30 +139,23 @@ public:
 		return m_Levels[currentMapNum].get(); 
 	}
 	void SetCurrentMap(int _currentMapNum);											// Set currentMapNum to given integer
-	void LoadCurrentMap(DeviceManager* dManager);												// Just reloads current map
 	void LoadNextMap(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousMap(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void ReloadMap(DeviceManager* dManager, int mapNum);											// Load specific map by providing map num in vector
 
-	void UnloadZone();																// Deletes all tile objects in vector to make room for the new zones tiles
-	void LoadZoneInfo(DeviceManager* dManager, int zoneNum);										// Load specific map by providing map num in vector
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
 	std::vector<GameObject*> GetObjects() { return m_Objects; }
-	//Player* GetPlayer() { return playerChar; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
 private:
-	std::vector<std::shared_ptr<GameObject>> tileSet;
+	std::vector<std::unique_ptr<GameObject>> tileSet;
 
 
 	std::vector<std::unique_ptr<Map>> m_Levels;										// Vector to store pointers to Map objects
-	//std::vector<std::wstring> m_TexPaths;
-	//Player* playerChar = NULL;														// NOTE: HAS BEEN MOVED
-	//Shotgun* shotgunChar = NULL;													// NOTE: HAS BEEN MOVED
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum = 0;					
 

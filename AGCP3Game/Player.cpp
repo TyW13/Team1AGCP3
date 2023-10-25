@@ -379,16 +379,16 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
     for (int i = 0; i < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles().size(); ++i)
     {
-        if (nextPosRect.left < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
+        if (nextPosRect.left <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().right &&                        // Basic AABB collision for player and other gameobjects in scene
             nextPosRect.right >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().left &&
-            nextPosRect.top < rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom &&
+            nextPosRect.top <= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().bottom &&
             nextPosRect.bottom >= rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionBounds().top)
         {
             if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Tile")
             {
                 int yDiff = 0;
                 int xDiff = 0;
-
+                mPos;
                 switch (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetCollisionDirection())
                 {
                 case(1):                                                                                        // Top facing tile
@@ -517,7 +517,7 @@ void Player::CheckCollision(DeviceManager* dManager, ResourceManager* rManager, 
 
 			if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "Damageable")
 			{
-                rManager->GetCurrentMap()->GetCurrentZone()->RespwanPlayer();
+                rManager->GetCurrentMap()->GetCurrentZone()->RespawnPlayer();
 			}
 				
             if (rManager->GetCurrentMap()->GetCurrentZone()->GetTiles()[i].get()->GetObjectType() == "BouncePad")
