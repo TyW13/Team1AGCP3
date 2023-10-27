@@ -4,6 +4,7 @@
 
 #include <fstream>;
 
+#include  "TitleImage.h"
 #include "Player.h"
 #include "Shotgun.h"
 
@@ -76,7 +77,6 @@ public:
 	// Tilesets array functions 
 	int getFirstgid() { return ts_firstgid; }
 	std::string getSource() { return ts_source; }
-	int GetColumns() { return ts_Columns; }
 
 	std::vector<std::shared_ptr<Layer>> GetLayers() { return layers; }								// Getter function for layers vector (current system stores each map zone data)
 	Layer* GetCurrentZone() { return layers[currentZoneNum].get(); }						// Gets current layer (zone) to access its data)
@@ -99,20 +99,6 @@ private:
 
 	// Tilesets data
 
-	// Tile set vars (since we are using a single tileset per level)
-	int ts_Firstgid;
-	int ts_Columns;
-	std::string ts_Image;
-	int ts_ImageHeight;
-	int ts_ImageWidth;
-	int ts_Margin;
-	std::string ts_Name;
-	int ts_Spacing;
-	int ts_Tilecount;
-	int ts_Tileheight;
-	int ts_Tilewidth;
-	std::string ts_Type;
-
 	int ts_firstgid;																//refers to which tile set was used to create the map 
 	std::string ts_source;															//links to the tile set used to create map 
 };
@@ -121,15 +107,11 @@ class ResourceManager
 {
 public:
 	ResourceManager(){}
-	~ResourceManager()
-	{
-		Terminate();
-	}
+	~ResourceManager(){}
 
 	void Init(DeviceManager* dManager);
 	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
-	void Terminate();
 
 	void LoadLevelsFromFile(DeviceManager* dManager);														// Reads json file to obtain level file names from array (strings)
 
@@ -152,12 +134,19 @@ public:
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
 private:
-	std::vector<std::unique_ptr<GameObject>> tileSet;
-
-
 	std::vector<std::unique_ptr<Map>> m_Levels;										// Vector to store pointers to Map objects
 	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
 	int currentMapNum = 0;					
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress
+
+	std::unique_ptr<TitleImage> titleImage;
+
+	enum EGameStates
+	{
+		TITLE,
+		GAME,
+		CREDITS
+	};
+	EGameStates currentGameState = EGameStates::TITLE;
 };

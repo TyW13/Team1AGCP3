@@ -89,6 +89,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShotgunAnimation.h" />
+    <ClInclude Include="ShotgunAnimation.h" />
+    <ClInclude Include="TitleImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -153,6 +155,8 @@
     </ClCompile>
     <ClCompile Include="ShotgunAnimation.cpp" />
     <ClCompile Include="ShotgunAnimation.cpp" />
+    <ClCompile Include="ShotgunAnimation.cpp" />
+    <ClCompile Include="TitleImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">

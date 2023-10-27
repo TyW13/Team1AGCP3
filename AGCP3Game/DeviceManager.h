@@ -1,6 +1,3 @@
-//
-// Game.h
-//
 #pragma once
 
 #include "pch.h"
@@ -56,6 +53,7 @@ public:
         Player,
         Tile,
         Shotgun,
+        TitleImage,
         Count,
     };
 

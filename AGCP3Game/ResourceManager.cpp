@@ -2,54 +2,79 @@
 
 #include <cstdio>
 #include "Tile.h"
+//#include "TitleImage.h"
 #include "ResourceManager.h"
 
 void ResourceManager::Init(DeviceManager* dManager)
 {
+	titleImage = std::make_unique<TitleImage>(dManager, L"Data/EngaugeTitleScreen.dds", DirectX::SimpleMath::Vector2(0, 0), DirectX::SimpleMath::Vector2(1, 1));
+
+	dManager->BeginRender();
+
+	dManager->GetSpriteBatch()->Begin(dManager->GetCommandList());
+
+	titleImage.get()->Render(dManager);
+
+	dManager->GetSpriteBatch()->End();
+
+	dManager->EndRender();
+
 	LoadLevelsFromFile(dManager);
 
-	RECT playerRect;
-	playerRect.left = 0;
-	playerRect.top= 0;
-	playerRect.right = 6;
-	playerRect.bottom = 16;
-
 	ReloadMap(dManager, 0);
+
+	currentGameState = EGameStates::GAME;
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
 {
-	if (GetCurrentMap()->GetCurrentZone()->GetPlayer() != nullptr)
+	switch (currentGameState)
 	{
-		GetCurrentMap()->GetCurrentZone()->GetPlayer()->Update(dManager, this, dTime);
-		GetCurrentMap()->GetCurrentZone()->GetShotgunObj()->Update(dManager, this, dTime);
+	case(EGameStates::TITLE):
+		// PLAN:: IN THE FUTURE CREATE TITLE SCREEN THAT PLAYER CAN INTERACT WITH TO START/LOAD/EXIT THE GAME
+		break;
+	case(EGameStates::GAME):
+		if (GetCurrentMap()->GetCurrentZone()->GetPlayer() != nullptr)
+		{
+			GetCurrentMap()->GetCurrentZone()->GetPlayer()->Update(dManager, this, dTime);
+			GetCurrentMap()->GetCurrentZone()->GetShotgunObj()->Update(dManager, this, dTime);
+		}
+		else { assert(false); }
+		break;
+	case(EGameStates::CREDITS):
+		// PLAN: IN THE FUTURE ADD CREDITS SCREEN SHOWING EVERYONES NAMES, WHICH THE PLAYER CAN EXIT TO TITLE SCREEN FROM
+		break;
 	}
-	else { assert(false); }
 }
 
 void ResourceManager::Render(DeviceManager* dManager)
 {
-	if (GetCurrentMap()->GetCurrentZone()->GetTiles().size() > 0)
+	switch (currentGameState)
 	{
-		for (auto& currentObj : GetCurrentMap()->GetCurrentZone()->GetTiles())
+	case(EGameStates::TITLE):
+		// PLAN: SEE ResourceManager::Update
+		break;
+	case(EGameStates::GAME):
+		if (GetCurrentMap()->GetCurrentZone()->GetTiles().size() > 0)
 		{
-			if (currentObj.get()->GetActive())
+			for (auto& currentObj : GetCurrentMap()->GetCurrentZone()->GetTiles())
 			{
-				currentObj.get()->Render(dManager);
+				if (currentObj.get()->GetActive())
+				{
+					currentObj.get()->Render(dManager);
+				}
 			}
 		}
+		if (GetCurrentMap()->GetCurrentZone()->GetPlayer() != nullptr && GetCurrentMap()->GetCurrentZone()->GetPlayer()->GetActive())
+		{
+			GetCurrentMap()->GetCurrentZone()->GetPlayer()->Render(dManager);
+			GetCurrentMap()->GetCurrentZone()->GetShotgunObj()->Render(dManager);
+		}
+		break;
+	case(EGameStates::CREDITS):
+		// PLAN: SEE ResourceManager::Update
+		break;
 	}
-
-	if (GetCurrentMap()->GetCurrentZone()->GetPlayer() != nullptr && GetCurrentMap()->GetCurrentZone()->GetPlayer()->GetActive())
-	{
-		GetCurrentMap()->GetCurrentZone()->GetPlayer()->Render(dManager);
-		GetCurrentMap()->GetCurrentZone()->GetShotgunObj()->Render(dManager);
-	}
-}
-
-void ResourceManager::Terminate()
-{
-
 }
 
 // Goes through levels json file to add all needed level names to vector
