@@ -7,13 +7,13 @@ class TitleImage
 public:
 
 	//TitleImage(){}
-	TitleImage(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale) 
+	TitleImage(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale) 
 	{
 		Init(dManager, texPath, _position, _scale);
 	}
 	~TitleImage(){}
 
-	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale);
+	void Init(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 _position, DirectX::SimpleMath::Vector2 _scale);
 	void Render(DeviceManager* dManager);
 
 private:
