@@ -130,8 +130,10 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="ContinueButton.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DeviceResources.h" />
+    <ClInclude Include="ExitButton.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameRenderer.h" />
@@ -145,19 +147,23 @@
     <ClInclude Include="Shotgun.h" />
     <ClInclude Include="ShotgunAnimation.h" />
     <ClInclude Include="ShotgunAnimation.h" />
+    <ClInclude Include="StartButton.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DXSampleHelper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TitleImage.h" />
+    <ClInclude Include="UIElement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="ContinueButton.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -171,12 +177,14 @@
     <ClCompile Include="Shotgun.cpp" />
     <ClCompile Include="ShotgunAnimation.cpp" />
     <ClCompile Include="ShotgunAnimation.cpp" />
+    <ClCompile Include="StartButton.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TitleImage.cpp" />
+    <ClCompile Include="UIElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">

@@ -12,10 +12,10 @@ void ShotgunAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	//Grabs all the necessary data
 	jsonPath = "Data/" + jsonPath;
-	if (jsonPath == "Data/Shotgun.json")
+	if (jsonPath == "Data/Shotgun/Shotgun.json")
 	{
 		LoadAnimation(jsonPath);
-		LoadAnimationData("Data/ShotgunAnimData.json");
+		LoadAnimationData("Data/Shotgun/Shotgun_AnimData.json");
 		SwitchTex(Sprite, 6, InitState);
 	}
 	else

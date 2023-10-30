@@ -12,10 +12,10 @@ void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	//Grabs the necessary data for the animation
 	jsonPath = "Data/" + jsonPath;
-	if (jsonPath == "Data/Player.json")
+	if (jsonPath == "Data/Player/Player.json")
 	{
 		LoadAnimation(jsonPath);
-		LoadAnimationData("Data/PlayerAnimData.json");
+		LoadAnimationData("Data/Player/Player_AnimData.json");
 		SwitchTex(Sprite, Zero, InitState);
 	}
 	else

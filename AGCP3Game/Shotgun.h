@@ -6,14 +6,13 @@
 class Shotgun : public GameObject
 {
 public:
-	Shotgun(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 })
+	Shotgun(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 })
 		: GameObject(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect)
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
-	~Shotgun() {}
 
-	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 }) override;
+	void Init(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 }) override;
 	void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 	void Render(DeviceManager* dManager) override;
 

@@ -25,11 +25,11 @@ void AudioManager::Init()
 	m_audEngine = std::make_unique<AudioEngine>(eflags);
 
 	m_shotgun = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/shotgun.wav");
+		L"Data/Shotgun/Shotgun_Shoot.wav");
 	m_jump = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/jump.wav");
+		L"Data/Player/Player_Jump.wav");
 	m_footstep = std::make_unique<SoundEffect>(m_audEngine.get(),
-		L"Data/footstep.wav");
+		L"Data/Player/Player_Footstep.wav");
 
 	// Create an instance of the sound effect and set it to loop
 	m_footstep_looped = m_footstep->CreateInstance();

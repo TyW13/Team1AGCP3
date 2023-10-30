@@ -2,28 +2,14 @@
 
 #include <cstdio>
 #include "Tile.h"
-//#include "TitleImage.h"
+#include "UIElement.h"
+#include "StartButton.h"
+#include "ExitButton.h"
 #include "ResourceManager.h"
 
 void ResourceManager::Init(DeviceManager* dManager)
 {
-	titleImage = std::make_unique<TitleImage>(dManager, L"Data/EngaugeTitleScreen.dds", DirectX::SimpleMath::Vector2(0, 0), DirectX::SimpleMath::Vector2(1, 1));
-
-	dManager->BeginRender();
-
-	dManager->GetSpriteBatch()->Begin(dManager->GetCommandList());
-
-	titleImage.get()->Render(dManager);
-
-	dManager->GetSpriteBatch()->End();
-
-	dManager->EndRender();
-
-	LoadLevelsFromFile(dManager);
-
-	ReloadMap(dManager, 0);
-
-	currentGameState = EGameStates::GAME;
+	AddTitleScreenUI(dManager);
 }
 
 void ResourceManager::Update(DeviceManager* dManager, float dTime)
@@ -31,7 +17,7 @@ void ResourceManager::Update(DeviceManager* dManager, float dTime)
 	switch (currentGameState)
 	{
 	case(EGameStates::TITLE):
-		// PLAN:: IN THE FUTURE CREATE TITLE SCREEN THAT PLAYER CAN INTERACT WITH TO START/LOAD/EXIT THE GAME
+		CheckTitleOnClickEvents(dManager);
 		break;
 	case(EGameStates::GAME):
 		if (GetCurrentMap()->GetCurrentZone()->GetPlayer() != nullptr)
@@ -52,7 +38,10 @@ void ResourceManager::Render(DeviceManager* dManager)
 	switch (currentGameState)
 	{
 	case(EGameStates::TITLE):
-		// PLAN: SEE ResourceManager::Update
+		for (auto& element : m_TitleUIElements)
+		{
+			element.get()->Render(dManager);
+		}
 		break;
 	case(EGameStates::GAME):
 		if (GetCurrentMap()->GetCurrentZone()->GetTiles().size() > 0)
@@ -77,11 +66,32 @@ void ResourceManager::Render(DeviceManager* dManager)
 	}
 }
 
+void ResourceManager::AddTitleScreenUI(DeviceManager* dManager)
+{
+	m_TitleUIElements.push_back(std::make_shared<UIElement>(dManager, UIFolderPath + "UI_TitleMasterSheet.dds", DirectX::SimpleMath::Vector2(0, 0), DirectX::SimpleMath::Vector2(10, 10), DirectX::SimpleMath::Vector2(192, 108), RECT{ (0), (438), (192), (546) }));
+	m_TitleUIElements.push_back(std::make_shared<StartButton>(dManager, UIFolderPath + "UI_TitleMasterSheet.dds", DirectX::SimpleMath::Vector2(674, 426), DirectX::SimpleMath::Vector2(1, 1), DirectX::SimpleMath::Vector2(572, 146), RECT{ (0), (146), (572), (292) }));
+	m_TitleUIElements.push_back(std::make_shared<ExitButton>(dManager, UIFolderPath + "UI_TitleMasterSheet.dds", DirectX::SimpleMath::Vector2(674, 784), DirectX::SimpleMath::Vector2(1, 1), DirectX::SimpleMath::Vector2(572, 146), RECT{ (0), (292), (572), (438) }));
+}
+
+void ResourceManager::LoadGame(DeviceManager* dManager)
+{
+	std::shared_ptr<TitleImage> loadingImage = std::make_shared<TitleImage>(dManager, UIFolderPath + "UI_LoadingScreen.dds", DirectX::SimpleMath::Vector2(0, 0), DirectX::SimpleMath::Vector2(1, 1));
+
+	// First render a loading screen to present to user while level data is being allocated/loaded
+	RenderLoadScreen(dManager, loadingImage);
+
+	LoadLevelsFromFile(dManager);
+
+	GetCurrentMap()->GetCurrentZone()->RespawnPlayer();
+
+	currentGameState = EGameStates::GAME;
+}
+
 // Goes through levels json file to add all needed level names to vector
 void ResourceManager::LoadLevelsFromFile(DeviceManager* dManager)
 {
 	FILE* gLevelsFile;
-	errno_t levelsStatus = fopen_s(&gLevelsFile, "Data/GameLevels.json", "rb");
+	errno_t levelsStatus = fopen_s(&gLevelsFile, (GameFolderPath + "GameLevels.json").c_str(), "rb");
 	if (levelsStatus != 0)
 	{
 		printf("ERROR: Could not open file!");
@@ -97,7 +107,7 @@ void ResourceManager::LoadLevelsFromFile(DeviceManager* dManager)
 	for (int i = 0; i < levelsArray.Size(); i++)
 	{
 		std::string file = levelsArray[i].GetString();
-		m_Levels.emplace_back(std::make_unique<Map>(dManager, ("Data/" + file).c_str()));
+		m_Levels.emplace_back(std::make_unique<Map>(this, dManager, (GameFolderPath + file).c_str()));
 	}
 }
 
@@ -133,11 +143,10 @@ void ResourceManager::LoadPreviousMap(DeviceManager* dManager)
 // Function to eventually load in .json files which will be used to create gameobjects and tiles for the map
 void ResourceManager::ReloadMap(DeviceManager* dManager, int mapNum)
 {
-	SetCurrentMap(mapNum);
 	GetCurrentMap()->GetCurrentZone()->RespawnPlayer();
 }
 
-Map::Map(DeviceManager* dManager, const char* filePath)
+Map::Map(ResourceManager* rManager, DeviceManager* dManager, const char* filePath)
 {
 	currentZoneNum = 0;
 
@@ -169,7 +178,7 @@ Map::Map(DeviceManager* dManager, const char* filePath)
 	rapidjson::Value layersA = mapDocument["layers"].GetArray();
 	for (size_t i = 0; i < layersA.Capacity(); i++)
 	{
-		layers.push_back(std::make_shared<Layer>(dManager, this, layersA[i]));
+		layers.push_back(std::make_shared<Layer>(rManager, dManager, this, layersA[i]));
 	}
 }
 
@@ -203,7 +212,7 @@ void ResourceManager::LoadPreviousZone(DeviceManager* dManager)
 
 void ResourceManager::SavePlayerData()
 {
-	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
+	playerDataFile.open((PlayerFolderPath + "Player_SaveData.txt").c_str());										// Opens playerData text file 
 	playerDataFile << GetCurrentMapNum();														// Writes players current map number to file
 	playerDataFile << "\n";
 	playerDataFile << GetCurrentMap()->GetCurrentZoneNum();										// Writes players current zone number to file
@@ -212,7 +221,7 @@ void ResourceManager::SavePlayerData()
 
 void ResourceManager::LoadPlayerData()
 {
-	playerDataFile.open("data/playerData.txt");													// Opens playerData text file 
+	playerDataFile.open((PlayerFolderPath + "Player_SaveData.txt").c_str());										// Opens playerData text file 
 
 	std::string line;																			// String to temporarily store data being pulled from text file
 
@@ -225,7 +234,41 @@ void ResourceManager::LoadPlayerData()
 	playerDataFile.close();																		// Closes playerData text file
 }
 
-Layer::Layer(DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value)
+void ResourceManager::RenderLoadScreen(DeviceManager* dManager, std::shared_ptr<TitleImage> loadingImage)
+{
+	dManager->BeginRender();
+
+	dManager->GetSpriteBatch()->Begin(dManager->GetCommandList());
+
+	loadingImage.get()->Render(dManager);
+
+	dManager->GetSpriteBatch()->End();
+
+	dManager->EndRender();
+}
+
+void ResourceManager::CheckTitleOnClickEvents(DeviceManager* dManager)
+{
+	DirectX::Mouse::State mouse = dManager->GetMouse()->GetState();
+
+	if (GetAsyncKeyState(VK_LBUTTON))
+	{
+		POINT mousePos;
+		GetCursorPos(&mousePos);
+		for (auto& element : m_TitleUIElements)
+		{
+			if (mousePos.x > element.get()->GetCollisionBounds().left &&
+				mousePos.x < element.get()->GetCollisionBounds().right &&
+				mousePos.y > element.get()->GetCollisionBounds().top &&
+				mousePos.y < element.get()->GetCollisionBounds().bottom)
+			{
+				element.get()->OnClicked(this, dManager);
+			}
+		}
+	}
+}
+
+Layer::Layer(ResourceManager* rManager, DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value)
 {
 	if (value.HasMember("data")) {
 		for (auto& a : value["data"].GetArray()) 
@@ -256,7 +299,7 @@ Layer::Layer(DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value)
 	x = value["x"].GetInt();
 	y = value["y"].GetInt();
 
-	LoadZoneTiles(dManager, ownerMap);
+	LoadZoneTiles(rManager, dManager, ownerMap);
 }
 
 void Layer::RespawnPlayer()
@@ -264,10 +307,11 @@ void Layer::RespawnPlayer()
 	playerChar.get()->SetPosition(DirectX::SimpleMath::Vector2(playerSpawnPosition.x, playerSpawnPosition.y));
 }
 
-void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
+void Layer::LoadZoneTiles(ResourceManager* rManager, DeviceManager* dManager, Map* ownerMap)
 {
 	FILE* fp;
-	errno_t tileSetStatus = fopen_s(&fp, "Data/Tileset.json", "rb");		// opening
+	//WideCharToMultiByte(CP_UTF8, 0, rManager->GameFolderPath.c_str(), -1, NULL, 0, NULL, NULL);
+	errno_t tileSetStatus = fopen_s(&fp, (rManager->GameFolderPath + "Tileset.json").c_str(), "rb");		// opening (WideCharToMultiByte taken from https://stackoverflow.com/questions/76459047/using-widechartomultibyte , not sure exactly how it works)
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;
@@ -282,8 +326,8 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 
 	RECT playerRect = { 5,2,13,17 };
 	RECT shotgunRect = { 5,2,13,17 };
-	playerChar =  std::make_unique<Player>(dManager, L"Data/Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(8, 15), "Player", 0, playerRect);
-	shotgunChar = std::make_unique<Shotgun>(dManager, L"Data/Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(9, 17), "Shotgun", 0, shotgunRect);
+	playerChar =  std::make_unique<Player>(dManager, rManager->PlayerFolderPath + "Player.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(8, 15), "Player", 0, playerRect);
+	shotgunChar = std::make_unique<Shotgun>(dManager, rManager->ShotgunFolderPath + "Shotgun.dds", DirectX::SimpleMath::Vector2(0, 0), objScale, true, DirectX::SimpleMath::Vector2(9, 17), "Shotgun", 0, shotgunRect);
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -295,13 +339,13 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 			size_t x = val % columns;															// Position of tile on the tile map, (0,0) is top left going down and to the right
 			size_t y = floor(val / columns);													// Floor rounds down (returns biggest int thats lower than original value)
 
-			size_t xPos = i % ownerMap->getWidth();										//
-			size_t yPos = floor(i / ownerMap->getWidth());								//
+			size_t xPos = i % ownerMap->getWidth();												//
+			size_t yPos = floor(i / ownerMap->getWidth());										//
 
-			float tileXPos = xPos * ownerMap->getTileWidth() * objScale.x;				// Tile object x and y position on screen
+			float tileXPos = xPos * ownerMap->getTileWidth() * objScale.x;						// Tile object x and y position on screen
 			float tileYPos = yPos * ownerMap->getTileWidth() * objScale.y;
 
-			float x1 = x * ownerMap->getTileWidth();										// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
+			float x1 = x * ownerMap->getTileWidth();											// Pixel coordinates on tileset image, each corner of a tile square (like int rect from sfml)
 			float x2 = (x + 1) * ownerMap->getTileWidth();
 			float y1 = y * ownerMap->getTileHeight();
 			float y2 = (y + 1) * ownerMap->getTileHeight();
@@ -322,7 +366,7 @@ void Layer::LoadZoneTiles(DeviceManager* dManager, Map* ownerMap)
 				playerSpawnPosition = DirectX::SimpleMath::Vector2(tileXPos, tileYPos - (playerChar->GetObjectSize().y * playerChar->GetScale().y));
 			}
 
-			tileObjects.push_back(std::make_shared<Tile>(dManager, L"Data/master_sheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(ownerMap->getTileWidth(), ownerMap->getTileHeight()), objType, collisionDirection, tileRect));
+			tileObjects.push_back(std::make_shared<Tile>(dManager, rManager->GameFolderPath + "MasterSheet.dds", DirectX::SimpleMath::Vector2(tileXPos, tileYPos), objScale, true, DirectX::SimpleMath::Vector2(ownerMap->getTileWidth(), ownerMap->getTileHeight()), objType, collisionDirection, tileRect));
 		}
 	}
 }

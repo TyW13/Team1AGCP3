@@ -4,18 +4,18 @@
 
 #include <fstream>;
 
-#include  "TitleImage.h"
+#include "TitleImage.h"
 #include "Player.h"
 #include "Shotgun.h"
 
 class Map;
+class UIElement;
 
 class Layer
 {
 public:
 	Layer() {}
-	Layer(DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value);
-	~Layer(){}
+	Layer(ResourceManager* rManager, DeviceManager* dManager, Map* ownerMap, rapidjson::Value& value);
 
 	std::vector<int> GetData() { return data; }
 	std::vector<std::shared_ptr<GameObject>> GetTiles() { return tileObjects; }
@@ -34,7 +34,7 @@ public:
 	Shotgun* GetShotgunObj() { return shotgunChar.get(); }
 
 	void RespawnPlayer();
-	void LoadZoneTiles(DeviceManager* dManager, Map* ownerMap);
+	void LoadZoneTiles(ResourceManager* rManager, DeviceManager* dManager, Map* ownerMap);
 
 private:
 	std::vector<int> data;
@@ -60,9 +60,7 @@ class Map
 public:
 
 	Map(){}
-	Map::Map(DeviceManager* dManager, const char* filePath);
-
-	~Map() {}
+	Map::Map(ResourceManager* rManager, DeviceManager* dManager, const char* filePath);
 
 	int getHeight() { return height; }
 	bool isInfinite() { return infinite; }
@@ -107,12 +105,13 @@ class ResourceManager
 {
 public:
 	ResourceManager(){}
-	~ResourceManager(){}
 
 	void Init(DeviceManager* dManager);
 	void Update(DeviceManager* dManager, float dTime);
 	void Render(DeviceManager* dManager);
 
+	void AddTitleScreenUI(DeviceManager* dManager);
+	void LoadGame(DeviceManager* dManager);
 	void LoadLevelsFromFile(DeviceManager* dManager);														// Reads json file to obtain level file names from array (strings)
 
 	int GetCurrentMapNum() { return currentMapNum; }
@@ -128,14 +127,21 @@ public:
 	void LoadNextZone(DeviceManager* dManager);													// Increments currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 	void LoadPreviousZone(DeviceManager* dManager);												// Decrements currentMapNum by 1 and then uses new currentMapNum to call ReloadMap function
 
-	std::vector<GameObject*> GetObjects() { return m_Objects; }
 
 	void SavePlayerData();															// Attach to button in the UI allowing player to save their current Map and Zone data to text file 
 	void LoadPlayerData();															// Reads Map and Zone data from text file and sets player to that specific level upon loading game 
 
+	const std::string GameFolderPath = "Data/Game/";
+	const std::string PlayerFolderPath = "Data/Player/";
+	const std::string ShotgunFolderPath = "Data/Shotgun/";
+	const std::string UIFolderPath = "Data/UI/";
+
 private:
-	std::vector<std::unique_ptr<Map>> m_Levels;										// Vector to store pointers to Map objects
-	std::vector<GameObject*> m_Objects;												// Vector to store current zone tiles
+	void RenderLoadScreen(DeviceManager* dManager, std::shared_ptr<TitleImage> loadingImage);
+	void CheckTitleOnClickEvents(DeviceManager* dManager);														// Checking On Click "events" for buttons on title screen
+
+	std::vector<std::shared_ptr<Map>> m_Levels;										// Vector to store pointers to Map objects
+	std::vector<std::shared_ptr<UIElement>> m_TitleUIElements;
 	int currentMapNum = 0;					
 
 	std::fstream playerDataFile;													// Stores Map and Zone num to enable them to save/load progress

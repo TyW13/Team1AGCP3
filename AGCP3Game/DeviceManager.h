@@ -53,7 +53,7 @@ public:
         Player,
         Tile,
         Shotgun,
-        TitleImage,
+        UI,
         Count,
     };
 

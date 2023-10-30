@@ -4,14 +4,13 @@
 class Tile : public GameObject
 {
 public:
-	Tile(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 })
+	Tile(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 })
 		: GameObject(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect)
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
-	~Tile() {}
 
-	void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 }) override;
+	void Init(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int collisionDirection, RECT objRect = { 0, 0, 8 ,8 }) override;
 	void Render(DeviceManager* dManager) override;
 
 	bool GetActive() override { return isActive; }

@@ -91,6 +91,11 @@
     <ClInclude Include="ShotgunAnimation.h" />
     <ClInclude Include="ShotgunAnimation.h" />
     <ClInclude Include="TitleImage.h" />
+    <ClInclude Include="ShotgunAnimation.h" />
+    <ClInclude Include="UIElement.h" />
+    <ClInclude Include="StartButton.h" />
+    <ClInclude Include="ExitButton.h" />
+    <ClInclude Include="ContinueButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -157,6 +162,11 @@
     <ClCompile Include="ShotgunAnimation.cpp" />
     <ClCompile Include="ShotgunAnimation.cpp" />
     <ClCompile Include="TitleImage.cpp" />
+    <ClCompile Include="ShotgunAnimation.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="StartButton.cpp" />
+    <ClCompile Include="ExitButton.cpp" />
+    <ClCompile Include="ContinueButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders.hlsl">

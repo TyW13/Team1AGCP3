@@ -7,14 +7,14 @@ class ResourceManager;
 class GameObject
 {
 public:
-	GameObject(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 0 ,0 })
+	GameObject(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string objType, int collisionDirection, RECT objRect = { 0, 0, 0 ,0 })
 	{
 		Init(dManager, texPath, position, scale, active, objSize, objType, collisionDirection, objRect);
 	}
 
 	virtual ~GameObject() {}
 
-	virtual void Init(DeviceManager* dManager, std::wstring texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int _collisionDirection, RECT objRect = { 0, 0, 0 ,0 });
+	virtual void Init(DeviceManager* dManager, std::string texPath, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, bool active, DirectX::SimpleMath::Vector2 objSize, std::string _objType, int _collisionDirection, RECT objRect = { 0, 0, 0 ,0 });
 	virtual void Update(DeviceManager* dManager, ResourceManager* rManager, float dTime);
 	virtual void Render(DeviceManager* dManager);
 
