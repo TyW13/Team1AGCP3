@@ -310,8 +310,7 @@ void Layer::RespawnPlayer()
 void Layer::LoadZoneTiles(ResourceManager* rManager, DeviceManager* dManager, Map* ownerMap)
 {
 	FILE* fp;
-	//WideCharToMultiByte(CP_UTF8, 0, rManager->GameFolderPath.c_str(), -1, NULL, 0, NULL, NULL);
-	errno_t tileSetStatus = fopen_s(&fp, (rManager->GameFolderPath + "Tileset.json").c_str(), "rb");		// opening (WideCharToMultiByte taken from https://stackoverflow.com/questions/76459047/using-widechartomultibyte , not sure exactly how it works)
+	errno_t tileSetStatus = fopen_s(&fp, (rManager->GameFolderPath + "Tileset.json").c_str(), "rb");
 	char readBuffer[4096];
 	rapidjson::FileReadStream mapStream(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document tilesetDoc;

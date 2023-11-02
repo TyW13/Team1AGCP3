@@ -32,7 +32,7 @@ void Player::Init(DeviceManager* dManager, std::string texPath, DirectX::SimpleM
 		dManager->GetDeviceResources()->GetCommandQueue());
 	uploadResourcesFinished.wait();
 
-    playerAnim.Init("Player/Player.json", *this);
+    playerAnim.Init("Data/Player/Player.json", *this);
     audioManager.Init();
 }
 void Player::Update(DeviceManager* dManager, ResourceManager* rManager, float dTime)

@@ -11,7 +11,6 @@ using namespace DirectX::SimpleMath;
 void PlayerAnimation::Init(std::string jsonPath, GameObject& Sprite)
 {
 	//Grabs the necessary data for the animation
-	jsonPath = "Data/" + jsonPath;
 	if (jsonPath == "Data/Player/Player.json")
 	{
 		LoadAnimation(jsonPath);
